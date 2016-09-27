@@ -1,0 +1,27 @@
+
+.markup3D.leader-container{
+    pointer-events: none;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    left: 0px;
+    top: 0px;
+}
+
+svg.markup3D {
+    width: 100%;
+    height: 100%;
+}
+
+.markup3D .btn-ctrl {
+    width: 46px;
+    height: 6px;
+    line-height: 0;
+    vertical-align: top;
+}
+
+.markup3D .btn-span {
+    margin-right: 0px;
+    line-height: 0.3;
+    top: 1px;
+}

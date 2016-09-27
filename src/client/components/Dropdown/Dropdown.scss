@@ -1,0 +1,26 @@
+.lmv-dropdown .btn {
+    background-color: #3C3F40;
+    vertical-align: top;
+    line-height: 0;
+    height: 28px;
+}
+
+.lmv-dropdown .label {
+    font: normal 14px Times New Roman;
+}
+
+.scrollable-menu {
+    height: auto;
+    max-height: 250px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.lmv-dropdown .label-container {
+    width: 100%;
+    overflow: hidden;
+}
+
+.lmv-dropdown .caret {
+    border-top:4px solid white;
+}

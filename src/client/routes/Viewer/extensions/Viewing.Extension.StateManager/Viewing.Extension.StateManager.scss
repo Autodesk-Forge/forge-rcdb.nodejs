@@ -1,0 +1,103 @@
+
+.state-manager{
+    top: 10px;
+    right: 10px;
+    width: 370px;
+    height: 350px;
+    resize: auto;
+}
+
+.state-manager .container {
+    height: calc(100% - 55px);
+    width: 100%;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin: 0;
+}
+
+.state-manager .item-list {
+    height: calc(100% - 24px);
+    overflow: auto;
+    margin-top: 6px;
+}
+
+.state-manager .btn {
+    height: 18px;
+    line-height: 0;
+    vertical-align: top;
+}
+
+.state-btn-list {
+    line-height: 0;
+    vertical-align: top;
+    margin-top: -7px;
+    float: right;
+    margin-right: -7px;
+}
+
+.state-manager .btn-save {
+    float: left;
+    height: 20px;
+    margin-right: 4px;
+    padding-top: 1px;
+}
+
+.state-manager .input-name {
+    border-radius: 4px;
+    width: calc(100% - 123px);
+    height: 20px;
+}
+
+.state-manager .btn-dropdown {
+    width: 170px;
+    height: 10px;
+}
+
+.state-manager .btn-span {
+    margin-right: 0px;
+    top: 3px;
+}
+
+.state-btn-span-list {
+    margin-right: 0px;
+    line-height: 0.3;
+    top: 1px;
+}
+
+.minimized {
+    height: 34px;
+    min-height: 34px
+}
+
+.state-manager .v-spacer {
+    border-width: 0px;
+    margin: 2px;
+}
+
+.state-manager .v-spacer-large {
+    border-width: 0px;
+    margin: 10px;
+}
+
+.state-list-group-item {
+    width: calc(100% - 2px);
+    height: 26px;
+    line-height: 0.3;
+    border-radius: 4px;
+    margin-top: 1px;
+    margin-bottom: 0px;
+    background-color: #E8E8E8;
+    border: 1px solid #000;
+    cursor: pointer;
+
+    position: relative;
+    display: block;
+    padding: 10px 10px;
+}
+
+.state-list-group-item:hover {
+
+    border: 1px solid #1547de;
+    background-color: #5BC0DE;
+}

@@ -1,0 +1,22 @@
+.db-dropdown {
+  margin: 26px;
+}
+
+.db-dropdown .field-container {
+  margin-bottom: 4px;
+  margin-top: 4px;
+}
+
+.db-dropdown .field-name {
+  float: left;
+  width: 70px;
+  position: relative;
+  text-align: left;
+}
+
+.db-dropdown .field-value{
+  float: left;
+  position: relative;
+  text-align: left;
+  width: calc(100% - 100px);
+}

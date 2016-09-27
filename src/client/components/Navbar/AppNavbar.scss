@@ -1,0 +1,38 @@
+
+.navbar {
+  margin-bottom: 0px;
+  border-radius: 0px;
+}
+
+.navbar-brand,
+.navbar-nav li a {
+    line-height: 60px;
+    height: 65px;
+    padding-top: 0;
+}
+
+.navbar-brand>img {
+  display: block;
+  margin: 5px;
+  float: left;
+}
+
+.dropdown-menu>li>a {
+    height: 30px;
+    line-height: 23px;
+    padding: 3px 20px;
+}
+
+.navbar-default {
+  border-bottom-color: #F5C70A;
+  border-bottom-width: 4px;
+}
+
+.app-logo {
+    position: relative;
+    top: 2px;
+}
+
+.menuItem {
+    border-radius: 4px;
+}
