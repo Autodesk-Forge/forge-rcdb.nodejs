@@ -1,8 +1,8 @@
 {
-  "name": "react-redux-starter-kit",
-  "version": "3.0.0-alpha.2",
-  "description": "Get started with React, Redux, and React-Router!",
-  "main": "index.js",
+  "name": "forge-rcdb",
+  "version": "1.0.0",
+  "description": "Autodesk Forge Responsive Connected Database",
+  "main": "main.js",
   "engines": {
     "node": ">=4.5.0",
     "npm": "^3.0.0"
@@ -13,7 +13,7 @@
     "build-prod": "NODE_ENV=production better-npm-run build",
     "lint": "eslint bin build config server src tests",
     "lint:fix": "npm run lint -- --fix",
-    "start": "npm run build-prod && better-npm-run start",
+    "start": "npm run build-prod && node bin/server",
     "dev": "better-npm-run dev",
     "test": "better-npm-run test",
     "test:dev": "npm run test -- --watch",
@@ -59,6 +59,7 @@
     "start": {
       "command": "node bin/server",
       "env": {
+        "NODE_ENV": "production",
         "DEBUG": "app:*"
       }
     },
