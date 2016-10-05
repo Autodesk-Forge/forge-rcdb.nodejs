@@ -10,7 +10,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "build-dev": "NODE_ENV=development better-npm-run build",
-    "build-prod": "NODE_ENV=production better-npm-run build",
+    "build-prod": "NODE_ENV=production npm run clean && node bin/build",
     "lint": "eslint bin build config server src tests",
     "lint:fix": "npm run lint -- --fix",
     "start": "npm run build-prod && node bin/server",
