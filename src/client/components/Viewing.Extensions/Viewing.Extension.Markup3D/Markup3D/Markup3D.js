@@ -482,27 +482,27 @@ export default class Markup3D extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   static load(viewer, state) {
 
-    var leaderNote = new LeaderNote(
+    var markup = new Markup3D(
       viewer,
       state.screenPoint,
       state.dbId,
       state.fragId,
       state.worldPoint)
 
-    leaderNote.bindToState =
+    markup.bindToState =
       state.bindToState
 
-    leaderNote.occlusion =
+    markup.occlusion =
       state.occlusion
 
-    leaderNote.endPoint =
+    markup.endPoint =
       state.endPoint
 
-    leaderNote.setLabelItem(
+    markup.setLabelItem(
       state.item)
 
-    leaderNote.update()
+    markup.update()
 
-    return leaderNote
+    return markup
   }
 }

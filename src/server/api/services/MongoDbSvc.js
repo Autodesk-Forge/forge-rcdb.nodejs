@@ -274,7 +274,7 @@ export default class DbSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////////////
-  updateItem(collectionName, item) {
+  updateItem(collectionName, query, opts = {}) {
 
     var _thisSvc = this;
 
@@ -282,23 +282,20 @@ export default class DbSvc extends BaseSvc {
 
       try{
 
-        if(typeof item._id == 'string') {
-          item._id = new mongo.ObjectId(item._id);
-        }
-
         var collection = await _thisSvc.getCollection(
           collectionName);
 
         collection.update(
-          {_id: item._id},
-          item, (err, res)=> {
+          query,
+          opts,
+          (err, res)=> {
 
-          if(err){
-            return reject(err);
-          }
+            if(err){
+              return reject(err);
+            }
 
-          return resolve(res);
-        });
+            return resolve(res);
+          });
       }
       catch(ex){
 

@@ -63,6 +63,40 @@ class StateManagerExtension extends ExtensionBase {
       this._options.container || this._viewer.container,
       this._control.container);
 
+    this._panel.on('open', () => {
+
+      if(this._api) {
+
+        this._api.getSequence(this._options.model._id).then(
+          async(sequence) => {
+
+          var states = await this._api.getStates(
+            this._options.model._id);
+
+          sequence.forEach((stateId) => {
+
+            states.forEach((state) => {
+
+              if(state.guid == this._options.stateId){
+
+                this._viewer.restoreState(state, false);
+              }
+
+              if (state.guid == stateId) {
+
+                this._panel.addItem(state);
+              }
+            })
+          })
+        })
+      }
+    })
+
+    this._panel.on('close', (state) => {
+
+      this._panel.clearItems()
+    })
+
     this._panel.on('state.add', (state) => {
 
       return this.onAddStateHandler(state);
@@ -97,32 +131,6 @@ class StateManagerExtension extends ExtensionBase {
 
     this.parentControl.addControl(
       this._control);
-
-    if(this._api) {
-
-      this._api.getSequence(this._options.model._id).then(
-        async(sequence) => {
-
-        var states = await this._api.getStates(
-          this._options.model._id);
-
-        sequence.forEach((stateId) => {
-
-        states.forEach((state) => {
-
-          if(state.guid == this._options.stateId){
-
-            this._viewer.restoreState(state, false);
-          }
-
-          if (state.guid == stateId) {
-
-            this._panel.addItem(state);
-          }
-        })
-      })
-     })
-    }
 
     if(this._options.homeState) {
 

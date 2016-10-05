@@ -41,7 +41,7 @@ export default class ModelSvc extends BaseSvc {
           fieldQuery: {
             _id: new mongo.ObjectId(modelId)
           }
-        });
+        })
 
         var model = await dbSvc.findOne(
           _thisSvc._config.collections.models,
@@ -60,7 +60,7 @@ export default class ModelSvc extends BaseSvc {
   //
   //
   ///////////////////////////////////////////////////////////////////////////////
-  getModels(opts) {
+  getModels (opts) {
 
     var _thisSvc = this
 
@@ -72,7 +72,8 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         var models = await dbSvc.getItems(
-          _thisSvc._config.collections.models, opts)
+          _thisSvc._config.collections.models,
+          opts)
 
         return resolve(models)
       }
@@ -110,7 +111,7 @@ export default class ModelSvc extends BaseSvc {
   // returns states sequence
   //
   ///////////////////////////////////////////////////////////////////
-  getSequence(modelId) {
+  getSequence (modelId) {
 
     var _thisSvc = this
 
@@ -122,17 +123,17 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         var query = {
-          _id: new mongo.ObjectId(modelId)
-        }
-
-        var fields = {
-          sequence: 1
+          fieldQuery:{
+            _id: new mongo.ObjectId(modelId)
+          },
+          pageQuery:{
+            sequence: 1
+          }
         }
 
         var model = await dbSvc.findOne(
           _thisSvc._config.collections.models,
-          query,
-          fields)
+          query)
 
         return resolve(model.sequence)
       }
@@ -168,14 +169,14 @@ export default class ModelSvc extends BaseSvc {
           }
         }
 
-        await dbSvc.update(
+        await dbSvc.updateItem(
           _thisSvc._config.collections.models,
           query,
           opts)
 
         return resolve(sequence)
-      }
-      catch(ex){
+
+      } catch(ex){
 
         return reject(ex)
       }
@@ -198,21 +199,21 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         var query = {
-          _id: new mongo.ObjectId(modelId)
-        }
-
-        var fields = {
-          states: 1
+          fieldQuery:{
+            _id: new mongo.ObjectId(modelId)
+          },
+          pageQuery:{
+            states: 1
+          }
         }
 
         var model = await dbSvc.findOne(
           _thisSvc._config.collections.models,
-          query,
-          fields)
+          query)
 
         return resolve(model.states)
-      }
-      catch(ex){
+
+      } catch(ex){
 
         return reject(ex)
       }
@@ -223,7 +224,7 @@ export default class ModelSvc extends BaseSvc {
   // adds new state
   //
   ///////////////////////////////////////////////////////////////////
-  addState(modelId, state) {
+  addState (modelId, state) {
 
     var _thisSvc = this
 
@@ -245,14 +246,14 @@ export default class ModelSvc extends BaseSvc {
           }
         }
 
-        await dbSvc.update(
+        await dbSvc.updateItem(
           _thisSvc._config.collections.models,
           query,
           opts)
 
         return resolve(state)
-      }
-      catch(ex){
+
+      } catch(ex){
 
         return reject(ex)
       }
@@ -285,14 +286,14 @@ export default class ModelSvc extends BaseSvc {
           }
         }
 
-      await dbSvc.update(
+      await dbSvc.updateItem(
         _thisSvc._config.collections.models,
         query,
         opts)
 
         return resolve(stateId)
-      }
-      catch(ex){
+
+      } catch(ex){
 
         return reject(ex)
       }

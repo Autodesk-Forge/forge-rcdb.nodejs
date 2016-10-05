@@ -122,4 +122,13 @@ export default class StateManagerPanel extends ToolPanelBase{
       }
     });
   }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  clearItems () {
+
+    $(`#${this.container.id}-item-list`).empty()
+  }
 }

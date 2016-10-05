@@ -34,8 +34,14 @@ export const actions = {
 const ACTION_HANDLERS = {
 
   [LOAD_DB_ITEMS] : (state, action) => {
+
+    const dbItems = _.sortBy(action.payload,
+      (dbItem) => {
+        return dbItem.name
+      })
+
     return Object.assign({}, state, {
-      dbItems: action.payload
+      dbItems
     })
   },
 

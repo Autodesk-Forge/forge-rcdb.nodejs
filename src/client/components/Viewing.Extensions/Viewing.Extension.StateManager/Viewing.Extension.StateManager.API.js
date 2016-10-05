@@ -2,15 +2,17 @@
 // StateManager API
 //
 /////////////////////////////////////////////////////////////////
-export default class StatesAPI {
+import ClientAPI from 'ClientAPI'
+
+export default class StatesAPI extends ClientAPI {
 
   ///////////////////////////////////////////////////////////////
   // Class constructor
   //
   ///////////////////////////////////////////////////////////////
-  constructor(apiUrl) {
+  constructor (apiUrl) {
 
-    this._apiUrl = apiUrl;
+    super(apiUrl)
   }
 
   ///////////////////////////////////////////////////////////////
@@ -19,77 +21,67 @@ export default class StatesAPI {
   ///////////////////////////////////////////////////////////////
   async getSequence(modelId) {
 
-  var url = this._apiUrl +
-    `/models/${modelId}/states/sequence`;
+  var url = this.apiUrl + `/${modelId}/states/sequence`
 
-  var res = await fetch(url);
-
-  return res.json();
+  return this.ajax(url)
 }
 
   ///////////////////////////////////////////////////////////////
   //
   //
   ///////////////////////////////////////////////////////////////
-  async getStates(modelId) {
+  getStates(modelId) {
 
-  var url = this._apiUrl +
-    `/models/${modelId}/states`;
+    var url = this.apiUrl + `/${modelId}/states`
 
-  var res = await fetch(url);
-
-  return res.json();
-}
-
-  ///////////////////////////////////////////////////////////////
-  //
-  //
-  ///////////////////////////////////////////////////////////////
-  async post(url, payload) {
-
-  var res = await fetch(url, {
-    method: 'post',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(payload || {})
-  });
-
-  return res.json();
-}
-
-  ///////////////////////////////////////////////////////////////
-  //
-  //
-  ///////////////////////////////////////////////////////////////
-  async saveSequence(modelId, sequence) {
-
-  var payload = {
-    sequence: sequence
+    return this.ajax(url)
   }
 
-  var url = this._apiUrl +
-    `/models/${modelId}/states/sequence`;
-
-  return this.post(url, payload);
-}
-
   ///////////////////////////////////////////////////////////////
   //
   //
   ///////////////////////////////////////////////////////////////
-  async addState(modelId, state) {
+  saveSequence(modelId, sequence) {
 
-  var payload = {
-    state: state
+    var payload = {
+      sequence: sequence
+    }
+
+    var url = this.apiUrl + `/${modelId}/states/sequence`
+
+    return this.ajax({
+      url: url,
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      data: JSON.stringify(payload)
+    })
   }
 
-  var url = this._apiUrl +
-    `/models/${modelId}/states`;
+  ///////////////////////////////////////////////////////////////
+  //
+  //
+  ///////////////////////////////////////////////////////////////
+  addState(modelId, state) {
 
-  return this.post(url, payload);
-}
+    var payload = {
+      state: state
+    }
+
+    var url = this.apiUrl + `/${modelId}/states`
+
+    return this.ajax({
+      url: url,
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      data: JSON.stringify(payload)
+    })
+  }
 
   ///////////////////////////////////////////////////////////////
   //
@@ -97,9 +89,11 @@ export default class StatesAPI {
   ///////////////////////////////////////////////////////////////
   removeState(modelId, stateId) {
 
-    var url = this._apiUrl +
-      `/models/${modelId}/states/${stateId}/remove`;
+    var url = this.apiUrl + `/${modelId}/states/${stateId}/remove`
 
-    return this.post(url);
+    return this.ajax({
+      url: url,
+      method: 'POST'
+    })
   }
 }

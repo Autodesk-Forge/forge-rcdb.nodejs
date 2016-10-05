@@ -19,13 +19,13 @@
   float: left;
 }
 
-.dropdown-menu>li>a {
+.forge-rcdb-navbar .dropdown-menu>li>a {
   height: 30px;
   line-height: 23px;
   padding: 3px 20px;
 }
 
-.dropdown .caret {
+.forge-rcdb-navbar .dropdown .caret {
   position: relative;
   top: -60px;
   left: 45px;
@@ -36,12 +36,12 @@
   border-bottom-width: 4px;
 }
 
-.app-logo {
+.forge-rcdb-navbar .app-logo {
   position: relative;
   top: 2px;
 }
 
-.menuItem {
+.forge-rcdb-navbar .menuItem {
   border-radius: 4px;
 }
 
@@ -61,7 +61,7 @@
   color: #a53a20;
 }
 
-.forge-rcdb-span {
+.forge-rcdb-navbar .forge-rcdb-span {
   position: relative;
   font-size: 26px;
   top: 3px;

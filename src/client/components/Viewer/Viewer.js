@@ -147,8 +147,10 @@ class Viewer extends React.Component {
         }, 600)
 
         this.viewer.loadExtension(StateManagerExtension, {
+          apiUrl: `/api/models/${'forge-rcdb'}`,
           container: $('.viewer-view')[0],
-          parentControl: ctrlGroup
+          parentControl: ctrlGroup,
+          model: model
         })
 
         this.viewer.loadExtension(Markup3DExtension, {
