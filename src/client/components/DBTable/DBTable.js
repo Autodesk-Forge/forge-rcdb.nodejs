@@ -131,7 +131,9 @@ class DBTable extends React.Component {
   /////////////////////////////////////////////////////////
   render() {
 
-    this.refresh()
+    setTimeout(() => {
+      this.refresh()
+    }, 0)
 
     return (
         <div className="db-table">

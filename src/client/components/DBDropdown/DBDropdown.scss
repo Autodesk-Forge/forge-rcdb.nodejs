@@ -1,7 +1,7 @@
 .db-dropdown {
   overflow: auto;
   padding: 24px;
-  height: 100%;
+  height: calc(100% - 14px);
 }
 
 .db-dropdown .field-container {

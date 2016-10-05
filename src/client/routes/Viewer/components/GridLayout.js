@@ -9,19 +9,6 @@ import './GridLayout.scss'
 import React from 'react'
 import _ from 'lodash'
 
-const computeDefaultLayout = () => {
-
-  var h = (screen.availHeight - 140)
-
-  h = h/8 - ((h/8)%4)
-
-  return [
-      { i: 'db-grid', h: h - 30, w: 8, x: 0, y: 0 },
-      { i: 'db-drop', h: 30, w: 8, x: 0, y: 0 },
-      { i: 'viewer',  h: h, w: 16, x: 8, y: 0 }
-    ]
-}
-
 class GridLayoutMovableLock extends React.Component {
 
   onMouseDown (e) {
@@ -51,6 +38,31 @@ class GridLayoutMovableLock extends React.Component {
   }
 }
 
+class DBResponsiveView extends React.Component {
+
+  render() {
+
+    const height = $('.db-responsive-view').height()
+
+    if(height && height < 250) {
+
+      return (
+        <div className="db-responsive-view">
+          <DBDropdown {...this.props}/>
+        </div>
+      )
+
+    } else {
+
+      return (
+        <div className="db-responsive-view">
+          <DBTable {...this.props}/>
+        </div>
+      )
+    }
+  }
+}
+
 class GridLayout extends React.Component {
 
   /////////////////////////////////////////////////////////
@@ -74,11 +86,23 @@ class GridLayout extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  computeDefaultLayout = () => {
+
+    var h = (screen.availHeight - 140)
+
+    h = h/8 - ((h/8)%4)
+
+    return [
+      { i: 'db-responsive-view', h: h, w: 8, x: 0, y: 0 },
+      { i: 'viewer',  h: h, w: 16, x: 8, y: 0 }
+    ]
+  }
+
   state = {
     mounted: false,
     currentBreakpoint: 'lg',
     layouts: {
-      lg: computeDefaultLayout()
+      lg: this.computeDefaultLayout()
     }
   }
 
@@ -103,13 +127,14 @@ class GridLayout extends React.Component {
 
       switch(layout.i) {
 
-        case 'db-grid':
+        case 'db-table':
           return (
             <div key={layout.i}>
               <GridLayoutMovableLock>
                 <DBTable
                   onSelectDbItem={this.props.onSelectDbItem}
                   onUpdateDbItem={this.props.onUpdateDbItem}
+                  selectedDbItem={this.props.selectedDbItem}
                   dbItems={this.props.filteredDbItems}
                 />
               </GridLayoutMovableLock>
@@ -127,6 +152,20 @@ class GridLayout extends React.Component {
                 dbItems={this.props.filteredDbItems}
               />
             </GridLayoutMovableLock>
+            </div>)
+          break
+
+        case 'db-responsive-view':
+          return (
+            <div key={layout.i}>
+              <GridLayoutMovableLock>
+                <DBResponsiveView
+                  onSelectDbItem={this.props.onSelectDbItem}
+                  onUpdateDbItem={this.props.onUpdateDbItem}
+                  selectedDbItem={this.props.selectedDbItem}
+                  dbItems={this.props.filteredDbItems}
+                />
+              </GridLayoutMovableLock>
             </div>)
           break
 

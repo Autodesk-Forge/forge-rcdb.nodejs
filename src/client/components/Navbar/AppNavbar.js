@@ -47,12 +47,12 @@ export default class AppNavbar extends React.Component {
                 </div>
               }>
               <MenuItem eventKey={3.1}>
-                <span className="fa fa-gear"></span>
+                <span className="fa fa-database"></span>
                 &nbsp; Select Database
               </MenuItem>
               <MenuItem divider/>
               <MenuItem eventKey={3.3}>
-                <span className="fa fa-gear"></span>
+                <span className="fa fa-th-large"></span>
                 &nbsp; Layout Settings
               </MenuItem>
             </NavDropdown>
