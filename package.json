@@ -13,7 +13,7 @@
     "build-prod": "NODE_ENV=production better-npm-run build",
     "lint": "eslint bin build config server src tests",
     "lint:fix": "npm run lint -- --fix",
-    "start": "better-npm-run start",
+    "start": "npm run build-prod && better-npm-run start",
     "dev": "better-npm-run dev",
     "test": "better-npm-run test",
     "test:dev": "npm run test -- --watch",
