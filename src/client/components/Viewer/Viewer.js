@@ -2,7 +2,7 @@ import StateManagerExtension from 'Viewing.Extension.StateManager'
 import VisualReportExtension from 'Viewing.Extension.VisualReport'
 import CanvasInfoExtension from 'Viewing.Extension.CanvasInfo'
 import Markup3DExtension from 'Viewing.Extension.Markup3D'
-import ViewerToolkit from 'ViewerToolkit'
+import ViewerToolkit from 'Viewer.Toolkit'
 import ServiceManager from 'SvcManager'
 import React from 'react'
 import './Viewer.scss'
@@ -211,7 +211,7 @@ class Viewer extends React.Component {
         //
         //Object.keys(componentsMap).forEach(async(key) => {
         //
-        //  const res = await materialSvc.postMaterial('mongo1', {
+        //  const res = await materialSvc.postMaterial('forge-rcdb', {
         //    name: key,
         //    supplier: 'Autodesk',
         //    currency: 'USD',

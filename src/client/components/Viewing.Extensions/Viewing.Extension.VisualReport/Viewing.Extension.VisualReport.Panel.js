@@ -3,13 +3,13 @@
 // by Philippe Leefsma, April 2016
 //
 /////////////////////////////////////////////////////////////////////
-import ToolPanelBase from 'ToolPanelBase/ToolPanelBase'
-import TabManager from 'TabManager/TabManager'
 import './Viewing.Extension.VisualReport.scss'
 import PieChart from './PieChart/PieChart'
 import BarChart from './BarChart/BarChart'
-import ViewerToolkit from 'ViewerToolkit'
-import Dropdown from 'Dropdown/Dropdown'
+import ViewerToolkit from 'Viewer.Toolkit'
+import ToolPanelBase from 'ToolPanelBase'
+import TabManager from 'TabManager'
+import Dropdown from 'Dropdown'
 import d3 from 'd3'
 
 export default class VisualReportPanel extends ToolPanelBase{

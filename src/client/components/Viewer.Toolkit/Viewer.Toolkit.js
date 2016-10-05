@@ -279,7 +279,14 @@ export default class ViewerToolkit {
 
             result.properties.forEach((prop) => {
 
-              if (displayName === prop.displayName) {
+              if(typeof displayName === 'function') {
+
+                if(displayName(prop.displayName)){
+
+                  resolve(prop)
+                }
+
+              } else if (displayName === prop.displayName) {
 
                 resolve(prop)
               }
@@ -353,7 +360,7 @@ export default class ViewerToolkit {
   // Maps components by property
   //
   /////////////////////////////////////////////////////////////////
-  static mapComponentsByProp(model, propName, components) {
+  static mapComponentsByProp(model, propName, components, defaultProp) {
 
     return new Promise(async(resolve, reject)=>{
 
@@ -366,7 +373,7 @@ export default class ViewerToolkit {
             try {
 
               var result = await ViewerToolkit.getProperty(
-                model, dbId, propName);
+                model, dbId, propName, defaultProp);
 
               result.dbId = dbId;
 
@@ -394,7 +401,7 @@ export default class ViewerToolkit {
 
         var componentsMap = {};
 
-        propertyResults.forEach((result)=>{
+        propertyResults.forEach((result) => {
 
           var value = result.displayValue;
 

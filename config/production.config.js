@@ -151,10 +151,10 @@ const envConfig = {
   },
   databases: [{
     type: 'mongo',
+    dbhost: process.env.RCDB_DBHOST,
     dbName: process.env.RCDB_DBNAME,
     user: process.env.RCDB_USER,
     pass: process.env.RCDB_PASS,
-    dbhost: process.env.RCDB_DBHOST,
     port: process.env.RCDB_PORT,
     collections: {
       materials: 'rcdb.materials',

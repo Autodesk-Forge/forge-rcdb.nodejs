@@ -37,7 +37,7 @@ To run these samples, you need your own Forge API credentials:
 WORK IN PROGRESS!!
 
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Autodesk-Forge/forge-boilers.nodejs)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 ## License
 

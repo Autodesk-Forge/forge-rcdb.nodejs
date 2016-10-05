@@ -16,7 +16,6 @@ const webpackConfig = {
       config.utils_paths.client(),
       path.resolve('./src/client/services'),
       path.resolve('./src/client/components'),
-      path.resolve('./src/client/components/utils'),
       path.resolve('./src/client/components/Viewing.Extensions')
     ],
     extensions : ['', '.js', '.jsx', '.json']

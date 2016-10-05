@@ -5,8 +5,8 @@
 /////////////////////////////////////////////////////////////////////
 import Snap from 'imports-loader?this=>window,fix=>module.exports=0!snapsvg/dist/snap.svg.js'
 import Markup3DTool from './Viewing.Extension.Markup3D.Tool'
-import ViewerToolkit from 'ViewerToolkit'
-import ExtensionBase from 'ExtensionBase'
+import ExtensionBase from 'Viewer.ExtensionBase'
+import ViewerToolkit from 'Viewer.Toolkit'
 
 class Markup3DExtension extends ExtensionBase {
 

@@ -4,8 +4,8 @@
 //
 /////////////////////////////////////////////////////////////////////
 import CanvasInfoPanel from './Viewing.Extension.CanvasInfo.Panel'
-import ViewerToolkit from 'ViewerToolkit'
-import ExtensionBase from 'ExtensionBase'
+import ExtensionBase from 'Viewer.ExtensionBase'
+import ViewerToolkit from 'Viewer.Toolkit'
 
 class CanvasInfoExtension extends ExtensionBase {
 
@@ -136,7 +136,9 @@ class CanvasInfoExtension extends ExtensionBase {
         let materialTasks = componentIds.map((dbId) => {
 
           return ViewerToolkit.getProperty(
-            this._viewer.model, dbId, 'Material', 'undefined')
+            this._viewer.model, dbId, (propName) => {
+              return (propName.indexOf('Material') > -1)
+            }, 'undefined')
         })
 
         let materials = await Promise.all(materialTasks)

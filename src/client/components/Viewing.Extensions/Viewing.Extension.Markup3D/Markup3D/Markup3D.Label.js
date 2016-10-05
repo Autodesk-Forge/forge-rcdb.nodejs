@@ -1,6 +1,6 @@
 import GraphicMarker from 'GraphicMarker'
 import SwitchButton from 'SwitchButton'
-import Toolkit from 'ViewerToolkit'
+import Toolkit from 'Viewer.Toolkit'
 import Dropdown from 'Dropdown'
 
 export default class LabelMarker extends GraphicMarker {

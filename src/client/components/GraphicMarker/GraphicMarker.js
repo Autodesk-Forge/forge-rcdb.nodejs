@@ -2,8 +2,8 @@
 //
 //
 /////////////////////////////////////////////////////////////////
-import PointTracker from 'PointTracker';
-import EventsEmitter from 'EventsEmitter';
+import PointTracker from 'Viewer.PointTracker'
+import EventsEmitter from 'EventsEmitter'
 
 export default class GraphicMarker extends EventsEmitter {
 

@@ -1,8 +1,8 @@
 {
-  "name": "forge-boiler.nodejs",
-  "description": "Forge boiler: viewer + server + data-management + derivatives",
-  "repository": "https://github.com/Autodesk-Forge/forge-boilers.nodejs",
-  "logo": "https://autodesk-forge.github.io/forge-boilers.nodejs/img/forge.png",
+  "name": "forge-rcdb.nodejs",
+  "description": "Autodesk Forge - Responsive Connected Database",
+  "repository": "https://github.com/Autodesk-Forge/forge-rcdb.nodejs",
+  "logo": "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/resources/img/forge.png",
   "keywords": ["autodesk", "forge", "node", "express"],
   "env": {
     "NODE_ENV": {
@@ -15,8 +15,20 @@
     "FORGE_CLIENT_SECRET": {
       "description": "Your Forge Client Secret API Key"
     },
-    "HOST_URL": {
-      "description": "Host url: for Heroku App use 'https://myApp.herokuapp.com', where 'myApp' is name of your app. Important: the name of your App needs to match the callback URL you specified on Forge Developer Portal"
+    "RCDB_DBHOST": {
+      "description": "Database host url"
+    },
+    "RCDB_PORT": {
+      "description": "Database port"
+    },
+    "RCDB_DBNAME": {
+      "description": "Database name"
+    },
+    "RCDB_USER": {
+      "description": "Database username"
+    },
+    "RCDB_PASS": {
+      "description": "Database user password"
     }
   }
 }

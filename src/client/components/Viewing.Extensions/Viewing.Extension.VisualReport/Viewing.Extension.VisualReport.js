@@ -4,8 +4,8 @@
 //
 /////////////////////////////////////////////////////////////////////
 import VisualReportPanel from './Viewing.Extension.VisualReport.Panel'
-import ViewerToolkit from 'ViewerToolkit'
-import ExtensionBase from 'ExtensionBase'
+import ExtensionBase from 'Viewer.ExtensionBase'
+import ViewerToolkit from 'Viewer.Toolkit'
 
 class VisualReportExtension extends ExtensionBase {
 

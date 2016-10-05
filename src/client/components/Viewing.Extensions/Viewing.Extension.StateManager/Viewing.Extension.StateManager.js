@@ -4,8 +4,8 @@
 /////////////////////////////////////////////////////////////////
 import StateManagerPanel from './Viewing.Extension.StateManager.Panel'
 import StatesAPI from './Viewing.Extension.StateManager.API'
-import ViewerToolkit from 'ViewerToolkit'
-import ExtensionBase from 'ExtensionBase'
+import ExtensionBase from 'Viewer.ExtensionBase'
+import ViewerToolkit from 'Viewer.Toolkit'
 
 class StateManagerExtension extends ExtensionBase {
 

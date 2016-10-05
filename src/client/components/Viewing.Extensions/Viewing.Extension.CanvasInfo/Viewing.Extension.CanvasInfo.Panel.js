@@ -1,6 +1,6 @@
-import ToolPanelBase from 'ToolPanelBase/ToolPanelBase'
 import './Viewing.Extension.CanvasInfo.scss'
-import ViewerToolkit from 'ViewerToolkit'
+import ViewerToolkit from 'Viewer.Toolkit'
+import ToolPanelBase from 'ToolPanelBase'
 import PieChart from './PieChart'
 import Legend from 'Legend'
 
@@ -137,6 +137,8 @@ export default class CanvasInfoPanel extends ToolPanelBase {
 
     let dataGroups = _.chunk(this.data, 5)
 
+    const width = Math.min(100/dataGroups.length, 30)
+
     dataGroups.forEach((dataGroup) => {
 
       const legendFragmentId = ToolPanelBase.guid()
@@ -144,7 +146,7 @@ export default class CanvasInfoPanel extends ToolPanelBase {
       $('#legend-container').append(`
         <div id="${legendFragmentId}"
           class="legend-fragment"
-          style="width:${100/dataGroups.length}%;">
+          style="width:${width}%;">
         </div>`)
 
       const legend = new Legend(
