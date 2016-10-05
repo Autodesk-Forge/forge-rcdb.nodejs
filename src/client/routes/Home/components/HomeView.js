@@ -23,22 +23,31 @@ class HomeView extends React.Component {
     }
   }
 
+
+
   render() {
 
     const { viewerState } = this.props
 
-    //57efaf0377c8eb0a560ef467
+    const Text = ({content}) => {
+      return (
+        <p dangerouslySetInnerHTML={{__html: content}}></p>
+      );
+    }
 
     return (
       <div className="home">
         <div className="title">
           <h2>Welcome!</h2>
-          <Link to='/viewer?id=57efaead77c8eb0a560ef465' activeClassName='route--active'>
-            Manufacturing Demo
+          <br/>
+          <br/>
+          <br/>
+          <Link className="link" to='/viewer?id=57efaead77c8eb0a560ef465' activeClassName='route--active'>
+            <Text content="Manufacturing Demo"/>
           </Link>
-            {'  -  '}
-          <Link to='/viewer?id=57f3739777c879f48ad54a44' activeClassName='route--active'>
-            AEC Demo
+          <p>{'  -  '}</p>
+          <Link className="link" to='/viewer?id=57f3739777c879f48ad54a44' activeClassName='route--active'>
+            <Text content="AEC Demo"/>
           </Link>
         </div>
         <img className='logo-hero' src="/resources/img/forge-hero.jpg"/>
