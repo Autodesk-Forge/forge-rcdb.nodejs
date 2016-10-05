@@ -183,10 +183,10 @@
     "util": "^0.10.3",
     "webpack": "^1.12.14",
     "webpack-dev-middleware": "^1.6.1",
-    "webpack-hot-middleware": "^2.12.2"
+    "webpack-hot-middleware": "^2.12.2",
     "yargs": "^5.0.0"
   },
   "devDependencies": {
-    
+
   }
 }
