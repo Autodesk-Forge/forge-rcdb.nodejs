@@ -28,10 +28,29 @@ export default class SocketSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////////////
-  getMaterials() {
+  getMaterials (dbName) {
 
-    var url = `${this._config.apiUrl}`
+    var url = `${this._config.apiUrl}/${dbName}`
 
     return this._api.ajax(url)
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  postMaterial(dbName, material) {
+
+    var url = `${this._config.apiUrl}/${dbName}`
+
+    return this._api.ajax({
+      url: url,
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      data: JSON.stringify(material)
+    })
   }
 }

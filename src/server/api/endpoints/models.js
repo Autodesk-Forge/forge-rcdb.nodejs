@@ -1,214 +1,220 @@
-import ServiceManager from '../services/ServiceManager'
+import ServiceManager from '../services/SvcManager'
 import express from 'express'
 import Debug from 'debug'
 
 module.exports = function() {
 
-  var router = express.Router();
+  var router = express.Router()
 
-  var debug = Debug('ModelAPI');
+  var debug = Debug('ModelAPI')
 
   //////////////////////////////////////////////////////////////////////////////
   //
   //
   ///////////////////////////////////////////////////////////////////////////////
-  router.get('/', async (req, res)=> {
+  router.get('/:db', async (req, res)=> {
 
     try {
 
+      var db = req.params.db
+
       var modelSvc = ServiceManager.getService(
-        'ModelSvc');
+        db + '-ModelSvc')
 
       var pageQuery = {
-        viewablePath: 1,
         name: 1,
-        urn: 1
-      };
+        urn: 1,
+        env: 1
+      }
 
       if(req.query.skip)
-        pageQuery.skip = req.query.skip;
+        pageQuery.skip = req.query.skip
 
       if(req.query.limit)
-        pageQuery.limit = req.query.limit;
+        pageQuery.limit = req.query.limit
 
       var response = await modelSvc.getModels({
           fieldQuery:{},
           pageQuery: pageQuery
-        });
+        })
 
-      res.json(response);
+      res.json(response)
     }
     catch (error) {
 
-      debug(error);
-
-      res.status(error.statusCode || 404);
-      res.json(error);
+      res.status(error.statusCode || 404)
+      res.json(error)
     }
-  });
+  })
 
   //////////////////////////////////////////////////////////////////////////////
   //
   //
   ///////////////////////////////////////////////////////////////////////////////
-  router.get('/:modelId', async (req, res)=> {
+  router.get('/:db/:modelId', async (req, res)=> {
 
     try {
 
+      var db = req.params.db
+
       var modelSvc = ServiceManager.getService(
-        'ModelSvc');
+        db + '-ModelSvc')
 
       var pageQuery = {
-        viewablePath: 1,
+        path: 1,
         name: 1,
-        urn: 1
-      };
+        urn: 1,
+        env: 1
+      }
 
       var response = await modelSvc.getById(
-        req.params.modelId, pageQuery);
+        req.params.modelId,
+        {pageQuery})
 
-      res.json(response);
+      res.json(response)
+
+    } catch (error) {
+
+      debug(error)
+
+      res.status(error.statusCode || 404)
+      res.json(error)
     }
-    catch (error) {
-
-      debug(error);
-
-      res.status(error.statusCode || 404);
-      res.json(error);
-    }
-  });
+  })
 
   //////////////////////////////////////////////////////////////////////////////
   // return states sequence
   //
   ///////////////////////////////////////////////////////////////////////////////
-  router.get('/:modelId/states/sequence', async(req, res)=> {
+  router.get('/:db/:modelId/states/sequence', async(req, res)=> {
 
     try {
 
+      var db = req.params.db
+
       var modelSvc = ServiceManager.getService(
-        'ModelSvc');
+        db + '-ModelSvc')
 
       var response = await modelSvc.getSequence(
-        req.params.modelId);
+        req.params.modelId)
 
-      res.json(response);
+      res.json(response)
+
+    } catch (error) {
+
+      debug(error)
+
+      res.status(error.statusCode || 404)
+      res.json(error)
     }
-    catch (error) {
-
-      debug(error);
-
-      res.status(error.statusCode || 404);
-      res.json(error);
-    }
-  });
+  })
 
   //////////////////////////////////////////////////////////////////////////////
   // save states sequence
   //
   ///////////////////////////////////////////////////////////////////////////////
-  router.post('/:modelId/states/sequence', async(req, res)=> {
+  router.post('/:db/:modelId/states/sequence', async(req, res)=> {
 
     try {
 
-      var sequence = req.body.sequence;
+      var db = req.params.db
 
       var modelSvc = ServiceManager.getService(
-        'ModelSvc');
+        db + '-ModelSvc');
+
+      var sequence = req.body.sequence
 
       var response = await modelSvc.setSequence(
         req.params.modelId,
-        sequence);
+        sequence)
 
-      res.json(response);
+      res.json(response)
+
+    } catch (error) {
+
+      res.status(error.statusCode || 404)
+      res.json(error)
     }
-    catch (error) {
-
-      debug(error);
-
-      res.status(error.statusCode || 404);
-      res.json(error);
-    }
-  });
+  })
 
   //////////////////////////////////////////////////////////////////////////////
   // return all states
   //
   ///////////////////////////////////////////////////////////////////////////////
-  router.get('/:modelId/states', async(req, res)=> {
+  router.get('/:db/:modelId/states', async(req, res)=> {
 
     try {
 
+      var db = req.params.db
+
       var modelSvc = ServiceManager.getService(
-        'ModelSvc');
+        db + '-ModelSvc');
 
       var response = await modelSvc.getStates(
-        req.params.modelId);
+        req.params.modelId)
 
-      res.json(response);
+      res.json(response)
+
+    } catch (error) {
+
+      res.status(error.statusCode || 404)
+      res.json(error)
     }
-    catch (error) {
-
-      debug(error);
-
-      res.status(error.statusCode || 404);
-      res.json(error);
-    }
-  });
+  })
 
   //////////////////////////////////////////////////////////////////////////////
   // remove state
   //
   ///////////////////////////////////////////////////////////////////////////////
-  router.post('/:modelId/states/:stateId/remove', async(req, res)=> {
+  router.post('/:db/:modelId/states/:stateId/remove', async(req, res)=> {
 
     try {
 
+      var db = req.params.db
+
       var modelSvc = ServiceManager.getService(
-        'ModelSvc');
+        db + '-ModelSvc');
 
       var response = await modelSvc.removeState(
         req.params.modelId,
-        req.params.stateId);
+        req.params.stateId)
 
-      res.json(response);
+      res.json(response)
+
+    } catch (error) {
+
+      res.status(error.statusCode || 404)
+      res.json(error)
     }
-    catch (error) {
-
-      debug(error);
-
-      res.status(error.statusCode || 404);
-      res.json(error);
-    }
-  });
+  })
 
   //////////////////////////////////////////////////////////////////////////////
   // adds new state
   //
   ///////////////////////////////////////////////////////////////////////////////
-  router.post('/:modelId/states', async(req, res)=> {
+  router.post('/:db/:modelId/states', async(req, res)=> {
 
     try {
 
-      var state = req.body.state;
+      var db = req.params.db
 
       var modelSvc = ServiceManager.getService(
-        'ModelSvc');
+        db + '-ModelSvc');
+
+      var state = req.body.state
 
       var response = await modelSvc.addState(
         req.params.modelId,
-        state);
+        state)
 
-      res.json(response);
+      res.json(response)
+
+    } catch (error) {
+
+      res.status(error.statusCode || 404)
+      res.json(error)
     }
-    catch (error) {
+  })
 
-      debug(error);
-
-      res.status(error.statusCode || 404);
-      res.json(error);
-    }
-  });
-
-  return router;
+  return router
 }

@@ -19,7 +19,7 @@
 import ServiceManager from '../services/SvcManager'
 import express from 'express'
 
-module.exports = function(config) {
+module.exports = function () {
 
     var router = express.Router();
 
@@ -27,65 +27,25 @@ module.exports = function(config) {
     //
     //
     ///////////////////////////////////////////////////////////////////////////////
-    router.get('/byName/:name', function (req, res) {
-
-        var name = req.params.name;
-
-        db.collection(config.materials, function (err, collection) {
-
-            collection.findOne(
-              { 'name': name },
-              { },
-
-              function (err, item) {
-
-                  res.status((item ? 200 : 404));
-                  res.jsonp(item);
-              });
-        });
-    });
-
-    ///////////////////////////////////////////////////////////////////////////////
-    //
-    //
-    ///////////////////////////////////////////////////////////////////////////////
-    router.get('/:id', function (req, res) {
-
-        var id = req.params.id;
-
-        if (id.length !== 24) {
-            res.status(404);
-            res.send(null);
-            return;
-        }
-
-        db.collection(config.materials, function (err, collection) {
-
-            collection.findOne(
-              {'_id': new mongo.ObjectId(id)},
-              { },
-
-              function (err, item) {
-
-                  res.status((item ? 200 : 404));
-                  res.jsonp(item);
-              });
-        });
-    });
-
-    ///////////////////////////////////////////////////////////////////////////////
-    //
-    //
-    ///////////////////////////////////////////////////////////////////////////////
-    router.get('/', async(req, res) => {
+    router.get('/:db', async(req, res) => {
 
       try {
 
-        let dbSvc = ServiceManager.getService('DbSvc')
+        var db = req.params.db
 
-        let items = await dbSvc.getItems(config.materials)
+        let dbSvc = ServiceManager.getService(db)
 
-        res.json(items);
+        if(!dbSvc) {
+
+          res.status(404)
+          res.json('Invalid database')
+          return
+        }
+
+        let items = await dbSvc.getItems(
+          dbSvc.config().collections.materials)
+
+        res.json(items)
 
       } catch (ex) {
 
@@ -98,52 +58,73 @@ module.exports = function(config) {
     //
     //
     ///////////////////////////////////////////////////////////////////////////////
-    router.put('/:id', function (req, res) {
+    router.get('/:db/:id', async (req, res) => {
 
-        var id = req.params.id;
+      try {
 
-        var material = req.body;
+        var db = req.params.db
 
-        db.collection(config.materials, function (err, collection) {
-            collection.update(
-              { '_id': new mongo.ObjectID(id) },
-              {$set: {
-                "price": material.price,
-                "supplier": material.supplier,
-                "currency": material.currency
-              }},
-              {safe: true},
-              function (err, result) {
-                  if (err) {
-                      res.send({ 'error': err });
-                  } else {
-                      res.send(material);
-                  }
-              });
-        });
-    });
+        let dbSvc = ServiceManager.getService(db)
+
+        if(!dbSvc) {
+
+          res.status(404)
+          res.json('Invalid database')
+          return
+        }
+
+        var id = req.params.id
+
+        let item = await dbSvc.findOne(
+          dbSvc.config().collections.materials, {
+            _id: id
+          })
+
+        res.json(item)
+
+      } catch (ex) {
+
+        res.status(ex.statusCode || 500)
+        res.json(ex)
+      }
+    })
 
     ///////////////////////////////////////////////////////////////////////////////
     //
     //
     ///////////////////////////////////////////////////////////////////////////////
-    router.post('/', function (req, res) {
+    router.post('/:db', async (req, res) => {
+
+      try {
+
+        var db = req.params.db
+
+        let dbSvc = ServiceManager.getService(db)
+
+        if(!dbSvc) {
+
+          res.status(404)
+          res.json('Invalid database')
+          return
+        }
 
         var material = req.body;
 
-        db.collection(config.materials, function (err, collection) {
-            collection.insert(
-              material,
-              {safe: true},
-                function (err, result) {
-                    if (err) {
-                        res.send({ 'error': err });
-                    } else {
-                        res.send(material);
-                    }
-                });
-        });
-    });
+        const query = { name: material.name }
+
+        const result = await dbSvc.upsertItem(
+          dbSvc.config().collections.materials,
+          material,
+          query)
+
+        res.json(material)
+
+      } catch (ex) {
+
+        res.status(ex.statusCode || 500)
+        res.json(ex)
+      }
+    })
 
     ///////////////////////////////////////////////////////////////////////////////
     //

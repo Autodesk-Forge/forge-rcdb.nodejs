@@ -1,4 +1,5 @@
 import { connect } from 'react-redux'
+
 import {
   loadDbItems,
   onDbItemSelected
@@ -20,9 +21,9 @@ const mapDispatchToProps = {
   loadDbItems: (dbItems) => loadDbItems(dbItems)
 }
 
-const mapStateToProps = (state) => ({
-  viewerState : state.viewer
-})
+const mapStateToProps = (state) => (
+  state.viewer
+)
 
 /*  Note: mapStateToProps is where you should use `reselect` to create selectors, ie:
 
@@ -38,4 +39,6 @@ const mapStateToProps = (state) => ({
     Selectors are composable. They can be used as input to other selectors.
     https://github.com/reactjs/reselect    */
 
-export default connect(mapStateToProps, mapDispatchToProps)(ViewerView)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps)(ViewerView)

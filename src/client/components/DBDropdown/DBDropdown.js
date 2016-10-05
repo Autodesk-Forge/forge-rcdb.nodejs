@@ -6,8 +6,11 @@ import './DBDropdown.scss'
 
 class DBDropdown extends React.Component {
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   static propTypes = {
-
     dbItems: PropTypes.arrayOf(PropTypes.object)
   }
 
@@ -15,96 +18,129 @@ class DBDropdown extends React.Component {
     dbItems: []
   }
 
-  constructor(props) {
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  state = {
+    dirty: false,
+    editedFieldName: '',
+    editedFieldValue:''
+  }
 
-    super(props)
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onSelectDbItem (selectedDbItem) {
 
-    this.state = {
-     selectedDbItem: {
-       value:0
-     },
-     html: {
-       supplier:' ',
-       currency:' ',
-       price:' '
-     }
+    if (selectedDbItem) {
+
+      this.props.onSelectDbItem(
+        selectedDbItem)
     }
   }
 
-  componentDidMount () {
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onChangeField (e, fieldName) {
 
+    // Strip all non-number characters from the input
+    //return inputValue.replace(/[^0-9]/g, "");
+
+    const enterPressed = (e.target.value.indexOf('<br>') > -1)
+
+    console.log(e.target.value)
+    console.log(enterPressed)
+
+    let fieldValue = e.target.value.replace('<br>', '')
+
+    switch(fieldName){
+
+      case 'price':
+        fieldValue = parseFloat(fieldValue)
+        break;
+    }
+
+    this.setState(Object.assign({}, this.state, {
+      dirty: true,
+      editedFieldName: fieldName,
+      editedFieldValue:fieldValue
+    }))
   }
 
-  onDbItemSelected (item) {
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onBlurField (e, field) {
 
-    this.props.onDbItemSelected(item)
+    if (this.state.dirty) {
 
-    this.setState({
-      selectedDbItem: item || {value:0}
-    });
+      this.props.selectedDbItem[
+        this.state.editedFieldName] =
+          this.state.editedFieldValue
+
+      this.props.onUpdateDbItem(
+        this.props.selectedDbItem)
+
+      this.state.dirty = false
+    }
   }
 
-  onFieldChanged (e, field) {
-
-    const html = e.target.value.replace('<br>', '')
-
-    let state = this.state
-
-    state.html[field] = html
-
-    this.setState(state);
-  }
-
-  onFieldBlured (e, field) {
-
-    console.log(e)
-  }
-
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   render() {
 
-    const dbItems = this.props.dbItems.map((item)=> {
-      return {
-        label: item.name,
-        value: item._id
-      }
-    })
+    const {selectedDbItem} = this.props
 
     return (
         <div className="db-dropdown">
           <Select
             name="form-field-name"
-            value={this.state.selectedDbItem.value}
-            options={dbItems}
-            onChange={(item)=>this.onDbItemSelected(item)}
+            labelKey="name"
+            valueKey="_id"
+            value={selectedDbItem ? selectedDbItem._id : null}
+            options={this.props.dbItems}
+            clearable={false}
+            placeholder={'Select material ...'}
+            noResultsText={'No material match ...'}
+            onChange={(item)=>this.onSelectDbItem(item)}
           />
           <div className="field-container">
-            <div className="field-name">Supplier:</div>
+            <div className="field-name"><b>Supplier:</b></div>
             <ContentEditable
-              onBlur={(e)=>this.onFieldBlured(e, 'supplier')}
+              onBlur={(e)=>this.onBlurField(e, 'supplier')}
               className="field-value"
-              html={this.state.html.supplier}
+              html={selectedDbItem ? selectedDbItem.supplier : ''}
               disabled={false}
-              onChange={(e)=>this.onFieldChanged(e, 'supplier')}
+              onChange={(e)=>this.onChangeField(e, 'supplier')}
             />
           </div>
           <br/>
           <div className="field-container">
-            <div className="field-name">Currency:</div>
+            <div className="field-name"><b>Currency:</b></div>
             <ContentEditable
+              onBlur={(e)=>this.onBlurField(e, 'currency')}
               className="field-value"
-              html={this.state.html.currency}
+              html={selectedDbItem ? selectedDbItem.currency : ''}
               disabled={false}
-              onChange={(e)=>this.onFieldChanged(e, 'currency')}
+              onChange={(e)=>this.onChangeField(e, 'currency')}
             />
           </div>
           <br/>
           <div className="field-container">
-            <div className="field-name">Price:</div>
+            <div className="field-name"><b>Price:</b></div>
             <ContentEditable
+              onBlur={(e)=>this.onBlurField(e, 'price')}
               className="field-value"
-              html={this.state.html.price}
+              html={selectedDbItem ? selectedDbItem.price : ''}
               disabled={false}
-              onChange={(e)=>this.onFieldChanged(e, 'price')}
+              onChange={(e)=>this.onChangeField(e, 'price')}
             />
           </div>
         </div>

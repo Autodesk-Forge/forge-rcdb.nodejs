@@ -1,11 +1,16 @@
 import AppContainer from './containers/AppContainer'
 import createStore from './store/createStore'
-import ServiceManager from 'SvcManager'
-import MaterialSvc from 'MaterialSvc'
 import ReactDOM from 'react-dom'
 import 'font-awesome-webpack'
+import config from 'c0nfig'
 import 'bootstrap-webpack'
 import React from 'react'
+
+//Services
+import ServiceManager from 'SvcManager'
+import MaterialSvc from 'MaterialSvc'
+import ModelSvc from 'ModelSvc'
+import EventSvc from 'EventSvc'
 
 // ========================================================
 // Store Instantiation
@@ -20,7 +25,17 @@ const materialSvc = new MaterialSvc({
   apiUrl: '/api/materials'
 })
 
+const modelSvc = new ModelSvc({
+  apiUrl: '/api/models'
+})
+
+const eventSvc = new EventSvc({
+
+})
+
 ServiceManager.registerService(materialSvc)
+ServiceManager.registerService(modelSvc)
+ServiceManager.registerService(eventSvc)
 
 // ========================================================
 // Render Setup
@@ -38,22 +53,19 @@ let render = () => {
 }
 
 // ========================================================
-// Developer Tools Setup
+// This code is excluded from production bundle
 // ========================================================
-if (__DEV__) {
+if (config.env === 'development') {
+
   if (window.devToolsExtension) {
     window.devToolsExtension.open()
   }
-}
 
-// This code is excluded from production bundle
-if (__DEV__) {
   if (module.hot) {
     // Development render functions
     const renderApp = render
     const renderError = (error) => {
       const RedBox = require('redbox-react').default
-
       ReactDOM.render(<RedBox error={error} />, MOUNT_NODE)
     }
 
@@ -68,10 +80,10 @@ if (__DEV__) {
 
     // Setup hot module replacement
     module.hot.accept('./routes/index', () =>
-      setImmediate(() => {
-        ReactDOM.unmountComponentAtNode(MOUNT_NODE)
-        render()
-      })
+        setImmediate(() => {
+          ReactDOM.unmountComponentAtNode(MOUNT_NODE)
+          render()
+        })
     )
   }
 }

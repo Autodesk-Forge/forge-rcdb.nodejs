@@ -1,0 +1,35 @@
+.viewer {
+
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 100;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+#forge-rcdb-toolbar{
+  background-color: #f5c70a;
+  border: 1px solid black;
+  color: black;
+}
+
+.dockingPanel {
+  text-align: left;
+}

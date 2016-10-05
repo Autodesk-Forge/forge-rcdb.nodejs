@@ -1,8 +1,8 @@
 // ------------------------------------
 // Constants
 // ------------------------------------
-export const LOAD_DB_ITEMS = 'LOAD_DB_ITEMS'
 export const ON_DB_ITEM_SELECTED = 'ON_DB_ITEM_SELECTED'
+export const LOAD_DB_ITEMS = 'LOAD_DB_ITEMS'
 
 // ------------------------------------
 // Actions
@@ -24,19 +24,21 @@ export const onDbItemSelected = (dbItem) => {
 }
 
 export const actions = {
-  loadDbItems,
-  onDbItemSelected
+  onDbItemSelected,
+  loadDbItems
 }
 
 // ------------------------------------
 // Action Handlers
 // ------------------------------------
 const ACTION_HANDLERS = {
+
   [LOAD_DB_ITEMS] : (state, action) => {
     return Object.assign({}, state, {
       dbItems: action.payload
     })
   },
+
   [ON_DB_ITEM_SELECTED] : (state, action) => {
     return Object.assign({}, state, {
       selectedDbItem: action.payload
@@ -48,10 +50,9 @@ const ACTION_HANDLERS = {
 // Reducer
 // ------------------------------------
 const initialState = {
-  dbItems: [],
-  selectedDbItem: {
-    value:''
-  }
+  selectedDbItem: null,
+  filteredDbItems: [],
+  dbItems: []
 }
 
 export default function reducer (state = initialState, action) {

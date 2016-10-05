@@ -29,8 +29,6 @@ module.exports = function() {
   ///////////////////////////////////////////////////////////////////////////
   router.get('/token/2legged', async(req, res) => {
 
-    console.log('/token/2legged')
-
     try {
 
       var forgeSvc = ServiceManager.getService(

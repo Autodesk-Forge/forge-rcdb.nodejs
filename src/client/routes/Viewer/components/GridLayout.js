@@ -1,9 +1,10 @@
 
 import {Responsive, WidthProvider} from 'react-grid-layout'
 const ResponsiveReactGridLayout = WidthProvider(Responsive)
+import ServiceManager from 'SvcManager'
 import DBDropdown from 'DBDropdown'
-import Viewer from './Viewer'
-import DBGrid from './DBGrid'
+import DBTable from 'DBTable'
+import Viewer from 'Viewer'
 import './GridLayout.scss'
 import React from 'react'
 import _ from 'lodash'
@@ -15,9 +16,9 @@ const computeDefaultLayout = () => {
   h = h/8 - ((h/8)%4)
 
   return [
-      { i: 'db-grid', h: h - 30, w: 4, x: 0, y: 0 },
-      { i: 'db-drop', h: 30, w: 4, x: 0, y: 0 },
-      { i: 'viewer',  h: h, w: 8, x: 4, y: 0 }
+      { i: 'db-grid', h: h - 30, w: 8, x: 0, y: 0 },
+      { i: 'db-drop', h: 30, w: 8, x: 0, y: 0 },
+      { i: 'viewer',  h: h, w: 16, x: 8, y: 0 }
     ]
 }
 
@@ -52,6 +53,10 @@ class GridLayoutMovableLock extends React.Component {
 
 class GridLayout extends React.Component {
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   static propTypes = {
 
   }
@@ -61,31 +66,37 @@ class GridLayout extends React.Component {
     rowHeight: 4,
     margin: [4, 4],
     cols: {
-      lg: 12, md: 10, sm: 6, xs: 4, xxs: 2
-    },
-    selectedDbItem: {
-      label: ''
+      lg: 24, md: 20, sm: 12, xs: 4, xxs: 4
     }
   }
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   state = {
     mounted: false,
     currentBreakpoint: 'lg',
     layouts: {
       lg: computeDefaultLayout()
-    },
-    selectedDbItem:{
-      label:'',
-      value: null
     }
   }
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   componentDidMount() {
+
     this.setState({
       mounted: true
     })
   }
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   generateDOM() {
 
     return _.map(this.state.layouts.lg, (layout) => {
@@ -95,7 +106,13 @@ class GridLayout extends React.Component {
         case 'db-grid':
           return (
             <div key={layout.i}>
-              <DBGrid/>
+              <GridLayoutMovableLock>
+                <DBTable
+                  onSelectDbItem={this.props.onSelectDbItem}
+                  onUpdateDbItem={this.props.onUpdateDbItem}
+                  dbItems={this.props.filteredDbItems}
+                />
+              </GridLayoutMovableLock>
             </div>)
           break
 
@@ -104,8 +121,10 @@ class GridLayout extends React.Component {
             <div key={layout.i}>
             <GridLayoutMovableLock>
               <DBDropdown
-                onDbItemSelected={this.props.onDbItemSelected}
-                dbItems={this.props.dbItems}
+                onSelectDbItem={this.props.onSelectDbItem}
+                onUpdateDbItem={this.props.onUpdateDbItem}
+                selectedDbItem={this.props.selectedDbItem}
+                dbItems={this.props.filteredDbItems}
               />
             </GridLayoutMovableLock>
             </div>)
@@ -115,7 +134,11 @@ class GridLayout extends React.Component {
           return (
             <div key={layout.i}>
               <GridLayoutMovableLock>
-                <Viewer/>
+                <Viewer
+                  onFilterDbItems={this.props.onFilterDbItems}
+                  updatedDbItem={this.props.updatedDbItem}
+                  modelId={this.props.query.id}
+                  dbItems={this.props.dbItems}/>
               </GridLayoutMovableLock>
             </div>)
           break
@@ -130,29 +153,41 @@ class GridLayout extends React.Component {
     })
   }
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   onBreakpointChange = (breakpoint) => {
     this.setState({
       currentBreakpoint: breakpoint
     })
   }
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   onLayoutChange = (layout, layouts) => {
     this.setState({
       layout: layout
     })
   }
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   render() {
 
     return (
       <div>
         <ResponsiveReactGridLayout
-          {...this.props}
-          layouts={this.state.layouts}
           onBreakpointChange={this.onBreakpointChange}
           onLayoutChange={this.onLayoutChange}
+          useCSSTransforms={this.state.mounted}
+          layouts={this.state.layouts}
           measureBeforeMount={false}
-          useCSSTransforms={this.state.mounted}>
+          {...this.props}>
           {this.generateDOM()}
         </ResponsiveReactGridLayout>
       </div>

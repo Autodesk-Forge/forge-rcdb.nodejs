@@ -1,8 +1,3 @@
-const config = require('../../config')
-
-const paths = config.utils_paths
-
-//import {serverConfig as config} from 'c0nfig'
 
 //Server stuff
 import cookieParser from 'cookie-parser'
@@ -18,19 +13,24 @@ import path from 'path'
 import DerivativesAPI from './api/endpoints/derivatives'
 import MaterialAPI from './api/endpoints/materials'
 import UploadAPI from './api/endpoints/upload'
+import ModelAPI from './api/endpoints/models'
 import ForgeAPI from './api/endpoints/forge'
 import OssAPI from './api/endpoints/oss'
 
 //Services
 import DerivativesSvc from './api/services/DerivativesSvc'
 import ServiceManager from './api/services/SvcManager'
+import MongoDbSvc from './api/services/MongoDbSvc'
 import ForgeSvc from './api/services/ForgeSvc'
+import ModelSvc from './api/services/ModelSvc'
 import OssSvc from './api/services/OssSvc'
-import DBSvc from './api/services/DbSvc'
 
-//Webpack hot reloading
-import webpackConfig from '../../build/webpack.config'
+//Webpack hot reloading imports
+import webpackConfig from '../../build/development.webpack.config'
 import webpack from 'webpack'
+
+//Config (NODE_ENV dependant)
+import config from'c0nfig'
 
 /////////////////////////////////////////////////////////////////////
 // App initialization
@@ -62,9 +62,10 @@ app.use(helmet())
 // API Routes setup
 //
 /////////////////////////////////////////////////////////////////////
-app.use('/api/materials', MaterialAPI(config.database.collections))
 app.use('/api/derivatives', DerivativesAPI())
+app.use('/api/materials', MaterialAPI())
 app.use('/api/upload', UploadAPI())
+app.use('/api/models', ModelAPI())
 app.use('/api/forge', ForgeAPI())
 app.use('/api/oss', OssAPI())
 
@@ -87,7 +88,7 @@ if (config.env === 'development') {
 
   app.use(require('webpack-dev-middleware')(compiler, {
     publicPath  : webpackConfig.output.publicPath,
-    contentBase : paths.client(),
+    contentBase : config.utils_paths.client(),
     hot         : true,
     quiet       : config.compiler_quiet,
     noInfo      : config.compiler_quiet,
@@ -101,7 +102,7 @@ if (config.env === 'development') {
   // these files. This middleware doesn't need to be enabled outside
   // of development since this directory will be copied into ~/dist
   // when the application is compiled.
-  app.use('/', express.static(paths.client('static')))
+  app.use('/', express.static(config.utils_paths.client('static')))
 
 } else {
 
@@ -116,7 +117,7 @@ if (config.env === 'development') {
   // Serving ~/dist by default. Ideally these files should be served by
   // the web server and not the app server, but this helps to demo the
   // server in production.
-  app.use('/', express.static(paths.dist()))
+  app.use('/', express.static(config.utils_paths.dist()))
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -151,15 +152,29 @@ async function runServer(app) {
 
     var ossSvc = new OssSvc()
 
-    var dbSvc = new DBSvc(
-      config.database)
-
-    await dbSvc.connect()
-
     ServiceManager.registerService(derivativesSvc)
     ServiceManager.registerService(forgeSvc)
     ServiceManager.registerService(ossSvc)
-    ServiceManager.registerService(dbSvc)
+
+    config.databases.forEach((dbConfig) => {
+
+      switch (dbConfig.type) {
+
+        case 'mongo':
+
+          let dbSvc = new MongoDbSvc(dbConfig)
+
+          dbSvc.connect().then(() => {
+
+            let modelSvc = new ModelSvc(dbConfig)
+
+            ServiceManager.registerService(modelSvc)
+            ServiceManager.registerService(dbSvc)
+          })
+
+          break;
+      }
+    })
 
     var server = app.listen(
       process.env.PORT || config.port || 3000, () => {

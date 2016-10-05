@@ -1,0 +1,54 @@
+
+.canvas-info {
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 30%;
+  resize: none;
+  border-radius: 0px;
+  max-width: 100%;
+}
+
+.canvas-info .container {
+  height: calc(100% - 42px);
+  margin: 0;
+  width:100%;
+  max-width: 100%;
+}
+
+.canvas-info .dockingPanelTitle {
+  padding-left: 30px;
+  cursor: auto;
+}
+
+.homeViewWrapper {
+  z-index: 100;
+}
+
+.viewcube {
+  z-index: 99;
+}
+
+#pie-chart-container {
+  height: 100%;
+  z-index: 97;
+  float: left;
+  width: 20%;
+}
+
+#legend-container {
+  margin-top: 10px;
+  height: 100%;
+  float: left;
+  z-index: 98;
+  width: 75%;
+}
+
+.legend-fragment {
+  height: 100%;
+  float: left;
+}
+
+[class*="pieChart"] {
+  cursor: pointer;
+}

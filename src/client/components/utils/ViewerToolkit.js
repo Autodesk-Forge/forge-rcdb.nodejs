@@ -67,27 +67,22 @@ export default class ViewerToolkit {
   // Return default viewable path: first 3d or 2d item
   //
   //////////////////////////////////////////////////////////////////////////
-  static getDefaultViewablePath(svf) {
+  static getDefaultViewablePath (doc, roles = ['3d', '2d']) {
 
-    var rootItem = svf.getRootItem()
+    var rootItem = doc.getRootItem()
 
-    var geometryItems3d = Autodesk.Viewing.Document.getSubItemsWithProperties(
-      rootItem, { 'type': 'geometry', 'role': '3d' }, true)
+    let roleArray = [...roles]
 
-    var geometryItems2d = Autodesk.Viewing.Document.getSubItemsWithProperties(
-      rootItem, { 'type': 'geometry', 'role': '2d' }, true)
+    let items = []
 
-    // Pick the first 3D or 2D item
-    if (geometryItems3d.length || geometryItems2d.length) {
+    roleArray.forEach((role) => {
 
-      var viewable = geometryItems3d.length ?
-        geometryItems3d[ 0 ] :
-        geometryItems2d[ 0 ]
+      items = [ ...items,
+        ...Autodesk.Viewing.Document.getSubItemsWithProperties(
+          rootItem, { type: 'geometry', role }, true) ]
+    })
 
-      return svf.getViewablePath(viewable)
-    }
-
-    return null
+    return items.length ? doc.getViewablePath(items[0]) : null
   }
 
   /////////////////////////////////////////////////////////////////
@@ -272,9 +267,9 @@ export default class ViewerToolkit {
   //
   //
   /////////////////////////////////////////////////////////////////
-  static getProperty(model, dbId, displayName) {
+  static getProperty(model, dbId, displayName, defaultValue) {
 
-    return new Promise(async(resolve, reject)=>{
+    return new Promise((resolve, reject) => {
 
       try{
 
@@ -282,20 +277,29 @@ export default class ViewerToolkit {
 
           if (result.properties) {
 
-            result.properties.forEach((prop)=>{
+            result.properties.forEach((prop) => {
 
-              if(displayName == prop.displayName){
-                return resolve(prop);
+              if (displayName === prop.displayName) {
+
+                resolve(prop)
               }
             });
 
-            reject(new Error('Not Found'));
-          }
-          else {
+            if (defaultValue) {
+
+              return resolve({
+                displayValue: defaultValue,
+                displayName
+              })
+            }
+
+            reject(new Error('Not Found'))
+
+          } else {
 
             reject(new Error('Error getting properties'));
           }
-        });
+        })
       }
       catch(ex){
 
@@ -573,8 +577,8 @@ export default class ViewerToolkit {
           if(createNodeFunc){
 
             childNode = createNodeFunc(childId);
-          }
-          else {
+
+          } else {
 
             node.children = node.children || [];
 

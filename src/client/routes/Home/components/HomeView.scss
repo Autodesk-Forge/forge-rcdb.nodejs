@@ -1,5 +1,15 @@
-.duck {
-  display: block;
-  width: 120px;
-  margin: 1.5rem auto;
+.home .title {
+  position: absolute;
+  width: 100%;
+  z-index: 1;
+}
+
+.home .title a {
+  font-size: 24px;
+}
+
+.home .logo-hero {
+  height: calc(100vh - 65px);
+  opacity: 0.6;
+  width: 100%;
 }

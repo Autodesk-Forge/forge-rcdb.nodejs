@@ -1,14 +1,16 @@
 
 .navbar {
+  padding-right: 10px;
+  padding-left: 10px;
   margin-bottom: 0px;
   border-radius: 0px;
 }
 
 .navbar-brand,
 .navbar-nav li a {
-    line-height: 60px;
-    height: 65px;
-    padding-top: 0;
+  line-height: 60px;
+  height: 65px;
+  padding-top: 0;
 }
 
 .navbar-brand>img {
@@ -18,9 +20,13 @@
 }
 
 .dropdown-menu>li>a {
-    height: 30px;
-    line-height: 23px;
-    padding: 3px 20px;
+  height: 30px;
+  line-height: 23px;
+  padding: 3px 20px;
+}
+
+.dropdown-div {
+  float: left;
 }
 
 .navbar-default {
@@ -29,10 +35,32 @@
 }
 
 .app-logo {
-    position: relative;
-    top: 2px;
+  position: relative;
+  top: 2px;
 }
 
 .menuItem {
-    border-radius: 4px;
+  border-radius: 4px;
+}
+
+.forge-rcdb-brand-item, {
+  list-style: none;
+}
+
+.forge-rcdb-brand-item > a,
+.forge-rcdb-brand-item > a:hover {
+  text-shadow: 0 0 0.5px #000;
+  text-decoration: none;
+  font-size: 24px;
+  color: #daa228;
+}
+
+.forge-rcdb-brand-item > a:hover {
+  color: #a53a20;
+}
+
+.forge-rcdb-span {
+  position: relative;
+  font-size: 26px;
+  top: 3px;
 }

@@ -29,13 +29,15 @@ To run these samples, you need your own Forge API credentials:
  * Clone this or download this project. It's recommended to install a git client such as [GitHub desktop](https://desktop.github.com/) or [SourceTree](https://www.sourcetreeapp.com/)
  * To clone it via command line, use the following (<b>Terminal</b> on MacOSX/Linux, <b>Git Shell</b> on Windows):
 
-    > git clone https://github.com/Autodesk-Forge/forge-rcdb
+    > git clone https://github.com/Autodesk-Forge/forge-rcdb.nodejs
 
 
 ## Project Setup
 
 WORK IN PROGRESS!!
 
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Autodesk-Forge/forge-boilers.nodejs)
 
 ## License
 

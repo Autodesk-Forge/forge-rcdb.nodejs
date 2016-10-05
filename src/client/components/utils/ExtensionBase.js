@@ -10,7 +10,7 @@ export default class ExtensionBase extends Autodesk.Viewing.Extension {
   // Class constructor
   //
   /////////////////////////////////////////////////////////////////
-  constructor(viewer, options) {
+  constructor(viewer, options = {}) {
 
     super(viewer, options)
 

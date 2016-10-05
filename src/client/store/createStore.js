@@ -3,9 +3,10 @@ import { browserHistory } from 'react-router'
 import { updateLocation } from './location'
 import makeRootReducer from './reducers'
 import thunk from 'redux-thunk'
-
+import config from 'c0nfig'
 
 export default (initialState = {}) => {
+
   // ======================================================
   // Middleware Configuration
   // ======================================================
@@ -15,7 +16,7 @@ export default (initialState = {}) => {
   // Store Enhancers
   // ======================================================
   const enhancers = []
-  if (__DEV__) {
+  if (config.env === 'development') {
     const devToolsExtension = window.devToolsExtension
     if (typeof devToolsExtension === 'function') {
       enhancers.push(devToolsExtension())
@@ -36,9 +37,11 @@ export default (initialState = {}) => {
   store.asyncReducers = {}
 
   // To unsubscribe, invoke `store.unsubscribeHistory()` anytime
-  store.unsubscribeHistory = browserHistory.listen(updateLocation(store))
+  store.unsubscribeHistory = browserHistory.listen(
+    updateLocation(store))
 
   if (module.hot) {
+
     module.hot.accept('./reducers', () => {
       const reducers = require('./reducers').default
       store.replaceReducer(reducers(store.asyncReducers))

@@ -1,27 +1,50 @@
 import { IndexLink, Link } from 'react-router'
-import DuckImage from '../assets/Duck.jpg'
+import ServiceManager from 'SvcManager'
 import React from 'react'
 import './HomeView.scss'
 
-export const HomeView = () => (
-  <div>
-    <h4>Welcome!</h4>
-    <IndexLink to='/' activeClassName='route--active'>
-    Home
-    </IndexLink>
-    {' · '}
-    <Link to='/counter' activeClassName='route--active'>
-    Counter
-    </Link>
-    {' · '}
-    <Link to='/viewer' activeClassName='route--active'>
-    Viewer
-    </Link>
-    <img
-      alt='This is a duck, because Redux!'
-      className='duck'
-      src={DuckImage} />
-  </div>
-)
+class HomeView extends React.Component {
+
+  async componentDidMount () {
+
+    try {
+
+      const modelSvc = ServiceManager.getService(
+        'ModelSvc')
+
+      const models = await modelSvc.getModels(
+        'forge-rcdb')
+
+      console.log(models)
+
+    } catch(ex) {
+
+      console.log(ex)
+    }
+  }
+
+  render() {
+
+    const { viewerState } = this.props
+
+    //57efaf0377c8eb0a560ef467
+
+    return (
+      <div className="home">
+        <div className="title">
+          <h2>Welcome!</h2>
+          <Link to='/viewer?id=57efaead77c8eb0a560ef465' activeClassName='route--active'>
+            Manufacturing Demo
+          </Link>
+            {'  -  '}
+          <Link to='/viewer?id=57f3739777c879f48ad54a44' activeClassName='route--active'>
+            AEC Demo
+          </Link>
+        </div>
+        <img className='logo-hero' src="/resources/img/forge-hero.jpg"/>
+      </div>
+    )
+  }
+}
 
 export default HomeView
