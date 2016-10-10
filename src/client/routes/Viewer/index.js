@@ -1,5 +1,4 @@
 import { injectReducer } from '../../store/reducers'
-import ViewerView from './components/ViewerView'
 
 export default (store) => ({
 

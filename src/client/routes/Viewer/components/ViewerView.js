@@ -1,8 +1,14 @@
+import CustomPropertyExtension from 'Viewing.Extension.CustomProperty'
+import StateManagerExtension from 'Viewing.Extension.StateManager'
+import VisualReportExtension from 'Viewing.Extension.VisualReport'
+import Markup3DExtension from 'Viewing.Extension.Markup3D'
+import ViewerToolkit from 'Viewer.Toolkit'
 import ServiceManager from 'SvcManager'
+import SplitLayout from './SplitLayout'
 import GridLayout from './GridLayout'
 import './ViewerView.scss'
 import React from 'react'
-
+import d3 from 'd3'
 
 class ViewerView extends React.Component {
 
@@ -10,10 +16,33 @@ class ViewerView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  constructor () {
+
+    super()
+
+    this.materialSvc = ServiceManager.getService(
+      'MaterialSvc')
+
+    this.socketSvc = ServiceManager.getService(
+      'SocketSvc')
+
+    this.modelSvc = ServiceManager.getService(
+      'ModelSvc')
+
+    this.eventSvc = ServiceManager.getService(
+      'EventSvc')
+
+    this.viewerEnvInitialized = false
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   state = {
     selectedDbItem: null,
-    updatedDbItem: null,
-    filteredDbItems:[]
+    filteredDbItems:[],
+    chartData:[]
   }
 
   /////////////////////////////////////////////////////////
@@ -24,23 +53,14 @@ class ViewerView extends React.Component {
 
     try {
 
-      this.materialSvc = ServiceManager.getService(
-        'MaterialSvc')
-
       const materials = await this.materialSvc.getMaterials(
         'forge-rcdb')
 
       this.props.loadDbItems(materials)
 
-      this.socketSvc = ServiceManager.getService(
-        'SocketSvc')
-
-      this.eventSvc = ServiceManager.getService(
-        'EventSvc')
-
     } catch(ex) {
 
-     console.log(ex)
+      console.log(ex)
     }
   }
 
@@ -54,35 +74,340 @@ class ViewerView extends React.Component {
       'forge-rcdb',
       updatedDbItem)
 
+    let item = this.materialMap[updatedDbItem.name]
+
+    item.dbMaterial = updatedDbItem
+
+    item.totalCost = item.totalMass * this.toUSD(
+      item.dbMaterial.price,
+      item.dbMaterial.currency)
+
+    const chartData = this.buildChartData(
+      this.materialMap,
+      'totalCost',
+      'USD')
+
     this.eventSvc.emit(
-      'updateDbItem',
-      updatedDbItem)
+      'chart.redraw',
+      chartData)
   }
 
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  onSelectDbItem (selectedDbItem) {
+  onSelectDbItem (selectedDbItem, propagate = true) {
 
-    this.eventSvc.emit(
-      'selectDbItem',
-      selectedDbItem)
+    const item = this.materialMap[selectedDbItem.name]
 
-    this.setState(Object.assign({}, this.state, {
-      selectedDbItem
-    }))
+    const dbIds = item ? item.components : []
+
+    this.viewer.fitToView(dbIds)
+    this.viewer.isolate(dbIds)
+
+    if(propagate) {
+
+      this.setState(Object.assign({}, this.state, {
+        selectedDbItem
+      }))
+    }
   }
 
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  onFilterDbItems (filteredDbItems) {
+  onChartClicked (item) {
 
-    this.setState(Object.assign({}, this.state, {
-      filteredDbItems
-    }))
+    const dbIds = item ? item.components : []
+
+    this.viewer.fitToView(dbIds)
+    this.viewer.isolate(dbIds)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onFullScreenMode (e) {
+
+    console.log(e)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async onViewerCreated (data) {
+
+    try {
+
+      const { viewer, initialize, loadDocument } = data
+
+      viewer.addEventListener(
+        Autodesk.Viewing.FULLSCREEN_MODE_EVENT, (e) => {
+
+          this.onFullScreenMode(e)
+      })
+
+      const modelId = this.props.location.query.id
+
+      this.model = await this.modelSvc.getModel(
+        'forge-rcdb',
+        modelId)
+
+      if(!this.viewerEnvInitialized) {
+
+        this.viewerEnvInitialized = true
+
+        await initialize(
+          this.model.env,
+          '/api/forge/token/2legged')
+      }
+
+      viewer.start()
+
+      switch (this.model.env) {
+
+        case 'Local':
+
+          viewer.load(this.model.path)
+
+          break
+
+        case 'AutodeskProduction':
+
+          const doc = await loadDocument(
+            'urn:' + this.model.urn)
+
+          const path = ViewerToolkit.getDefaultViewablePath(doc)
+
+          viewer.loadModel(path)
+
+          break
+      }
+
+      this.viewer = viewer
+
+    } catch(ex) {
+
+      console.log('Viewer Initialization Error: ')
+      console.log(ex)
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async onModelLoaded (viewer) {
+
+    try {
+
+      const removedControls = [
+        '#navTools',
+        '#toolbar-panTool',
+        '#toolbar-zoomTool',
+        '#toolbar-settingsTool',
+        '#toolbar-firstPersonTool',
+        '#toolbar-cameraSubmenuTool'
+      ]
+
+      $(removedControls.join(',')).css({display:'none'})
+
+      var ctrlGroup = new Autodesk.Viewing.UI.ControlGroup(
+      ' forge-rcdb-toolbar')
+
+      var viewerToolbar = viewer.getToolbar(true)
+
+      viewerToolbar.addControl(ctrlGroup)
+
+      viewer.resize()
+
+      viewer.loadExtension(CustomPropertyExtension, {
+        apiUrl: `/api/materials/${'forge-rcdb'}`
+      })
+
+      viewer.loadExtension(VisualReportExtension, {
+        container: $('.viewer-view')[0],
+        parentControl: ctrlGroup
+      })
+
+      viewer.setLightPreset(1)
+
+      setTimeout(()=> {
+        viewer.setLightPreset(0)
+        viewer.setBackgroundColor(
+          245, 245, 245,
+          245, 245, 245)
+      }, 600)
+
+      viewer.loadExtension(StateManagerExtension, {
+        apiUrl: `/api/models/${'forge-rcdb'}`,
+        container: $('.viewer-view')[0],
+        parentControl: ctrlGroup,
+        model: this.model
+      })
+
+      viewer.loadExtension(Markup3DExtension, {
+        parentControl: ctrlGroup
+      })
+
+      this.materialMap = await this.buildMaterialMap (
+        viewer, this.props.dbItems)
+
+      const filteredDbItems =
+        this.props.dbItems.filter((item) => {
+          return (this.materialMap[item.name] != null)
+        })
+
+      const chartData = this.buildChartData(
+        this.materialMap, 'totalCost', 'USD')
+
+      this.setState(Object.assign({}, this.state, {
+        filteredDbItems,
+        chartData
+      }))
+
+    } catch(ex) {
+
+      console.log(ex)
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  buildMaterialMap (viewer, dbMaterials) {
+
+    return new Promise(async(resolve, reject) => {
+
+      try {
+
+        let materialMap = { }
+
+        const componentIds = await ViewerToolkit.getLeafNodes(
+          viewer.model)
+
+        let materialTasks = componentIds.map((dbId) => {
+
+          return ViewerToolkit.getProperty(
+            viewer.model, dbId, (propName) => {
+              return (propName.indexOf('Material') > -1)
+            }, 'undefined')
+        })
+
+        let materials = await Promise.all(materialTasks)
+
+        let massTasks = componentIds.map((dbId) => {
+
+          return ViewerToolkit.getProperty(
+            viewer.model, dbId, 'Mass', 1.0)
+        })
+
+        let masses = await Promise.all(massTasks)
+
+        componentIds.forEach((dbId, idx) => {
+
+          const materialName = materials[idx].displayValue
+
+          if(materialName !== 'undefined') {
+
+            let dbMaterial = _.find(dbMaterials, {
+              name: materialName
+            })
+
+            if (dbMaterial) {
+
+              if (!materialMap[materialName]) {
+
+                materialMap[ materialName] = {
+                  dbMaterial: dbMaterial,
+                  components: [],
+                  totalMass: 0.0,
+                  totalCost: 0.0
+                }
+              }
+
+              let item = materialMap[materialName]
+
+              if(item) {
+
+                item.totalMass += masses[idx].displayValue
+
+                item.components.push(dbId)
+
+                item.totalCost = item.totalMass * this.toUSD(
+                  item.dbMaterial.price,
+                  item.dbMaterial.currency)
+              }
+            }
+          }
+        })
+
+        resolve(materialMap)
+
+      } catch (ex) {
+
+        reject(ex)
+      }
+    })
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  buildChartData (materialMap, fieldName, unit) {
+
+    var keys = Object.keys (materialMap)
+
+    var colors = d3.scale.linear()
+      .domain([0, keys.length * .33, keys.length * .66, keys.length])
+      .range(['#B58929', '#C61C6F', '#268BD2', '#85992C'])
+
+    return keys.map((key, idx) => {
+
+      var item = materialMap[key]
+
+      return {
+        value: parseFloat(item[fieldName].toFixed(2)),
+        color: colors(idx),
+        item: item,
+        label: key,
+        unit
+      }
+    })
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  toUSD (price, currency) {
+
+    var pricef = parseFloat(price)
+
+    switch (currency) {
+
+      case 'EUR': return pricef * 1.25;
+      case 'USD': return pricef * 1.0;
+      case 'JPY': return pricef * 0.0085;
+      case 'MXN': return pricef * 0.072;
+      case 'ARS': return pricef * 0.12;
+      case 'GBP': return pricef * 1.58;
+      case 'CAD': return pricef * 0.88;
+      case 'BRL': return pricef * 0.39;
+      case 'CHF': return pricef * 1.04;
+      case 'ZAR': return pricef * 0.091;
+      case 'INR': return pricef * 0.016;
+      case 'PLN': return pricef * 0.30;
+      case 'CNY': return pricef * 0.16;
+      case 'DKK': return pricef * 0.17;
+      case 'RUB': return pricef * 0.019;
+      default: return 0.0; //Unknown
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -91,20 +416,102 @@ class ViewerView extends React.Component {
   /////////////////////////////////////////////////////////
   render() {
 
-    return (
-      <div className="viewer-view">
-        <GridLayout
-          onFilterDbItems={(dbItems) => this.onFilterDbItems(dbItems)}
-          onUpdateDbItem={(dbItem) => this.onUpdateDbItem(dbItem)}
-          onSelectDbItem={(dbItem) => this.onSelectDbItem(dbItem)}
-          filteredDbItems={this.state.filteredDbItems}
-          selectedDbItem={this.state.selectedDbItem}
-          query={this.props.location.query}
-          dbItems={this.props.dbItems}
-        />
-      </div>
-    )
+    const {layoutType} = this.props.appState
+
+    switch (layoutType) {
+
+      case 'gridLayout':
+
+        return (
+          <div className="viewer-view">
+            <GridLayout
+              onSelectDbItem={(dbItem, src) => this.onSelectDbItem(dbItem, src)}
+              onUpdateDbItem={(dbItem) => this.onUpdateDbItem(dbItem)}
+              onModelLoaded={(viewer) => this.onModelLoaded(viewer)}
+              onViewerCreated={(data) => this.onViewerCreated(data)}
+              onChartClicked={(data) => this.onChartClicked(data)}
+              filteredDbItems={this.state.filteredDbItems}
+              selectedDbItem={this.state.selectedDbItem}
+              chartData={this.state.chartData}
+              dbItems={this.props.dbItems}
+            />
+          </div>
+        )
+
+      case 'splitLayoutRight':
+      case 'splitLayoutLeft':
+      default:
+
+        return (
+          <div className="viewer-view">
+            <SplitLayout
+              onSelectDbItem={(dbItem, propagate) => this.onSelectDbItem(dbItem, propagate)}
+              onUpdateDbItem={(dbItem) => this.onUpdateDbItem(dbItem)}
+              onModelLoaded={(viewer) => this.onModelLoaded(viewer)}
+              onViewerCreated={(data) => this.onViewerCreated(data)}
+              onChartClicked={(data) => this.onChartClicked(data)}
+              filteredDbItems={this.state.filteredDbItems}
+              selectedDbItem={this.state.selectedDbItem}
+              chartData={this.state.chartData}
+              dbItems={this.props.dbItems}
+              layoutType={layoutType}
+            />
+          </div>
+        )
+    }
   }
 }
 
 export default ViewerView
+
+
+//  //this.viewer.loadExtension(CanvasInfoExtension, {
+//  //  materials: this.props.dbItems,
+//  //  parentControl: ctrlGroup,
+//  //  autoShow: true
+//  //})
+//
+//  this.eventSvc.on('updateDbItem', (updatedDbItem) => {
+//
+//    const canvasInfoExt = this.viewer.getExtension(
+//      CanvasInfoExtension)
+//
+//    canvasInfoExt.updateMaterial(updatedDbItem)
+//  })
+//
+//  //setInterval(()=> {
+//  //
+//  //  var idx = Math.floor((Math.random() * 100)%this.props.dbItems.length)
+//  //
+//  //  var m = this.props.dbItems[idx]
+//  //
+//  //  m.price = Math.random() * 100
+//  //
+//  //  this.updateMaterial(m)
+//  //
+//  //}, 1000)
+//
+//  //const componentIds = await ViewerToolkit.getLeafNodes(
+//  //  this.viewer.model)
+//  //
+//  //var componentsMap = await ViewerToolkit.mapComponentsByProp(
+//  //  this.viewer.model,
+//  //  'Material',
+//  //  componentIds);
+//  //
+//  //const materialSvc = ServiceManager.getService(
+//  //  'MaterialSvc')
+//  //
+//  //Object.keys(componentsMap).forEach(async(key) => {
+//  //
+//  //  const res = await materialSvc.postMaterial('forge-rcdb', {
+//  //    name: key,
+//  //    supplier: 'Autodesk',
+//  //    currency: 'USD',
+//  //    price: 1.0
+//  //  })
+//  //
+//  //  console.log(res)
+//  //})
+//})
+

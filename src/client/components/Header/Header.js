@@ -2,10 +2,20 @@ import AppNavbar from '../Navbar/AppNavbar'
 import React from 'react'
 import './Header.scss'
 
-export const Header = () => (
-  <div>
-    <AppNavbar/>
-  </div>
-)
+class Header extends React.Component {
+
+  componentDidMount () {
+
+  }
+
+  render () {
+
+    return (
+      <div>
+        <AppNavbar {...this.props}/>
+      </div>
+    )
+  }
+}
 
 export default Header

@@ -56,8 +56,6 @@ const ACTION_HANDLERS = {
 // Reducer
 // ------------------------------------
 const initialState = {
-  selectedDbItem: null,
-  filteredDbItems: [],
   dbItems: []
 }
 

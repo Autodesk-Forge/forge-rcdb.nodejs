@@ -9,7 +9,6 @@
 
 .visual-report .container {
   transition: opacity 1.5s ease-in-out;
-  background-color: #CCCCCC;
   opacity: 0.2;
   height: calc(100% - 40px);
   width: 100%;
@@ -69,7 +68,7 @@
 }
 
 .visual-report .props-container {
-  border: 1px solid #232323;
+  border: 1px solid rgb(72, 72, 72);
   margin-bottom: 10px;
   border-radius: 4px;
 }
@@ -84,11 +83,11 @@
 }
 
 .visual-report .lmv-dropdown .label {
-    color: black;
+    color: rgb(72, 72, 72);
 }
 
 .visual-report .lmv-dropdown .caret{
-    border-top:4px solid black;
+    border-top:4px solid rgb(72, 72, 72);
 }
 
 .visual-report .d3 {

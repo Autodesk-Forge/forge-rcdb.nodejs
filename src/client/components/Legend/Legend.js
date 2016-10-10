@@ -4,26 +4,29 @@ import './Legend.scss'
 
 class Legend  extends EventsEmitter {
 
-  constructor(container, data) {
+  constructor (container, data) {
 
     super()
 
     this.svgId = this.guid()
 
     this.options = {
-      textStrokeColor: '#424242',
-      textFillColor: '#424242',
-      textVerticalAlign: 17,
-      horizontalSpacing: 36,
-      verticalSpacing: 28,
-      textMaxLength: 25,
-      circleRadius: 10,
+      textStrokeColor: '#727272',
+      textFillColor: '#727272',
+      textHorizontalSpacing: 32,
+      textVerticalAlign: 13,
+      verticalSpacing: 20,
+      textMaxLength: 50,
+      circleRadius: 6,
       fontSize: 12,
-      stokeWidth: 3
+      fontName: 'Artifakt',
+      strokeWidth: 3
     }
 
-    $(container).append(
-      `<svg class="legend" id="${this.svgId}"></svg>`
+    $(container).append(`
+      <svg class="legend" id="${this.svgId}">
+      </svg>
+      `
     )
 
     this.snap = Snap($(`#${this.svgId}`)[0])
@@ -38,37 +41,40 @@ class Legend  extends EventsEmitter {
 
     var circle = this.snap.paper.circle(
       2 * this.options.circleRadius,
-      this.options.stokeWidth + this.options.circleRadius + idx * this.options.verticalSpacing,
+      this.options.strokeWidth +
+        this.options.circleRadius +
+        idx * this.options.verticalSpacing,
       this.options.circleRadius)
 
     circle.attr({
       fill: element.color,
       fillOpacity: 0.5,
       stroke: element.color,
-      strokeWidth: 3
+      strokeWidth: this.options.strokeWidth
     })
 
     circle.click(() => {
 
-      this.emit('legend.click', element)
+      this.emit('legend.click', element.item)
     })
 
     circle.addClass('clickable')
 
     var txt = this.snap.paper.text(
-      this.options.horizontalSpacing,
-      this.options.textVerticalAlign + idx * this.options.verticalSpacing,
+      this.options.textHorizontalSpacing,
+      this.options.textVerticalAlign +
+        idx * this.options.verticalSpacing,
       this.getFormattedText(element.label))
 
     txt.attr({
-      fontSize: this.options.fontSize + 'px',
+      font: `${this.options.fontSize}px ${this.options.fontName}`,
       fill: this.options.textStrokeColor,
       stroke: this.options.textFillColor
     })
 
     txt.click(() => {
 
-      this.emit('legend.click', element)
+      this.emit('legend.click', element.item)
     })
 
     txt.addClass('clickable')

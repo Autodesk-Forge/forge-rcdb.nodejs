@@ -28,15 +28,15 @@ class DBTable extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  onSelectDbItem (e) {
+  onSelectRow (e) {
 
-    //const id = $(e.target).parent()[0].id
-    //
-    //const selectedDbItem = _.find(
-    //  this.props.dbItems, { _id:id })
-    //
-    //this.props.onSelectDbItem(
-    //  selectedDbItem)
+    const id = $(e.target).parent()[0].id
+
+    const selectedDbItem = _.find(
+      this.props.dbItems, { _id:id })
+
+    this.props.onSelectDbItem(
+      selectedDbItem, false)
   }
 
   /////////////////////////////////////////////////////////
@@ -102,7 +102,7 @@ class DBTable extends React.Component {
         this.props.onUpdateDbItem(dbItem)
       })
 
-      this.select = $('select').niceSelect()
+      this.select = $('select', '.db-table').niceSelect()
 
       this.select.on('change', (e, option) => {
 
@@ -121,7 +121,7 @@ class DBTable extends React.Component {
         'click')
 
       $('.footable > tbody > tr > td:first-child').on (
-        'click', (e) => this.onSelectDbItem(e))
+        'click', (e) => this.onSelectRow(e))
     }
   }
 
@@ -137,19 +137,22 @@ class DBTable extends React.Component {
 
     return (
         <div className="db-table">
-          <table className="footable">
+          <table className="footable scroll">
             <thead>
               <tr>
                 <th className="db-column fooId">
                 Material
                 </th>
-                <th className="db-column fooEditable" data-hide="phone,tablet">
+                <th className="db-column fooEditable"
+                  data-hide="phone,tablet">
                 Supplier
                 </th>
                 <th className="db-column fooEditable">
                 Price (/kg)
                 </th>
-                <th className="db-column" data-hide="phone" data-ft-control="select">
+                <th className="db-column"
+                  data-hide="phone"
+                  data-ft-control="select">
                 Currency
                 </th>
                 <th className="db-column hidden">

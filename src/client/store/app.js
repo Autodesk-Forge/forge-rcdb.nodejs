@@ -1,38 +1,40 @@
 // ------------------------------------
 // Constants
 // ------------------------------------
-export const COUNTER_INCREMENT = 'COUNTER_INCREMENT'
+export const LAYOUT_CHANGE = 'LAYOUT_CHANGE'
 
 // ------------------------------------
 // Actions
 // ------------------------------------
-export function increment (value = 1) {
+export function layoutChange (layoutType) {
   return {
-    type    : COUNTER_INCREMENT,
-    payload : value
+    type    : LAYOUT_CHANGE,
+    payload : layoutType
   }
-}
-
-
-
-export const actions = {
-  increment,
-  doubleAsync
 }
 
 // ------------------------------------
 // Action Handlers
 // ------------------------------------
 const ACTION_HANDLERS = {
-  [COUNTER_INCREMENT] : (state, action) => state + action.payload
+
+  [LAYOUT_CHANGE] : (state, action) => {
+
+    return Object.assign({}, state, {
+      layoutType: action.payload
+    })
+  }
 }
 
 // ------------------------------------
 // Reducer
 // ------------------------------------
-const initialState = 0
+const initialState = {
+  layoutType: 'splitLayoutRight'
+}
 
-export default function counterReducer (state = initialState, action) {
+export default function reducer (state = initialState, action) {
+
   const handler = ACTION_HANDLERS[action.type]
 
   return handler ? handler(state, action) : state

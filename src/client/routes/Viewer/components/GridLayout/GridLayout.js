@@ -1,9 +1,9 @@
 
 import {Responsive, WidthProvider} from 'react-grid-layout'
 const ResponsiveReactGridLayout = WidthProvider(Responsive)
-import ServiceManager from 'SvcManager'
-import DBDropdown from 'DBDropdown'
-import DBTable from 'DBTable'
+import DBResponsiveView from '../DBResponsiveView'
+import WidgetContainer from 'WidgetContainer'
+import DBChart from 'DBChart'
 import Viewer from 'Viewer'
 import './GridLayout.scss'
 import React from 'react'
@@ -11,7 +11,7 @@ import _ from 'lodash'
 
 class GridLayoutMovableLock extends React.Component {
 
-  onMouseDown (e) {
+  onPointerDown (e) {
 
     if(e.target &&
       e.target.className &&
@@ -30,36 +30,12 @@ class GridLayoutMovableLock extends React.Component {
 
     return (
       <div className="grid-layout-movableLock"
-        onMouseDown={this.onMouseDown}>
+        onTouchStart={this.onPointerDown}
+        onMouseDown={this.onPointerDown}>
         <div className="handle"></div>
           {this.props.children}
       </div>
     )
-  }
-}
-
-class DBResponsiveView extends React.Component {
-
-  render() {
-
-    const height = $('.db-responsive-view').height()
-
-    if(height && height < 250) {
-
-      return (
-        <div className="db-responsive-view">
-          <DBDropdown {...this.props}/>
-        </div>
-      )
-
-    } else {
-
-      return (
-        <div className="db-responsive-view">
-          <DBTable {...this.props}/>
-        </div>
-      )
-    }
   }
 }
 
@@ -78,7 +54,7 @@ class GridLayout extends React.Component {
     rowHeight: 4,
     margin: [4, 4],
     cols: {
-      lg: 24, md: 20, sm: 12, xs: 4, xxs: 4
+      lg: 48, md: 40, sm: 24, xs: 8, xxs: 8
     }
   }
 
@@ -93,8 +69,9 @@ class GridLayout extends React.Component {
     h = h/8 - ((h/8)%4)
 
     return [
-      { i: 'db-responsive-view', h: h, w: 8, x: 0, y: 0 },
-      { i: 'viewer',  h: h, w: 16, x: 8, y: 0 }
+      { i: 'grid',   h: 35, w: 16, x: 0, y: 0 },
+      { i: 'chart',  h: h - 35, w: 16, x: 0, y: 0 },
+      { i: 'viewer', h: h, w: 32, x: 16, y: 0 }
     ]
   }
 
@@ -127,44 +104,35 @@ class GridLayout extends React.Component {
 
       switch(layout.i) {
 
-        case 'db-table':
+        case 'grid':
           return (
             <div key={layout.i}>
               <GridLayoutMovableLock>
-                <DBTable
-                  onSelectDbItem={this.props.onSelectDbItem}
-                  onUpdateDbItem={this.props.onUpdateDbItem}
-                  selectedDbItem={this.props.selectedDbItem}
-                  dbItems={this.props.filteredDbItems}
-                />
+                <WidgetContainer title="Database">
+                  <DBResponsiveView
+                    onSelectDbItem={this.props.onSelectDbItem}
+                    onUpdateDbItem={this.props.onUpdateDbItem}
+                    selectedDbItem={this.props.selectedDbItem}
+                    dbItems={this.props.filteredDbItems}
+                  />
+                </WidgetContainer>
               </GridLayoutMovableLock>
             </div>)
           break
 
-        case 'db-drop':
-          return (
-            <div key={layout.i}>
-            <GridLayoutMovableLock>
-              <DBDropdown
-                onSelectDbItem={this.props.onSelectDbItem}
-                onUpdateDbItem={this.props.onUpdateDbItem}
-                selectedDbItem={this.props.selectedDbItem}
-                dbItems={this.props.filteredDbItems}
-              />
-            </GridLayoutMovableLock>
-            </div>)
-          break
-
-        case 'db-responsive-view':
+        case 'chart':
           return (
             <div key={layout.i}>
               <GridLayoutMovableLock>
-                <DBResponsiveView
-                  onSelectDbItem={this.props.onSelectDbItem}
-                  onUpdateDbItem={this.props.onUpdateDbItem}
-                  selectedDbItem={this.props.selectedDbItem}
-                  dbItems={this.props.filteredDbItems}
-                />
+                <WidgetContainer title="Cost Breakdown">
+                  <DBChart
+                    onSelectDbItem={this.props.onSelectDbItem}
+                    onUpdateDbItem={this.props.onUpdateDbItem}
+                    selectedDbItem={this.props.selectedDbItem}
+                    onClick={this.props.onChartClicked}
+                    data={this.props.chartData}
+                  />
+                </WidgetContainer>
               </GridLayoutMovableLock>
             </div>)
           break
@@ -174,9 +142,10 @@ class GridLayout extends React.Component {
             <div key={layout.i}>
               <GridLayoutMovableLock>
                 <Viewer
+                  onViewerCreated={this.props.onViewerCreated}
                   onFilterDbItems={this.props.onFilterDbItems}
                   updatedDbItem={this.props.updatedDbItem}
-                  modelId={this.props.query.id}
+                  onModelLoaded={this.props.onModelLoaded}
                   dbItems={this.props.dbItems}/>
               </GridLayoutMovableLock>
             </div>)
@@ -222,8 +191,8 @@ class GridLayout extends React.Component {
       <div>
         <ResponsiveReactGridLayout
           onBreakpointChange={this.onBreakpointChange}
-          onLayoutChange={this.onLayoutChange}
           useCSSTransforms={this.state.mounted}
+          onLayoutChange={this.onLayoutChange}
           layouts={this.state.layouts}
           measureBeforeMount={false}
           {...this.props}>

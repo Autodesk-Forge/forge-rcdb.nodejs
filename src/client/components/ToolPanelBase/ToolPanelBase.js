@@ -159,11 +159,6 @@ export default class ToolPanelBase extends
     $(this.container).append($content)
 
     this.container.classList.add('toolPanelBase')
-
-    $(this.container).resize(() => {
-
-      console.log('resize yo')
-    })
   }
 
   /////////////////////////////////////////////////////////////

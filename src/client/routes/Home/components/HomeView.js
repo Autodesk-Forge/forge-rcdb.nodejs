@@ -24,7 +24,6 @@ class HomeView extends React.Component {
   }
 
 
-
   render() {
 
     const { viewerState } = this.props
@@ -50,7 +49,9 @@ class HomeView extends React.Component {
             <Text content="AEC Demo"/>
           </Link>
         </div>
-        <img className='logo-hero' src="/resources/img/forge-hero.jpg"/>
+        <img className='logo-hero' src="/resources/img/hero-banner.jpg"/>
+        <div className="models">
+        </div>
       </div>
     )
   }

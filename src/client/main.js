@@ -12,6 +12,9 @@ import MaterialSvc from 'MaterialSvc'
 import ModelSvc from 'ModelSvc'
 import EventSvc from 'EventSvc'
 
+//default theme
+import './styles/themes/snow-white.scss'
+
 // ========================================================
 // Store Instantiation
 // ========================================================

@@ -1,5 +1,5 @@
 // We only need to import the modules necessary for initial render
-import CoreLayout from '../layouts/CoreLayout/CoreLayout'
+import CoreLayout from '../layouts/CoreLayout'
 import ViewerRoute from './Viewer'
 import HomeRoute from './Home'
 

@@ -1,4 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const OptimizeJsPlugin = require("optimize-js-plugin")
 const debug = require('debug')('app:webpack:config')
 const webpack = require('webpack')
 const cssnano = require('cssnano')
@@ -58,9 +59,9 @@ webpackConfig.plugins = [
 
 webpackConfig.plugins.push(
     new HtmlWebpackPlugin({
-      threeJS: 'https://autodeskviewer.com/viewers/2.10/three.min.js',
       viewer3D: 'https://autodeskviewer.com/viewers/2.10/viewer3D.min.js',
       viewerCSS: 'https://autodeskviewer.com/viewers/2.10/style.min.css',
+      threeJS: 'https://autodeskviewer.com/viewers/2.10/three.min.js',
       template: config.utils_paths.client('layouts/index.ejs'),
       title: 'Forge | RCDB',
       filename: 'index.html',
@@ -83,6 +84,9 @@ webpackConfig.plugins.push(
       dead_code : true,
       warnings  : false
     }
+  }),
+  new OptimizeJsPlugin({
+    sourceMap: false
   })
 )
 

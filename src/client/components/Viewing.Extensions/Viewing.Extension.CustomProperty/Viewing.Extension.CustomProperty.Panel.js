@@ -15,12 +15,23 @@
 // DOES NOT WARRANT THAT THE OPERATION OF THE PROGRAM WILL BE
 // UNINTERRUPTED OR ERROR FREE.
 ///////////////////////////////////////////////////////////////////////////////
-AutodeskNamespace("Autodesk.ADN.Viewing.Extension");
 
-Autodesk.ADN.Viewing.Extension.CustomPropertyPanelExtension = function (viewer, options) {
+export default class CustomPropertyPanel extends
+  Autodesk.Viewing.Extensions.ViewerPropertyPanel {
 
-    // base constructor
-    Autodesk.Viewing.Extension.call(this, viewer, options);
+  constructor (viewer) {
+
+    super(viewer)
+  }
+
+  refresh () {
+
+    this.setVisible(false, true)
+    this.setVisible(true, true)
+  }
+}
+
+function old(viewer, options) {
 
     var _self = this;
 
@@ -50,23 +61,14 @@ Autodesk.ADN.Viewing.Extension.CustomPropertyPanelExtension = function (viewer, 
     };
 
     ///////////////////////////////////////////////////////////////////////////
-    // unload callback
-    //
-    ///////////////////////////////////////////////////////////////////////////
-    _self.unload = function () {
-
-        return true;
-    };
-
-    ///////////////////////////////////////////////////////////////////////////
     // CustomPropertyPanel
     //
     ///////////////////////////////////////////////////////////////////////////
     Autodesk.ADN.Viewing.Extension.CustomPropertyPanel = function (viewer) {
-        
+
         Autodesk.Viewing.Extensions.ViewerPropertyPanel.call(
           this, viewer);
-        
+
         var _panel = this;
 
         /////////////////////////////////////////////////////////////////
@@ -307,24 +309,6 @@ Autodesk.ADN.Viewing.Extension.CustomPropertyPanelExtension = function (viewer, 
             return menuId;
         }
 
-        /////////////////////////////////////////////////////////////////
-        // Generates random guid
-        //
-        /////////////////////////////////////////////////////////////////
-        function guid() {
-
-            var d = new Date().getTime();
-
-            var guid = 'xxxx-xxxx-xxxx-xxxx'.replace(
-              /[xy]/g,
-              function (c) {
-                  var r = (d + Math.random() * 16) % 16 | 0;
-                  d = Math.floor(d / 16);
-                  return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16);
-              });
-
-            return guid;
-        };
 
         /////////////////////////////////////////////////////////////////
         //
@@ -384,20 +368,5 @@ Autodesk.ADN.Viewing.Extension.CustomPropertyPanelExtension = function (viewer, 
               });
         }
     };
-    
-    Autodesk.ADN.Viewing.Extension.CustomPropertyPanel.prototype =
-      Object.create(Autodesk.Viewing.Extensions.ViewerPropertyPanel.prototype);
-    
-    Autodesk.ADN.Viewing.Extension.CustomPropertyPanel.prototype.constructor =
-      Autodesk.ADN.Viewing.Extension.CustomPropertyPanel;
+
 };
-
-Autodesk.ADN.Viewing.Extension.CustomPropertyPanelExtension.prototype =
-    Object.create(Autodesk.Viewing.Extension.prototype);
-
-Autodesk.ADN.Viewing.Extension.CustomPropertyPanelExtension.prototype.constructor =
-    Autodesk.ADN.Viewing.Extension.CustomPropertyPanelExtension;
-
-Autodesk.Viewing.theExtensionManager.registerExtension(
-    'Autodesk.ADN.Viewing.Extension.CustomPropertyPanel',
-    Autodesk.ADN.Viewing.Extension.CustomPropertyPanelExtension);

@@ -1,7 +1,7 @@
 .db-dropdown {
+  height: calc(100% - 14px);
   overflow: auto;
   padding: 24px;
-  height: calc(100% - 14px);
 }
 
 .db-dropdown .field-container {
@@ -25,10 +25,10 @@
 
 .db-dropdown .Select-control,
 .db-dropdown .Select-menu-outer {
-  background-color: #e6effb;
-  border: 1px solid black;
+  background-color: #f8f8f8;
+  border: 1px solid #aeaeae;
 }
 
 .db-dropdown .Select-option {
-  background-color: #e6effb;
+  background-color: #f8f8f8;
 }

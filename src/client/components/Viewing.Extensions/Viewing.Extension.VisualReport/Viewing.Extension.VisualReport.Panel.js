@@ -16,7 +16,7 @@ export default class VisualReportPanel extends ToolPanelBase{
 
   constructor(viewer, properties, componentIds, buttonElement) {
 
-    super($('.viewer-view')[0], 'Visual Report', {
+    super($('.viewer-view')[0], 'Visual Reports', {
       shadow: true,
       buttonElement
     });

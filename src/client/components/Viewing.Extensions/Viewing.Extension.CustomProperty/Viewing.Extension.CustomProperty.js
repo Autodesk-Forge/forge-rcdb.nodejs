@@ -1,11 +1,11 @@
 /////////////////////////////////////////////////////////////////////
 // Viewing.Extension.CustomPropertyExtension
-// by Philippe Leefsma, Spetember 2016
+// by Philippe Leefsma, September 2016
 //
 /////////////////////////////////////////////////////////////////////
 import CustomPropertyPanel from './Viewing.Extension.CustomProperty.Panel'
-import ViewerToolkit from 'ViewerToolkit'
-import ExtensionBase from 'ExtensionBase'
+import ExtensionBase from 'Viewer.ExtensionBase'
+import ViewerToolkit from 'Viewer.Toolkit'
 
 class CustomPropertyExtension extends ExtensionBase {
 
@@ -13,7 +13,7 @@ class CustomPropertyExtension extends ExtensionBase {
   // Class constructor
   //
   /////////////////////////////////////////////////////////////////
-  constructor(viewer, options = {}) {
+  constructor (viewer, options = {}) {
 
     super (viewer, options)
   }
@@ -33,10 +33,16 @@ class CustomPropertyExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////////////
   load() {
 
-  console.log('Viewing.Extension.CustomProperty loaded');
+    this._panel = new CustomPropertyPanel(
+      this._viewer)
 
-  return true;
-}
+    this._viewer.setPropertyPanel(
+      this._panel)
+
+    console.log('Viewing.Extension.CustomProperty loaded');
+
+    return true;
+  }
 
   /////////////////////////////////////////////////////////////////
   // Unload callback

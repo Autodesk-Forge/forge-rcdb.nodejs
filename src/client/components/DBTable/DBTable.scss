@@ -1,15 +1,16 @@
 .footable {
   font-family: 'trebuchet MS' , 'Lucida sans' , Arial;
   border-collapse: separate;
-  border: solid #000000 1px;
   border-radius: 6px;
   border-spacing: 0;
   font-size: 14px;
+  border: none;
   width: 100%;
   color: #444;
 }
 
 .footable > tbody > tr > td:first-child {
+  margin-left: 0px;
   cursor: pointer;
 }
 
@@ -29,24 +30,31 @@
   color: #000;
 }
 
-.footable > tbody > tr {
-  background: #fbf8e9;
+.footable > thead > tr {
+  background-color: rgb(255,255,255);
 }
 
 .footable > tbody > tr:hover {
-  background: #3ba1e8;
-  color: #FFFFFF;
+  background: rgb(215, 215, 215);
+  color: #000;
 }
 
 .footable.breakpoint > tbody > tr:hover:not(.footable-row-detail) {
   cursor: pointer;
 }
 
-.footable > tbody > tr > td, .footable > thead > tr > th {
-  border-left: 1px solid #000000;
-  border-top: 1px solid #000000;
-  padding: 10px;
+.footable > thead > tr > th {
   text-align: left;
+  padding: 10px;
+  border: none;
+  border-bottom: 1px solid rgb(180, 180, 180);
+}
+
+.footable > tbody > tr > td{
+  text-align: left;
+  padding: 10px;
+  border: none;
+  border-bottom: 1px solid rgb(215, 215, 215);
 }
 
 .footable > tbody > tr > td.footable-cell-detail {
@@ -54,13 +62,13 @@
 }
 
 .footable > thead > tr > th, .footable > thead > tr > td {
-  background-color: #dce9f9;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#ebf3fc), to(#dce9f9));
-  background-image: -webkit-linear-gradient(top, #ebf3fc, #dce9f9);
-  background-image: -moz-linear-gradient(top, #ebf3fc, #dce9f9);
-  background-image: -ms-linear-gradient(top, #ebf3fc, #dce9f9);
-  background-image: -o-linear-gradient(top, #ebf3fc, #dce9f9);
-  background-image: linear-gradient(to bottom, #ebf3fc, #dce9f9);
+//  background-color: #dce9f9;
+//  background-image: -webkit-gradient(linear, left top, left bottom, from(#ebf3fc), to(#dce9f9));
+//  background-image: -webkit-linear-gradient(top, #ebf3fc, #dce9f9);
+//  background-image: -moz-linear-gradient(top, #ebf3fc, #dce9f9);
+//  background-image: -ms-linear-gradient(top, #ebf3fc, #dce9f9);
+//  background-image: -o-linear-gradient(top, #ebf3fc, #dce9f9);
+//  background-image: linear-gradient(to bottom, #ebf3fc, #dce9f9);
   -webkit-box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
   -moz-box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
   box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
@@ -69,15 +77,13 @@
 }
 
 .footable > thead > tr:first-child > th:first-child, .footable > thead > tr:first-child > td:first-child {
-  -moz-border-radius: 6px 0 0 0;
-  -webkit-border-radius: 6px 0 0 0;
-  border-radius: 6px 0 0 0;
+  border-radius: 0 0 0 0;
 }
 
 .footable > thead > tr:first-child > th.footable-last-column, .footable > thead > tr:first-child > td.footable-last-column {
-  -moz-border-radius: 0 6px 0 0;
-  -webkit-border-radius: 0 6px 0 0;
-  border-radius: 0 6px 0 0;
+  -moz-border-radius: 0 0 0 0;
+  -webkit-border-radius: 0 0 0 0;
+  border-radius: 0 0 0 0;
 }
 
 .footable > thead > tr:first-child > th:first-child.footable-last-column, .footable > thead > tr:first-child > td:first-child.footable-last-column {
@@ -114,15 +120,13 @@
 }
 
 .footable > tfoot > tr > th, .footable > tfoot > tr > td {
-  background-color: #dce9f9;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#ebf3fc), to(#dce9f9));
-  background-image: -webkit-linear-gradient(top, #ebf3fc, #dce9f9);
-  background-image: -moz-linear-gradient(top, #ebf3fc, #dce9f9);
-  background-image: -ms-linear-gradient(top, #ebf3fc, #dce9f9);
-  background-image: -o-linear-gradient(top, #ebf3fc, #dce9f9);
-  background-image: linear-gradient(to bottom, #ebf3fc, #dce9f9);
-  -webkit-box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
-  -moz-box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
+//  background-color: #dce9f9;
+//  background-image: -webkit-gradient(linear, left top, left bottom, from(#ebf3fc), to(#dce9f9));
+//  background-image: -webkit-linear-gradient(top, #ebf3fc, #dce9f9);
+//  background-image: -moz-linear-gradient(top, #ebf3fc, #dce9f9);
+//  background-image: -ms-linear-gradient(top, #ebf3fc, #dce9f9);
+//  background-image: -o-linear-gradient(top, #ebf3fc, #dce9f9);
+//  background-image: linear-gradient(to bottom, #ebf3fc, #dce9f9);
   box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
   border-top: 1px solid #ccc;
   text-shadow: 0 1px 0 rgba(255,255,255,.5);
@@ -139,53 +143,14 @@
   border-color: rgba(82, 168, 236, 0.8);
   outline: 0;
   outline: thin dotted \9;
-  /* IE6-9 */
-
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
-  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+  //box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
 }
 
 .footable input[readonly]:focus{
   background-color:transparent;
   border-color:black;
   border-width:thin;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
   box-shadow: none;
-}
-
-.footableButton{
-  background-color: #dce9f9;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#ebf3fc), to(#dce9f9));
-  background-image: -webkit-linear-gradient(top, #ebf3fc, #dce9f9);
-  background-image: -moz-linear-gradient(top, #ebf3fc, #dce9f9);
-  background-image: -ms-linear-gradient(top, #ebf3fc, #dce9f9);
-  background-image: -o-linear-gradient(top, #ebf3fc, #dce9f9);
-  background-image: linear-gradient(to bottom, #ebf3fc, #dce9f9);
-
-  -webkit-border-radius:5px;
-  -moz-border-radius:5px;
-  -ms-border-radius:5px;
-  -o-border-radius:5px;
-  border-radius:5px;
-  -webkit-box-shadow:0 2px 5px rgba(0,0,0,0.2);
-  -moz-box-shadow:0 2px 5px rgba(0,0,0,0.2);
-  box-shadow:0 2px 5px rgba(0,0,0,0.2);
-  color: #444;
-  display:inline-block;
-  font-size:12px;
-  font-weight:bold;
-  padding:4px 12px;
-  text-decoration:none;
-  text-transform:uppercase;
-
-  margin-top:1%;
-  margin-bottom:1%;
-}
-.footableButton:hover{
-  background:#424242;
-  color:#fff
 }
 
 .fooId{
@@ -201,14 +166,51 @@
 }
 
 .db-table {
-  height: calc(100% - 22px);
-  padding-right: 12px;
-  padding-left: 12px;
-  margin-top: 12px;
-  overflow: auto;
+  height: calc(100% - 12px);
   width: 100%;
 }
 
 .db-table .db-column {
   width: 20%;
+}
+
+
+.scroll {
+  border-collapse: collapse;
+  height: 100%;
+  border: 0;
+}
+
+.scroll tr {
+  color: rgb(0, 0, 0);
+  display: flex;
+}
+
+.scroll td {
+  padding: 3px;
+  flex: 1 auto;
+  border: 1px solid #aaa;
+  width: 1px;
+  word-wrap: break;
+  color: rgb(114, 114, 114);
+}
+
+.scroll thead tr:after {
+  overflow-y: scroll;
+  visibility: hidden;
+  content: '';
+  height: 0;
+}
+
+.scroll thead th {
+  border: 1px solid #000;
+  display: block;
+  flex: 1 auto;
+}
+
+.scroll tbody {
+  overflow: auto;
+  display: block;
+  height: 100%;
+  width: 100%;
 }

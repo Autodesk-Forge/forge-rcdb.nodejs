@@ -1,0 +1,185 @@
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted rgb(72, 72, 72);
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: rgb(72, 72, 72);
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 100;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.adsk-control-group {
+  background-color: #FFFFFF;
+  border: 1px solid white;
+  color: rgb(72, 72, 72);
+  box-shadow: 0 0px 0px rgba(0,0,0,1);
+}
+
+.adsk-control-tooltip {
+  background-color: #FFFFFF;
+  border: 1px solid rgb(72, 72, 72);
+  color: rgb(72, 72, 72);
+}
+
+.dockingPanel {
+  background: rgba(255, 255, 255, 0.8);
+  text-align: left;
+}
+
+.dockingPanelTitle {
+  border-bottom: 1px solid rgb(194, 194, 194);
+  background-color: rgb(248, 248, 248);
+  text-align: left;
+  color: rgb(72, 72, 72);
+}
+
+.dockingPanel:hover {
+  background: rgba(255, 255, 255, 1.0);
+  border: 1px solid #888888;
+}
+
+.propertyPanel .treeview group, .propertyPanel .treeview leaf {
+  color: #040404;
+}
+
+.modelStructurePanel .treeview header {
+  white-space: normal;
+  word-wrap: break-word;
+  width: auto;
+  display: inline-block;
+  border-radius: 4px;
+  background: rgb(204, 204, 204);
+  box-shadow: 0 3px 5px rgba(0,0,0,.2);
+}
+
+.treeview label {
+  margin-bottom: 0;
+  font-weight: 400;
+  color: black;
+}
+
+.modelStructurePanel .dockingPanelTitle {
+  background: rgb(194, 194, 194);
+}
+
+.explode-submenu {
+  width: 150px;
+  left: 0;
+  bottom: 40px;
+  margin-bottom: 10px;
+  padding: 10px;
+  background: rgb(255, 255, 255);
+  border: 1px solid rgb(72, 72, 72);
+  border-radius: 5px;
+  cursor: default;
+}
+
+.toolbar-settings-sub-menu {
+  min-width: 300px;
+  position: absolute;
+  display: block;
+  left: 0;
+  bottom: 40px;
+  margin-bottom: 10px;
+  background: #FFFFFF;
+  list-style: none;
+  font-size: 14px;
+  color: rgb(72, 72, 72);
+  line-height: 14px;
+  text-align: left;
+  -webkit-padding-start: 0;
+  -moz-padding-start: 0;
+  -ms-padding-start: 0;
+  border: 1px solid rgba(150,150,150,.15);
+  border-radius: 5px;
+  transition: all .2s ease;
+}
+
+.dockingPanel .settings-table td,
+.dockingPanel .settings-table td > input {
+  cursor: pointer;
+  color: black;
+}
+
+.settings-tabs ul li.tabselected {
+  background-color: rgba(255,255,255,.12);
+  border: solid rgb(72, 72, 72);
+  border-width: 0 0 3px;
+}
+
+.settings-tabs ul li a {
+  color: #000;
+  text-decoration: none;
+}
+
+.dockingPanel .viewer-restore-defaults {
+  color: #000;
+  display: block;
+  font-size: 14px;
+  margin: 15px 20px 15px 21px;
+  padding: 6px 10px;
+  width: calc(100% - 60px);
+  cursor: pointer;
+  text-align: center;
+  border: 1px solid black;
+  border-radius: 4px;
+}
+
+input.toolbar-search-box {
+  background: rgb(93, 92, 92);
+}
+
+.measure-selection-result {
+  display: inline-block;
+  margin: 21px 0;
+  color: black;
+}
+
+.measure-initial {
+  margin: 38px 0 38px 56px;
+  color: black;
+}
+
+.measure-restart {
+  margin: 10px 20px 15px;
+  padding: 6px 10px;
+  width: calc(100% - 55px);
+  cursor: pointer;
+  text-align: center;
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+  color: rgb(72, 72, 72);
+}
+
+.measure-repick {
+  display: inline-block;
+  margin: 20px;
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+  float: right;
+  opacity: .5;
+  color: black;
+}
+
+.measure-settings-button {
+  top: 20px;
+  right: 20px;
+  font-size: 18px;
+  opacity: .5;
+  color: black;
+}

@@ -12,7 +12,7 @@ export default class StateManagerPanel extends ToolPanelBase{
 
   constructor(container, btnElement) {
 
-    super(container, 'State Manager', {
+    super(container, 'States Manager', {
       buttonElement: btnElement,
       shadow: true
     });

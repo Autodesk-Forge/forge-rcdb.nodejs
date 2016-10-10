@@ -1,5 +1,4 @@
 import { injectReducer } from '../../store/reducers'
-import HomeView from './components/HomeView'
 
 export default (store) => ({
 
