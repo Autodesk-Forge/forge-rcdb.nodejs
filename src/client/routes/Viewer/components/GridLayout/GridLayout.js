@@ -69,9 +69,9 @@ class GridLayout extends React.Component {
     h = h/8 - ((h/8)%4)
 
     return [
-      { i: 'grid',   h: 35, w: 16, x: 0, y: 0 },
-      { i: 'chart',  h: h - 35, w: 16, x: 0, y: 0 },
-      { i: 'viewer', h: h, w: 32, x: 16, y: 0 }
+      { i: 'grid',   h: 42, w: 16, x: 0, y: 0 },
+      { i: 'chart',  h: h - 40, w: 16, x: 0, y: 0 },
+      { i: 'viewer', h: h+2, w: 32, x: 16, y: 0 }
     ]
   }
 

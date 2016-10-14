@@ -43,7 +43,7 @@ WORK IN PROGRESS!!
 
 [https://forge-rcdb.autodesk.io](https://forge-rcdb.autodesk.io/)
 
- ![forge-rcdb](resources/img/forge-rcdb.png)
+ ![forge-rcdb](resources/img/forge-rcdb.jpg)
 
 ## License
 

@@ -28,7 +28,7 @@ class DBTable extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  onSelectRow (e) {
+  onRowClicked (e) {
 
     const id = $(e.target).parent()[0].id
 
@@ -37,6 +37,15 @@ class DBTable extends React.Component {
 
     this.props.onSelectDbItem(
       selectedDbItem, false)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onHeaderClicked (e) {
+
+    console.log(e)
   }
 
   /////////////////////////////////////////////////////////
@@ -53,6 +62,7 @@ class DBTable extends React.Component {
       this.ftEditable.addRows(
         '.footable',
         this.props.dbItems.map((dbItem) => {
+
           return {
             name: dbItem.name,
             supplier: dbItem.supplier,
@@ -61,6 +71,7 @@ class DBTable extends React.Component {
             id: dbItem._id
           }
         }), {
+
           select: {
             currency: [
               {value:'ARS', label:'ARS'},
@@ -88,16 +99,23 @@ class DBTable extends React.Component {
           _id: updateRecord.id
         })
 
-        if(updateRecord.fieldName === 'price') {
+        switch(updateRecord.fieldName) {
 
-          dbItem[updateRecord.fieldName] =
-            parseFloat(updateRecord.fieldValue)
+          case 'price':
+            dbItem[updateRecord.fieldName] =
+              parseFloat(updateRecord.fieldValue)
+            break
 
-        } else {
+          case 'currency':
+            return
 
-          dbItem[updateRecord.fieldName] =
-            updateRecord.fieldValue
+          default:
+            dbItem[updateRecord.fieldName] =
+              updateRecord.fieldValue
+            break
         }
+
+        //console.log($('.scroll tbody').scrollTop())
 
         this.props.onUpdateDbItem(dbItem)
       })
@@ -105,6 +123,8 @@ class DBTable extends React.Component {
       this.select = $('select', '.db-table').niceSelect()
 
       this.select.on('change', (e, option) => {
+
+        //console.log($('.scroll tbody').scrollTop())
 
         const id = $(option).parents('tr')[0].id
 
@@ -121,7 +141,10 @@ class DBTable extends React.Component {
         'click')
 
       $('.footable > tbody > tr > td:first-child').on (
-        'click', (e) => this.onSelectRow(e))
+        'click', (e) => this.onRowClicked(e))
+
+      $('.footable > thead > tr > th').on (
+        'click', (e) => this.onHeaderClicked(e))
     }
   }
 

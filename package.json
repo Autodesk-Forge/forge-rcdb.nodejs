@@ -109,6 +109,8 @@
     "express": "^4.14.0",
     "express-session": "^1.14.1",
     "extract-text-webpack-plugin": "^1.0.0",
+    "falcor-express": "^0.1.2",
+    "falcor-router": "^0.4.0",
     "file-loader": "^0.9.0",
     "find-remove": "^0.2.12",
     "fixed-data-table": "^0.6.3",

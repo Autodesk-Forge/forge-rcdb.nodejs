@@ -66,15 +66,6 @@ const config = {
   ]
 }
 
-/************************************************
- -------------------------------------------------
-
- All Internal Configuration Below
- Edit at Your Own Risk
-
- -------------------------------------------------
- ************************************************/
-
 // ------------------------------------
 // Environment
 // ------------------------------------
@@ -136,6 +127,12 @@ const envConfig = {
     chunkModules : true,
     colors       : true
   },
+
+  client: {
+    host: process.env.HOST_URL  || 'https://forge-rcdb.autodesk.io',
+    port: process.env.HOST_PORT || 443
+  },
+
   forge: {
     oauth: {
       clientSecret: process.env.FORGE_CLIENT_SECRET,
@@ -164,7 +161,6 @@ const envConfig = {
 }
 
 Object.assign(config, envConfig)
-
 
 module.exports = config
 

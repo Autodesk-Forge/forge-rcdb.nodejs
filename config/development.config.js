@@ -128,6 +128,12 @@ config.utils_paths = {
 const envConfig = {
 
   compiler_public_path: `http://${config.server_host}:${config.server_port}/`,
+
+  client: {
+    host: 'http://localhost',
+    port: 3000
+  },
+
   forge: {
     oauth: {
       clientSecret: process.env.FORGE_DEV_CLIENT_SECRET,

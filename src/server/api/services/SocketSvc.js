@@ -2,30 +2,29 @@
 import BaseSvc from './BaseSvc'
 import io from 'socket.io'
 
-
 export default class SocketSvc extends BaseSvc {
 
   /////////////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////////////
-  constructor(opts) {
+  constructor (config) {
 
-    super(opts);
+    super (config)
 
-    this._connections = {};
+    this._connections = {}
 
     this.handleConnection =
-      this.handleConnection.bind(this);
+      this.handleConnection.bind(this)
 
     this.handleDisconnection =
-      this.handleDisconnection.bind(this);
+      this.handleDisconnection.bind(this)
 
-    this._io = io(opts.config.server);
+    this._io = io(config.server)
 
     this._io.sockets.on(
       'connection',
-      this.handleConnection);
+      this.handleConnection)
   }
 
   /////////////////////////////////////////////////////////////////
@@ -34,7 +33,7 @@ export default class SocketSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   name() {
 
-    return 'SocketSvc';
+    return 'SocketSvc'
   }
 
   ///////////////////////////////////////////////////////////////////
@@ -45,24 +44,37 @@ export default class SocketSvc extends BaseSvc {
 
     //socket.handshake.session
 
-    var _thisSvc = this;
+    var _thisSvc = this
 
-    _thisSvc._connections[socket.id] = socket;
+    _thisSvc._connections[socket.id] = socket
 
-    socket.emit('connection.data', {
-      socketId: socket.id
-    });
+    socket.on('request.connection.data', ()=> {
+      socket.emit('connection.data', {
+        socketId: socket.id
+      })
+    })
 
     socket.on('disconnect', ()=> {
 
-      _thisSvc.handleDisconnection(socket.id);
-    });
+      _thisSvc.handleDisconnection(socket.id)
+    })
+
+    socket.on('broadcast', (data) => {
+
+      let socketIds = Object.keys(_thisSvc._connections)
+
+      let filter = socketIds.filter((socketId) => {
+        return socketId !== socket.id
+      })
+
+      _thisSvc.broadcast(data.msgId, data.msg, filter)
+    })
 
     _thisSvc.emit('SocketSvc.Connection', {
       id: socket.id
-    });
+    })
 
-    console.log('Socket connected: ' + socket.id);
+    console.log('Socket connected: ' + socket.id)
   }
 
   ///////////////////////////////////////////////////////////////////
@@ -71,17 +83,17 @@ export default class SocketSvc extends BaseSvc {
   ///////////////////////////////////////////////////////////////////
   handleDisconnection(id) {
 
-    var _thisSvc = this;
+    var _thisSvc = this
 
     _thisSvc.emit('SocketSvc.Disconnection', {
       id: id
-    });
+    })
 
     if(_thisSvc._connections[id]){
 
-      delete _thisSvc._connections[id];
+      delete _thisSvc._connections[id]
 
-      console.log('Socket disconnected: ' + id);
+      console.log('Socket disconnected: ' + id)
     }
   }
 
@@ -92,7 +104,7 @@ export default class SocketSvc extends BaseSvc {
   ///////////////////////////////////////////////////////////////////
   broadcast(msgId, msg, filter = null) {
 
-    var _thisSvc = this;
+    var _thisSvc = this
 
     if(filter) {
 
@@ -102,9 +114,9 @@ export default class SocketSvc extends BaseSvc {
 
         if(_thisSvc._connections[socketId]){
 
-          var socket = _thisSvc._connections[socketId];
+          var socket = _thisSvc._connections[socketId]
 
-          socket.emit(msgId, msg);
+          socket.emit(msgId, msg)
         }
       })
     }
@@ -112,9 +124,9 @@ export default class SocketSvc extends BaseSvc {
 
       for(var socketId in _thisSvc._connections){
 
-        var socket = _thisSvc._connections[socketId];
+        var socket = _thisSvc._connections[socketId]
 
-        socket.emit(msgId, msg);
+        socket.emit(msgId, msg)
       }
     }
   }

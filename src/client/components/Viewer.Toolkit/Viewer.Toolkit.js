@@ -129,15 +129,15 @@ export default class ViewerToolkit {
   /////////////////////////////////////////////////////////////////
   static getLeafNodes(model, dbId) {
 
-    return new Promise(async(resolve, reject)=>{
+    return new Promise((resolve, reject)=>{
 
       try{
 
         var leafIds = [];
 
-        var instanceTree = model.getData().instanceTree;
+        var instanceTree = model.getData().instanceTree
 
-        dbId = dbId || instanceTree.getRootId();
+        dbId = dbId || instanceTree.getRootId()
 
         function _getLeafNodesRec(id){
 
@@ -145,24 +145,24 @@ export default class ViewerToolkit {
 
           instanceTree.enumNodeChildren(id,
             function(childId) {
-              _getLeafNodesRec(childId);
-              ++childCount;
-            });
+              _getLeafNodesRec(childId)
+              ++childCount
+            })
 
           if(childCount == 0){
-            leafIds.push(id);
+            leafIds.push(id)
           }
         }
 
-        _getLeafNodesRec(dbId);
+        _getLeafNodesRec(dbId)
 
-        return resolve(leafIds);
-      }
-      catch(ex){
+        return resolve(leafIds)
 
-        return reject(ex);
+      } catch(ex){
+
+        return reject(ex)
       }
-    });
+    })
   }
 
   /////////////////////////////////////////////////////////////////
@@ -645,3 +645,4 @@ export default class ViewerToolkit {
     return taskResults;
   }
 }
+

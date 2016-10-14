@@ -11,7 +11,7 @@ class SplitLayout extends React.Component {
 
   constructor () {
 
-    super()
+    super ()
 
     this.eventSvc = ServiceManager.getService(
       'EventSvc')
@@ -39,7 +39,6 @@ class SplitLayout extends React.Component {
   //
   /////////////////////////////////////////////////////////
   render() {
-
 
     switch(this.props.layoutType) {
 
@@ -70,17 +69,15 @@ class SplitLayout extends React.Component {
                 width={this.state.splitWidth}/>
 
               <SplitPane split="horizontal"
-                minSize={180} defaultSize={300}
+                minSize={230} defaultSize={300}
                 onChange={ (size) => {
                   if(this.eventTimeout) {
                     clearTimeout(this.eventTimeout)
                   }
                   this.eventTimeout = setTimeout(() => {
-
                     $('.Pane.horizontal.Pane2').css({
                       height: `calc(100% - ${size}px)`
                     })
-
                     this.setState(Object.assign({}, this.state, {
                       splitHeight: size
                     }))
@@ -127,17 +124,15 @@ class SplitLayout extends React.Component {
                 }, 100)
               }}>
               <SplitPane split="horizontal"
-                minSize={180} defaultSize={300}
+                minSize={230} defaultSize={300}
                 onChange={ (size) => {
                   if(this.eventTimeout) {
                     clearTimeout(this.eventTimeout)
                   }
                   this.eventTimeout = setTimeout(() => {
-
                     $('.Pane.horizontal.Pane2').css({
                       height: `calc(100% - ${size}px)`
                     })
-
                     this.setState(Object.assign({}, this.state, {
                       splitHeight: size
                     }))

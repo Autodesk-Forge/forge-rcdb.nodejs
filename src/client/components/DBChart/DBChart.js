@@ -1,25 +1,23 @@
 import React, { PropTypes } from 'react'
-import ServiceManager from 'SvcManager'
 import PieChart from './PieChart'
 import Legend from 'Legend'
 import './DBChart.scss'
 
 class DBChart extends React.Component {
 
-  /////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////
-  constructor () {
+  /////////////////////////////////////////////////////////////
+  componentDidMount () {
 
-    super()
-
-    this.eventSvc = ServiceManager.getService(
-      'EventSvc')
-
-    this.eventSvc.on('chart.redraw', (chartData) => {
-
-      this.draw(chartData)
+    $(window).resize(() => {
+      if(this.eventTimeout) {
+        clearTimeout(this.eventTimeout)
+      }
+      this.eventTimeout = setTimeout(() => {
+        this.draw(this.props.data)
+      }, 100)
     })
   }
 
@@ -59,13 +57,19 @@ class DBChart extends React.Component {
 
     $('#legend-container').empty()
 
+    $('#legend-container').css({
+      height: `${chartData.length * 20}px`
+    })
+
     this.legend = new Legend(
       '#legend-container',
       chartData)
 
-    this.legend.on('legend.click', (item) => {
+    this.legend.on('legend.click', (data) => {
 
-      this.props.onClick(item)
+      this.pieChart.pie.openSegment(data.index)
+
+      this.props.onClick(data.item)
     })
 
     $('#pie-chart-container').empty()
@@ -77,9 +81,14 @@ class DBChart extends React.Component {
         width: $('.db-chart').width()
       }
 
+      const filteredChartData = _.filter(chartData,
+        (entry) => {
+          return entry.value > 0
+        })
+
       this.pieChart = new PieChart(
         '#pie-chart-container',
-        chartData,
+        filteredChartData,
         { effects: { load: { effect: "none" }}})
 
       this.pieChart.on('pieSegment.click', (item) => {

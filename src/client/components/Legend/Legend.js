@@ -16,7 +16,8 @@ class Legend  extends EventsEmitter {
       textHorizontalSpacing: 32,
       textVerticalAlign: 13,
       verticalSpacing: 20,
-      textMaxLength: 50,
+      textStrokeWidth: 0.4,
+      textMaxLength: 25,
       circleRadius: 6,
       fontSize: 12,
       fontName: 'Artifakt',
@@ -33,11 +34,11 @@ class Legend  extends EventsEmitter {
 
     data.forEach((entry, idx) => {
 
-      this.drawElement(idx, entry)
+      this.drawElement(entry, idx)
     })
   }
 
-  drawElement(idx, element) {
+  drawElement(element, idx) {
 
     var circle = this.snap.paper.circle(
       2 * this.options.circleRadius,
@@ -55,29 +56,40 @@ class Legend  extends EventsEmitter {
 
     circle.click(() => {
 
-      this.emit('legend.click', element.item)
+      this.emit('legend.click', {
+        item: element.item,
+        index: idx
+      })
     })
 
     circle.addClass('clickable')
 
-    var txt = this.snap.paper.text(
-      this.options.textHorizontalSpacing,
-      this.options.textVerticalAlign +
-        idx * this.options.verticalSpacing,
-      this.getFormattedText(element.label))
+    element.legendLabel.forEach((label) => {
 
-    txt.attr({
-      font: `${this.options.fontSize}px ${this.options.fontName}`,
-      fill: this.options.textStrokeColor,
-      stroke: this.options.textFillColor
+      var txt = this.snap.paper.text(
+        this.options.textHorizontalSpacing +
+          label.spacing,
+        this.options.textVerticalAlign +
+          idx * this.options.verticalSpacing,
+        this.getFormattedText(label.text))
+
+      txt.attr({
+        font: `${this.options.fontSize}px ${this.options.fontName}`,
+        fill: this.options.textStrokeColor,
+        stroke: this.options.textFillColor,
+        strokeWidth: this.options.textStrokeWidth
+      })
+
+      txt.click(() => {
+
+        this.emit('legend.click', {
+          item: element.item,
+          index: idx
+        })
+      })
+
+      txt.addClass('clickable')
     })
-
-    txt.click(() => {
-
-      this.emit('legend.click', element.item)
-    })
-
-    txt.addClass('clickable')
   }
 
   getFormattedText(label) {

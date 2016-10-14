@@ -4,31 +4,31 @@
 }
 
 .legend-scroll {
-  height: calc(50% - 40px);
+  height: calc(50% - 25px);
   overflow: auto;
 }
 
 #legend-container {
-  margin-left: 5%;
-  height: 300px;
+  margin-left: 20px;
+  margin-top: 6px;
+  height: 100%;
 }
 
 #pie-chart-container {
-  height: calc(50% - 22px);
-  margin-left: 10%;
+  height: calc(50% - 25px);
+  margin-left: 10px;
   overflow: hidden;
 }
 
 .db-chart .footer {
   border-top: 1px solid #aeaeae;
-  margin-bottom: 10px;
   text-align: left;
-  margin-top: 10px;
   height: 26px;
 }
 
 .db-chart .footer .footer-panel {
   height: 100%;
+  float: left;
   width: 50%;
 }
 

@@ -5,6 +5,18 @@ import './HomeView.scss'
 
 class HomeView extends React.Component {
 
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  state = {
+    models: []
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
   async componentDidMount () {
 
     try {
@@ -15,7 +27,14 @@ class HomeView extends React.Component {
       const models = await modelSvc.getModels(
         'forge-rcdb')
 
-      console.log(models)
+      const modelsbyName =  _.sortBy(models,
+        (model) => {
+          return model.name
+        })
+
+      this.setState(Object.assign({}, this.state, {
+        models: modelsbyName
+      }))
 
     } catch(ex) {
 
@@ -23,10 +42,20 @@ class HomeView extends React.Component {
     }
   }
 
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  onModelClicked (model) {
 
+
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
   render() {
-
-    const { viewerState } = this.props
 
     const Text = ({content}) => {
       return (
@@ -36,21 +65,31 @@ class HomeView extends React.Component {
 
     return (
       <div className="home">
-        <div className="title">
+        <div className="welcome">
           <h2>Welcome!</h2>
-          <br/>
-          <br/>
-          <br/>
-          <Link className="link" to='/viewer?id=57efaead77c8eb0a560ef465' activeClassName='route--active'>
-            <Text content="Manufacturing Demo"/>
-          </Link>
-          <p>{'  -  '}</p>
-          <Link className="link" to='/viewer?id=57f3739777c879f48ad54a44' activeClassName='route--active'>
-            <Text content="AEC Demo"/>
-          </Link>
         </div>
         <img className='logo-hero' src="/resources/img/hero-banner.jpg"/>
         <div className="models">
+          <div className="title">
+            <img/>
+            Select a model ...
+          </div>
+
+          <div className="content responsive-grid">
+
+            {this.state.models.map((model) => {
+              return (
+                <a key={model.urn} href={`/viewer?id=${model._id}`}>
+                  <figure>
+                    <img src={"data:image/png;base64," + model.thumbnail}/>
+                    <figcaption>
+                    {model.name}
+                    </figcaption>
+                  </figure>
+                </a>)
+              })
+            }
+          </div>
         </div>
       </div>
     )

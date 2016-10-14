@@ -8,9 +8,9 @@ export default class SocketSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////////////
-  constructor(opts) {
+  constructor (config) {
 
-    super(opts)
+    super (config)
   }
 
   /////////////////////////////////////////////////////////////////
@@ -29,6 +29,8 @@ export default class SocketSvc extends BaseSvc {
   connect() {
 
     return new Promise((resolve, reject) => {
+
+      console.log(`${this._config.host}:${this._config.port}`)
 
       this.socket = ioClient.connect(
         `${this._config.host}:${this._config.port}`, {
@@ -58,8 +60,27 @@ export default class SocketSvc extends BaseSvc {
   //
   //
   ///////////////////////////////////////////////////////////////////
+  emit(msgId, msg) {
+
+    if(this.socket) {
+
+      this.socket.emit(msgId, msg)
+    }
+  }
+
+  ///////////////////////////////////////////////////////////////////
+  //
+  //
+  ///////////////////////////////////////////////////////////////////
   broadcast(msgId, msg, filter = null) {
 
+    if(this.socket) {
 
+      this.socket.emit('broadcast', {
+        filter,
+        msgId,
+        msg
+      })
+    }
   }
 }

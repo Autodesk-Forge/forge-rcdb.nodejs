@@ -1,19 +1,33 @@
 
-import { DropdownButton, NavDropdown, MenuItem, NavItem, Navbar, Button, Modal, Nav } from 'react-bootstrap'
-import LayoutSettingsDlg from './dialogs/LayoutSettingsDlg'
-import ThemeSettingsDlg from './dialogs/ThemeSettingsDlg'
+import DatabaseDlg from './dialogs/DatabaseDlg'
+import LayoutDlg from './dialogs/LayoutDlg'
+import ThemeDlg from './dialogs/ThemeDlg'
 import AboutDlg from './dialogs/AboutDlg'
 import React, { PropTypes } from 'react'
 import SpinningImg from './SpinningImg'
 import './dialogs/dialogs.scss'
 import './AppNavbar.scss'
+import {
+  DropdownButton,
+  NavDropdown,
+  MenuItem,
+  NavItem,
+  Navbar,
+  Button,
+  Modal,
+  Nav
+  } from 'react-bootstrap'
 
 export default class AppNavbar extends React.Component {
 
-  state= {
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  state = {
     databaseOpen: false,
-    themesOpen: false,
     layoutOpen: false,
+    themeOpen: false,
     aboutOpen: false
   }
 
@@ -21,7 +35,7 @@ export default class AppNavbar extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////////////
-  onSelectDatabase () {
+  openDatabaseDlg () {
 
     this.setState(Object.assign({}, this.state, {
       databaseOpen: true
@@ -32,7 +46,7 @@ export default class AppNavbar extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////////////
-  onSelectLayout () {
+  openLayoutDlg () {
 
     this.setState(Object.assign({}, this.state, {
       layoutOpen: true
@@ -43,22 +57,18 @@ export default class AppNavbar extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////////////
-  onSelectTheme () {
+  openThemeDlg () {
 
     this.setState(Object.assign({}, this.state, {
-      themesOpen: true
+      themeOpen: true
     }))
   }
 
-  themeChange (theme) {
-
-  }
-
   /////////////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////////////
-  onAbout () {
+  openAboutDlg () {
 
     this.setState(Object.assign({}, this.state, {
       aboutOpen: true
@@ -71,7 +81,7 @@ export default class AppNavbar extends React.Component {
   /////////////////////////////////////////////////////////////////
   render() {
 
-    const {appState} = this.props;
+    const { appState } = this.props;
 
     return (
 
@@ -106,49 +116,58 @@ export default class AppNavbar extends React.Component {
                   &nbsp; Settings &nbsp;
                 </div>
               }>
-              <MenuItem eventKey={3.1} onClick={() => {this.onSelectDatabase()}}>
+              <MenuItem eventKey={3.1} onClick={() => {this.openDatabaseDlg()}}>
                 <span className="fa fa-database"></span>
                 &nbsp; Select database ...
               </MenuItem>
               <MenuItem divider/>
-              <MenuItem eventKey={3.2} onClick={() => {this.onSelectLayout()}}>
+              <MenuItem eventKey={3.2} onClick={() => {this.openLayoutDlg()}}>
                 <span className="fa fa-th-large"></span>
                 &nbsp; Select layout ...
               </MenuItem>
-              <MenuItem eventKey={3.3} onClick={() => {this.onSelectTheme()}}>
+              <MenuItem divider/>
+              <MenuItem eventKey={3.3} onClick={() => {this.openThemeDlg()}}>
                 <span className="fa fa-paint-brush"></span>
                 &nbsp; Select theme ...
               </MenuItem>
             </NavDropdown>
 
-            <NavItem eventKey={4} onClick={() => {this.onAbout()}}>
+            <NavItem eventKey={4} onClick={() => {this.openAboutDlg()}}>
               <span className="forge-rcdb-span fa fa-question-circle"></span>
               &nbsp; About ...
             </NavItem>
           </Nav>
 
-        <LayoutSettingsDlg
-          close={()=>{ this.setState(Object.assign({}, this.state, {
-            layoutOpen: false
-          }))}}
-          layoutChange={this.props.layoutChange}
-          open={this.state.layoutOpen}
-        />
+          <DatabaseDlg
+            close={()=>{ this.setState(Object.assign({}, this.state, {
+              databaseOpen: false
+            }))}}
+            databaseChange={this.props.databaseChange}
+            open={this.state.databaseOpen}
+          />
 
-        <ThemeSettingsDlg
-          close={()=>{ this.setState(Object.assign({}, this.state, {
-            themesOpen: false
-          }))}}
-          onSelectItem={(theme) => this.themeChange(theme)}
-          open={this.state.themesOpen}
-        />
+          <LayoutDlg
+            close={()=>{ this.setState(Object.assign({}, this.state, {
+              layoutOpen: false
+            }))}}
+            layoutChange={this.props.layoutChange}
+            open={this.state.layoutOpen}
+          />
 
-        <AboutDlg
-          close={()=>{ this.setState(Object.assign({}, this.state, {
-            aboutOpen: false
-          }))}}
-          open={this.state.aboutOpen}
-        />
+          <ThemeDlg
+            close={()=>{ this.setState(Object.assign({}, this.state, {
+              themeOpen: false
+            }))}}
+            themeChange={this.props.themeChange}
+            open={this.state.themeOpen}
+          />
+
+          <AboutDlg
+            close={()=>{ this.setState(Object.assign({}, this.state, {
+              aboutOpen: false
+            }))}}
+            open={this.state.aboutOpen}
+          />
 
         </Navbar.Collapse>
       </Navbar>

@@ -12,6 +12,7 @@ import path from 'path'
 //Endpoints
 import DerivativesAPI from './api/endpoints/derivatives'
 import MaterialAPI from './api/endpoints/materials'
+import SocketAPI from './api/endpoints/socket'
 import UploadAPI from './api/endpoints/upload'
 import ModelAPI from './api/endpoints/models'
 import ForgeAPI from './api/endpoints/forge'
@@ -21,6 +22,7 @@ import OssAPI from './api/endpoints/oss'
 import DerivativesSvc from './api/services/DerivativesSvc'
 import ServiceManager from './api/services/SvcManager'
 import MongoDbSvc from './api/services/MongoDbSvc'
+import SocketSvc from './api/services/SocketSvc'
 import ForgeSvc from './api/services/ForgeSvc'
 import ModelSvc from './api/services/ModelSvc'
 import OssSvc from './api/services/OssSvc'
@@ -42,7 +44,7 @@ var app = express()
 app.set('trust proxy', 1)
 
 app.use(session({
-  secret: 'autodeskforge',
+  secret: 'forge-rcdb',
   cookie: {
     secure: (process.env.NODE_ENV === 'production'), //requires https
     maxAge: 1000 * 60 * 60 * 24 // 24h session
@@ -64,6 +66,7 @@ app.use(helmet())
 /////////////////////////////////////////////////////////////////////
 app.use('/api/derivatives', DerivativesAPI())
 app.use('/api/materials', MaterialAPI())
+app.use('/api/socket', SocketAPI())
 app.use('/api/upload', UploadAPI())
 app.use('/api/models', ModelAPI())
 app.use('/api/forge', ForgeAPI())
@@ -98,25 +101,8 @@ if (config.env === 'development') {
 
   app.use(require('webpack-hot-middleware')(compiler))
 
-  // Serve static assets from ~/src/static since Webpack is unaware of
-  // these files. This middleware doesn't need to be enabled outside
-  // of development since this directory will be copied into ~/dist
-  // when the application is compiled.
-  app.use('/', express.static(config.utils_paths.client('static')))
-
 } else {
 
-  _debug(
-    'Server is being run outside of live development mode, meaning it will ' +
-    'only serve the compiled application bundle in ~/dist. Generally you ' +
-    'do not need an application server for this and can instead use a web ' +
-    'server such as nginx to serve your static files. See the "deployment" ' +
-    'section in the README for more information on deployment strategies.'
-  )
-
-  // Serving ~/dist by default. Ideally these files should be served by
-  // the web server and not the app server, but this helps to demo the
-  // server in production.
   app.use('/', express.static(config.utils_paths.dist()))
 }
 
@@ -124,7 +110,7 @@ if (config.env === 'development') {
 //
 //
 /////////////////////////////////////////////////////////////////////
-async function runServer(app) {
+function runServer(app) {
 
   try {
 
@@ -178,6 +164,13 @@ async function runServer(app) {
 
     var server = app.listen(
       process.env.PORT || config.port || 3000, () => {
+
+        var socketSvc = new SocketSvc({
+          session,
+          server
+        })
+
+        ServiceManager.registerService(socketSvc)
 
         console.log('Server listening on: ')
         console.log(server.address())

@@ -142,13 +142,15 @@ export default class ToolPanelBase extends
       this.titleLabel || this.container.id,
       this.options)
 
-    if(this.options.movable) {
+    if (this.options.movable) {
+
       this.initializeMoveHandlers(this.title)
     }
 
-    if(this.options.closable){
+    if (this.options.closable) {
+
       this.closer = this.createCloseButton()
-      $(this.title).append(this.closer)
+      this.container.appendChild(this.closer)
     }
 
     var $content = $(this.htmlContent(

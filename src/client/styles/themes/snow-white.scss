@@ -27,6 +27,10 @@
   box-shadow: 0 0px 0px rgba(0,0,0,1);
 }
 
+.adsk-control.adsk-button:hover {
+  color: #be6835;
+}
+
 .adsk-control-tooltip {
   background-color: #FFFFFF;
   border: 1px solid rgb(72, 72, 72);
@@ -50,8 +54,14 @@
   border: 1px solid #888888;
 }
 
-.propertyPanel .treeview group, .propertyPanel .treeview leaf {
+.propertyPanel .treeview group,
+.propertyPanel .treeview leaf {
   color: #040404;
+}
+
+.propertyPanel .treeview group>header {
+  display: block;
+  background-color: #e6e6e6;
 }
 
 .modelStructurePanel .treeview header {

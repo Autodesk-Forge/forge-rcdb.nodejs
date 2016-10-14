@@ -131,3 +131,115 @@ class VisualReportExtension extends ExtensionBase {
 Autodesk.Viewing.theExtensionManager.registerExtension(
   VisualReportExtension.ExtensionId,
   VisualReportExtension);
+
+
+    AutodeskNamespace("Autodesk.ADN.Viewing.Extension");
+
+    function getLeafNodes(model, nodeId) {
+
+      return new Promise((resolve, reject)=>{
+
+        try{
+
+          var leafIds = [];
+
+          var instanceTree = model.getData().instanceTree
+
+          nodeId = nodeId || instanceTree.getRootId()
+
+          function _getLeafNodesRec(id){
+
+            var childCount = 0;
+
+            instanceTree.enumNodeChildren(id,
+              function(childId) {
+                _getLeafNodesRec(childId)
+                ++childCount
+              })
+
+            if(childCount == 0){
+              leafIds.push(id)
+            }
+          }
+
+          _getLeafNodesRec(nodeId)
+
+          return resolve(leafIds)
+
+        } catch(ex){
+
+          return reject(ex)
+        }
+      })
+    }
+
+    function nodeIdToFragIds(model, nodeId) {
+
+      var instanceTree = model.getData().instanceTree
+
+      var fragIds = []
+
+      instanceTree.enumNodeFragments(
+        nodeId, (fragId) => {
+          fragIds.push(fragId)
+        });
+
+      return fragIds
+    }
+
+
+    Autodesk.ADN.Viewing.Extension.Basic = function (viewer, options) {
+
+      Autodesk.Viewing.Extension.call(this, viewer, options);
+
+      var _this = this;
+
+      _this.load = function () {
+
+        var fragList = viewer.model.getFragmentList()
+
+        getLeafNodes(viewer.model).then((dbIds) => {
+
+          dbIds.forEach((dbId) => {
+
+            const fragIds = nodeIdToFragIds(
+              viewer.model, dbId)
+
+            fragIds.forEach((fragId) => {
+
+              var material = fragList.getMaterial(fragId)
+
+              if(material) {
+
+                material.opacity = 0.5
+                material.transparent = true
+                material.needsUpdate = true
+              }
+            })
+          })
+
+          viewer.impl.invalidate(true, true, true)
+        })
+
+
+        return true;
+      };
+
+      _this.unload = function () {
+
+        Autodesk.Viewing.theExtensionManager.unregisterExtension(
+          "Autodesk.ADN.Viewing.Extension.Basic");
+
+        return true;
+      };
+    };
+
+    Autodesk.ADN.Viewing.Extension.Basic.prototype =
+      Object.create(Autodesk.Viewing.Extension.prototype);
+
+    Autodesk.ADN.Viewing.Extension.Basic.prototype.constructor =
+      Autodesk.ADN.Viewing.Extension.Basic;
+
+    Autodesk.Viewing.theExtensionManager.registerExtension(
+      "Autodesk.ADN.Viewing.Extension.Basic",
+      Autodesk.ADN.Viewing.Extension.Basic);

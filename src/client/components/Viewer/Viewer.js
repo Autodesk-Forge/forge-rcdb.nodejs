@@ -1,3 +1,20 @@
+//////////////////////////////////////////////////////////////////////////
+// Copyright (c) Autodesk, Inc. All rights reserved
+// Written by Philippe Leefsma 2016 - ADN/Developer Technical Services
+//
+// Permission to use, copy, modify, and distribute this software in
+// object code form for any purpose and without fee is hereby granted,
+// provided that the above copyright notice appears in all copies and
+// that both that copyright notice and the limited warranty and
+// restricted rights notice below appear in all supporting
+// documentation.
+//
+// AUTODESK PROVIDES THIS PROGRAM "AS IS" AND WITH ALL FAULTS.
+// AUTODESK SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTY OF
+// MERCHANTABILITY OR FITNESS FOR A PARTICULAR USE.  AUTODESK, INC.
+// DOES NOT WARRANT THAT THE OPERATION OF THE PROGRAM WILL BE
+// UNINTERRUPTED OR ERROR FREE.
+/////////////////////////////////////////////////////////////////////
 import React from 'react'
 import './Viewer.scss'
 
@@ -15,19 +32,26 @@ class Viewer extends React.Component {
   }
 
   ///////////////////////////////////////////////////////////////////
-  //
+  // Async viewer event: returns a promise that resolves when the
+  // specified event is fired.
+  // Removes event handler automatically
   //
   ///////////////////////////////////////////////////////////////////
   viewerEvent (event) {
+
     return new Promise((resolve, reject) => {
-      this.viewer.addEventListener(event, () => {
-        resolve()
-      })
+
+      const handler = (e) => {
+        this.viewer.removeEventListener(event, handler)
+        resolve(e)
+      }
+
+      this.viewer.addEventListener(event, handler)
     })
   }
 
   ///////////////////////////////////////////////////////////////////
-  //
+  // Initialize viewer environment
   //
   ///////////////////////////////////////////////////////////////////
   initialize (env, tokenUrl) {
@@ -52,7 +76,7 @@ class Viewer extends React.Component {
   }
 
   ///////////////////////////////////////////////////////////////////
-  //
+  // Load a document from its URN
   //
   ///////////////////////////////////////////////////////////////////
   loadDocument (urn) {
@@ -70,7 +94,8 @@ class Viewer extends React.Component {
   }
 
   ///////////////////////////////////////////////////////////////////
-  //
+  // Component has been mounted so this container div is now created
+  // in the DOM and viewer can be instantiated
   //
   ///////////////////////////////////////////////////////////////////
   componentDidMount () {
@@ -86,7 +111,7 @@ class Viewer extends React.Component {
         viewer: this.viewer
       })
 
-      this.viewerSize = this.getSize(this.viewer)
+      //this.viewerSize = this.getSize(this.viewer)
 
       const events = [
         this.viewerEvent(Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT),
@@ -106,7 +131,8 @@ class Viewer extends React.Component {
   }
 
   ///////////////////////////////////////////////////////////////////
-  //
+  // Component will unmount so we can destroy the viewer to avoid
+  // memory leaks
   //
   ///////////////////////////////////////////////////////////////////
   componentWillUnmount () {
@@ -119,25 +145,25 @@ class Viewer extends React.Component {
   }
 
   ///////////////////////////////////////////////////////////////////
-  //
+  // Render component, resize the viewer if exists
   //
   ///////////////////////////////////////////////////////////////////
   render() {
 
-    //if (this.viewer && this.viewer.impl) {
-    //
-    //  this.viewer.resize()
-    //
-    //  const viewerSize = this.getSize(this.viewer)
-    //
-    //  if(this.viewerSize.width  !== viewerSize.width ||
-    //     this.viewerSize.height !== viewerSize.height) {
-    //
-    //    this.viewerSize = viewerSize
-    //
-    //    this.onResize()
-    //  }
-    //}
+    if (this.viewer && this.viewer.impl) {
+
+      this.viewer.resize()
+
+      //const viewerSize = this.getSize(this.viewer)
+      //
+      //if(this.viewerSize.width  !== viewerSize.width ||
+      //   this.viewerSize.height !== viewerSize.height) {
+      //
+      //  this.viewerSize = viewerSize
+      //
+      //  this.onResize()
+      //}
+    }
 
     return (
       <div className="viewer" ref={(div)=> this.viewerContainer=div}>

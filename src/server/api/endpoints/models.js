@@ -22,6 +22,7 @@ module.exports = function() {
         db + '-ModelSvc')
 
       var pageQuery = {
+        thumbnail: 1,
         name: 1,
         urn: 1,
         env: 1

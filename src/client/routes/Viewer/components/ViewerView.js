@@ -53,10 +53,20 @@ class ViewerView extends React.Component {
 
     try {
 
-      const materials = await this.materialSvc.getMaterials(
-        'forge-rcdb')
+      this.socketSvc.connect().then(() => {
 
-      this.props.loadDbItems(materials)
+        this.socketSvc.on('update.dbItem',
+          (updatedDbItem) => {
+
+            this.updateDbItem(updatedDbItem)
+          })
+      })
+
+      this.materialSvc.getMaterials(
+        'forge-rcdb').then((materials) => {
+
+          this.props.loadDbItems(materials)
+        })
 
     } catch(ex) {
 
@@ -74,22 +84,42 @@ class ViewerView extends React.Component {
       'forge-rcdb',
       updatedDbItem)
 
-    let item = this.materialMap[updatedDbItem.name]
+    this.socketSvc.broadcast(
+      'update.dbItem',
+      updatedDbItem)
 
-    item.dbMaterial = updatedDbItem
+    this.updateDbItem(updatedDbItem)
+  }
 
-    item.totalCost = item.totalMass * this.toUSD(
-      item.dbMaterial.price,
-      item.dbMaterial.currency)
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  updateDbItem (updatedDbItem) {
+
+    let entry = this.materialMap[updatedDbItem.name]
+
+    entry.dbMaterial = updatedDbItem
+
+    entry.totalCost = entry.totalMass * this.toUSD(
+      entry.dbMaterial.price,
+      entry.dbMaterial.currency)
 
     const chartData = this.buildChartData(
       this.materialMap,
-      'totalCost',
-      'USD')
+      'totalCost')
 
-    this.eventSvc.emit(
-      'chart.redraw',
-      chartData)
+    const filteredDbItems = this.state.filteredDbItems.map(
+      (dbItem) => {
+
+        return dbItem._id === updatedDbItem._id ?
+          updatedDbItem : dbItem
+      })
+
+    this.setState(Object.assign({}, this.state, {
+      filteredDbItems,
+      chartData
+    }))
   }
 
   /////////////////////////////////////////////////////////
@@ -225,7 +255,9 @@ class ViewerView extends React.Component {
       viewer.resize()
 
       viewer.loadExtension(CustomPropertyExtension, {
-        apiUrl: `/api/materials/${'forge-rcdb'}`
+        getCustomProperties: (nodeId) => {
+          return this.getCustomProperties(nodeId)
+        }
       })
 
       viewer.loadExtension(VisualReportExtension, {
@@ -253,26 +285,78 @@ class ViewerView extends React.Component {
         parentControl: ctrlGroup
       })
 
-      this.materialMap = await this.buildMaterialMap (
-        viewer, this.props.dbItems)
+      if (!this.materialMap) {
 
-      const filteredDbItems =
-        this.props.dbItems.filter((item) => {
-          return (this.materialMap[item.name] != null)
-        })
+        this.materialMap = await this.buildMaterialMap (
+          viewer, this.props.dbItems)
 
-      const chartData = this.buildChartData(
-        this.materialMap, 'totalCost', 'USD')
+        //console.log(this.materialMap)
 
-      this.setState(Object.assign({}, this.state, {
-        filteredDbItems,
-        chartData
-      }))
+        const filteredDbItems =
+          this.props.dbItems.filter((item) => {
+            return (this.materialMap[item.name] != null)
+          })
+
+        const chartData = this.buildChartData(
+          this.materialMap,
+          'totalCost')
+
+        this.setState(Object.assign({}, this.state, {
+          filteredDbItems,
+          chartData
+        }))
+      }
 
     } catch(ex) {
 
       console.log(ex)
     }
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  getCustomProperties (nodeId) {
+
+    return new Promise(async(resolve, reject) => {
+
+      try {
+
+        const prop = await ViewerToolkit.getProperty(
+          this.viewer.model, nodeId, 'Material')
+
+        const material = this.materialMap[
+          prop.displayValue].dbMaterial
+
+        resolve([ {
+            name: 'Material',
+            value: material.name,
+            dataType: 'text',
+            category: 'Database'
+          },{
+            name: 'Supplier',
+            value: material.supplier,
+            dataType: 'text',
+            category: 'Database'
+          },{
+            name: 'Price',
+            value: material.price,
+            dataType: 'text',
+            category: 'Database'
+          },{
+            name: 'Currency',
+            value: material.currency,
+            dataType: 'text',
+            category: 'Database'
+          }
+        ])
+
+      } catch (ex) {
+
+        reject(ex)
+      }
+    })
   }
 
   /////////////////////////////////////////////////////////////////
@@ -285,7 +369,7 @@ class ViewerView extends React.Component {
 
       try {
 
-        let materialMap = { }
+        let materialMap = {}
 
         const componentIds = await ViewerToolkit.getLeafNodes(
           viewer.model)
@@ -359,7 +443,7 @@ class ViewerView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////////
-  buildChartData (materialMap, fieldName, unit) {
+  buildChartData (materialMap, fieldName) {
 
     var keys = Object.keys (materialMap)
 
@@ -367,18 +451,50 @@ class ViewerView extends React.Component {
       .domain([0, keys.length * .33, keys.length * .66, keys.length])
       .range(['#B58929', '#C61C6F', '#268BD2', '#85992C'])
 
-    return keys.map((key, idx) => {
+    let totalCost = 0.0
+    let totalMass = 0.0
 
-      var item = materialMap[key]
+    for(let key in materialMap) {
+
+      const item = materialMap[key]
+
+      totalCost += item.totalCost
+      totalMass += item.totalMass
+    }
+
+    const chartData = keys.map((key, idx) => {
+
+      const item = materialMap[key]
+
+      const cost = item.totalCost.toFixed(2)
+      const mass = item.totalMass.toFixed(2)
+
+      const costPercent = (item.totalCost * 100 / totalCost).toFixed(2)
+      const massPercent = (item.totalMass * 100 / totalMass).toFixed(2)
+
+      const label = fieldName === 'totalCost' ?
+        `${key}: ${costPercent}% (${cost} USD)` :
+        `${key}: ${massPercent}% (${mass} Kg)`
+
+      const legendLabel = [
+        {text: key, spacing: 0},
+        {text: `% ${costPercent}`, spacing: 160},
+        {text: `$USD ${cost}`, spacing: 210},
+      ]
 
       return {
         value: parseFloat(item[fieldName].toFixed(2)),
         color: colors(idx),
-        item: item,
-        label: key,
-        unit
+        legendLabel,
+        label,
+        item
       }
     })
+
+    return _.sortBy(chartData,
+      (entry) => {
+        return entry.value * -1.0
+      })
   }
 
   /////////////////////////////////////////////////////////////////

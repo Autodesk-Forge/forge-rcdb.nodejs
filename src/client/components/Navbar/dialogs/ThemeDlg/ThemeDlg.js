@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react'
-import './ThemeSettingsDlg.scss'
 import Modal from 'react-modal'
+import './ThemeDlg.scss'
 
-export default class ThemeSettingsDlg extends React.Component {
+export default class ThemeDlg extends React.Component {
 
   /////////////////////////////////////////////////////////////////
   //
@@ -13,18 +13,18 @@ export default class ThemeSettingsDlg extends React.Component {
     super()
 
     this.items = [
-      {
-        img: '/resources/img/forge-theme.png',
-        layoutType: 'forge-theme',
-        caption: 'Forge',
-        key: '1'
-      },
-      {
-        img: '/resources/img/snow-white-theme.png',
-        theme: 'snow-white-theme',
-        caption: 'Snow White',
-        key: '2'
-      }
+      //{
+      //  img: '/resources/img/forge-theme.png',
+      //  layoutType: 'forge-theme',
+      //  caption: 'Forge',
+      //  key: '1'
+      //},
+      //{
+      //  img: '/resources/img/snow-white-theme.png',
+      //  theme: 'snow-white-theme',
+      //  caption: 'Snow White',
+      //  key: '2'
+      //}
     ]
   }
 
@@ -55,7 +55,7 @@ export default class ThemeSettingsDlg extends React.Component {
 
     return (
       <div>
-        <Modal className="dialog theme-settings"
+        <Modal className="dialog theme"
           isOpen={this.props.open}
           onRequestClose={() => {this.close()}}>
 
@@ -65,6 +65,8 @@ export default class ThemeSettingsDlg extends React.Component {
           </div>
 
           <div className="content responsive-grid">
+
+            NOT YET IMPLEMENTED :( ...
 
             {this.items.map((item) => {
               return (

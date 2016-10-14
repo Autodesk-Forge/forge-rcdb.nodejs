@@ -44,11 +44,11 @@ export default class PieChart extends EventsEmitter {
         placeholderParser: (index, replacements) => {
           Object.assign(replacements, {unit: data[index].unit})
         },
-        string: `{label}: {percentage}% ({value} {unit})`,
+        string: '{label}',
         styles: {
           fadeInSpeed: 250,
-          backgroundColor: "#efcb34",
-          backgroundOpacity: 1.0,
+          backgroundColor: "#bababa",
+          backgroundOpacity: 0.85,
           color: "#00",
           borderRadius: 2,
           font: "arial",

@@ -9,6 +9,7 @@ import React from 'react'
 //Services
 import ServiceManager from 'SvcManager'
 import MaterialSvc from 'MaterialSvc'
+import SocketSvc from 'SocketSvc'
 import ModelSvc from 'ModelSvc'
 import EventSvc from 'EventSvc'
 
@@ -36,7 +37,13 @@ const eventSvc = new EventSvc({
 
 })
 
+const socketSvc = new SocketSvc({
+  host: config.client.host,
+  port: config.client.port
+})
+
 ServiceManager.registerService(materialSvc)
+ServiceManager.registerService(socketSvc)
 ServiceManager.registerService(modelSvc)
 ServiceManager.registerService(eventSvc)
 

@@ -34,7 +34,8 @@ class CustomPropertyExtension extends ExtensionBase {
   load() {
 
     this._panel = new CustomPropertyPanel(
-      this._viewer)
+      this._viewer,
+      this._options)
 
     this._viewer.setPropertyPanel(
       this._panel)

@@ -1,13 +1,13 @@
-@media screen and (min-width: 360px) {
+@media screen and (min-width: 260px) {
 
-  .dialog.layout-settings {
-    left: calc(50% - 175px);
+  .dialog.theme {
+    left: calc(50% - 125px);
     top: calc(40% - 100px);
-    height: 188px;
-    width: 350px;
+    height: 174px;
+    width: 250px;
   }
 
-  .layout-settings .responsive-grid a {
+  .theme .responsive-grid a {
     text-decoration: none;
     display: inline-block;
     margin-bottom: 4px;
@@ -17,7 +17,7 @@
     width: 100px;
   }
 
-  .layout-settings .responsive-grid img {
+  .theme .responsive-grid img {
     transition: transform .2s ease-in-out;
     background: #ccc;
     max-width: 100%;
@@ -30,16 +30,16 @@
   }
 }
 
-@media screen and (max-width: 359px) {
+@media screen and (max-width: 259px) {
 
-  .dialog.layout-settings {
+  .dialog.theme {
     left: calc(50% - 175px);
     top: calc(40% - 100px);
     height: 188px;
-    width: 300px;
+    width: 200px;
   }
 
-  .layout-settings .responsive-grid a {
+  .theme .responsive-grid a {
     text-decoration: none;
     display: inline-block;
     margin-bottom: 4px;
@@ -49,7 +49,7 @@
     width: 100px;
   }
 
-  .layout-settings .responsive-grid img {
+  .theme .responsive-grid img {
     transition: transform .2s ease-in-out;
     background: #ccc;
     max-width: 100%;
@@ -62,30 +62,29 @@
   }
 }
 
-.layout-settings .responsive-grid {
+.theme .responsive-grid {
   height: calc(100% - 40px);
   justify-content: center;
   flex-wrap: wrap;
   display: flex;
 }
 
-.layout-settings .responsive-grid a:nth-of-type(3n) {
+.theme .responsive-grid a:nth-of-type(2n) {
   margin-right: 0;
 }
 
-.layout-settings .responsive-grid a:hover img {
+.theme .responsive-grid a:hover img {
   transform: scale(1.10);
 }
 
-.layout-settings .responsive-grid figure {
+.theme .responsive-grid figure {
   background-color: #e0e0e0;
   border: 1px solid #d2d2d2;
   border-radius: 4px;
   overflow: hidden;
-  height: 135px;
   margin: 0;
 }
 
-.layout-settings .responsive-grid figcaption {
+.theme .responsive-grid figcaption {
   margin: 4px;
 }
