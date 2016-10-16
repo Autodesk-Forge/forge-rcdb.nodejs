@@ -22,7 +22,6 @@ module.exports = function() {
         db + '-ModelSvc')
 
       var pageQuery = {
-        thumbnail: 1,
         name: 1,
         urn: 1,
         env: 1
@@ -42,6 +41,33 @@ module.exports = function() {
       res.json(response)
     }
     catch (error) {
+
+      res.status(error.statusCode || 404)
+      res.json(error)
+    }
+  })
+
+  //////////////////////////////////////////////////////////////////////////////
+  // get thumbnails batch mode
+  //
+  ///////////////////////////////////////////////////////////////////////////////
+  router.post('/:db/thumbnails', async(req, res)=> {
+
+    try {
+
+      var db = req.params.db
+
+      var modelSvc = ServiceManager.getService(
+        db + '-ModelSvc');
+
+      var modelIds = req.body
+
+      var response = await modelSvc.getThumbnails(
+        modelIds)
+
+      res.json(response)
+
+    } catch (error) {
 
       res.status(error.statusCode || 404)
       res.json(error)

@@ -1,6 +1,7 @@
 import ServiceManager from './SvcManager'
 import BaseSvc from './BaseSvc'
 import mongo from 'mongodb'
+import _ from 'lodash'
 
 export default class ModelSvc extends BaseSvc {
 
@@ -30,7 +31,7 @@ export default class ModelSvc extends BaseSvc {
 
     var _thisSvc = this
 
-    return new Promise(async(resolve, reject)=> {
+    return new Promise(async(resolve, reject) => {
 
       try {
 
@@ -48,8 +49,8 @@ export default class ModelSvc extends BaseSvc {
          query)
 
         return resolve(model)
-      }
-      catch(ex){
+
+      } catch(ex){
 
         return reject(ex)
       }
@@ -64,7 +65,7 @@ export default class ModelSvc extends BaseSvc {
 
     var _thisSvc = this
 
-    return new Promise(async(resolve, reject)=> {
+    return new Promise(async(resolve, reject) => {
 
       try {
 
@@ -76,8 +77,54 @@ export default class ModelSvc extends BaseSvc {
           opts)
 
         return resolve(models)
+
+      } catch(ex){
+
+        return reject(ex)
       }
-      catch(ex){
+    })
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  //
+  //
+  ///////////////////////////////////////////////////////////////////////////////
+  getThumbnails (modelIds, opts) {
+
+    var _thisSvc = this
+
+    return new Promise(async(resolve, reject) => {
+
+      try {
+
+        var dbSvc = ServiceManager.getService(
+          this._config.dbName)
+
+        let query = {
+          fieldQuery:{
+           $or: modelIds.map((id) => {
+             return { _id: new mongo.ObjectId(id) }
+           })
+          },
+          pageQuery: {
+            thumbnail: 1
+          }
+        }
+
+        const models = await dbSvc.getItems(
+          _thisSvc._config.collections.models,
+          Object.assign({}, opts, query))
+
+        const thumbnails = modelIds.map((id) => {
+
+          const mongoId = new mongo.ObjectId(id)
+
+          return _.find(models, { _id: mongoId }).thumbnail
+        })
+
+        return resolve(thumbnails)
+
+      } catch(ex){
 
         return reject(ex)
       }
@@ -99,8 +146,8 @@ export default class ModelSvc extends BaseSvc {
         //TODO NOT IMPLEMENTED
 
         return resolve()
-      }
-      catch(ex){
+
+      } catch(ex){
 
         return reject(ex)
       }
@@ -136,8 +183,8 @@ export default class ModelSvc extends BaseSvc {
           query)
 
         return resolve(model.sequence)
-      }
-      catch(ex){
+
+      } catch(ex){
 
         return reject(ex)
       }
@@ -286,10 +333,10 @@ export default class ModelSvc extends BaseSvc {
           }
         }
 
-      await dbSvc.updateItem(
-        _thisSvc._config.collections.models,
-        query,
-        opts)
+        await dbSvc.updateItem(
+          _thisSvc._config.collections.models,
+          query,
+          opts)
 
         return resolve(stateId)
 

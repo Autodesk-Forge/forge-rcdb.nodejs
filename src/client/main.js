@@ -9,12 +9,10 @@ import React from 'react'
 //Services
 import ServiceManager from 'SvcManager'
 import MaterialSvc from 'MaterialSvc'
+import FalcorSvc from 'FalcorSvc'
 import SocketSvc from 'SocketSvc'
 import ModelSvc from 'ModelSvc'
 import EventSvc from 'EventSvc'
-
-//default theme
-import './styles/themes/snow-white.scss'
 
 // ========================================================
 // Store Instantiation
@@ -42,8 +40,15 @@ const socketSvc = new SocketSvc({
   port: config.client.port
 })
 
+const falcorSvc = new FalcorSvc({
+  dataSources:[
+    {name: 'Models', apiUrl: '/api/falcor/models.json'}
+  ]
+})
+
 ServiceManager.registerService(materialSvc)
 ServiceManager.registerService(socketSvc)
+ServiceManager.registerService(falcorSvc)
 ServiceManager.registerService(modelSvc)
 ServiceManager.registerService(eventSvc)
 

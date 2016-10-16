@@ -41,7 +41,7 @@ WORK IN PROGRESS!!
 
 ## Live Demo
 
-[https://forge-rcdb.autodesk.io](https://forge-rcdb.autodesk.io/)
+[https://forge-rcdb.autodesk.io](https://forge-rcdb.autodesk.io)
 
  ![forge-rcdb](resources/img/forge-rcdb.jpg)
 

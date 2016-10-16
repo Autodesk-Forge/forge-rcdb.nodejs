@@ -3,8 +3,10 @@ import StateManagerExtension from 'Viewing.Extension.StateManager'
 import VisualReportExtension from 'Viewing.Extension.VisualReport'
 import Markup3DExtension from 'Viewing.Extension.Markup3D'
 import ViewerToolkit from 'Viewer.Toolkit'
+import JQueryLayout from './JQueryLayout'
 import ServiceManager from 'SvcManager'
 import SplitLayout from './SplitLayout'
+import FlexLayout from './FlexLayout'
 import GridLayout from './GridLayout'
 import './ViewerView.scss'
 import React from 'react'
@@ -267,11 +269,18 @@ class ViewerView extends React.Component {
 
       viewer.setLightPreset(1)
 
+      console.log()
+
       setTimeout(()=> {
         viewer.setLightPreset(0)
+
+        const appState = this.props.appState
+
+        const bgClr = appState.theme.viewer.backgroundColor
+
         viewer.setBackgroundColor(
-          245, 245, 245,
-          245, 245, 245)
+          bgClr[0], bgClr[1], bgClr[2],
+          bgClr[0], bgClr[1], bgClr[2])
       }, 600)
 
       viewer.loadExtension(StateManagerExtension, {
@@ -556,11 +565,50 @@ class ViewerView extends React.Component {
 
       case 'splitLayoutRight':
       case 'splitLayoutLeft':
-      default:
 
         return (
           <div className="viewer-view">
             <SplitLayout
+              onSelectDbItem={(dbItem, propagate) => this.onSelectDbItem(dbItem, propagate)}
+              onUpdateDbItem={(dbItem) => this.onUpdateDbItem(dbItem)}
+              onModelLoaded={(viewer) => this.onModelLoaded(viewer)}
+              onViewerCreated={(data) => this.onViewerCreated(data)}
+              onChartClicked={(data) => this.onChartClicked(data)}
+              filteredDbItems={this.state.filteredDbItems}
+              selectedDbItem={this.state.selectedDbItem}
+              chartData={this.state.chartData}
+              dbItems={this.props.dbItems}
+              layoutType={layoutType}
+            />
+          </div>
+        )
+
+      case 'flexLayoutRight':
+      case 'flexLayoutLeft':
+
+        return (
+          <div className="viewer-view">
+            <FlexLayout
+              onSelectDbItem={(dbItem, propagate) => this.onSelectDbItem(dbItem, propagate)}
+              onUpdateDbItem={(dbItem) => this.onUpdateDbItem(dbItem)}
+              onModelLoaded={(viewer) => this.onModelLoaded(viewer)}
+              onViewerCreated={(data) => this.onViewerCreated(data)}
+              onChartClicked={(data) => this.onChartClicked(data)}
+              filteredDbItems={this.state.filteredDbItems}
+              selectedDbItem={this.state.selectedDbItem}
+              chartData={this.state.chartData}
+              dbItems={this.props.dbItems}
+              layoutType={layoutType}
+            />
+          </div>
+        )
+
+      case 'jqueryLayoutRight':
+      case 'jqueryLayoutLeft':
+
+        return (
+          <div className="viewer-view">
+            <JQueryLayout
               onSelectDbItem={(dbItem, propagate) => this.onSelectDbItem(dbItem, propagate)}
               onUpdateDbItem={(dbItem) => this.onUpdateDbItem(dbItem)}
               onModelLoaded={(viewer) => this.onModelLoaded(viewer)}

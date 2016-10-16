@@ -91,6 +91,11 @@ webpackConfig.plugins.push(
 )
 
 // ------------------------------------
+// No Parse
+// ------------------------------------
+webpackConfig.module.noParse = /falcor/
+
+// ------------------------------------
 // Loaders
 // ------------------------------------
 // JavaScript / JSON

@@ -21,13 +21,29 @@ class HomeView extends React.Component {
 
     try {
 
-      const modelSvc = ServiceManager.getService(
+      const falcorSvc = ServiceManager.getService(
+        'FalcorSvc')
+
+      falcorSvc.Models.get('length').then((response) =>  {
+        //console.log(response.json)
+      })
+
+      falcorSvc.Models.get('[0..2]').then((response) =>  {
+        //console.log(response.json)
+        //console.log(response.json['0']['1'])
+      })
+
+      falcorSvc.Models.get(["byId", "57efaead77c8eb0a560ef465"]).then((response) =>  {
+        //console.log(response ? response.json : 'null')
+      })
+
+      this.modelSvc = ServiceManager.getService(
         'ModelSvc')
 
-      const models = await modelSvc.getModels(
+      const models = await this.modelSvc.getModels(
         'forge-rcdb')
 
-      const modelsbyName =  _.sortBy(models,
+      const modelsbyName = _.sortBy(models,
         (model) => {
           return model.name
         })
@@ -35,6 +51,8 @@ class HomeView extends React.Component {
       this.setState(Object.assign({}, this.state, {
         models: modelsbyName
       }))
+
+      this.batchRequestThumbnails(3)
 
     } catch(ex) {
 
@@ -46,9 +64,31 @@ class HomeView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////////////
-  onModelClicked (model) {
+  batchRequestThumbnails (size) {
 
+    _.chunk(this.state.models, size).forEach((modelChunk) => {
 
+      const modelIds = modelChunk.map((model) => {
+        return model._id
+      })
+
+      this.modelSvc.getThumbnails(
+        'forge-rcdb', modelIds).then((thumbnails) => {
+
+          const models = this.state.models.map((model) => {
+
+            const idx = modelIds.indexOf(model._id)
+
+            return (idx < 0 ?
+              model :
+              Object.assign({}, model, {thumbnail: thumbnails[idx]}))
+          })
+
+          this.setState(Object.assign({}, this.state, {
+            models
+          }))
+        })
+    })
   }
 
   /////////////////////////////////////////////////////////////////
@@ -68,7 +108,7 @@ class HomeView extends React.Component {
         <div className="welcome">
           <h2>Welcome!</h2>
         </div>
-        <img className='logo-hero' src="/resources/img/hero-banner.jpg"/>
+        <img className='logo-hero'/>
         <div className="models">
           <div className="title">
             <img/>
@@ -81,7 +121,8 @@ class HomeView extends React.Component {
               return (
                 <a key={model.urn} href={`/viewer?id=${model._id}`}>
                   <figure>
-                    <img src={"data:image/png;base64," + model.thumbnail}/>
+                    <img className={model.thumbnail ? "":"default-thumbnail"}
+                      src={model.thumbnail ? "data:image/png;base64," + model.thumbnail : ""}/>
                     <figcaption>
                     {model.name}
                     </figcaption>

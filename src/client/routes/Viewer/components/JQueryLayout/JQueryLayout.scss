@@ -1,0 +1,24 @@
+.jquery-layout {
+  flex-direction: column;
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.jquery-layout .row {
+  border: 1px solid green;
+  overflow-y: auto;
+  overflow-x: hide;
+  flex:0.25;
+}
+
+.jquery-layout .splitter {
+  transition: all ease-in 0.1s;
+  text-align: center;
+  width: 100%;
+  height: 4px;
+}
+
+.jquery-layout-draggable {
+  background: #00d3ff;
+}

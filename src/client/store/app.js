@@ -2,6 +2,7 @@
 // Constants
 // ------------------------------------
 export const LAYOUT_CHANGE = 'LAYOUT_CHANGE'
+export const THEME_CHANGE = 'THEME_CHANGE'
 
 // ------------------------------------
 // Actions
@@ -10,6 +11,13 @@ export function layoutChange (layoutType) {
   return {
     type    : LAYOUT_CHANGE,
     payload : layoutType
+  }
+}
+
+export function themeChange (theme) {
+  return {
+    type    : THEME_CHANGE,
+    payload : theme
   }
 }
 
@@ -23,6 +31,13 @@ const ACTION_HANDLERS = {
     return Object.assign({}, state, {
       layoutType: action.payload
     })
+  },
+
+  [THEME_CHANGE] : (state, action) => {
+
+    return Object.assign({}, state, {
+      theme: action.payload
+    })
   }
 }
 
@@ -30,7 +45,17 @@ const ACTION_HANDLERS = {
 // Reducer
 // ------------------------------------
 const initialState = {
-  layoutType: 'splitLayoutRight'
+  layoutType: 'splitLayoutRight',
+  theme: {
+    name: 'Snow-White',
+    css: '/resources/themes/snow-white.css',
+    viewer: {
+      backgroundColor: [
+        245, 245, 245,
+        245, 245, 245
+      ]
+    }
+  }
 }
 
 export default function reducer (state = initialState, action) {

@@ -4,9 +4,11 @@ import cookieParser from 'cookie-parser'
 import session from 'express-session'
 import bodyParser from 'body-parser'
 import favicon from 'serve-favicon'
+import store from 'connect-mongo'
 import express from 'express'
 import helmet from 'helmet'
 import debug from 'debug'
+import util from 'util'
 import path from 'path'
 
 //Endpoints
@@ -17,6 +19,9 @@ import UploadAPI from './api/endpoints/upload'
 import ModelAPI from './api/endpoints/models'
 import ForgeAPI from './api/endpoints/forge'
 import OssAPI from './api/endpoints/oss'
+
+//Falcor API
+import FalcorAPI from './api/falcor'
 
 //Services
 import DerivativesSvc from './api/services/DerivativesSvc'
@@ -43,15 +48,45 @@ var app = express()
 
 app.set('trust proxy', 1)
 
-app.use(session({
-  secret: 'forge-rcdb',
-  cookie: {
-    secure: (process.env.NODE_ENV === 'production'), //requires https
-    maxAge: 1000 * 60 * 60 * 24 // 24h session
-  },
-  resave: false,
-  saveUninitialized: true
-}))
+if(process.env.NODE_ENV === 'development') {
+
+  app.use(session({
+    secret: 'forge-rcdb',
+    cookie: {
+      secure: false,
+      maxAge: 1000 * 60 * 60 * 24 // 24h session
+    },
+    resave: false,
+    saveUninitialized: true
+  }))
+
+} else {
+
+  const dbConfig = config.databases[0]
+
+  const MongoStore = store(session)
+
+  app.use(session({
+    secret: 'forge-rcdb',
+    cookie: {
+      secure: true,
+      maxAge: 1000 * 60 * 60 * 24 // 24h session
+    },
+    resave: false,
+    saveUninitialized: true,
+
+    store: new MongoStore({
+      url: util.format('mongodb://%s:%s@%s:%d/%s',
+        dbConfig.user,
+        dbConfig.pass,
+        dbConfig.dbhost,
+        dbConfig.port,
+        dbConfig.dbName),
+      autoRemove: 'native',  // Default
+      autoRemoveInterval: 10 // In minutes. Default
+    })
+  }))
+}
 
 app.use('/resources', express.static(__dirname + '/../../resources'))
 app.use(favicon(__dirname + '/../../resources/img/forge.png'))
@@ -72,9 +107,18 @@ app.use('/api/models', ModelAPI())
 app.use('/api/forge', ForgeAPI())
 app.use('/api/oss', OssAPI())
 
+/////////////////////////////////////////////////////////////////////
+// Falcor Routes
+//
+/////////////////////////////////////////////////////////////////////
+app.use('/api/falcor/models.json', FalcorAPI.Model)
+
+/////////////////////////////////////////////////////////////////////
 // This rewrites all routes requests to the root /index.html file
 // (ignoring file requests). If you want to implement universal
-// rendering, you'll want to remove this middleware.
+// rendering, you'll want to remove this middleware
+//
+/////////////////////////////////////////////////////////////////////
 app.use(require('connect-history-api-fallback')())
 
 /////////////////////////////////////////////////////////////////////
@@ -163,7 +207,7 @@ function runServer(app) {
     })
 
     var server = app.listen(
-      process.env.PORT || config.port || 3000, () => {
+      process.env.PORT || config.server_port || 3000, () => {
 
         var socketSvc = new SocketSvc({
           session,

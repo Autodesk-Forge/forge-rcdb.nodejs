@@ -14,19 +14,19 @@ export default class LayoutDlg extends React.Component {
 
     this.items = [
       {
-        img: '/resources/img/split-layout-left.png',
+        className: 'split-layout-left',
         layoutType: 'splitLayoutLeft',
         caption: 'Split Layout - Left',
         key: '1'
       },
       {
-        img: '/resources/img/split-layout-right.png',
+        className: 'split-layout-right',
         layoutType: 'splitLayoutRight',
         caption: 'Split Layout - Right',
         key: '2'
       },
       {
-        img: '/resources/img/grid-layout.png',
+        className: 'grid-layout',
         layoutType: 'gridLayout',
         caption: 'Grid Layout',
         key: '3'
@@ -76,7 +76,7 @@ export default class LayoutDlg extends React.Component {
               return (
                 <a key={item.key} href="#" onClick={()=>{this.onClick(item)}}>
                   <figure>
-                    <img src={item.img}/>
+                    <img className={item.className}/>
                     <figcaption>
                     {item.caption}
                     </figcaption>

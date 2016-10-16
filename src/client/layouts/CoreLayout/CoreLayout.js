@@ -15,10 +15,11 @@ class CoreLayout extends React.Component {
 
   render () {
 
-    const {children} = this.props
+    const {appState, children} = this.props
 
     return (
       <div className='container text-center'>
+        <link rel="stylesheet" type="text/css" href={appState.theme.css} />
         <Header {...this.props} />
         <div className='core-layout__viewport'>
           {children}

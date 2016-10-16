@@ -8,21 +8,14 @@ export default class Markup3DTool extends EventsEmitter {
   // Class constructor
   //
   /////////////////////////////////////////////////////////////////
-  constructor (viewer) {
+  constructor (viewer, markupCollection) {
 
     super()
 
-    this.viewer = viewer
-
-    this.active = false
-
-    this.MarkupCollection = {}
+    this.markupCollection = markupCollection
 
     this.onSelectionChangedHandler =
       (e) => this.onSelectionChanged(e)
-
-    this.onExplodeHandler =
-      (e) => this.onExplode(e)
 
     this.onStartDragHandler =
       (e) => this.onStartDrag(e)
@@ -30,8 +23,9 @@ export default class Markup3DTool extends EventsEmitter {
     this.onEndDragHandler =
       (e) => this.onEndDrag(e)
 
-    this.onVisibilityHandler =
-      (e) => this.onVisibility(e)
+    this.viewer = viewer
+
+    this.active = false
   }
 
   /////////////////////////////////////////////////////////////////
@@ -67,22 +61,6 @@ export default class Markup3DTool extends EventsEmitter {
         event: Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
         handler: this.onSelectionChangedHandler,
         removeOnDeactivate: true
-      },
-      {
-        event: Autodesk.Viewing.EXPLODE_CHANGE_EVENT,
-        handler: this.onExplodeHandler
-      },
-      {
-        event: Autodesk.Viewing.ISOLATE_EVENT,
-        handler: this.onVisibilityHandler
-      },
-      {
-        event: Autodesk.Viewing.HIDE_EVENT,
-        handler: this.onVisibilityHandler
-      },
-      {
-        event: Autodesk.Viewing.SHOW_EVENT,
-        handler: this.onVisibilityHandler
       }
     ]
 
@@ -179,7 +157,7 @@ export default class Markup3DTool extends EventsEmitter {
 
       //cancel markup creation
       if (this.currentMarkup &&
-        !this.MarkupCollection[this.currentMarkup.id]) {
+        !this.markupCollection[this.currentMarkup.id]) {
 
         this.currentMarkup.off()
 
@@ -251,34 +229,6 @@ export default class Markup3DTool extends EventsEmitter {
   }
 
   /////////////////////////////////////////////////////////////////
-  // EXPLODE_CHANGE_EVENT Handler
-  //
-  /////////////////////////////////////////////////////////////////
-  onExplode (event) {
-
-    for (var id in this.MarkupCollection) {
-
-      var markup = this.MarkupCollection[id]
-
-      markup.updateFragmentTransform()
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////
-  // ISOLATE_EVENT Handler
-  //
-  /////////////////////////////////////////////////////////////////
-  onVisibility (event) {
-
-    for (var id in this.MarkupCollection) {
-
-      var markup = this.MarkupCollection[id]
-
-      markup.updateVisibilty(event)
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////////////
@@ -293,9 +243,9 @@ export default class Markup3DTool extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   onEndDrag (markup) {
 
-    if (!this.MarkupCollection[markup.id]) {
+    if (!this.markupCollection[markup.id]) {
 
-      this.MarkupCollection[markup.id] = markup
+      this.markupCollection[markup.id] = markup
     }
 
     this.currentMarkup = null
@@ -312,9 +262,9 @@ export default class Markup3DTool extends EventsEmitter {
       MarkupCollection: []
     }
 
-    for (var id in this.MarkupCollection) {
+    for (var id in this.markupCollection) {
 
-      var markup = this.MarkupCollection[id]
+      var markup = this.markupCollection[id]
 
       if (markup.bindToState) {
 
@@ -331,14 +281,14 @@ export default class Markup3DTool extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   restoreState (viewerState, immediate) {
 
-    for (var id in this.MarkupCollection) {
+    for (var id in this.markupCollection) {
 
-      var markup = this.MarkupCollection[id]
+      var markup = this.markupCollection[id]
 
       if (markup.bindToState) {
 
         markup.remove()
-        delete this.MarkupCollection[id]
+        delete this.markupCollection[id]
       }
     }
 
@@ -356,7 +306,7 @@ export default class Markup3DTool extends EventsEmitter {
         markup.on('drag.end',
           this.onEndDragHandler)
 
-        this.MarkupCollection[markup.id] = markup
+        this.markupCollection[markup.id] = markup
       })
     }
   }

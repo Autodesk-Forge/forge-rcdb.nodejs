@@ -77,6 +77,11 @@ webpackConfig.plugins.push(
 )
 
 // ------------------------------------
+// No Parse
+// ------------------------------------
+webpackConfig.module.noParse = /falcor/
+
+// ------------------------------------
 // Loaders
 // ------------------------------------
 // JavaScript / JSON
@@ -88,7 +93,7 @@ webpackConfig.module.loaders = [{
 }, {
   test   : /\.json$/,
   loader : 'json'
-}]
+} ]
 
 // ------------------------------------
 // Style Loaders

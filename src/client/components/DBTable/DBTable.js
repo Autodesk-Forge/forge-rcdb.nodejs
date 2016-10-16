@@ -12,6 +12,14 @@ class DBTable extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  state = {
+    scroll: 0
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   componentDidMount () {
 
     $('.footable').footable({
@@ -115,7 +123,11 @@ class DBTable extends React.Component {
             break
         }
 
-        //console.log($('.scroll tbody').scrollTop())
+        const scroll = $('.scroll tbody').scrollTop()
+
+        this.setState(Object.assign({}, this.state, {
+          scroll
+        }))
 
         this.props.onUpdateDbItem(dbItem)
       })
@@ -124,8 +136,6 @@ class DBTable extends React.Component {
 
       this.select.on('change', (e, option) => {
 
-        //console.log($('.scroll tbody').scrollTop())
-
         const id = $(option).parents('tr')[0].id
 
         let dbItem = _.find(this.props.dbItems, {
@@ -133,6 +143,12 @@ class DBTable extends React.Component {
         })
 
         dbItem.currency = $(option).attr('data-value')
+
+        const scroll = $('.scroll tbody').scrollTop()
+
+        this.setState(Object.assign({}, this.state, {
+          scroll
+        }))
 
         this.props.onUpdateDbItem(dbItem)
       })
@@ -145,6 +161,8 @@ class DBTable extends React.Component {
 
       $('.footable > thead > tr > th').on (
         'click', (e) => this.onHeaderClicked(e))
+
+      $('.scroll tbody').scrollTop(this.state.scroll)
     }
   }
 

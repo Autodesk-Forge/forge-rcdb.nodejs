@@ -45,4 +45,23 @@ export default class SocketSvc extends BaseSvc {
 
     return this._api.ajax(url)
   }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  getThumbnails (dbName, modelIds) {
+
+    var url = `${this._config.apiUrl}/${dbName}/thumbnails`
+
+    return this._api.ajax({
+      url: url,
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      data: JSON.stringify(modelIds)
+    })
+  }
 }

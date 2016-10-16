@@ -339,10 +339,14 @@ export default class Markup3D extends EventsEmitter {
   //
   //
   /////////////////////////////////////////////////////////////////
-  updateFragmentTransform(){
+  updateFragmentTransform () {
+
+    console.log('updateFragmentTransform')
 
     var pos = this.meshPosition(
       this.fragId)
+
+    console.log(pos)
 
     var meshTranslation = {
 

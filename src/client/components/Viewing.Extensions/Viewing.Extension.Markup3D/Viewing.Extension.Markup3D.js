@@ -6,6 +6,7 @@
 import Snap from 'imports-loader?this=>window,fix=>module.exports=0!snapsvg/dist/snap.svg.js'
 import Markup3DTool from './Viewing.Extension.Markup3D.Tool'
 import ExtensionBase from 'Viewer.ExtensionBase'
+import ViewerTooltip from 'Viewer.Tooltip'
 import ViewerToolkit from 'Viewer.Toolkit'
 
 class Markup3DExtension extends ExtensionBase {
@@ -18,10 +19,23 @@ class Markup3DExtension extends ExtensionBase {
 
     super(viewer, options)
 
-    this.markup3DTool = new Markup3DTool(viewer)
+    this.markupCollection = {}
+
+    this.markup3DTool = new Markup3DTool(
+      viewer,
+      this.markupCollection)
+
+    this.tooltip = new ViewerTooltip(
+      viewer)
 
     this._viewer.toolController.registerTool(
       this.markup3DTool)
+
+    this.onExplodeHandler =
+      (e) => this.onExplode(e)
+
+    this.onVisibilityHandler =
+      (e) => this.onVisibility(e)
   }
 
   /////////////////////////////////////////////////////////////////
@@ -81,6 +95,32 @@ class Markup3DExtension extends ExtensionBase {
       this._control.container.classList.remove('active')
     })
 
+    this.eventHandlers = [
+      {
+        event: Autodesk.Viewing.EXPLODE_CHANGE_EVENT,
+        handler: this.onExplodeHandler
+      },
+      {
+        event: Autodesk.Viewing.ISOLATE_EVENT,
+        handler: this.onVisibilityHandler
+      },
+      {
+        event: Autodesk.Viewing.HIDE_EVENT,
+        handler: this.onVisibilityHandler
+      },
+      {
+        event: Autodesk.Viewing.SHOW_EVENT,
+        handler: this.onVisibilityHandler
+      }
+    ]
+
+    this.eventHandlers.forEach((entry) => {
+
+      this._viewer.addEventListener(
+        entry.event,
+        entry.handler)
+    })
+
     console.log('Viewing.Extension.Markup3D loaded')
 
     return true
@@ -91,6 +131,16 @@ class Markup3DExtension extends ExtensionBase {
   //
   /////////////////////////////////////////////////////////////////
   unload () {
+
+    this.eventHandlers.forEach((entry) => {
+
+      if(entry.removeOnDeactivate) {
+
+        this._viewer.removeEventListener(
+          entry.event,
+          entry.handler)
+      }
+    })
 
     this.parentControl.removeControl(
       this._control)
@@ -131,6 +181,35 @@ class Markup3DExtension extends ExtensionBase {
     this.markup3DTool.restoreState(
       viewerState, immediate)
   }
+
+  /////////////////////////////////////////////////////////////////
+  // EXPLODE_CHANGE_EVENT Handler
+  //
+  /////////////////////////////////////////////////////////////////
+  onExplode (event) {
+
+    for (var id in this.markupCollection) {
+
+      var markup = this.markupCollection[id]
+
+      markup.updateFragmentTransform()
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////
+  // ISOLATE_EVENT Handler
+  //
+  /////////////////////////////////////////////////////////////////
+  onVisibility (event) {
+
+    for (var id in this.markupCollection) {
+
+      var markup = this.markupCollection[id]
+
+      markup.updateVisibilty(event)
+    }
+  }
+
 }
 
 Autodesk.Viewing.theExtensionManager.registerExtension(
