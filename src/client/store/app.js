@@ -45,7 +45,7 @@ const ACTION_HANDLERS = {
 // Reducer
 // ------------------------------------
 const initialState = {
-  layoutType: 'splitLayoutRight',
+  layoutType: 'flexLayoutRight',
   theme: {
     name: 'Snow-White',
     css: '/resources/themes/snow-white.css',

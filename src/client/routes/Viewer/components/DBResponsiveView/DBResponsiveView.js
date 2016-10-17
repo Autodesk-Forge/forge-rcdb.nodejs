@@ -11,7 +11,7 @@ class DBResponsiveView extends React.Component {
 
     const height = $('.db-responsive-view').height()
 
-    if(height && height < 250) {
+    if(height && height < 185) {
 
       return (
         <div className="db-responsive-view">
