@@ -42,6 +42,7 @@ WORK IN PROGRESS!!
     // so for dev you need to run
     npm run build-dev
 
+    http://localhost:3000
 
 For database configuration, refer to config/
 
@@ -63,13 +64,13 @@ Model Schema:
 
 Material Schema:
 
-   {
-     "_id" : ObjectId("57ee6b26dfda94c109157449"),
-     "name" : "Steel",
-     "supplier" : "Autodesk",
-     "currency" : "USD",
-     "price" : 2.5
-   }
+    {
+      "_id" : ObjectId("57ee6b26dfda94c109157449"),
+      "name" : "Steel",
+      "supplier" : "Autodesk",
+      "currency" : "USD",
+      "price" : 2.5
+    }
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
