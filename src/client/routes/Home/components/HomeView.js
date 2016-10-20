@@ -111,8 +111,7 @@ class HomeView extends React.Component {
         <img className='logo-hero'/>
         <div className="models">
           <div className="title">
-            <img/>
-            Select a model ...
+            Select Model
           </div>
 
           <div className="content responsive-grid">

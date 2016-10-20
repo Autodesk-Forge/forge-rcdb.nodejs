@@ -154,7 +154,13 @@ class ViewerView extends React.Component {
     const dbIds = item ? item.components : []
 
     this.viewer.fitToView(dbIds)
-    this.viewer.isolate(dbIds)
+
+    ViewerToolkit.isolate(
+      this.viewer.model,
+      dbIds, 0.0).then(() => {
+
+        this.viewer.impl.invalidate(true, true, true)
+      })
   }
 
   /////////////////////////////////////////////////////////
@@ -236,16 +242,32 @@ class ViewerView extends React.Component {
 
     try {
 
-      const removedControls = [
-        '#navTools',
-        '#toolbar-panTool',
-        '#toolbar-zoomTool',
-        '#toolbar-settingsTool',
-        '#toolbar-firstPersonTool',
-        '#toolbar-cameraSubmenuTool'
-      ]
+      const modelOptions = this.model.options || {
+          removedControls: [
+            '#navTools',
+            '#toolbar-settingsTool'
+          ],
+          retargetedControls: [
 
-      $(removedControls.join(',')).css({display:'none'})
+          ]
+        }
+
+      const removedControls =
+        modelOptions.removedControls || []
+
+      $(removedControls.join(',')).css({
+        display:'none'
+      })
+
+      const retargetedControls =
+        modelOptions.retargetedControls || []
+
+      retargetedControls.forEach((ctrl) => {
+
+        var $ctrl = $(ctrl.id).detach()
+
+        $(ctrl.parentId).append($ctrl)
+      })
 
       var ctrlGroup = new Autodesk.Viewing.UI.ControlGroup(
       ' forge-rcdb-toolbar')
@@ -262,17 +284,17 @@ class ViewerView extends React.Component {
         }
       })
 
-      viewer.loadExtension(VisualReportExtension, {
-        container: $('.viewer-view')[0],
-        parentControl: ctrlGroup
-      })
+      viewer.loadExtension(VisualReportExtension,
+        Object.assign({}, {
+          container: $('.viewer-view')[0],
+          parentControl: ctrlGroup
+        }, modelOptions.visualReport))
 
-      viewer.setLightPreset(1)
-
-      console.log()
+      viewer.setLightPreset(0)
 
       setTimeout(()=> {
-        viewer.setLightPreset(0)
+
+        viewer.setLightPreset(1)
 
         const appState = this.props.appState
 
@@ -280,7 +302,7 @@ class ViewerView extends React.Component {
 
         viewer.setBackgroundColor(
           bgClr[0], bgClr[1], bgClr[2],
-          bgClr[0], bgClr[1], bgClr[2])
+          bgClr[3], bgClr[4], bgClr[5])
       }, 600)
 
       viewer.loadExtension(StateManagerExtension, {
@@ -290,16 +312,15 @@ class ViewerView extends React.Component {
         model: this.model
       })
 
-      viewer.loadExtension(Markup3DExtension, {
-        parentControl: ctrlGroup
-      })
+      viewer.loadExtension(Markup3DExtension,
+        Object.assign({}, {
+          parentControl: ctrlGroup
+        }, modelOptions.markup3D))
 
       if (!this.materialMap) {
 
         this.materialMap = await this.buildMaterialMap (
           viewer, this.props.dbItems)
-
-        //console.log(this.materialMap)
 
         const filteredDbItems =
           this.props.dbItems.filter((item) => {
@@ -487,8 +508,8 @@ class ViewerView extends React.Component {
 
       const legendLabel = [
         {text: key, spacing: 0},
-        {text: `% ${costPercent}`, spacing: 160},
-        {text: `$USD ${cost}`, spacing: 210},
+        {text: `% ${costPercent}`, spacing: 170},
+        {text: `$USD ${cost}`, spacing: 230},
       ]
 
       return {
@@ -541,7 +562,7 @@ class ViewerView extends React.Component {
   /////////////////////////////////////////////////////////
   render() {
 
-    const {layoutType} = this.props.appState
+    const { layoutType } = this.props.appState
 
     switch (layoutType) {
 
@@ -624,58 +645,35 @@ class ViewerView extends React.Component {
         )
     }
   }
+
+  //createDBItems() {
+  //
+  //  const componentIds = await ViewerToolkit.getLeafNodes(
+  //    this.viewer.model)
+  //
+  //  var componentsMap = await ViewerToolkit.mapComponentsByProp(
+  //    this.viewer.model,
+  //    'Material',
+  //    componentIds);
+  //
+  //  const materialSvc = ServiceManager.getService(
+  //    'MaterialSvc')
+  //
+  //  Object.keys(componentsMap).forEach(async(key) => {
+  //
+  //    const res = await
+  //    materialSvc.postMaterial('forge-rcdb', {
+  //      name: key,
+  //      supplier: 'Autodesk',
+  //      currency: 'USD',
+  //      price: 1.0
+  //    })
+  //
+  //    console.log(res)
+  //  })
+  //}
 }
 
 export default ViewerView
 
-
-//  //this.viewer.loadExtension(CanvasInfoExtension, {
-//  //  materials: this.props.dbItems,
-//  //  parentControl: ctrlGroup,
-//  //  autoShow: true
-//  //})
-//
-//  this.eventSvc.on('updateDbItem', (updatedDbItem) => {
-//
-//    const canvasInfoExt = this.viewer.getExtension(
-//      CanvasInfoExtension)
-//
-//    canvasInfoExt.updateMaterial(updatedDbItem)
-//  })
-//
-//  //setInterval(()=> {
-//  //
-//  //  var idx = Math.floor((Math.random() * 100)%this.props.dbItems.length)
-//  //
-//  //  var m = this.props.dbItems[idx]
-//  //
-//  //  m.price = Math.random() * 100
-//  //
-//  //  this.updateMaterial(m)
-//  //
-//  //}, 1000)
-//
-//  //const componentIds = await ViewerToolkit.getLeafNodes(
-//  //  this.viewer.model)
-//  //
-//  //var componentsMap = await ViewerToolkit.mapComponentsByProp(
-//  //  this.viewer.model,
-//  //  'Material',
-//  //  componentIds);
-//  //
-//  //const materialSvc = ServiceManager.getService(
-//  //  'MaterialSvc')
-//  //
-//  //Object.keys(componentsMap).forEach(async(key) => {
-//  //
-//  //  const res = await materialSvc.postMaterial('forge-rcdb', {
-//  //    name: key,
-//  //    supplier: 'Autodesk',
-//  //    currency: 'USD',
-//  //    price: 1.0
-//  //  })
-//  //
-//  //  console.log(res)
-//  //})
-//})
 

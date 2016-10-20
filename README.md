@@ -36,6 +36,40 @@ To run these samples, you need your own Forge API credentials:
 
 WORK IN PROGRESS!!
 
+    npm install
+
+    // by default post-install step will run a production build
+    // so for dev you need to run
+    npm run build-dev
+
+
+For database configuration, refer to config/
+
+Model Schema:
+
+    {
+      "_id" : "mongoDB Id",
+      "urn" : "model URN",
+      "name" : "Model name",
+      "path" : "...path of local svf for dev env ...",
+      "env" : "AutodeskProduction" || "Local",
+      "sequence" : [],
+      "states" : [],
+      "options" : {
+      //extensions options
+      },
+      "thumbnail" : "... base64 encoded thumbnail ... "
+    }
+
+Material Schema:
+
+   {
+     "_id" : ObjectId("57ee6b26dfda94c109157449"),
+     "name" : "Steel",
+     "supplier" : "Autodesk",
+     "currency" : "USD",
+     "price" : 2.5
+   }
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 

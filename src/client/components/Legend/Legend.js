@@ -16,10 +16,10 @@ class Legend  extends EventsEmitter {
       textHorizontalSpacing: 32,
       textVerticalAlign: 13,
       verticalSpacing: 20,
-      textStrokeWidth: 0.4,
+      textStrokeWidth: 0.1,
       textMaxLength: 25,
       circleRadius: 6,
-      fontSize: 12,
+      fontSize: 13,
       fontName: 'Artifakt',
       strokeWidth: 3
     }

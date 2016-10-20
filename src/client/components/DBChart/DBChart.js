@@ -76,15 +76,18 @@ class DBChart extends React.Component {
 
     if(chartData && chartData.length) {
 
-      const parentSize = {
-        height: $('.db-chart').height(),
-        width: $('.db-chart').width()
-      }
-
       const filteredChartData = _.filter(chartData,
         (entry) => {
           return entry.value > 0
         })
+
+      const size = Math.min(
+        $('#pie-chart-container').height(),
+        $('#pie-chart-container').width())
+
+      $('#pie-chart-container').css({
+        'margin-left': `calc(50% - ${size/2}px)`
+      })
 
       this.pieChart = new PieChart(
         '#pie-chart-container',

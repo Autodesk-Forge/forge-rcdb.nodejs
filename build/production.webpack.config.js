@@ -11,7 +11,7 @@ debug('Creating configuration.')
 const webpackConfig = {
   name    : 'client',
   target  : 'web',
-  devtool : config.compiler_devtool,
+  devtool : false,
   resolve : {
     root       : [
       config.utils_paths.client(),

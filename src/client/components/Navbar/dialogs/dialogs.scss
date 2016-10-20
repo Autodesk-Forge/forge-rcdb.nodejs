@@ -1,9 +1,14 @@
+.ReactModalPortal {
+  position: absolute;
+  z-index: 10;
+}
 
 .dialog {
   border: 1px solid #b3b3b3;
   background-color: #f6f6f6;
   position: absolute;
   border-radius: 4px;
+  z-index: 10;
 }
 
 .dialog .title {

@@ -14,15 +14,15 @@ export default class DatabaseDlg extends React.Component {
 
     this.items = [
       //{
-      //  img: '/resources/img/split-layout-left.png',
-      //  layoutType: 'splitLayoutLeft',
-      //  caption: 'Split Layout - Left',
+      //  img: '/resources/img/forge-theme.png',
+      //  layoutType: 'forge-theme',
+      //  caption: 'Forge',
       //  key: '1'
       //},
       //{
-      //  img: '/resources/img/split-layout-right.png',
-      //  layoutType: 'splitLayoutRight',
-      //  caption: 'Split Layout - Right',
+      //  img: '/resources/img/snow-white-theme.png',
+      //  theme: 'snow-white-theme',
+      //  caption: 'Snow White',
       //  key: '2'
       //}
     ]
@@ -43,7 +43,7 @@ export default class DatabaseDlg extends React.Component {
   /////////////////////////////////////////////////////////////////
   onClick (item) {
 
-    this.props.layoutChange(item.layoutType)
+    this.props.onSelectItem(item)
     this.props.close()
   }
 
@@ -55,18 +55,18 @@ export default class DatabaseDlg extends React.Component {
 
     return (
       <div>
-        <Modal className="dialog layout"
+        <Modal className="dialog database"
           isOpen={this.props.open}
           onRequestClose={() => {this.close()}}>
 
           <div className="title">
             <img/>
-            <b>Select database ...</b>
+            <b>Select Database ...</b>
           </div>
 
           <div className="content responsive-grid">
 
-            NOT YET IMPLEMENTED :( ...
+          NOT YET IMPLEMENTED :( ...
 
             {this.items.map((item) => {
               return (
@@ -78,8 +78,8 @@ export default class DatabaseDlg extends React.Component {
                     </figcaption>
                   </figure>
                 </a>)
-              })
-            }
+            })
+              }
           </div>
 
         </Modal>

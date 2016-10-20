@@ -15,7 +15,7 @@ class CoreLayout extends React.Component {
 
   render () {
 
-    const {appState, children} = this.props
+    const { appState, children } = this.props
 
     return (
       <div className='container text-center'>

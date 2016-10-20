@@ -27,7 +27,6 @@ export default class PinMarker extends GraphicMarker {
       strokeWidth: 3
     });
 
-    this.setVisible(true);
     this.activateLock3d(viewer);
     this.setWorldPoint(worldPoint);
 
@@ -38,20 +37,20 @@ export default class PinMarker extends GraphicMarker {
   //
   //
   /////////////////////////////////////////////////////////////////
-  setVisible(show) {
+  setVisible (show) {
 
-    if(show){
+    if (show) {
 
-      clearTimeout(this.timeoutId);
+      clearTimeout(this.timeoutId)
       this.timeoutId = setTimeout(()=>{
-        super.setVisible(true);
-      }, 400);
-    }
-    else{
+        super.setVisible(true)
+      }, 400)
 
-      clearTimeout(this.timeoutId);
-      this.timeoutId = 0;
-      super.setVisible(false);
+    } else {
+
+      clearTimeout(this.timeoutId)
+      this.timeoutId = 0
+      super.setVisible(false)
     }
   }
 }

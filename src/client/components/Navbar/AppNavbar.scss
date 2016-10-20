@@ -28,7 +28,7 @@
 .forge-rcdb-navbar .dropdown .caret {
   position: relative;
   top: -60px;
-  left: 45px;
+  left: 35px;
 }
 
 .navbar-default {
@@ -36,6 +36,7 @@
   border-bottom-color: #aeaeae;
   background-color: #ffffff;
   border-bottom-width: 1px;
+  z-index: 3;
 }
 
 .forge-rcdb-navbar .app-logo {
@@ -67,9 +68,4 @@
   position: relative;
   font-size: 26px;
   top: 3px;
-}
-
-.ReactModalPortal {
-  position: absolute;
-  z-index: 1;
 }

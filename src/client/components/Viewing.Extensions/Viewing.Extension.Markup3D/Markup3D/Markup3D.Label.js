@@ -9,47 +9,49 @@ export default class LabelMarker extends GraphicMarker {
   //
   //
   /////////////////////////////////////////////////////////////////
-  constructor(parent, viewer, dbId, screenPoint) {
+  constructor(parent, viewer, dbId, screenPoint, properties = null) {
 
     super(viewer.container, {x: 100, y: 22});
 
-    this.controlsId = this.guid();
+    this.controlsId = this.guid()
 
-    this.svgId = this.guid();
+    this.properties = properties
 
-    this.viewer = viewer;
+    this.svgId = this.guid()
 
-    this.parent = parent;
+    this.viewer = viewer
 
-    this.dbId = dbId;
+    this.parent = parent
+
+    this.dbId = dbId
 
     this.setContent(
       `<svg id="${this.svgId}" class="markup3D"></svg>
        <div id="${this.controlsId}" class="markup3D"></div>
       `
-    );
+    )
 
     $(`#${this._markerId}`).css({
       'pointer-events': 'auto'
-    });
+    })
 
     $(`#${this.svgId}`).css({
       cursor: 'pointer'
-    });
+    })
 
-    var snap = Snap($(`#${this.svgId}`)[0]);
+    var snap = Snap($(`#${this.svgId}`)[0])
 
     this.label = snap.paper.text(0, 15,
-      'Place label ...');
+      'Place label ...')
 
     this.label.attr({
       fontFamily: 'Arial',
       fontSize: '13px',
       stroke: '#000000'
-    });
+    })
 
-    this.setVisible(true);
-    this.setScreenPoint(screenPoint);
+    this.setVisible(true)
+    this.setScreenPoint(screenPoint)
 
     this.onMouseUpHandler = (event)=>
       this.onMouseUp(event);
@@ -72,9 +74,9 @@ export default class LabelMarker extends GraphicMarker {
       'dblclick',
       this.onDoubleClickHandler);
 
-    this.createControls();
+    this.createControls()
 
-    this.showControls(false);
+    this.showControls(false)
 
     this.timeoutId = 0;
   }
@@ -85,15 +87,15 @@ export default class LabelMarker extends GraphicMarker {
   /////////////////////////////////////////////////////////////////
   setVisible(show) {
 
-    if(show){
+    if (show) {
 
-      clearTimeout(this.timeoutId);
-      this.timeoutId = 0;
-      super.setVisible(true);
-    }
-    else{
+      clearTimeout(this.timeoutId)
+      this.timeoutId = 0
+      super.setVisible(true)
 
-      clearTimeout(this.timeoutId);
+    } else{
+
+      clearTimeout(this.timeoutId)
       this.timeoutId = setTimeout(()=>{
         super.setVisible(false);
       }, 400);
@@ -156,11 +158,12 @@ export default class LabelMarker extends GraphicMarker {
       var prop = await Toolkit.getProperty(
         this.viewer.model,
         this.dbId,
-        LabelMarker.prototype.labelName);
+        LabelMarker.prototype.labelName,
+        'Not Available')
 
       this.updateLabel(
         prop.displayName,
-        prop.displayValue);
+        prop.displayValue)
 
       this.item = {
         name: prop.displayName,
@@ -169,7 +172,7 @@ export default class LabelMarker extends GraphicMarker {
     }
     else {
 
-      this.showControls(true);
+      this.showControls(true)
     }
   }
 
@@ -179,11 +182,12 @@ export default class LabelMarker extends GraphicMarker {
   /////////////////////////////////////////////////////////////////
   async createControls() {
 
-    var properties = await Toolkit.getProperties(
+    const properties = await Toolkit.getProperties(
       this.viewer.model,
-      this.dbId);
+      this.dbId,
+      this.properties)
 
-    properties = properties.sort((a, b)=>{
+    const sortedProperties = properties.sort((a, b)=>{
 
       var nameA = a.displayName.toLowerCase();
       var nameB = b.displayName.toLowerCase();
@@ -191,7 +195,7 @@ export default class LabelMarker extends GraphicMarker {
       return nameA > nameB ? 1 : -1;
     });
 
-    var menuItems = properties.map((prop)=>{
+    var menuItems = sortedProperties.map((prop)=>{
 
       return {
         name: prop.displayName,
@@ -217,10 +221,10 @@ export default class LabelMarker extends GraphicMarker {
       this.item = item;
     });
 
-    var occlusionSwitchId = this.guid();
-    var bindSwitchId = this.guid();
-    var btnRemoveId = this.guid();
-    var btnExitId = this.guid();
+    var occlusionSwitchId = this.guid()
+    var bindSwitchId = this.guid()
+    var btnRemoveId = this.guid()
+    var btnExitId = this.guid()
 
     var html = `
       <br>
@@ -365,7 +369,7 @@ export default class LabelMarker extends GraphicMarker {
   //
   //
   /////////////////////////////////////////////////////////////////
-  onMouseDown(event) {
+  onMouseDown (event) {
 
     if(!this.parent.dragging) {
 
@@ -377,7 +381,7 @@ export default class LabelMarker extends GraphicMarker {
   //
   //
   /////////////////////////////////////////////////////////////////
-  onDoubleClick(event) {
+  onDoubleClick (event) {
 
     this.showControls(true);
   }

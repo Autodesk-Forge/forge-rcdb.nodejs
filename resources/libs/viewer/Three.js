@@ -6538,6 +6538,10 @@ THREE.Plane.prototype = {
 			var normalMatrix = optionalNormalMatrix || m1.getNormalMatrix( matrix );
 			var newNormal = v1.copy( this.normal ).applyMatrix3( normalMatrix );
 
+			// LMV-Patch: [HB] Added missing re-normalization. Note that it is important to do this here
+			// already, because it also affects the recomputation of this.constant.
+			newNormal.normalize();
+
 			var newCoplanarPoint = this.coplanarPoint( v2 );
 			newCoplanarPoint.applyMatrix4( matrix );
 
@@ -27143,6 +27147,7 @@ THREE.FontUtils.generateShapes = function ( text, parameters ) {
 
 } )( THREE.FontUtils );
 
+// LMV-Patch [TS] Commented out for use in node-lmv
 // To use the typeface.js face files, hook up the API
 //self._typeface_js = { faces: THREE.FontUtils.faces, loadFace: THREE.FontUtils.loadFace };
 //THREE.typeface_js = self._typeface_js;

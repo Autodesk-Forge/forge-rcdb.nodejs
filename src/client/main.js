@@ -9,8 +9,9 @@ import React from 'react'
 //Services
 import ServiceManager from 'SvcManager'
 import MaterialSvc from 'MaterialSvc'
-import FalcorSvc from 'FalcorSvc'
+import StorageSvc from 'StorageSvc'
 import SocketSvc from 'SocketSvc'
+import FalcorSvc from 'FalcorSvc'
 import ModelSvc from 'ModelSvc'
 import EventSvc from 'EventSvc'
 
@@ -23,8 +24,24 @@ const store = createStore(initialState)
 // ========================================================
 // Services Initialization
 // ========================================================
+
+const falcorSvc = new FalcorSvc({
+  dataSources:[
+    {name: 'Models', apiUrl: '/api/falcor/models.json'}
+  ]
+})
+
+const storageSvc = new StorageSvc({
+  storageKey: 'Autodesk.Forge-RCDB.Storage'
+})
+
 const materialSvc = new MaterialSvc({
   apiUrl: '/api/materials'
+})
+
+const socketSvc = new SocketSvc({
+  host: config.client.host,
+  port: config.client.port
 })
 
 const modelSvc = new ModelSvc({
@@ -35,18 +52,11 @@ const eventSvc = new EventSvc({
 
 })
 
-const socketSvc = new SocketSvc({
-  host: config.client.host,
-  port: config.client.port
-})
-
-const falcorSvc = new FalcorSvc({
-  dataSources:[
-    {name: 'Models', apiUrl: '/api/falcor/models.json'}
-  ]
-})
-
+// ========================================================
+// Services Registration
+// ========================================================
 ServiceManager.registerService(materialSvc)
+ServiceManager.registerService(storageSvc)
 ServiceManager.registerService(socketSvc)
 ServiceManager.registerService(falcorSvc)
 ServiceManager.registerService(modelSvc)

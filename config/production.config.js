@@ -37,10 +37,15 @@ const config = {
   // ----------------------------------
   compiler_babel : {
     cacheDirectory : true,
-    plugins        : ['transform-runtime'],
-    presets        : ['es2015', 'react', 'stage-0']
+    plugins: [
+      'transform-runtime',
+      'transform-react-constant-elements',
+      //'transform-react-inline-elements',
+      'transform-react-remove-prop-types'
+    ],
+    presets: ['es2015', 'react', 'stage-0']
   },
-  compiler_devtool         : 'source-map',
+  compiler_devtool         : false,
   compiler_hash_type       : 'hash',
   compiler_fail_on_warning : false,
   compiler_quiet           : false,

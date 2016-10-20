@@ -10,7 +10,9 @@ export default class Markup3D extends EventsEmitter {
   //
   //
   /////////////////////////////////////////////////////////////////
-  constructor (viewer, screenPoint, dbId, fragId, worldPoint = null) {
+  constructor (viewer, screenPoint, dbId, fragId,
+               worldPoint = null,
+               properties = null) {
 
     super()
 
@@ -24,7 +26,7 @@ export default class Markup3D extends EventsEmitter {
 
     this.fragId = fragId
 
-    this.visible = true
+    this.visible = false
 
     this.dbId = dbId
 
@@ -37,6 +39,9 @@ export default class Markup3D extends EventsEmitter {
     this.pinMarker = new PinMarker(
       viewer,
       this.initialWorldPoint)
+
+    this.onTrackerModified = _.throttle(
+      this.onTrackerModified, 10)
 
     this.trackerModifiedHandler =
       (screenPoint) => this.onTrackerModified(
@@ -88,7 +93,8 @@ export default class Markup3D extends EventsEmitter {
       this,
       this.viewer,
       this.dbId,
-      this.startPoint)
+      this.startPoint,
+      properties)
 
     this.setLeaderEndPoint(screenPoint)
   }
@@ -115,11 +121,11 @@ export default class Markup3D extends EventsEmitter {
   //
   //
   /////////////////////////////////////////////////////////////////
-  setVisible (show) {
+  setVisible (show, force = false) {
 
     //update only if it's a toggle
 
-    if (show === this.visible) {
+    if (show === this.visible && !force) {
 
       return
     }
@@ -341,12 +347,8 @@ export default class Markup3D extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   updateFragmentTransform () {
 
-    console.log('updateFragmentTransform')
-
     var pos = this.meshPosition(
       this.fragId)
-
-    console.log(pos)
 
     var meshTranslation = {
 
@@ -484,14 +486,15 @@ export default class Markup3D extends EventsEmitter {
   //
   //
   /////////////////////////////////////////////////////////////////
-  static load(viewer, state) {
+  static load(viewer, state, options = {}) {
 
     var markup = new Markup3D(
       viewer,
       state.screenPoint,
       state.dbId,
       state.fragId,
-      state.worldPoint)
+      state.worldPoint,
+      options.properties)
 
     markup.bindToState =
       state.bindToState
@@ -505,7 +508,19 @@ export default class Markup3D extends EventsEmitter {
     markup.setLabelItem(
       state.item)
 
-    markup.update()
+    if (markup.occlusion && markup.checkOcclusion()) {
+
+      markup.labelMarker.setVisible(false)
+      markup.pinMarker.setVisible(false)
+      markup.leader.setVisible(false)
+      markup.visible = false
+      markup.update()
+
+    } else {
+
+      markup.update()
+      markup.setVisible(true, true)
+    }
 
     return markup
   }

@@ -1,4 +1,4 @@
-import LeaderNote from './Markup3D/Markup3D'
+import Markup3D from './Markup3D/Markup3D'
 import './Viewing.Extension.Markup3D.scss'
 import EventsEmitter from 'EventsEmitter'
 
@@ -8,7 +8,7 @@ export default class Markup3DTool extends EventsEmitter {
   // Class constructor
   //
   /////////////////////////////////////////////////////////////////
-  constructor (viewer, markupCollection) {
+  constructor (viewer, markupCollection, options = {}) {
 
     super()
 
@@ -23,9 +23,11 @@ export default class Markup3DTool extends EventsEmitter {
     this.onEndDragHandler =
       (e) => this.onEndDrag(e)
 
+    this.options = options
+
     this.viewer = viewer
 
-    this.active = false
+    this.create = false
   }
 
   /////////////////////////////////////////////////////////////////
@@ -47,12 +49,24 @@ export default class Markup3DTool extends EventsEmitter {
   }
 
   /////////////////////////////////////////////////////////////////
-  // Activate Tool
+  //
   //
   /////////////////////////////////////////////////////////////////
   activate () {
 
-    this.active = true
+  }
+
+  deactivate () {
+
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  startCreate () {
+
+    this.create = true
 
     this.currentMarkup = null
 
@@ -71,16 +85,16 @@ export default class Markup3DTool extends EventsEmitter {
         entry.handler)
     })
 
-    this.emit('activate')
+    this.emit('startCreate')
   }
 
   /////////////////////////////////////////////////////////////////
-  // Deactivate tool
+  //
   //
   /////////////////////////////////////////////////////////////////
-  deactivate () {
+  stopCreate () {
 
-    this.active = false
+    this.create = false
 
     this.currentMarkup = null
 
@@ -96,7 +110,7 @@ export default class Markup3DTool extends EventsEmitter {
 
     this.eventHandlers = null
 
-    this.emit('deactivate')
+    this.emit('stopCreate')
   }
 
   /////////////////////////////////////////////////////////////////
@@ -110,9 +124,9 @@ export default class Markup3DTool extends EventsEmitter {
       y: event.clientY
     }
 
-    console.log('-------------------')
-    console.log('Tool:handleSingleClick(event, button)')
-    console.log(event)
+    //console.log('-------------------')
+    //console.log('Tool:handleSingleClick(event, button)')
+    //console.log(event)
 
     var viewport = this.viewer.navigation.getScreenViewport()
 
@@ -125,7 +139,7 @@ export default class Markup3DTool extends EventsEmitter {
       n.x,
       n.y)
 
-    console.log(worldPoint)
+    //console.log(worldPoint)
 
     return false
   }
@@ -167,9 +181,9 @@ export default class Markup3DTool extends EventsEmitter {
 
         this.currentMarkup = null
 
-      } else { //deactivate tool
+      } else {
 
-        this.deactivate()
+        this.stopCreate()
       }
     }
 
@@ -205,11 +219,15 @@ export default class Markup3DTool extends EventsEmitter {
 
       if (worldPoint) {
 
-        var markup = new LeaderNote(
+        var markup = new Markup3D(
           this.viewer,
           this.screenPoint,
           sel.dbIdArray[0],
-          sel.fragIdsArray[0])
+          sel.fragIdsArray[0],
+          null,
+          this.options.properties)
+
+        markup.setVisible(true)
 
         markup.on('drag.start', (markup) => {
           this.onStartDragHandler (markup)
@@ -296,8 +314,10 @@ export default class Markup3DTool extends EventsEmitter {
 
       viewerState.Markup3D.MarkupCollection.forEach((state) => {
 
-        var markup = LeaderNote.load(
-          this.viewer, state)
+        var markup = Markup3D.load(
+          this.viewer,
+          state,
+          this.options)
 
         markup.on('drag.start', (markup) => {
           this.onStartDragHandler (markup)
@@ -308,6 +328,23 @@ export default class Markup3DTool extends EventsEmitter {
 
         this.markupCollection[markup.id] = markup
       })
+
+      const onStateRestored = () => {
+
+        this.viewer.removeEventListener(
+          Autodesk.Viewing.VIEWER_STATE_RESTORED_EVENT,
+          onStateRestored);
+
+        setTimeout(() => {
+
+
+
+        }, 1250);
+      }
+
+      this.viewer.addEventListener(
+        Autodesk.Viewing.VIEWER_STATE_RESTORED_EVENT,
+        onStateRestored);
     }
   }
 }

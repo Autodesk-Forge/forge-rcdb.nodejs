@@ -12,8 +12,11 @@ class DBTable extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  state = {
-    scroll: 0
+  constructor () {
+
+    super()
+
+    this.scroll = 0
   }
 
   /////////////////////////////////////////////////////////
@@ -36,15 +39,16 @@ class DBTable extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  onRowClicked (e) {
-
-    const id = $(e.target).parent()[0].id
+  onRowClicked (id) {
 
     const selectedDbItem = _.find(
-      this.props.dbItems, { _id:id })
+      this.props.dbItems, { _id: id })
 
-    this.props.onSelectDbItem(
-      selectedDbItem, false)
+    if(selectedDbItem) {
+
+      this.props.onSelectDbItem(
+        selectedDbItem, false)
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -110,8 +114,14 @@ class DBTable extends React.Component {
         switch(updateRecord.fieldName) {
 
           case 'price':
-            dbItem[updateRecord.fieldName] =
-              parseFloat(updateRecord.fieldValue)
+
+            const price = parseFloat(updateRecord.fieldValue)
+
+            if(!isNaN(price)) {
+
+              dbItem[updateRecord.fieldName] = price
+            }
+
             break
 
           case 'currency':
@@ -122,12 +132,6 @@ class DBTable extends React.Component {
               updateRecord.fieldValue
             break
         }
-
-        const scroll = $('.scroll tbody').scrollTop()
-
-        this.setState(Object.assign({}, this.state, {
-          scroll
-        }))
 
         this.props.onUpdateDbItem(dbItem)
       })
@@ -144,12 +148,6 @@ class DBTable extends React.Component {
 
         dbItem.currency = $(option).attr('data-value')
 
-        const scroll = $('.scroll tbody').scrollTop()
-
-        this.setState(Object.assign({}, this.state, {
-          scroll
-        }))
-
         this.props.onUpdateDbItem(dbItem)
       })
 
@@ -157,12 +155,56 @@ class DBTable extends React.Component {
         'click')
 
       $('.footable > tbody > tr > td:first-child').on (
-        'click', (e) => this.onRowClicked(e))
+        'click', (e) => {
+          const id = $(e.target).parent()[0].id
+          this.onRowClicked(id)
+        })
+
+      $('.footable > tbody > tr > td:first-child label').on (
+        'click', (e) => {
+          const id = $(e.target).parent().parent()[0].id
+          this.onRowClicked(id)
+        })
 
       $('.footable > thead > tr > th').on (
         'click', (e) => this.onHeaderClicked(e))
 
-      $('.scroll tbody').scrollTop(this.state.scroll)
+      $("td[contenteditable='true']", '.footable').on (
+        'keydown keypress',  (e) => {
+
+          // Allow only numeric for "Price"
+          if($(e.target).index() === 2) {
+
+            //backspace,  ->, <-, delete, '.', ',',
+            const allowed = [8, 37, 39, 46, 188, 190]
+
+            if (allowed.indexOf(e.keyCode) > -1 ||
+               (e.keyCode > 47 && e.keyCode < 58)) {
+
+              //console.log('OK')
+
+            } else {
+
+              e.preventDefault()
+            }
+
+          } else {
+
+            // prevents ENTER
+            if (e.keyCode === 13) {
+
+              e.preventDefault()
+
+            }
+          }
+        })
+
+      $('.scroll tbody').scroll(()=>{
+
+        this.scroll = $('.scroll tbody').scrollTop()
+      })
+
+      $('.scroll tbody').scrollTop(this.scroll)
     }
   }
 
@@ -182,22 +224,22 @@ class DBTable extends React.Component {
             <thead>
               <tr>
                 <th className="db-column fooId">
-                Material
+                  <label>Material</label>
                 </th>
                 <th className="db-column fooEditable"
                   data-hide="phone,tablet">
-                Supplier
+                  Supplier
                 </th>
                 <th className="db-column fooEditable">
-                Price (/kg)
+                  Price (/kg)
                 </th>
                 <th className="db-column"
                   data-hide="phone"
                   data-ft-control="select">
-                Currency
+                  Currency
                 </th>
                 <th className="db-column hidden">
-                _id
+                  _id
                 </th>
               </tr>
             </thead>

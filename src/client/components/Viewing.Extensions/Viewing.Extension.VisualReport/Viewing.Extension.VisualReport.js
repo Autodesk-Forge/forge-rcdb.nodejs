@@ -15,7 +15,7 @@ class VisualReportExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////////////
   constructor(viewer, options) {
 
-    super(viewer, options);
+    super (viewer, options)
   }
 
   /////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@ class VisualReportExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////////////
   static get ExtensionId() {
 
-    return 'Viewing.Extension.VisualReport';
+    return 'Viewing.Extension.VisualReport'
   }
 
   /////////////////////////////////////////////////////////////////
@@ -56,9 +56,14 @@ class VisualReportExtension extends ExtensionBase {
       })
     })
 
-    var properties = await ViewerToolkit.getPropertyList(
-      this._viewer.model,
-      componentIds);
+    let properties = this._options.properties
+
+    if (!properties) {
+
+      properties = await ViewerToolkit.getPropertyList(
+        this._viewer.model,
+        componentIds)
+    }
 
     this._control = ViewerToolkit.createButton(
       'toolbar-visual-report',

@@ -17,19 +17,24 @@ class Markup3DExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////////////
   constructor (viewer, options) {
 
-    super(viewer, options)
+    super (viewer, options)
 
     this.markupCollection = {}
 
     this.markup3DTool = new Markup3DTool(
       viewer,
-      this.markupCollection)
+      this.markupCollection,
+      options)
 
     this.tooltip = new ViewerTooltip(
       viewer)
 
     this._viewer.toolController.registerTool(
       this.markup3DTool)
+
+    var toolName = this.markup3DTool.getName()
+
+    this._viewer.toolController.activateTool(toolName)
 
     this.onExplodeHandler =
       (e) => this.onExplode(e)
@@ -58,15 +63,13 @@ class Markup3DExtension extends ExtensionBase {
       'glyphicon glyphicon-check',
       'Markup 3D', () => {
 
-        var toolName = this.markup3DTool.getName()
+        if (this.markup3DTool.create) {
 
-        if (this.markup3DTool.active) {
-
-          this._viewer.toolController.deactivateTool(toolName)
+          this.markup3DTool.stopCreate()
 
         } else {
 
-          this._viewer.toolController.activateTool(toolName)
+          this.markup3DTool.startCreate()
         }
       })
 
@@ -85,12 +88,12 @@ class Markup3DExtension extends ExtensionBase {
     this.parentControl.addControl(
       this._control)
 
-    this.markup3DTool.on('activate', () => {
+    this.markup3DTool.on('startCreate', () => {
 
       this._control.container.classList.add('active')
     })
 
-    this.markup3DTool.on('deactivate', () => {
+    this.markup3DTool.on('stopCreate', () => {
 
       this._control.container.classList.remove('active')
     })

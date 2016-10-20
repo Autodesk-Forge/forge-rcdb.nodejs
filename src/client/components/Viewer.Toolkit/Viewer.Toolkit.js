@@ -127,34 +127,41 @@ export default class ViewerToolkit {
   //
   //
   /////////////////////////////////////////////////////////////////
-  static getLeafNodes(model, dbId) {
+  static getLeafNodes (model, dbIds) {
 
     return new Promise((resolve, reject)=>{
 
-      try{
+      try {
 
-        var leafIds = [];
+        const instanceTree = model.getData().instanceTree
 
-        var instanceTree = model.getData().instanceTree
+        dbIds = dbIds || instanceTree.getRootId()
 
-        dbId = dbId || instanceTree.getRootId()
+        const dbIdArray = Array.isArray(dbIds) ? dbIds : [dbIds]
 
-        function _getLeafNodesRec(id){
+        let leafIds = []
+
+        const getLeafNodesRec = (id) => {
 
           var childCount = 0;
 
-          instanceTree.enumNodeChildren(id,
-            function(childId) {
-              _getLeafNodesRec(childId)
+          instanceTree.enumNodeChildren(id, (childId) => {
+
+              getLeafNodesRec(childId)
+
               ++childCount
             })
 
-          if(childCount == 0){
+          if (childCount == 0) {
+
             leafIds.push(id)
           }
         }
 
-        _getLeafNodesRec(dbId)
+        for (var i = 0; i < dbIdArray.length; ++i) {
+
+          getLeafNodesRec(dbIdArray[i])
+        }
 
         return resolve(leafIds)
 
@@ -169,34 +176,36 @@ export default class ViewerToolkit {
   // get node fragIds
   //
   /////////////////////////////////////////////////////////////////
-  static getFragIds(model, dbId) {
+  static getFragIds (model, dbIds) {
 
-    return new Promise(async(resolve, reject)=>{
+    return new Promise(async(resolve, reject) => {
 
       try{
 
-        var instanceTree = model.getData().instanceTree;
+        const dbIdArray = Array.isArray(dbIds) ? dbIds : [dbIds]
 
-        var leafIds = await ViewerToolkit.getLeafNodes(
-          model, dbId);
+        const instanceTree = model.getData().instanceTree
 
-        var fragIds = [];
+        const leafIds = await ViewerToolkit.getLeafNodes(
+          model, dbIdArray)
 
-        for(var i=0; i<leafIds.length; ++i){
+        let fragIds = []
+
+        for(var i=0; i< leafIds.length; ++i) {
 
           instanceTree.enumNodeFragments(
-            leafIds[i],(fragId)=> {
-              fragIds.push(fragId);
-            });
+            leafIds[i], (fragId) => {
+              fragIds.push(fragId)
+            })
         }
 
-        return resolve(fragIds);
-      }
-      catch(ex){
+        return resolve(fragIds)
 
-        return reject(ex);
+      } catch(ex){
+
+        return reject(ex)
       }
-    });
+    })
   }
 
   /////////////////////////////////////////////////////////////////
@@ -241,26 +250,45 @@ export default class ViewerToolkit {
   // Gets properties from component
   //
   /////////////////////////////////////////////////////////////////
-  static getProperties(model, dbId) {
+  static getProperties(model, dbId, requestedProps = null) {
 
-    return new Promise(async(resolve, reject)=>{
+    return new Promise((resolve, reject) => {
 
-      try{
+      try {
 
-        model.getProperties(dbId, function(result) {
+        if (requestedProps) {
 
-          if (result.properties);
-            return resolve(
-              result.properties);
+          const propTasks = requestedProps.map((displayName) => {
 
-          return reject('No Properties');
-        });
+            return ViewerToolkit.getProperty(
+              model, dbId, displayName, 'Not Available')
+          })
+
+          Promise.all(propTasks).then((properties) => {
+
+            resolve(properties)
+          })
+
+        } else {
+
+          model.getProperties(dbId, function(result) {
+
+            if (result.properties) {
+
+              return resolve(
+                result.properties)
+            }
+
+            return reject('No Properties')
+          })
+        }
+
+      } catch (ex) {
+
+          console.log(ex)
+          return reject(ex)
       }
-      catch(ex){
-
-          return reject(ex);
-      }
-    });
+    })
   }
 
   /////////////////////////////////////////////////////////////////
@@ -643,6 +671,58 @@ export default class ViewerToolkit {
     _executeTaskOnModelTreeRec(rootId);
 
     return taskResults;
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  static isolate (model, dbIds, opacity) {
+
+    return new Promise(async(resolve, reject) => {
+
+      try {
+
+        const fragList = model.getFragmentList()
+
+        const targetIds = Array.isArray(dbIds) ? dbIds : [dbIds]
+
+        const targetLeafIds = await ViewerToolkit.getLeafNodes(
+          model, targetIds)
+
+        const leafIds = await ViewerToolkit.getLeafNodes(model)
+
+        const leafTasks = leafIds.map((dbId) => {
+
+          return new Promise(async(resolveLeaf) => {
+
+            const fragIds = await ViewerToolkit.getFragIds(
+              model, dbId)
+
+            const show = !targetLeafIds.length  ||
+              targetLeafIds.indexOf(dbId) > -1
+
+            fragIds.forEach((fragId) => {
+
+              var material = fragList.getMaterial(fragId)
+
+              if (material) {
+
+                material.opacity = show ? 1.0 : opacity
+                material.transparent = true
+                material.needsUpdate = true
+              }
+            })
+          })
+        })
+
+        return Promise.all(leafTasks)
+
+      } catch(ex){
+
+        return reject(ex)
+      }
+    })
   }
 }
 

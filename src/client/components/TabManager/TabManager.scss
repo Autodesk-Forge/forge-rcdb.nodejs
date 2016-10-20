@@ -25,7 +25,7 @@
   overflow: hidden;
   position: relative;
   z-index: 1;
-  border: 1px solid #232323;
+  border: 1px solid #aeaeae;
 }
 
 .tabs .headers {
@@ -52,8 +52,8 @@
   cursor: pointer;
   display:block;
   padding:5px 5px;
-  background-color: #ADADAD;
-  color: #000;
+  background-color: #fdfdfd;
+  color: rgb(71, 72, 72);
   text-decoration: none;
   margin: 0;
   border-top:1px solid #CCC;
@@ -68,6 +68,6 @@
 .tabs a.active {
   background-color: #E8E8E8;
   border-bottom:1px solid #E8E8E8;
-  color: #000;
+  color: rgb(71, 72, 72);
   text-decoration: none;
 }

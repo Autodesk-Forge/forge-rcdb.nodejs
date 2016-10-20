@@ -154,66 +154,6 @@
     return buttonIndexes;
   }
 
-  function addFooRowButtons(table) {
-    //This function does NOT add buttons to the footable-row-detail rows
-    //(see fooNewRecord-Populated bind below)
-    var buttons = getButtonIndexes(table);
-    if (buttons != undefined && $(this).is(":visible")) {
-      $(table).find('tr').not(':first, .footable-row-detail').each(function () {
-        addButtonsToRow(this, buttons);
-      });
-    }
-
-  }
-
-  function addButtonsToRow(row, buttons) {
-    if ($(row).hasClass('fooNewRecord')) {
-      $(buttons.addCols).each(function (i) {
-        if ($(row).find('td').eq(buttons.addCols[i]).length > 0) {
-          $(row).find('td').eq(buttons.addCols[i]).each(function () {
-            if ($(this).find('input[type="button"][value="Add"]').length <= 0) {
-              $(this).append('<input class="footableButton" type="button" value="Add" />');
-            }
-          });
-        }
-        else {
-          $(row).append('<td><input class="footableButton" type="button" value="Add" /></td>');
-        }
-      });
-    }
-    else {
-      $(buttons.deleteCols).each(function (i) {
-        if ($(row).find('td').eq(buttons.deleteCols[i]).length > 0) {
-          $(row).find('td').eq(buttons.deleteCols[i]).each(function () {
-            if ($(this).find('input[type="button"][value="Delete"]').length <= 0) {
-              $(this).append('<input class="footableButton" type="button" value="Delete" />');
-            }
-          });
-        }
-        else {
-          $(row).append('<td><input class="footableButton" type="button" value="Delete" /></td>');
-        }
-      });
-    }
-  }
-
-  function addButtonsToDetailRow(detailRow, buttons) {
-    var row = $(detailRow).prev();
-    var detailDiv = $(detailRow).find('.footable-row-detail-inner');
-    var addButtonColVisible = $(row).find('input[type="button"][value="Add"].footableButton').is(":visible");
-    var deleteButtonColVisible = $(row).find('input[type="button"][value="Delete"].footableButton').is(":visible");
-    var newRecordRow = $(row).hasClass('fooNewRecord');
-
-    if (row.hasClass('fooNewRecord')) {
-      if (!addButtonColVisible && buttons.addCols.length >= 0) {
-        if ($(detailDiv).find('input[type="button"][value="Add"]').length <= 0) {
-          $(detailDiv).append('<input class="footableButton" type="button" value="Add" />');
-          $(detailDiv).find('input[type="button"][value="Delete"].footableButton').remove();
-        }
-      }
-    }
-  }
-
   var onUpdateHandler = null;
 
   function setUpdateHandler (handler) {
@@ -339,76 +279,78 @@
     }
   }
 
-  function processServerResponse(target, data, updateRecord) {
-    //the data response variable can be json or a valid javascript object...
-    data = tryJSONParse(data);
-    data.responseData = tryJSONParse(data.responseData);
-
-    var table = $(target).closest('table');
-    var curRow = getCurrentRow(target);
-    var nextRow = $(curRow).next();
-
-    //handle processing for fooButtons
-    if ($(target).hasClass('footableButton') && data.response != "Error") {
-      if (updateRecord.command == "Add") {
-        //convert new record to normal record.
-        $(curRow).removeClass('fooNewRecord');
-        $(curRow).find('input[type="button"][value="Add"].footableButton').remove();
-        addButtonsToRow(curRow, getButtonIndexes(table));
-        if ($(nextRow).hasClass('footable-row-detail')) addButtonsToDetailRow(nextRow, getButtonIndexes(this));
-
-        //Hide the curRow detail row, if showing
-        if ($(curRow).hasClass('footable-detail-show')) {
-          $(curRow).removeClass('footable-detail-show');
-          $(nextRow).hide();
-        }
-
-      }
-      if (updateRecord.command == "Delete" && data.response == "Success") {
-        deleteRow(curRow);
-      }
-    }
-
-    //Handle processing AJAX server responses.
-    if (data.response == "Success") {
-      //Do nothing!
-    }
-    else if (data.response == "Load") {
-      deleteAllRows(table);
-      addRows(table, data.responseData);
-    }
-    else if (data.response == "Append") {
-      addRows(table, data.responseData);
-    }
-    else if (data.response == "Update") {
-      updateRow(curRow, data.responseData);
-    }
-    else if (data.response == "Delete") {
-      deleteRow(curRow);
-    }
-    else if (data.response == "DeleteAll") {
-      deleteAllRows(table);
-    }
-    else if (data.response == "Error") {
-      alert("The update was not successful\r\n" + data.message);
-
-      if (updateRecord.command == 'Update') {
-        //if a cell update fails, revert back to the previous value.
-        var updateIndex = $.data(
-          w.footable,
-          $(ft.table).attr('id') + '_colNames').indexOf(
-          updateRecord.updatedFieldName);
-
-        $(target).closest('tr').find('td').eq(updateIndex)
-          .text(updateRecord.updatedFieldOldValue);
-      }
-    }
-    else {
-      alert('Invalid server response! Response recieved: ' + data.response);
-    }
-
-    checkNewEmptyRecord(table);
-  }
+  //function processServerResponse(target, data, updateRecord) {
+  //  //the data response variable can be json or a valid javascript object...
+  //  data = tryJSONParse(data);
+  //  data.responseData = tryJSONParse(data.responseData);
+  //
+  //  var table = $(target).closest('table');
+  //  var curRow = getCurrentRow(target);
+  //  var nextRow = $(curRow).next();
+  //
+  //  //handle processing for fooButtons
+  //  if ($(target).hasClass('footableButton') && data.response != "Error") {
+  //    if (updateRecord.command == "Add") {
+  //      //convert new record to normal record.
+  //      $(curRow).removeClass('fooNewRecord');
+  //      $(curRow).find('input[type="button"][value="Add"].footableButton').remove();
+  //
+  //      addButtonsToRow(curRow, getButtonIndexes(table));
+  //
+  //      if ($(nextRow).hasClass('footable-row-detail')) addButtonsToDetailRow(nextRow, getButtonIndexes(this));
+  //
+  //      //Hide the curRow detail row, if showing
+  //      if ($(curRow).hasClass('footable-detail-show')) {
+  //        $(curRow).removeClass('footable-detail-show');
+  //        $(nextRow).hide();
+  //      }
+  //
+  //    }
+  //    if (updateRecord.command == "Delete" && data.response == "Success") {
+  //      deleteRow(curRow);
+  //    }
+  //  }
+  //
+  //  //Handle processing AJAX server responses.
+  //  if (data.response == "Success") {
+  //    //Do nothing!
+  //  }
+  //  else if (data.response == "Load") {
+  //    deleteAllRows(table);
+  //    addRows(table, data.responseData);
+  //  }
+  //  else if (data.response == "Append") {
+  //    addRows(table, data.responseData);
+  //  }
+  //  else if (data.response == "Update") {
+  //    updateRow(curRow, data.responseData);
+  //  }
+  //  else if (data.response == "Delete") {
+  //    deleteRow(curRow);
+  //  }
+  //  else if (data.response == "DeleteAll") {
+  //    deleteAllRows(table);
+  //  }
+  //  else if (data.response == "Error") {
+  //    alert("The update was not successful\r\n" + data.message);
+  //
+  //    if (updateRecord.command == 'Update') {
+  //      //if a cell update fails, revert back to the previous value.
+  //      var updateIndex = $.data(
+  //        w.footable,
+  //        $(ft.table).attr('id') + '_colNames').indexOf(
+  //        updateRecord.updatedFieldName);
+  //
+  //      $(target).closest('tr').find('td').eq(updateIndex)
+  //        .text(updateRecord.updatedFieldOldValue);
+  //    }
+  //  }
+  //  else {
+  //    alert('Invalid server response! Response recieved: ' + data.response);
+  //  }
+  //
+  //  checkNewEmptyRecord(table);
+  //}
 
   function getCurrentRow(target) {
     var curRow = $(target).closest('tr');
@@ -521,7 +463,12 @@
                 </select>
                 `
               break;
+
           }
+        } else {
+
+          // wraps in label for styling
+          value = `<label>${value}</label>`
         }
 
         //capture and add fooTable data-class values.
@@ -545,7 +492,8 @@
     });
 
     $(table).find('tbody').prepend(rows);
-    addFooRowButtons(table);
+
+    //addFooRowButtons(table);
     makeColsFooEditable(table);
 
     $(table).data('ft').bindToggleSelectors();
@@ -554,12 +502,13 @@
 
   $.fn.ftEditable = function (target) {
     return {
-      processServerResponse: processServerResponse,
+      //processServerResponse: processServerResponse,
+      //transportData: transportData,
+      //processCommand: processCommand,
+
       checkNewEmptyRecord: checkNewEmptyRecord,
       setUpdateHandler: setUpdateHandler,
-      processCommand: processCommand,
       deleteAllRows: deleteAllRows,
-      transportData: transportData,
       updateRow: updateRow,
       deleteRow: deleteRow,
       addRows: addRows
@@ -618,6 +567,7 @@
 
           //Populate the value property of checkboxes in the footable to true or false
           $(ft.table).on('change', 'input[type="checkbox"]', function (e) {
+
             var val = $(this).is(':checked');
             $(this).val(val);
             if(val) this.setAttribute("checked", "checked");
@@ -639,6 +589,7 @@
 
           //if a footable cell value changes, create an update object to send to the server.
           $(ft.table).bind('td-cell-changed', function (e) {
+
             var buttons = getButtonIndexes(this);
             //Do not process update on data-ft-buttons columns
             if (buttons.buttonCols.indexOf($(e.target).index()) < 0) {
@@ -653,7 +604,9 @@
 
           //must use on() function since input tags are dynamically created.
           $(ft.table).on('change', 'input', function (e) {
+
             if ($(e.target).closest('tr').hasClass('footable-row-detail')) {
+
               //Always pass changes made to an input detail textbox to it's corr parent td
               var FieldName = $(e.target).closest('div').text().trim().slice(0, -1);
               var tdFieldIndex = $.data(w.footable, $(ft.table).attr('id') + '_colNames').indexOf(FieldName);
@@ -666,18 +619,19 @@
             }
           });
 
-          $(ft.table).on('click', 'input[type="button"][value="Add"].footableButton', function (e) {
-            processCommand(e.target, 'Add');
-          });
+          //$(ft.table).on('click', 'input[type="button"][value="Add"].footableButton', function (e) {
+          //  processCommand(e.target, 'Add');
+          //});
+          //
+          //$(ft.table).on('click', 'input[type="button"][value="Delete"].footableButton', function (e) {
+          //  processCommand(e.target, 'Delete');
+          //});
 
-          $(ft.table).on('click', 'input[type="button"][value="Delete"].footableButton', function (e) {
-            processCommand(e.target, 'Delete');
-          });
         } //footable_initialized
       }); //ft.table bind
 
       makeColsFooEditable(ft.table);
-      addFooRowButtons(ft.table);
+      //addFooRowButtons(ft.table);
 
       //AutoLoad sends a load command each time a Footable is created.
       if($.data(w.footable, $(ft.table).attr('id') + '_autoLoad')) {
@@ -693,9 +647,9 @@
       });
 
       //Add any footableButton's to a row's footable-row-detail-inner div
-      $(ft.table).bind('fooDetail-Populated', function (e) {
-        addButtonsToDetailRow($(e.target).next(), getButtonIndexes(this));
-      });
+      //$(ft.table).bind('fooDetail-Populated', function (e) {
+      //  addButtonsToDetailRow($(e.target).next(), getButtonIndexes(this));
+      //});
 
     } //p.init
 

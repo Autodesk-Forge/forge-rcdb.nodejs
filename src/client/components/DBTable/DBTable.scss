@@ -49,13 +49,39 @@
   border: none;
   border-bottom: 1px solid rgb(180, 180, 180);
   cursor: pointer;
+  overflow: hidden;
 }
 
-.footable > tbody > tr > td{
+.footable > tbody > tr {
+  border-bottom: 1px solid rgb(215, 215, 215);
+}
+
+.footable > tbody > tr > td {
   text-align: left;
   padding: 10px;
   border: none;
-  border-bottom: 1px solid rgb(215, 215, 215);
+  overflow: hidden;
+}
+
+.footable > thead > tr > th label {
+  font-family: Artifakt;
+}
+
+.footable > tbody > tr > td label {
+  display: inline-block;
+  max-width: 100%;
+  margin-bottom: 0px;
+  font-weight: normal;
+  font-family: Artifakt;
+}
+
+.footable > thead > tr > th:first-child label {
+  margin-left: 18px;
+}
+
+.footable > tbody > tr > td:first-child label {
+  margin-left: 18px;
+  cursor: pointer;
 }
 
 .footable > tbody > tr > td.footable-cell-detail {
@@ -63,13 +89,13 @@
 }
 
 .footable > thead > tr > th, .footable > thead > tr > td {
-//  background-color: #dce9f9;
-//  background-image: -webkit-gradient(linear, left top, left bottom, from(#ebf3fc), to(#dce9f9));
-//  background-image: -webkit-linear-gradient(top, #ebf3fc, #dce9f9);
-//  background-image: -moz-linear-gradient(top, #ebf3fc, #dce9f9);
-//  background-image: -ms-linear-gradient(top, #ebf3fc, #dce9f9);
-//  background-image: -o-linear-gradient(top, #ebf3fc, #dce9f9);
-//  background-image: linear-gradient(to bottom, #ebf3fc, #dce9f9);
+  //  background-color: #dce9f9;
+  //  background-image: -webkit-gradient(linear, left top, left bottom, from(#ebf3fc), to(#dce9f9));
+  //  background-image: -webkit-linear-gradient(top, #ebf3fc, #dce9f9);
+  //  background-image: -moz-linear-gradient(top, #ebf3fc, #dce9f9);
+  //  background-image: -ms-linear-gradient(top, #ebf3fc, #dce9f9);
+  //  background-image: -o-linear-gradient(top, #ebf3fc, #dce9f9);
+  //  background-image: linear-gradient(to bottom, #ebf3fc, #dce9f9);
   -webkit-box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
   -moz-box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
   box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;

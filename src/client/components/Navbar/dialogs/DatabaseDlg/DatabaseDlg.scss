@@ -1,13 +1,13 @@
-@media screen and (min-width: 360px) {
+@media screen and (min-width: 260px) {
 
-  .dialog.layout {
-    left: calc(50% - 175px);
+  .dialog.database {
+    left: calc(50% - 125px);
     top: calc(40% - 100px);
-    height: 188px;
-    width: 350px;
+    height: 174px;
+    width: 250px;
   }
 
-  .layout .responsive-grid a {
+  .database .responsive-grid a {
     text-decoration: none;
     display: inline-block;
     margin-bottom: 4px;
@@ -17,7 +17,7 @@
     width: 100px;
   }
 
-  .layout .responsive-grid img {
+  .database .responsive-grid img {
     transition: transform .2s ease-in-out;
     background: #ccc;
     max-width: 100%;
@@ -30,62 +30,61 @@
   }
 }
 
-//@media screen and (max-width: 359px) {
-//
-//  .dialog.layout {
-//    left: calc(50% - 175px);
-//    top: calc(40% - 100px);
-//    height: 188px;
-//    width: 200px;
-//  }
-//
-//  .layout .responsive-grid a {
-//    text-decoration: none;
-//    display: inline-block;
-//    margin-bottom: 4px;
-//    margin-right: 4px;
-//    margin-left: 4px;
-//    color: #606060;
-//    width: 100px;
-//  }
-//
-//  .layout .responsive-grid img {
-//    transition: transform .2s ease-in-out;
-//    background: #ccc;
-//    max-width: 100%;
-//    display: block;
-//    height: auto;
-//    border: none;
-//    width: 90px;
-//    height: 82px;
-//    margin: 4px;
-//  }
-//}
+@media screen and (max-width: 259px) {
 
-.layout .responsive-grid {
+  .dialog.database {
+    left: calc(50% - 175px);
+    top: calc(40% - 100px);
+    height: 188px;
+    width: 200px;
+  }
+
+  .database .responsive-grid a {
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 4px;
+    margin-right: 4px;
+    margin-left: 4px;
+    color: #606060;
+    width: 100px;
+  }
+
+  .database .responsive-grid img {
+    transition: transform .2s ease-in-out;
+    background: #ccc;
+    max-width: 100%;
+    display: block;
+    height: auto;
+    border: none;
+    width: 90px;
+    height: 82px;
+    margin: 4px;
+  }
+}
+
+.database .responsive-grid {
   height: calc(100% - 40px);
   justify-content: center;
   flex-wrap: wrap;
   display: flex;
 }
 
-.layout .responsive-grid a:nth-of-type(3n) {
+.database .responsive-grid a:nth-of-type(2n) {
   margin-right: 0;
 }
 
-.layout .responsive-grid a:hover img {
+.database .responsive-grid a:hover img {
   transform: scale(1.10);
 }
 
-.layout .responsive-grid figure {
+.database .responsive-grid figure {
   background-color: #e0e0e0;
   border: 1px solid #d2d2d2;
   border-radius: 4px;
   overflow: hidden;
-  height: 135px;
   margin: 0;
 }
 
-.layout .responsive-grid figcaption {
+.database .responsive-grid figcaption {
   margin: 4px;
 }

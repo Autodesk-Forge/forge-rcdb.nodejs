@@ -106,7 +106,7 @@ export default class PieChart extends EventsEmitter {
   applyCustomProps () {
 
     $(`${this.selector} > svg`).css({
-      transform: `translate(5px, -2px)`,
+      transform: `translate(0px, -2px)`,
       overflow: 'visible',
       width: '100%'
     })

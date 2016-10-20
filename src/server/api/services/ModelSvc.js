@@ -27,7 +27,7 @@ export default class ModelSvc extends BaseSvc {
   //
   //
   ///////////////////////////////////////////////////////////////////////////////
-  getById(modelId, opts = {}) {
+  getById (modelId, opts = {}) {
 
     var _thisSvc = this
 

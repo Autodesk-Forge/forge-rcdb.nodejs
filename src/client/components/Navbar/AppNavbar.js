@@ -26,9 +26,10 @@ export default class AppNavbar extends React.Component {
   /////////////////////////////////////////////////////////////////
   state = {
     databaseOpen: false,
-    layoutOpen: false,
-    themeOpen: false,
-    aboutOpen: false
+    layoutOpen:   false,
+    themeOpen:    false,
+    aboutOpen:    false,
+    menuIcons:    false
   }
 
   /////////////////////////////////////////////////////////////////
@@ -91,8 +92,8 @@ export default class AppNavbar extends React.Component {
             <NavItem className="forge-rcdb-brand-item"
               href="https://forge.autodesk.com"
               target="_blank">
-              <img height="56" width="56" src="/resources/img/forge.png"/>
-              &nbsp;<b>Forge</b> | RCDB
+              <img height="30" src="/resources/img/forge-logo.png"/>
+              {/*&nbsp;<b>Forge</b> | RCDB*/}
             </NavItem>
           </Navbar.Brand>
           <Navbar.Toggle/>
@@ -102,7 +103,7 @@ export default class AppNavbar extends React.Component {
 
           <Nav>
             <NavItem eventKey={1} href="/#">
-              <span className="forge-rcdb-span fa fa-home"></span>
+              <span className={"forge-rcdb-span " + (this.state.menuIcons ? "fa fa-home":"")}></span>
               &nbsp; Home
             </NavItem>
           </Nav>
@@ -112,7 +113,7 @@ export default class AppNavbar extends React.Component {
             <NavDropdown eventKey={3} id="basic-nav-dropdown"
               title={
                 <div className="dropdown-div">
-                  <span className="forge-rcdb-span fa fa-gear"></span>
+                  <span className={"forge-rcdb-span " + (this.state.menuIcons ? "fa fa-gear":"")}></span>
                   &nbsp; Settings &nbsp;
                 </div>
               }>
@@ -133,7 +134,7 @@ export default class AppNavbar extends React.Component {
             </NavDropdown>
 
             <NavItem eventKey={4} onClick={() => {this.openAboutDlg()}}>
-              <span className="forge-rcdb-span fa fa-question-circle"></span>
+              <span className={"forge-rcdb-span " + (this.state.menuIcons ? "fa fa-question-circle":"")}></span>
               &nbsp; About ...
             </NavItem>
           </Nav>

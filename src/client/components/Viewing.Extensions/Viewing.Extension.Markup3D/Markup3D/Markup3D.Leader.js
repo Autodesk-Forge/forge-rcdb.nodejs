@@ -35,6 +35,10 @@ export default class Leader {
       this.arrow
     )
 
+    this.leader.attr({
+      visibility: 'hidden'
+    })
+
     this.timer = new Stopwatch()
 
     this.scaleFactor = 1.0

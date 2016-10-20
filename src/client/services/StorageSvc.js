@@ -1,7 +1,8 @@
 
 import BaseSvc from './BaseSvc'
+import Lockr from 'lockr'
 
-export default class EventSvc extends BaseSvc {
+export default class StorageSvc extends BaseSvc {
 
   /////////////////////////////////////////////////////////////////
   //
@@ -18,6 +19,6 @@ export default class EventSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   name() {
 
-    return 'EventSvc'
+    return 'StorageSvc'
   }
 }
