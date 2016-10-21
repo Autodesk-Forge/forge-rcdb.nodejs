@@ -1,0 +1,18 @@
+{ "_id" : { "$oid" : "57ee6b26dfda94c109157449" }, "name" : "Steel", "supplier" : "Autodesk", "currency" : "USD", "price" : 2.5 }
+{ "_id" : { "$oid" : "57ee6b26dfda94c10915744e" }, "name" : "Steel, High Strength Low Alloy", "supplier" : "Autodesk", "currency" : "ARS", "price" : 22 }
+{ "_id" : { "$oid" : "57ee6b26dfda94c10915744f" }, "name" : "Steel, Mild", "supplier" : "Autodesk", "currency" : "CAD", "price" : 7 }
+{ "_id" : { "$oid" : "57ee6b26dfda94c109157450" }, "name" : "Acetal Resin, Black", "supplier" : "Autodesk", "currency" : "CHF", "price" : 21 }
+{ "_id" : { "$oid" : "57ee6b26dfda94c109157451" }, "name" : "ABS Plastic", "supplier" : "Autodesk", "currency" : "CAD", "price" : 6 }
+{ "_id" : { "$oid" : "57ee6b26dfda94c109157452" }, "name" : "Nylon Composite (Nylon, molybdenum disulphide)", "supplier" : "Autodesk", "currency" : "USD", "price" : 1.66 }
+{ "_id" : { "$oid" : "57ee6b26dfda94c109157454" }, "name" : "Aluminum-6061", "supplier" : "Autodesk", "currency" : "CAD", "price" : 3 }
+{ "_id" : { "$oid" : "57ee6b26dfda94c109157453" }, "name" : "Acetal Resin, White", "supplier" : "Autodesk", "currency" : "USD", "price" : 1.3 }
+{ "_id" : { "$oid" : "57ee6b26dfda94c10915744b" }, "name" : "Brass, Soft Yellow", "supplier" : "Autodesk", "currency" : "BRL", "price" : 1.99 }
+{ "_id" : { "$oid" : "57ee6b26dfda94c109157455" }, "name" : "Rubber", "supplier" : "Autodesk", "currency" : "BRL", "price" : 12 }
+{ "_id" : { "$oid" : "57ee6b26dfda94c109157448" }, "name" : "Stainless Steel", "supplier" : "Autodesk", "currency" : "BRL", "price" : 1.55 }
+{ "_id" : { "$oid" : "57ee6b26dfda94c10915744d" }, "name" : "Nylon-6/6", "supplier" : "Autodesk", "currency" : "CHF", "price" : 12.75 }
+{ "_id" : { "$oid" : "57f4e35ddfda94c109157457" }, "name" : "Glass", "supplier" : "Autodesk", "currency" : "USD", "price" : 2 }
+{ "_id" : { "$oid" : "57f4e35ddfda94c109157458" }, "name" : "Metal - Steel", "supplier" : "Autodesk", "currency" : "USD", "price" : 1 }
+{ "_id" : { "$oid" : "57f4e35ddfda94c109157459" }, "name" : "Metal - Aluminum", "supplier" : "Autodesk", "currency" : "USD", "price" : 3 }
+{ "_id" : { "$oid" : "57f4e35ddfda94c10915745a" }, "name" : "Plastic", "supplier" : "Autodesk", "currency" : "USD", "price" : 1 }
+{ "_id" : { "$oid" : "57f4e35ddfda94c10915745b" }, "name" : "Copper", "supplier" : "Autodesk", "currency" : "USD", "price" : 10 }
+{ "_id" : { "$oid" : "57ee6b26dfda94c10915744a" }, "name" : "Polyaryletherketone Resin", "supplier" : "Autodesk", "currency" : "CNY", "price" : 1.53 }

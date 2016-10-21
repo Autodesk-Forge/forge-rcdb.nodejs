@@ -72,6 +72,9 @@ Material Schema:
       "price" : 2.5
     }
 
+An export of my database records is provided in /resources/db
+
+
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 ## Live Demo
