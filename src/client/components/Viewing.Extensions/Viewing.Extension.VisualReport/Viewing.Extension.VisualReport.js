@@ -33,6 +33,8 @@ class VisualReportExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////////////
   async load() {
 
+    this._viewer.setQualityLevel(false, true)
+
     var componentIds = await ViewerToolkit.getLeafNodes(
       this._viewer.model);
 
@@ -102,7 +104,8 @@ class VisualReportExtension extends ExtensionBase {
         fragList.setMaterial(fragId, material)
       }
 
-      this._viewer.isolate()
+      ViewerToolkit.isolateFull(
+        this._viewer)
 
       this._viewer.impl.invalidate(
         true, false, false);

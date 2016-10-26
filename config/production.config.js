@@ -39,9 +39,9 @@ const config = {
     cacheDirectory : true,
     plugins: [
       'transform-runtime',
-      'transform-react-constant-elements',
+      //'transform-react-constant-elements',
       //'transform-react-inline-elements',
-      'transform-react-remove-prop-types'
+      //'transform-react-remove-prop-types'
     ],
     presets: ['es2015', 'react', 'stage-0']
   },

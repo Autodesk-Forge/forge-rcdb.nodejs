@@ -1,15 +1,27 @@
 (function($) {
 
-  var drg_h, drg_w, pos_y, pos_x, priorCursor, options
+  var drg_h, drg_w, pos_y, pos_x, priorCursor, options, $panes
 
   function onMouseDown (e) {
+
+    const splitterIdx = ($(this).index() - 1) / 2
+
+    $panes.forEach(($pane) => {
+
+      let flexStr = $pane.css('flex')
+
+      const flex = parseFloat(flexStr.split(' ')[0])
+
+      console.log(flex)
+    })
+
+    console.log('Index: ' + splitterIdx)
 
     priorCursor = $('body').css('cursor')
 
     $('body').css('cursor', options.cursor)
 
-    var $drag = $(this).addClass(
-      'jquery-layout-draggable')
+    var $drag = $(this).addClass('draggable')
 
     drg_h = $drag.outerHeight()
     drg_w = $drag.outerWidth()
@@ -24,53 +36,57 @@
 
   function onMouseMove (e) {
 
-    var prev = $('.jquery-layout-draggable').prev();
-    var next = $('.jquery-layout-draggable').next();
+    var prevPane = $('.draggable').prev()
+    var nextPane = $('.draggable').next()
 
-    // Assume 50/50 split between prev and next then adjust to
-    // the next X for prev
+    var total = prevPane.outerHeight() + nextPane.outerHeight()
 
-    var total = prev.outerHeight() + next.outerHeight()
-
-    var leftPercentage =
-      ((e.pageY - prev.offset().top) +
+    var prevFlex = ((e.pageY - prevPane.offset().top) +
       (pos_y - drg_h / 2)) / total
 
-    var rightPercentage = 1 - leftPercentage;
+    var nextFlex = 1 - prevFlex
 
-    if(leftPercentage  * 100 < options.min ||
-       rightPercentage * 100 < options.min) {
-      return;
-    }
+    prevFlex *= 0.5
+    nextFlex *= 0.5
 
-    //console.log('l: ' + leftPercentage + ', r:' + rightPercentage);
-
-    prev.css('flex', leftPercentage.toString());
-    next.css('flex', rightPercentage.toString());
+    prevPane.css('flex', prevFlex.toString())
+    nextPane.css('flex', nextFlex.toString())
   }
 
-  $.fn.drags = function (opts) {
+  $.fn.draggable = function (opts) {
 
     options = $.extend({
       cursor: 'ns-resize',
       min: 10
     }, opts)
 
-    var $el = this;
+    var $splitters = this
 
-    $el.css('cursor', options.cursor)
+    $panes = []
 
-    $el.on('mousedown', onMouseDown)
+    $splitters.each(function(idx) {
+
+      $panes.push($(this).prev())
+
+      if(idx === $splitters.length -1) {
+
+        $panes.push($(this).next())
+      }
+    })
+
+    $splitters.css('cursor', options.cursor)
+
+    $splitters.on('mousedown', onMouseDown)
 
     $(document).on('mouseup', function () {
 
       $('body').css('cursor', priorCursor)
 
-      $('.jquery-layout-draggable').parents().off(
+      $('.draggable').parents().off(
         'mousemove')
 
-      $('.jquery-layout-draggable').removeClass(
-        'jquery-layout-draggable')
+      $('.draggable').removeClass(
+        'draggable')
     });
   }
 

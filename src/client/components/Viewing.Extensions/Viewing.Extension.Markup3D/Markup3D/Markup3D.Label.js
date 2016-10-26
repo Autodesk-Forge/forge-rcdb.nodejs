@@ -11,7 +11,7 @@ export default class LabelMarker extends GraphicMarker {
   /////////////////////////////////////////////////////////////////
   constructor(parent, viewer, dbId, screenPoint, properties = null) {
 
-    super(viewer.container, {x: 100, y: 22});
+    super(viewer.container, {x: 100, y: 22})
 
     this.controlsId = this.guid()
 
@@ -51,41 +51,42 @@ export default class LabelMarker extends GraphicMarker {
     })
 
     this.setVisible(true)
+
     this.setScreenPoint(screenPoint)
 
     this.onMouseUpHandler = (event)=>
-      this.onMouseUp(event);
+      this.onMouseUp(event)
 
     this.onMouseDownHandler = (event)=>
-      this.onMouseDown(event);
+      this.onMouseDown(event)
 
     this.onDoubleClickHandler = (event)=>
-      this.onDoubleClick(event);
+      this.onDoubleClick(event)
 
     $(`#${this.svgId}`).on(
       'mouseup',
-      this.onMouseUpHandler);
+      this.onMouseUpHandler)
 
     $(`#${this.svgId}`).on(
       'mousedown',
-      this.onMouseDownHandler);
+      this.onMouseDownHandler)
 
     $(`#${this.svgId}`).on(
       'dblclick',
-      this.onDoubleClickHandler);
+      this.onDoubleClickHandler)
 
     this.createControls()
 
     this.showControls(false)
 
-    this.timeoutId = 0;
+    this.timeoutId = 0
   }
 
   /////////////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////////////
-  setVisible(show) {
+  setVisible (show) {
 
     if (show) {
 
@@ -96,9 +97,9 @@ export default class LabelMarker extends GraphicMarker {
     } else{
 
       clearTimeout(this.timeoutId)
-      this.timeoutId = setTimeout(()=>{
-        super.setVisible(false);
-      }, 400);
+      this.timeoutId = setTimeout(() => {
+        super.setVisible(false)
+      }, 400)
     }
   }
 
@@ -106,54 +107,54 @@ export default class LabelMarker extends GraphicMarker {
   //
   //
   /////////////////////////////////////////////////////////////////
-  startDrag() {
+  startDrag () {
 
     $(`#${this.svgId}`).css({
       cursor: 'move'
-    });
+    })
 
-    var $canvas = $('canvas', this.viewer.container);
+    var $canvas = $('canvas', this.viewer.container)
 
-    this.viewerCursor = $canvas.css('cursor');
+    this.viewerCursor = $canvas.css('cursor')
 
     $canvas.css({
       cursor: 'move'
-    });
+    })
 
-    this.parent.dragging = true;
+    this.parent.dragging = true
 
-    this.parent.emit('drag.start', this.parent);
+    this.parent.emit('drag.start', this.parent)
   }
 
   /////////////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////////////
-  async endDrag() {
+  async endDrag () {
 
-    this.parent.dragging = false;
+    this.parent.dragging = false
 
-    this.parent.emit('drag.end', this.parent);
+    this.parent.emit('drag.end', this.parent)
 
-    var $canvas = $('canvas', this.viewer.container);
+    var $canvas = $('canvas', this.viewer.container)
 
     $canvas.css({
       cursor: this.viewerCursor
-    });
+    })
 
     $(`#${this._markerId}`).css({
       'pointer-events': 'auto'
-    });
+    })
 
     $(`#${this.svgId}`).css({
       cursor: 'pointer'
-    });
+    })
 
     if(this.item) {
-      return;
+      return
     }
 
-    if(LabelMarker.prototype.labelName){
+    if (LabelMarker.prototype.labelName) {
 
       var prop = await Toolkit.getProperty(
         this.viewer.model,
@@ -166,11 +167,13 @@ export default class LabelMarker extends GraphicMarker {
         prop.displayValue)
 
       this.item = {
-        name: prop.displayName,
-        value: prop.displayValue
+        value: prop.displayValue,
+        name: prop.displayName
       }
-    }
-    else {
+
+      this.emit('labelSelected')
+
+    } else {
 
       this.showControls(true)
     }
@@ -189,11 +192,11 @@ export default class LabelMarker extends GraphicMarker {
 
     const sortedProperties = properties.sort((a, b)=>{
 
-      var nameA = a.displayName.toLowerCase();
-      var nameB = b.displayName.toLowerCase();
+      var nameA = a.displayName.toLowerCase()
+      var nameB = b.displayName.toLowerCase()
 
-      return nameA > nameB ? 1 : -1;
-    });
+      return nameA > nameB ? 1 : -1
+    })
 
     var menuItems = sortedProperties.map((prop)=>{
 
@@ -201,9 +204,9 @@ export default class LabelMarker extends GraphicMarker {
         name: prop.displayName,
         value: prop.displayValue
       }
-    });
+    })
 
-    var $container = $(`#${this.controlsId}`);
+    var $container = $(`#${this.controlsId}`)
 
     this.dropdown = new Dropdown({
       container: $container,
@@ -212,14 +215,16 @@ export default class LabelMarker extends GraphicMarker {
         top: 0, left: 0
       },
       menuItems
-    });
+    })
 
-    this.dropdown.on('item.selected', (item)=>{
+    this.dropdown.on('item.selected', (item) => {
 
-      LabelMarker.prototype.labelName = item.name;
+      LabelMarker.prototype.labelName = item.name
 
-      this.item = item;
-    });
+      this.item = item
+
+      this.emit('labelSelected')
+    })
 
     var occlusionSwitchId = this.guid()
     var bindSwitchId = this.guid()
@@ -231,16 +236,16 @@ export default class LabelMarker extends GraphicMarker {
       <div style="width: 150px;">
 
         <div id="${bindSwitchId}"
-          style="margin-right:10px;float:left;padding-top:1px;">
+          style="margin-right:10px; float:left; padding-top:1px;">
         </div>
-        <div style="height:30px;">
+        <div style="height:30px">
           <b>Bind to State</b>
         </div>
 
         <div id="${occlusionSwitchId}"
-          style="margin-right:10px;float:left;padding-top:1px;">
+          style="margin-right:10px; float:left; padding-top:1px;">
         </div>
-        <div style="height:30px;">
+        <div style="height:30px">
           <b>Occlusion</b>
         </div>
 
@@ -260,9 +265,9 @@ export default class LabelMarker extends GraphicMarker {
          <span class="fa fa-sign-out btn-span"></span>
          </button>
       </div>
-    `;
+    `
 
-    $container.append(html);
+    $container.append(html)
 
     $container.find('label[data-toggle="tooltip"]').tooltip({
       container: 'body',
@@ -272,96 +277,96 @@ export default class LabelMarker extends GraphicMarker {
 
     this.bindSwitch =
       new SwitchButton('#' + bindSwitchId,
-        this.parent.bindToState);
+        this.parent.bindToState)
 
     this.bindSwitch.on('checked', (checked)=>{
 
-      this.parent.bindToState = checked;
-    });
+      this.parent.bindToState = checked
+    })
 
     this.occlusionSwitch =
       new SwitchButton('#' + occlusionSwitchId,
-        this.parent.occlusion);
+        this.parent.occlusion)
 
     this.occlusionSwitch.on('checked', (checked)=>{
 
-      this.parent.occlusion = checked;
-    });
+      this.parent.occlusion = checked
+    })
 
     $('#' + btnRemoveId).click(()=>{
 
-      this.parent.remove();
-    });
+      this.parent.remove()
+    })
 
     $('#' + btnExitId).click(()=>{
 
       // ensure some default is set for next markup
-      if(!this.item) {
+      if (!this.item) {
 
-        this.item = menuItems[0];
+        this.item = menuItems[0]
 
         LabelMarker.prototype.labelName =
-          this.item.name;
+          this.item.name
       }
 
-      this.showControls(false);
+      this.showControls(false)
 
       this.updateLabel(
         this.item.name,
-        this.item.value);
-    });
+        this.item.value)
+    })
   }
 
   /////////////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////////////
-  updateLabel(name, value) {
+  updateLabel (name, value) {
 
-    var snap = Snap($(`#${this.svgId}`)[0]);
+    var snap = Snap($(`#${this.svgId}`)[0])
 
-    this.label.remove();
+    this.label.remove()
 
     var nameLabel = snap.paper.text(0, 15,
-      name.replace(':', '') + ': ');
+      name.replace(':', '') + ': ')
 
     var valueLabel = snap.paper.text(
       nameLabel.getBBox().width, 15,
-      value);
+      value)
 
     nameLabel.attr({
       fontFamily: 'Arial',
       fontSize: '13px',
       stroke: '#FF0000'
-    });
+    })
 
     valueLabel.attr({
       fontFamily: 'Arial',
       fontSize: '13px',
       stroke: '#000000'
-    });
+    })
 
     this.label = snap.group(
       nameLabel,
-      valueLabel);
+      valueLabel)
 
     var width = nameLabel.getBBox().width +
-      valueLabel.getBBox().width;
+      valueLabel.getBBox().width
 
     $(`#${this._markerId}`).css({
       width: width + 10
-    });
+    })
   }
 
   /////////////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////////////
-  onMouseUp(event) {
+  onMouseUp (event) {
 
-    if(this.parent.dragging){
+    if (this.parent.dragging) {
 
-      this.endDrag();
+      this.endDrag()
     }
   }
 
@@ -371,9 +376,9 @@ export default class LabelMarker extends GraphicMarker {
   /////////////////////////////////////////////////////////////////
   onMouseDown (event) {
 
-    if(!this.parent.dragging) {
+    if (!this.parent.dragging) {
 
-      this.startDrag();
+      this.startDrag()
     }
   }
 
@@ -383,21 +388,21 @@ export default class LabelMarker extends GraphicMarker {
   /////////////////////////////////////////////////////////////////
   onDoubleClick (event) {
 
-    this.showControls(true);
+    this.showControls(true)
   }
 
   /////////////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////////////
-  showControls(show) {
+  showControls (show) {
 
     $(`#${this.svgId}`).css({
       display: show ? 'none':'block'
-    });
+    })
 
     $(`#${this.controlsId}`).css({
       display: show ? 'block' : 'none'
-    });
+    })
   }
 }

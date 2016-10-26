@@ -28,7 +28,7 @@ class JQueryLayout extends React.Component {
   /////////////////////////////////////////////////////////
   componentDidMount() {
 
-    $('.jquery-layout .splitter').drags()
+    $('.jquery-layout .splitter').draggable()
   }
 
   /////////////////////////////////////////////////////////

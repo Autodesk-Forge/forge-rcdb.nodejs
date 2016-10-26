@@ -133,7 +133,7 @@ export default class BarChart extends EventsEmitter {
 
         tooltip.html(props.label + ': ' + props.value)
           .style('left', x - 20 + 'px')
-          .style('top', y + 40 + 'px')
+          .style('top', y - 40 + 'px')
           .style('display', 'block')
 
         tempcolor = this.style.fill;

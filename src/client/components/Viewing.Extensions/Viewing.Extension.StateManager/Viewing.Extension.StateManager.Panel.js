@@ -84,7 +84,9 @@ export default class StateManagerPanel extends ToolPanelBase{
     var itemHtml = `
 
         <div id="${item.guid}" class="state-list-group-item">
+            <label>
             ${item.name}
+            </label>
              <button id="${item.guid}-delete-btn"
                     class="btn btn-danger state-btn-list">
               <span class="glyphicon glyphicon-remove state-btn-span-list">

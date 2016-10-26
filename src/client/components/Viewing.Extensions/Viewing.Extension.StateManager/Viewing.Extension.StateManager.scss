@@ -92,10 +92,21 @@
   background-color: #E8E8E8;
   border: 1px solid #aeaeae;
   cursor: pointer;
-
   position: relative;
   display: block;
   padding: 10px 10px;
+}
+
+.state-list-group-item label {
+  width: calc(100% - 45px)!important;
+  overflow-x: hidden;
+  margin-top: -4px;
+  position: relative;
+  height: 15px;
+  line-height: 0.8;
+  font-weight: inherit;
+  font-family: Artifakt;
+  font-size: 13px;
 }
 
 .state-list-group-item:hover {

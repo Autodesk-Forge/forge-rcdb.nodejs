@@ -29,6 +29,11 @@ class Markup3DExtension extends ExtensionBase {
     this.tooltip = new ViewerTooltip(
       viewer)
 
+    this.tooltip.setContent(`
+      <div id="markup3D-tooltipId" class="markup3D-tooltip">
+        <b>Place markup ...</b>
+      </div>`, '#markup3D-tooltipId')
+
     this._viewer.toolController.registerTool(
       this.markup3DTool)
 
@@ -90,10 +95,25 @@ class Markup3DExtension extends ExtensionBase {
 
     this.markup3DTool.on('startCreate', () => {
 
+      this.tooltip.activate()
+
       this._control.container.classList.add('active')
     })
 
+    this.markup3DTool.on('pinSelected', () => {
+
+      this.tooltip.deactivate()
+    })
+
+    this.markup3DTool.on('markupCreated', () => {
+
+      //TODO more work to handle proper behavior
+      //this.tooltip.activate()
+    })
+
     this.markup3DTool.on('stopCreate', () => {
+
+      this.tooltip.deactivate()
 
       this._control.container.classList.remove('active')
     })

@@ -1,4 +1,3 @@
-import { EventsEmitterComposer } from 'EventsEmitter'
 import EventsEmitter from 'EventsEmitter'
 
 /////////////////////////////////////////////////////////////////////
@@ -6,7 +5,7 @@ import EventsEmitter from 'EventsEmitter'
 //
 /////////////////////////////////////////////////////////////////////
 export class BaseTreeDelegate extends
-  EventsEmitterComposer (Autodesk.Viewing.UI.TreeDelegate) {
+  EventsEmitter.Composer (Autodesk.Viewing.UI.TreeDelegate) {
 
   ///////////////////////////////////////////////////////////////////
   //

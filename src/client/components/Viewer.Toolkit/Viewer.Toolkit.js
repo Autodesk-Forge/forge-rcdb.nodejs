@@ -385,47 +385,43 @@ export default class ViewerToolkit {
   }
 
   /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  static getBulkPropertiesAsync (model, dbIds, propFilter) {
+
+    return new Promise((resolve, reject) => {
+
+      model.getBulkProperties(dbIds, propFilter, (result) => {
+
+        resolve (result)
+
+      }, (error) => {
+
+        reject(error)
+      })
+    })
+  }
+
+  /////////////////////////////////////////////////////////////////
   // Maps components by property
   //
   /////////////////////////////////////////////////////////////////
-  static mapComponentsByProp(model, propName, components, defaultProp) {
+  static mapComponentsByProp (model, propName, components, defaultProp) {
 
-    return new Promise(async(resolve, reject)=>{
+    return new Promise(async(resolve, reject) => {
 
-      try{
+      try {
 
-        var propertyTasks = components.map((dbId)=>{
+        const results = await ViewerToolkit.getBulkPropertiesAsync(
+          model, components, [propName])
 
-          return new Promise(async(_resolve, _reject)=>{
+        const propertyResults = results.map((result) => {
 
-            try {
-
-              var result = await ViewerToolkit.getProperty(
-                model, dbId, propName, defaultProp);
-
-              result.dbId = dbId;
-
-              return _resolve(result);
-            }
-            catch (ex){
-
-              if(ex.message == 'Not Found'){
-
-                var result = {
-                  displayValue: 'Not Available'
-                };
-
-                result.dbId = dbId;
-
-                return _resolve(result);
-              }
-
-              return _reject(ex);
-            }
-          });
-        });
-
-        var propertyResults = await Promise.all(propertyTasks);
+          return Object.assign({}, result.properties[0], {
+            dbId: result.dbId
+          })
+        })
 
         var componentsMap = {};
 
@@ -435,24 +431,24 @@ export default class ViewerToolkit {
 
           if(typeof value == 'string'){
 
-            value = value.split(':')[0];
+            value = value.split(':')[0]
           }
 
           if (!componentsMap[value]) {
 
-            componentsMap[value] = [];
+            componentsMap[value] = []
           }
 
-          componentsMap[value].push(result.dbId);
-        });
+          componentsMap[value].push(result.dbId)
+        })
 
-        return resolve(componentsMap);
-      }
-      catch(ex){
+        return resolve(componentsMap)
+
+      } catch(ex){
 
         return reject(ex);
       }
-    });
+    })
   }
 
   /////////////////////////////////////////////////////////////
@@ -585,14 +581,15 @@ export default class ViewerToolkit {
   /////////////////////////////////////////////////////////////////
   static async setMaterial(model, dbId, material) {
 
-    var fragIds = await ViewerToolkit.getFragIds(
-      model, dbId);
+    const fragIds = await ViewerToolkit.getFragIds(
+      model, dbId)
+
+    const fragList = model.getFragmentList()
 
     fragIds.forEach((fragId)=> {
 
-      model.getFragmentList().setMaterial(
-        fragId, material);
-    });
+      fragList.setMaterial(fragId, material)
+    })
   }
 
   /////////////////////////////////////////////////////////////////
@@ -677,42 +674,34 @@ export default class ViewerToolkit {
   //
   //
   /////////////////////////////////////////////////////////////////
-  static isolate (model, dbIds, opacity) {
+  static isolateFull (viewer, model = null, dbIds = []) {
 
     return new Promise(async(resolve, reject) => {
 
       try {
 
-        const fragList = model.getFragmentList()
+        model = model || viewer.model
+
+        viewer.isolate(dbIds)
 
         const targetIds = Array.isArray(dbIds) ? dbIds : [dbIds]
 
         const targetLeafIds = await ViewerToolkit.getLeafNodes(
           model, targetIds)
 
-        const leafIds = await ViewerToolkit.getLeafNodes(model)
+        const leafIds = await ViewerToolkit.getLeafNodes (model)
 
         const leafTasks = leafIds.map((dbId) => {
 
-          return new Promise(async(resolveLeaf) => {
-
-            const fragIds = await ViewerToolkit.getFragIds(
-              model, dbId)
+          return new Promise((resolveLeaf) => {
 
             const show = !targetLeafIds.length  ||
               targetLeafIds.indexOf(dbId) > -1
 
-            fragIds.forEach((fragId) => {
+            viewer.impl.visibilityManager.setNodeOff(
+              dbId, !show)
 
-              var material = fragList.getMaterial(fragId)
-
-              if (material) {
-
-                material.opacity = show ? 1.0 : opacity
-                material.transparent = true
-                material.needsUpdate = true
-              }
-            })
+            resolveLeaf()
           })
         })
 

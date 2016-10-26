@@ -66,26 +66,29 @@ export default class Markup3DTool extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   startCreate () {
 
-    this.create = true
+    if(!this.create) {
 
-    this.currentMarkup = null
+      this.create = true
 
-    this.eventHandlers = [
-      {
-        event: Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
-        handler: this.onSelectionChangedHandler,
-        removeOnDeactivate: true
-      }
-    ]
+      this.currentMarkup = null
 
-    this.eventHandlers.forEach((entry) => {
+      this.eventHandlers = [
+        {
+          event: Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
+          handler: this.onSelectionChangedHandler,
+          removeOnDeactivate: true
+        }
+      ]
 
-      this.viewer.addEventListener(
-        entry.event,
-        entry.handler)
-    })
+      this.eventHandlers.forEach((entry) => {
 
-    this.emit('startCreate')
+        this.viewer.addEventListener(
+          entry.event,
+          entry.handler)
+      })
+
+      this.emit('startCreate')
+    }
   }
 
   /////////////////////////////////////////////////////////////////
@@ -94,23 +97,26 @@ export default class Markup3DTool extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   stopCreate () {
 
-    this.create = false
+    if(this.create) {
 
-    this.currentMarkup = null
+      this.create = false
 
-    this.eventHandlers.forEach((entry) => {
+      this.currentMarkup = null
 
-      if(entry.removeOnDeactivate) {
+      this.eventHandlers.forEach((entry) => {
 
-        this.viewer.removeEventListener(
-          entry.event,
-          entry.handler)
-      }
-    })
+        if (entry.removeOnDeactivate) {
 
-    this.eventHandlers = null
+          this.viewer.removeEventListener(
+            entry.event,
+            entry.handler)
+        }
+      })
 
-    this.emit('stopCreate')
+      this.eventHandlers = null
+
+      this.emit('stopCreate')
+    }
   }
 
   /////////////////////////////////////////////////////////////////
@@ -227,6 +233,11 @@ export default class Markup3DTool extends EventsEmitter {
           null,
           this.options.properties)
 
+        markup.on('created', () => {
+
+          this.emit('markupCreated', markup)
+        })
+
         markup.setVisible(true)
 
         markup.on('drag.start', (markup) => {
@@ -237,6 +248,8 @@ export default class Markup3DTool extends EventsEmitter {
           this.onEndDragHandler)
 
         markup.startDrag()
+
+        this.emit('pinSelected')
 
       } else {
 

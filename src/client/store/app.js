@@ -1,10 +1,12 @@
+import ServiceManager from 'SvcManager'
+
 // ------------------------------------
 // Constants
 // ------------------------------------
 export const DATABASE_CHANGE = 'DATABASE_CHANGE'
+export const SAVE_APP_STATE = 'SAVE_APP_STATE'
 export const LAYOUT_CHANGE = 'LAYOUT_CHANGE'
 export const THEME_CHANGE = 'THEME_CHANGE'
-export const SAVE_STORAGE = 'SAVE_STORAGE'
 
 // ------------------------------------
 // Actions
@@ -30,10 +32,9 @@ export function themeChange (theme) {
   }
 }
 
-export function saveStorage () {
-
+export function saveAppState () {
   return {
-    type    : SAVE_STORAGE
+    type    : SAVE_APP_STATE
   }
 }
 
@@ -63,38 +64,56 @@ const ACTION_HANDLERS = {
     })
   },
 
-  [SAVE_STORAGE] : (state, action) => {
+  [SAVE_APP_STATE] : (state, action) => {
+
+    const storageSvc = ServiceManager.getService(
+      'StorageSvc')
+
+    storageSvc.save('AppState', state)
 
     return state
   }
 }
 
 // ------------------------------------
-// Reducer
+// Initial App State
 // ------------------------------------
-const defaultState = {
-  layoutType: 'splitLayoutRight',
-  theme: {
-    name: 'Snow-White',
-    css: '/resources/themes/snow-white.css',
-    viewer: {
-      backgroundColor: [
-        245, 245, 245,
-        245, 245, 245
-      ]
+
+const createInitialState = () => {
+
+  const defaultState = {
+    layoutType: 'splitLayoutRight',
+    theme: {
+      name: 'Snow-White',
+      css: '/resources/themes/snow-white.css',
+      viewer: {
+        backgroundColor: [
+          245, 245, 245,
+          245, 245, 245
+        ]
+      }
     }
   }
+
+  const storageSvc = ServiceManager.getService(
+    'StorageSvc')
+
+  const storageState = storageSvc.load(
+    'AppState')
+
+  const initialState = Object.assign({},
+    defaultState,
+    storageState)
+
+  return initialState
 }
 
-const storageState = {
-  layoutType: 'splitLayoutRight'
-}
+// ------------------------------------
+// Reducer
+// ------------------------------------
 
-const initialState = Object.assign({},
-  defaultState,
-  storageState)
-
-export default function reducer (state = initialState, action) {
+export default function reducer (
+  state = createInitialState(), action) {
 
   const handler = ACTION_HANDLERS[action.type]
 

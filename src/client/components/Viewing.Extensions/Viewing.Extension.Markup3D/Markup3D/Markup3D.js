@@ -96,6 +96,13 @@ export default class Markup3D extends EventsEmitter {
       this.startPoint,
       properties)
 
+    this.labelMarker.on('labelSelected', () => {
+
+      this.labelMarker.off()
+
+      this.emit('created')
+    })
+
     this.setLeaderEndPoint(screenPoint)
   }
 

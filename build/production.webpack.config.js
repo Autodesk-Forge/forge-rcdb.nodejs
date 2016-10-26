@@ -59,9 +59,9 @@ webpackConfig.plugins = [
 
 webpackConfig.plugins.push(
     new HtmlWebpackPlugin({
-      viewer3D: 'https://autodeskviewer.com/viewers/2.10/viewer3D.min.js',
-      viewerCSS: 'https://autodeskviewer.com/viewers/2.10/style.min.css',
-      threeJS: 'https://autodeskviewer.com/viewers/2.10/three.min.js',
+      viewer3D: 'https://autodeskviewer.com/viewers/2.11/viewer3D.min.js',
+      viewerCSS: 'https://autodeskviewer.com/viewers/2.11/style.min.css',
+      threeJS: 'https://autodeskviewer.com/viewers/2.11/three.min.js',
       template: config.utils_paths.client('layouts/index.ejs'),
       title: 'Forge | RCDB',
       filename: 'index.html',
@@ -126,6 +126,7 @@ webpackConfig.module.loaders.push({
     'sass?sourceMap'
   ]
 })
+
 webpackConfig.module.loaders.push({
   test    : /\.css$/,
   exclude : null,

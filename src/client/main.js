@@ -16,12 +16,6 @@ import ModelSvc from 'ModelSvc'
 import EventSvc from 'EventSvc'
 
 // ========================================================
-// Store Instantiation
-// ========================================================
-const initialState = window.___INITIAL_STATE__
-const store = createStore(initialState)
-
-// ========================================================
 // Services Initialization
 // ========================================================
 
@@ -61,6 +55,14 @@ ServiceManager.registerService(socketSvc)
 ServiceManager.registerService(falcorSvc)
 ServiceManager.registerService(modelSvc)
 ServiceManager.registerService(eventSvc)
+
+// ========================================================
+// Store Instantiation
+// ========================================================
+const initialState = window.___INITIAL_STATE__
+
+const store = createStore(initialState)
+
 
 // ========================================================
 // Render Setup

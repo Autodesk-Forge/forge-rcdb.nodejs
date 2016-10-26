@@ -151,6 +151,7 @@ export default class AppNavbar extends React.Component {
             close={()=>{ this.setState(Object.assign({}, this.state, {
               layoutOpen: false
             }))}}
+            saveAppState={this.props.saveAppState}
             layoutChange={this.props.layoutChange}
             open={this.state.layoutOpen}
           />

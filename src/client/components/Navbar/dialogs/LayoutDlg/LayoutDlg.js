@@ -30,6 +30,12 @@ export default class LayoutDlg extends React.Component {
         layoutType: 'gridLayout',
         caption: 'Grid Layout',
         key: '3'
+      },
+      {
+        className: 'grid-layout',
+        layoutType: 'jqueryLayoutRight',
+        caption: 'JQuery',
+        key: '4'
       }
     ]
   }
@@ -50,6 +56,7 @@ export default class LayoutDlg extends React.Component {
   onClick (item) {
 
     this.props.layoutChange(item.layoutType)
+    this.props.saveAppState()
     this.props.close()
   }
 

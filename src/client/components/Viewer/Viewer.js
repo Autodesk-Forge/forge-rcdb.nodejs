@@ -15,6 +15,7 @@
 // DOES NOT WARRANT THAT THE OPERATION OF THE PROGRAM WILL BE
 // UNINTERRUPTED OR ERROR FREE.
 /////////////////////////////////////////////////////////////////////
+import ReactDOM from 'react-dom'
 import React from 'react'
 import './Viewer.scss'
 
@@ -105,13 +106,40 @@ class Viewer extends React.Component {
       this.viewer = new Autodesk.Viewing.Private.GuiViewer3D(
         this.viewerContainer)
 
+      // Experimental !
+      // This this to render dynamic components
+      // inserted after the viewer div has been created
+
+      const reactViewerNode = document.createElement('div')
+
+      this.viewer.container.appendChild(reactViewerNode)
+
+      this.viewer.react = {
+        node: reactViewerNode,
+        components: [],
+        addComponent: (component) => {
+
+          this.viewer.react.components.push(component)
+        },
+        render: (props) => {
+
+          ReactDOM.render(
+            <div>
+            {
+              React.Children.map(
+                this.viewer.react.components,
+                (child) => React.cloneElement(child, props))
+              }
+            </div>,
+            reactViewerNode)
+        }
+      }
+
       this.props.onViewerCreated({
         loadDocument: this.loadDocument,
         initialize: this.initialize,
         viewer: this.viewer
       })
-
-      //this.viewerSize = this.getSize(this.viewer)
 
       const events = [
         this.viewerEvent(Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT),
@@ -127,6 +155,21 @@ class Viewer extends React.Component {
 
       console.log('Viewer Initialization Error: ')
       console.log(ex)
+    }
+  }
+
+  ///////////////////////////////////////////////////////////////////
+  //
+  //
+  ///////////////////////////////////////////////////////////////////
+  componentDidUpdate () {
+
+    if (this.viewer && this.viewer.react) {
+
+      if(this.viewer.react.components.length) {
+
+        this.viewer.react.render(this.props)
+      }
     }
   }
 
@@ -153,20 +196,10 @@ class Viewer extends React.Component {
     if (this.viewer && this.viewer.impl) {
 
       this.viewer.resize()
-
-      //const viewerSize = this.getSize(this.viewer)
-      //
-      //if(this.viewerSize.width  !== viewerSize.width ||
-      //   this.viewerSize.height !== viewerSize.height) {
-      //
-      //  this.viewerSize = viewerSize
-      //
-      //  this.onResize()
-      //}
     }
 
     return (
-      <div className="viewer" ref={(div)=> this.viewerContainer=div}>
+      <div className="viewer" ref={ (div) => this.viewerContainer = div }>
       </div>
     )
   }

@@ -173,24 +173,26 @@ export default class VisualReportPanel extends ToolPanelBase{
   //
   //
   /////////////////////////////////////////////////////////////
-  createMaterial(clrStr) {
+  createMaterial (clrStr) {
 
-    var clr = parseInt(clrStr.replace('#',''), 16);
+    var clr = parseInt(clrStr.replace('#',''), 16)
 
     var props = {
       shading: THREE.FlatShading,
       name: ViewerToolkit.guid(),
-      shininess: 15,
       specular: clr,
+      shininess: 0,
+      emissive: 0,
+      diffuse: 0,
       color: clr
-    };
+    }
 
-    var material = new THREE.MeshBasicMaterial(props);
+    var material = new THREE.MeshPhongMaterial(props)
 
     this.viewer.impl.matman().addMaterial(
       props.name,
       material,
-      true);
+      true)
 
     return material;
   }
@@ -204,7 +206,7 @@ export default class VisualReportPanel extends ToolPanelBase{
     var componentsMap = await ViewerToolkit.mapComponentsByProp(
       this.viewer.model,
       propName,
-      this.componentIds);
+      this.componentIds)
 
     var groupedMap = this.groupMap(
       componentsMap, 'Other', 1.5);
@@ -228,8 +230,8 @@ export default class VisualReportPanel extends ToolPanelBase{
         ViewerToolkit.setMaterial(
           this.viewer.model,
           dbId,
-          material);
-      });
+          material)
+      })
 
       return {
         label: key,
@@ -240,8 +242,10 @@ export default class VisualReportPanel extends ToolPanelBase{
       }
     });
 
-    this.viewer.fitToView();
-    this.viewer.isolate();
+    this.viewer.fitToView()
+
+    ViewerToolkit.isolateFull(
+      this.viewer)
 
     this.redraw(this.data)
 
@@ -263,8 +267,12 @@ export default class VisualReportPanel extends ToolPanelBase{
 
     this.pieChart.on('segment.click', (e)=>{
 
-      this.viewer.fitToView(e.dbIds);
-      this.viewer.isolate(e.dbIds);
+      this.viewer.fitToView(e.dbIds)
+
+      ViewerToolkit.isolateFull(
+        this.viewer,
+        this.viewer.model,
+        e.dbIds)
     });
 
     this.barChart = new BarChart(
@@ -273,8 +281,12 @@ export default class VisualReportPanel extends ToolPanelBase{
 
     this.barChart.on('bar.click', (e)=>{
 
-      this.viewer.fitToView(e.dbIds);
-      this.viewer.isolate(e.dbIds);
+      this.viewer.fitToView(e.dbIds)
+
+      ViewerToolkit.isolateFull(
+        this.viewer,
+        this.viewer.model,
+        e.dbIds)
     });
   }
 
@@ -312,12 +324,11 @@ export default class VisualReportPanel extends ToolPanelBase{
   // based on viewer input property
   //
   /////////////////////////////////////////////////////////////
-  async buildCustomDataTree(propName) {
+  async buildCustomDataTree (propName) {
 
     var model = this.viewer.model;
 
-    var root = await ViewerToolkit.buildModelTree(
-      model);
+    var root = await ViewerToolkit.buildModelTree(model)
 
     var taskFunc = (node, parent)=> {
 
@@ -332,27 +343,28 @@ export default class VisualReportPanel extends ToolPanelBase{
 
           if (isNaN(prop.displayValue)) {
 
-            node.size = 0;
+            node.size = 0
+
+          } else {
+
+            node.size = prop.displayValue
           }
-          else {
 
-            node.size = prop.displayValue;
-          }
+          return resolve()
 
-          return resolve();
-        }
-        catch (ex) {
+        } catch (ex) {
 
-          node.size = 0;
-          return resolve();
+          node.size = 0
+
+          return resolve()
         }
       });
     }
 
     await ViewerToolkit.runTaskOnDataTree(
-      root, taskFunc);
+      root, taskFunc)
 
-    this.normalize(root);
+    this.normalize(root)
 
     return root;
   }

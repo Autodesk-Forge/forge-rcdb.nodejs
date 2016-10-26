@@ -1,6 +1,7 @@
 import CustomPropertyExtension from 'Viewing.Extension.CustomProperty'
 import StateManagerExtension from 'Viewing.Extension.StateManager'
 import VisualReportExtension from 'Viewing.Extension.VisualReport'
+import ContextMenuExtension from 'Viewing.Extension.ContextMenu'
 import Markup3DExtension from 'Viewing.Extension.Markup3D'
 import ViewerToolkit from 'Viewer.Toolkit'
 import JQueryLayout from './JQueryLayout'
@@ -135,7 +136,11 @@ class ViewerView extends React.Component {
     const dbIds = item ? item.components : []
 
     this.viewer.fitToView(dbIds)
-    this.viewer.isolate(dbIds)
+
+    ViewerToolkit.isolateFull(
+      this.viewer,
+      this.viewer.model,
+      dbIds)
 
     if(propagate) {
 
@@ -155,12 +160,10 @@ class ViewerView extends React.Component {
 
     this.viewer.fitToView(dbIds)
 
-    ViewerToolkit.isolate(
+    ViewerToolkit.isolateFull(
+      this.viewer,
       this.viewer.model,
-      dbIds, 0.0).then(() => {
-
-        this.viewer.impl.invalidate(true, true, true)
-      })
+      dbIds)
   }
 
   /////////////////////////////////////////////////////////
@@ -170,6 +173,20 @@ class ViewerView extends React.Component {
   onFullScreenMode (e) {
 
     console.log(e)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onSelectionChanged (e) {
+
+    if (e.selections && e.selections.length) {
+
+      const selection = e.selections[0]
+
+      //console.log(selection.dbIdArray[0])
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -188,9 +205,15 @@ class ViewerView extends React.Component {
           this.onFullScreenMode(e)
       })
 
+      viewer.addEventListener(
+        Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT, (e) => {
+
+          this.onSelectionChanged(e)
+        })
+
       const modelId = this.props.location.query.id
 
-      this.model = await this.modelSvc.getModel(
+      this.dbModel = await this.modelSvc.getModel(
         'forge-rcdb',
         modelId)
 
@@ -199,24 +222,24 @@ class ViewerView extends React.Component {
         this.viewerEnvInitialized = true
 
         await initialize(
-          this.model.env,
+          this.dbModel.env,
           '/api/forge/token/2legged')
       }
 
       viewer.start()
 
-      switch (this.model.env) {
+      switch (this.dbModel.env) {
 
         case 'Local':
 
-          viewer.load(this.model.path)
+          viewer.load(this.dbModel.path)
 
           break
 
         case 'AutodeskProduction':
 
           const doc = await loadDocument(
-            'urn:' + this.model.urn)
+            'urn:' + this.dbModel.urn)
 
           const path = ViewerToolkit.getDefaultViewablePath(doc)
 
@@ -242,7 +265,13 @@ class ViewerView extends React.Component {
 
     try {
 
-      const modelOptions = this.model.options || {
+      //viewer.react.addComponent(
+      //  <div key="test" className="react-div">
+      //    Test
+      //  </div>
+      //)
+
+      const modelOptions = this.dbModel.options || {
           removedControls: [
             '#navTools',
             '#toolbar-settingsTool'
@@ -278,6 +307,27 @@ class ViewerView extends React.Component {
 
       viewer.resize()
 
+      viewer.loadExtension(ContextMenuExtension, {
+
+        buildMenu: (menu, selectedDbId) => {
+
+          if (!selectedDbId) {
+
+            return [{
+              title: 'Show all objects',
+              target: () => {
+
+                ViewerToolkit.isolateFull(viewer)
+              }
+            }]
+
+          } else {
+
+            return menu
+          }
+        }
+      })
+
       viewer.loadExtension(CustomPropertyExtension, {
         getCustomProperties: (nodeId) => {
           return this.getCustomProperties(nodeId)
@@ -309,7 +359,7 @@ class ViewerView extends React.Component {
         apiUrl: `/api/models/${'forge-rcdb'}`,
         container: $('.viewer-view')[0],
         parentControl: ctrlGroup,
-        model: this.model
+        model: this.dbModel
       })
 
       viewer.loadExtension(Markup3DExtension,

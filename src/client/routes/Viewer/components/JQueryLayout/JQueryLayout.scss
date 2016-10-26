@@ -9,7 +9,7 @@
   border: 1px solid green;
   overflow-y: auto;
   overflow-x: hide;
-  flex:0.25;
+  flex: 0.25;
 }
 
 .jquery-layout .splitter {
@@ -19,6 +19,7 @@
   height: 4px;
 }
 
-.jquery-layout-draggable {
+.jquery-layout .draggable {
   background: #00d3ff;
 }
+
