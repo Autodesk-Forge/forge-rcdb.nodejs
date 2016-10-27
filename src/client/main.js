@@ -85,6 +85,7 @@ let render = () => {
 if (config.env === 'development') {
 
   if (window.devToolsExtension) {
+
     window.devToolsExtension.open()
   }
 

@@ -63,6 +63,10 @@
   overflow: hidden;
 }
 
+.footable > tbody > tr > td:last-child {
+  overflow: visible;
+}
+
 .footable > thead > tr > th label {
   font-family: Artifakt;
 }
@@ -201,6 +205,9 @@
   width: 20%;
 }
 
+.db-table .select-container {
+
+}
 
 .scroll {
   border-collapse: collapse;

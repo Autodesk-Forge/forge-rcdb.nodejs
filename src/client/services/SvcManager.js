@@ -5,7 +5,7 @@ class SvcManager {
   //
   //
   /////////////////////////////////////////////////////////////////
-  constructor() {
+  constructor () {
 
     this._services = {}
   }
@@ -14,7 +14,7 @@ class SvcManager {
   //
   //
   /////////////////////////////////////////////////////////////////
-  registerService(svc) {
+  registerService (svc) {
 
     this._services[svc.name()] = svc
   }
@@ -23,9 +23,9 @@ class SvcManager {
   //
   //
   /////////////////////////////////////////////////////////////////
-  getService(name) {
+  getService (name) {
 
-    if(this._services[name]){
+    if (this._services[name]) {
 
       return this._services[name]
     }

@@ -5,3 +5,5 @@ dist
 coverage
 .idea/
 resources/models
+bin/static
+

@@ -38,8 +38,8 @@ module.exports = function() {
         'data:read')
 
       res.json(token)
-    }
-    catch (error) {
+
+    } catch (error) {
 
       res.status(error.statusCode || 404)
       res.json(error)

@@ -239,7 +239,7 @@ export default class LabelMarker extends GraphicMarker {
           style="margin-right:10px; float:left; padding-top:1px;">
         </div>
         <div style="height:30px">
-          <b>Bind to State</b>
+          <b>Bind to state</b>
         </div>
 
         <div id="${occlusionSwitchId}"

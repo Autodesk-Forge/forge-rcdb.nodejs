@@ -458,9 +458,11 @@
               })
 
               value = `
-                <select>
-                  ${selectOpts.join('')}
-                </select>
+                <div class="select-container">
+                  <select>
+                    ${selectOpts.join('')}
+                  </select>
+                </div>
                 `
               break;
 

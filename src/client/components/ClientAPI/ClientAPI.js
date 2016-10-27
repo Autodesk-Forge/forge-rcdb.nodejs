@@ -14,7 +14,7 @@ export default class ClientAPI {
   // fetch wrapper
   //
   /////////////////////////////////////////////////////////////
-  fetch(url, params) {
+  fetch (url, params) {
 
     return fetch(url, params).then(response => {
 

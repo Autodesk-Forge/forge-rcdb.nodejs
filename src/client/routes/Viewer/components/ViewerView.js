@@ -232,7 +232,7 @@ class ViewerView extends React.Component {
 
         case 'Local':
 
-          viewer.load(this.dbModel.path)
+          viewer.loadModel(this.dbModel.path)
 
           break
 
@@ -266,10 +266,11 @@ class ViewerView extends React.Component {
     try {
 
       //viewer.react.addComponent(
-      //  <div key="test" className="react-div">
-      //    Test
-      //  </div>
+      //  <DBDropdown key="test" className="react-div">
+      //  </DBDropdown>
       //)
+
+      //viewer.loadExtension('Autodesk.InViewerSearch')
 
       const modelOptions = this.dbModel.options || {
           removedControls: [
