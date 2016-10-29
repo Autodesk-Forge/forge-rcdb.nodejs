@@ -1,6 +1,6 @@
 import {EventsEmitterComposer} from './EventsEmitter'
 import EventsEmitter from './EventsEmitter'
 
-EventsEmitter.composer = EventsEmitterComposer
+EventsEmitter.Composer = EventsEmitterComposer
 
 export default EventsEmitter

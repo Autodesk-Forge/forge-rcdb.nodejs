@@ -1,320 +1,3 @@
-
-function getGlobal() {
-    return (typeof window !== "undefined" && window !== null)
-            ? window
-            : (typeof self !== "undefined" && self !== null)
-                ? self
-                : global;
-}
-
-/**
- * Create namespace
- * @param {string} s - namespace (e.g. 'Autodesk.Viewing')
- * @return {Object} namespace
- */
-var AutodeskNamespace = function (s) {
-    var ns = getGlobal();
-
-    var parts = s.split('.');
-    for (var i = 0; i < parts.length; ++i) {
-        ns[parts[i]] = ns[parts[i]] || {};
-        ns = ns[parts[i]];
-    }
-
-    return ns;
-};
-
-// Define the most often used ones
-AutodeskNamespace("Autodesk.Viewing.Private");
-
-AutodeskNamespace("Autodesk.Viewing.Extensions");
-
-AutodeskNamespace("Autodesk.Viewing.Shaders");
-
-AutodeskNamespace('Autodesk.Viewing.UI');
-
-AutodeskNamespace('Autodesk.LMVTK');
-
-Autodesk.Viewing.getGlobal = getGlobal;
-Autodesk.Viewing.AutodeskNamespace = AutodeskNamespace;
-
-
-function getGlobal() {
-    return (typeof window !== "undefined" && window !== null)
-            ? window
-            : (typeof self !== "undefined" && self !== null)
-                ? self
-                : global;
-}
-
-var av = Autodesk.Viewing,
-    avp = av.Private;
-
-av.getGlobal = getGlobal;
-
-var isBrowser = av.isBrowser = (typeof navigator !== "undefined");
-
-var isIE11 = av.isIE11 = isBrowser && !!navigator.userAgent.match(/Trident\/7\./);
-
-// fix IE events
-if(typeof window !== "undefined" && isIE11){
-    (function () {
-        function CustomEvent ( event, params ) {
-            params = params || { bubbles: false, cancelable: false, detail: undefined };
-            var evt = document.createEvent( 'CustomEvent' );
-            evt.initCustomEvent( event, params.bubbles, params.cancelable, params.detail );
-            return evt;
-        };
-
-        CustomEvent.prototype = window.CustomEvent.prototype;
-
-        window.CustomEvent = CustomEvent;
-    })();
-}
-
-// IE does not implement ArrayBuffer slice. Handy!
-if (!ArrayBuffer.prototype.slice) {
-    ArrayBuffer.prototype.slice = function(start, end) {
-        // Normalize start/end values
-        if (!end || end > this.byteLength) {
-            end = this.byteLength;
-        }
-        else if (end < 0) {
-            end = this.byteLength + end;
-            if (end < 0) end = 0;
-        }
-        if (start < 0) {
-            start = this.byteLength + start;
-            if (start < 0) start = 0;
-        }
-
-        if (end <= start) {
-            return new ArrayBuffer();
-        }
-
-        // Bytewise copy- this will not be fast, but what choice do we have?
-        var len = end - start;
-        var view = new Uint8Array(this, start, len);
-        var out = new Uint8Array(len);
-        for (var i = 0; i < len; i++) {
-            out[i] = view[i];
-        }
-        return out.buffer;
-    }
-}
-
-
-//The BlobBuilder object
-if (typeof window !== "undefined")
-    window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder || window.MSBlobBuilder;
-
-
-// Launch full screen on the given element with the available method
-var launchFullscreen = av.launchFullscreen = function(element, options) {
-    if (element.requestFullscreen) {
-        element.requestFullscreen(options);
-    } else if (element.mozRequestFullScreen) {
-        element.mozRequestFullScreen(options);
-    } else if (element.webkitRequestFullscreen) {
-        element.webkitRequestFullscreen(options);
-    } else if (element.msRequestFullscreen) {
-        element.msRequestFullscreen(options);
-    }
-}
-
-// Exit full screen with the available method
-var exitFullscreen = av.exitFullscreen = function() {
-    if (document.exitFullscreen) {
-        document.exitFullscreen();
-    } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen();
-    } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-    } else if (document.msExitFullscreen) {
-        document.msExitFullscreen();
-    }
-}
-
-// Determines if the browser is in full screen
-var inFullscreen = av.inFullscreen = function(){
-
-    // Special case for Ms-Edge that has webkitIsFullScreen with correct value
-    // and fullscreenEnabled with wrong value (thanks MS)
-    if ("webkitIsFullScreen" in document) return document.webkitIsFullScreen;
-    return !!(document.mozFullScreenElement ||
-        document.msFullscreenElement ||
-        document.fullscreenEnabled || // Check last-ish because it is true in Ms-Edge
-        document.querySelector(".viewer-fill-browser")); // Fallback for iPad
-}
-
-var fullscreenElement = av.fullscreenElement = function() {
-    return document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
-}
-
-var isFullscreenAvailable = av.isFullscreenAvailable = function(element) {
-    return element.requestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen || element.msRequestFullscreen;
-}
-
-// Get the version of the android device through user agent.
-// Return the version string of android device, e.g. 4.4, 5.0...
-var getAndroidVersion = av.getAndroidVersion = function(ua) {
-    var ua = ua || navigator.userAgent;
-    var match = ua.match(/Android\s([0-9\.]*)/);
-    return match ? match[1] : false;
-};
-
-// Determine if this is a touch or notouch device.
-var isTouchDevice = av.isTouchDevice = function() {
-    /*
-    // Temporarily disable touch support through hammer on Android 5, to debug
-    // some specific gesture issue with Chromium WebView when loading viewer3D.js.
-    if (parseInt(getAndroidVersion()) == 5) {
-        return false;
-    }
-    */
-
-    return (typeof window !== "undefined" &&  "ontouchstart" in window);
-}
-
-av.isIOSDevice = function() {
-    if (!isBrowser) return false;
-    return /ip(ad|hone|od)/.test(navigator.userAgent.toLowerCase());
-};
-
-av.isAndroidDevice = function() {
-    if (!isBrowser) return false;
-    return (navigator.userAgent.toLowerCase().indexOf('android') !== -1);
-};
-
-av.isMobileDevice = function() {
-    if (!isBrowser) return false;
-    return av.isIOSDevice() || av.isAndroidDevice();
-};
-
-av.isSafari = function() {
-    if (!isBrowser) return false;
-    var _ua = navigator.userAgent.toLowerCase();
-    return (_ua.indexOf("safari") !== -1) && (_ua.indexOf("chrome") === -1);
-};
-
-av.isFirefox = function() {
-    if (!isBrowser) return false;
-    var _ua = navigator.userAgent.toLowerCase();
-    return (_ua.indexOf("firefox") !== -1);
-};
-
-av.isMac = function() {
-    if (!isBrowser) return false;
-    var _ua = navigator.userAgent.toLowerCase();
-    return  (_ua.indexOf("mac os") !== -1);
-};
-
-av.isWindows = function() {
-    if (!isBrowser) return false;
-    var _ua = navigator.userAgent.toLowerCase();
-    return  (_ua.indexOf("win32") !== -1 || _ua.indexOf("windows") !== -1);
-};
-
-var rescueFromPolymer = av.rescueFromPolymer = (function() {
-
-    if (av.isSafari()) {
-
-        return function(object) {
-
-            if (!window.Polymer)
-                return object;
-
-            for (var p in object) {
-                if (p.indexOf("__impl") !== -1) {
-                    return object[p];
-                }
-            }
-            return object;
-        };
-
-    } else {
-
-        return function(o) { return o; };
-
-    }
-
-})();
-
-/**
- * Detects if WebGL is enabled.
- *
- * @return { number } -1 for not Supported,
- *                    0 for disabled
- *                    1 for enabled
- */
-var detectWebGL = av.detectWebGL = function()
-{
-    // Check for the webgl rendering context
-    if ( !! window.WebGLRenderingContext) {
-        var canvas = document.createElement("canvas"),
-            names = ["webgl", "experimental-webgl", "moz-webgl", "webkit-3d"],
-            context = false;
-
-        for (var i = 0; i < 4; i++) {
-            try {
-                context = canvas.getContext(names[i]);
-                context = rescueFromPolymer(context);
-                if (context && typeof context.getParameter === "function") {
-                    // WebGL is enabled.
-                    //
-                    return 1;
-                }
-            } catch (e) {}
-        }
-
-        // WebGL is supported, but disabled.
-        //
-        return 0;
-    }
-
-    // WebGL not supported.
-    //
-    return -1;
-};
-
-
-// Convert touchstart event to click to remove the delay between the touch and
-// the click event which is sent after touchstart with about 300ms deley.
-// Should be used in UI elements on touch devices.
-var touchStartToClick = av.touchStartToClick = function(e) {
-    e.preventDefault();  // Stops the firing of delayed click event.
-    e.stopPropagation();
-    e.target.click();    // Maps to immediate click.
-};
-
-//Safari doesn't have the Performance object
-//We only need the now() function, so that's easy to emulate.
-(function() {
-    var global = getGlobal();
-    if (!global.performance)
-        global.performance = Date;
-})();
-
-
-
-//This file is the first one when creating minified build
-//and is used to set certain flags that are needed
-//for the concatenated build.
-
-var av = Autodesk.Viewing;
-var avp = Autodesk.Viewing.Private;
-
-avp.IS_CONCAT_BUILD = true;
-
-/** @define {string} */
-avp.BUILD_LMV_WORKER_URL = "lmvworker.js";
-avp.LMV_WORKER_URL = avp.BUILD_LMV_WORKER_URL;
-
-avp.ENABLE_DEBUG = avp.ENABLE_DEBUG || false;
-avp.ENABLE_TRACE = avp.ENABLE_TRACE || false;
-avp.DEBUG_SHADERS = avp.DEBUG_SHADERS || false;
-avp.ENABLE_INLINE_WORKER = true;
-
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author *kile / http://kile.stravaganza.org/
@@ -1962,6 +1645,1874 @@ LmvMatrix4.prototype = {
 
 };
 
+var WGS =
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			exports: {},
+/******/ 			id: moduleId,
+/******/ 			loaded: false
+/******/ 		};
+
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+
+
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var its = __webpack_require__(1);
+	var bvh = __webpack_require__(2);
+
+	module.exports = {
+	    InstanceTreeStorage: its.InstanceTreeStorage,
+	    InstanceTreeAccess: its.InstanceTreeAccess,
+	    BVHBuilder: bvh.BVHBuilder,
+	    NodeArray: bvh.NodeArray
+	};
+
+
+/***/ },
+/* 1 */
+/***/ function(module, exports) {
+
+		//
+		// struct Node {
+		//     int dbId;
+		//	   int parentDbId;
+		//	   int firstChild; //if negative it's a fragment list
+		//     int numChildren;
+		//     int flags;	
+		// };
+		// sizeof(Node) == 20
+		var SIZEOF_NODE = 5, //integers
+			OFFSET_DBID = 0,
+			OFFSET_PARENT = 1,
+			OFFSET_FIRST_CHILD = 2,
+			OFFSET_NUM_CHILD = 3,
+			OFFSET_FLAGS = 4;
+
+		// note: objectCount and fragmentCount are not used
+		function NodeArray(objectCount, fragmentCount) {
+
+			this.nodes = [];
+			this.nextNode = 0;
+			
+			this.children = [];
+			this.nextChild = 0;
+
+			this.dbIdToIndex = {};
+
+			this.names = [];
+			this.s2i = {}; //duplicate string pool
+			this.strings = [];
+			this.nameSuffixes = []; //integers
+
+			//Occupy index zero so that we can use index 0 as undefined
+			this.getIndex(0);
+		}
+
+		NodeArray.prototype.getIndex = function(dbId) {
+
+			var index = this.dbIdToIndex[dbId];
+
+			if (index)
+				return index;
+
+			index = this.nextNode++;
+
+			//Allocate space for new node
+			this.nodes.push(dbId); //store the dbId as first integer in the Node structure
+			//Add four blank integers to be filled by setNode
+			for (var i=1; i<SIZEOF_NODE; i++)
+				this.nodes.push(0);
+
+			this.dbIdToIndex[dbId] = index;
+
+			return index;
+		};
+
+		NodeArray.prototype.setNode = function(dbId, parentDbId, name, flags, childrenIds, isLeaf) {
+
+			var index = this.getIndex(dbId);
+
+			var baseOffset = index * SIZEOF_NODE;
+
+			this.nodes[baseOffset+OFFSET_PARENT] = parentDbId;
+			this.nodes[baseOffset+OFFSET_FIRST_CHILD] = this.nextChild;
+			this.nodes[baseOffset+OFFSET_NUM_CHILD] = isLeaf ? -childrenIds.length : childrenIds.length;
+			this.nodes[baseOffset+OFFSET_FLAGS] = flags;
+
+			for (var i=0; i<childrenIds.length; i++)
+				this.children[this.nextChild++] = isLeaf ? childrenIds[i] : this.getIndex(childrenIds[i]);
+
+			if (this.nextChild > this.children.length) {
+	            // TODO: this code may run in a worker, replace console with something else
+				console.error("Child index out of bounds -- should not happen");
+	        }
+		
+			this.processName(index, name);
+		};
+
+		NodeArray.prototype.processName = function(index, name) {
+
+			//Attempt to decompose the name into a base string + integer,
+			//like for example "Base Wall [12345678]" or "Crank Shaft:1"
+			//We will try to reduce memory usage by storing "Base Wall" just once.
+			var base;
+			var suffix;
+
+			//Try Revit style [1234] first
+			var iStart = -1;
+			var iEnd = -1;
+
+			if (name) { //name should not be empty, but hey, it happens.
+				iEnd = name.lastIndexOf("]");
+				iStart = name.lastIndexOf("[");
+
+				//Try Inventor style :1234
+				if (iStart === -1 || iEnd === -1) {
+					iStart = name.lastIndexOf(":");
+					iEnd = name.length;
+				}		
+			}
+
+			//TODO: Any other separators? What does AutoCAD use?
+
+			if (iStart >= 0 && iEnd > iStart) {
+				base = name.slice(0, iStart+1);
+				var ssuffix = name.slice(iStart+1, iEnd);
+				suffix = parseInt(ssuffix, 10);
+				
+				//make sure we get the same thing back when
+				//converting back to string, otherwise don't 
+				//decompose it.
+				if (!suffix || suffix+"" !== ssuffix) {
+					base = name;
+					suffix = 0;
+				}
+			} else {
+				base = name;
+				suffix = 0;
+			}
+
+
+			var idx = this.s2i[base];
+			if (idx === undefined) {
+				this.strings.push(base);
+				idx = this.strings.length-1;
+				this.s2i[base] = idx;
+			}
+
+			this.names[index] = idx;
+			this.nameSuffixes[index] = suffix;
+		};
+
+
+		function arrayToBuffer(a) {
+			var b = new Int32Array(a.length);
+			b.set(a);
+			return b;
+		}
+
+	    // note none of these arguments are used
+		NodeArray.prototype.flatten = function(dbId, parentDbId, name, flags, childrenIds, isLeaf) {
+			this.nodes = arrayToBuffer(this.nodes);
+			this.children = arrayToBuffer(this.children);
+			this.names = arrayToBuffer(this.names);
+			this.nameSuffixes = arrayToBuffer(this.nameSuffixes);
+			this.s2i = null; //we don't need this temporary map once we've built the strings list
+		};
+
+
+
+		function InstanceTreeAccess(nodeArray, rootId, nodeBoxes) {
+			this.nodes = nodeArray.nodes;
+			this.children = nodeArray.children;
+			this.dbIdToIndex = nodeArray.dbIdToIndex;
+			this.names = nodeArray.names;
+			this.nameSuffixes = nodeArray.nameSuffixes;
+			this.strings = nodeArray.strings;
+			this.rootId = rootId;
+			this.numNodes = this.nodes.length / SIZEOF_NODE;
+			this.visibleIds = null;
+
+
+			this.nodeBoxes = nodeBoxes || new Float32Array(6 * this.numNodes);
+		}
+
+	    // note dbId is not used
+		InstanceTreeAccess.prototype.getNumNodes = function(dbId) {
+			return this.numNodes;
+		};
+
+		InstanceTreeAccess.prototype.getIndex = function(dbId) {
+			return this.dbIdToIndex[dbId];
+		};
+
+		InstanceTreeAccess.prototype.name = function(dbId) {
+			var idx = this.dbIdToIndex[dbId];
+			var base = this.strings[this.names[idx]];
+			var suffix = this.nameSuffixes[idx];
+			if (suffix) {
+				//NOTE: update this logic if more separators are supported in processName above
+				var lastChar = base.charAt(base.length-1);
+				if (lastChar === "[")
+					return base + suffix + "]";
+				else
+					return base + suffix;
+			} else {
+				return base;
+			}
+		};
+
+		InstanceTreeAccess.prototype.getParentId = function(dbId) {
+			return this.nodes[this.dbIdToIndex[dbId] * SIZEOF_NODE + OFFSET_PARENT];
+		};
+
+		InstanceTreeAccess.prototype.getNodeFlags = function(dbId) {
+			return this.nodes[this.dbIdToIndex[dbId] * SIZEOF_NODE + OFFSET_FLAGS];
+		};
+
+		InstanceTreeAccess.prototype.setNodeFlags = function(dbId, flags) {
+			this.nodes[this.dbIdToIndex[dbId] * SIZEOF_NODE + OFFSET_FLAGS] = flags;
+		};
+
+		InstanceTreeAccess.prototype.getNumChildren = function(dbId) {
+			var numChildren = this.nodes[this.dbIdToIndex[dbId] * SIZEOF_NODE + OFFSET_NUM_CHILD];
+			if (numChildren > 0)
+				return numChildren;
+			return 0;		
+		};
+
+		InstanceTreeAccess.prototype.getNumFragments = function(dbId) {
+			var numChildren = this.nodes[this.dbIdToIndex[dbId] * SIZEOF_NODE + OFFSET_NUM_CHILD];
+			if (numChildren < 0)
+				return -numChildren;
+			return 0;		
+		};
+
+		InstanceTreeAccess.prototype.getNodeBox = function(dbId, dst) {
+			var off = this.getIndex(dbId) * 6;
+			for (var i=0; i<6; i++)
+				dst[i] = this.nodeBoxes[off+i];
+		};
+
+		//Returns an array containing the dbIds of all objects
+		//that are physically represented in the scene. Not all
+		//objects in the property database occur physically in each graphics viewable.
+		InstanceTreeAccess.prototype.getVisibleIds = function() {
+			if (!this.visibleIds) {
+				this.visibleIds = Object.keys(this.dbIdToIndex).map(function(k) { return parseInt(k); });
+			}
+
+			return this.visibleIds;
+		};
+
+
+		InstanceTreeAccess.prototype.enumNodeChildren = function(dbId, callback) {
+			var idx = this.dbIdToIndex[dbId];
+			var firstChild = this.nodes[idx * SIZEOF_NODE + OFFSET_FIRST_CHILD];
+			var numChildren = this.nodes[idx * SIZEOF_NODE + OFFSET_NUM_CHILD];
+
+			if (numChildren > 0) {
+				for (var i=0; i<numChildren; i++) {
+					var childDbId = this.nodes[this.children[firstChild+i] * SIZEOF_NODE];
+					callback(childDbId, dbId, idx);
+				}
+			}
+		};
+
+		InstanceTreeAccess.prototype.enumNodeFragments = function(dbId, callback) {
+			var idx = this.dbIdToIndex[dbId];
+			var firstChild = this.nodes[idx * SIZEOF_NODE + OFFSET_FIRST_CHILD];
+			var numChildren = this.nodes[idx * SIZEOF_NODE + OFFSET_NUM_CHILD];
+
+			//If numChildren is negative, it means leaf node and children are fragments
+			if (numChildren < 0) {
+				numChildren = -numChildren;
+				for (var i=0; i<numChildren; i++) {
+					callback(this.children[firstChild+i], dbId, idx);
+				}
+			}
+		};
+
+	module.exports = {
+	    InstanceTreeStorage: NodeArray,
+		InstanceTreeAccess: InstanceTreeAccess
+	};
+
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	/**
+	 * BVH definitions:
+	 *
+	 * BVH Node: if this was C (the only real programming language), it would go something like this,
+	 * but with better alignment.
+	 *
+	 * This is definition for "fat" nodes (for rasterization),
+	 * i.e. when inner nodes also contain primitives.
+	 * struct Node {                                                            byte/short/int offset
+	 *      float worldBox[6]; //world box of the node node                         0/0/0
+	 *      int leftChildIndex; //pointer to left child node (right is left+1)     24/12/6
+	 *      ushort primCount; //how many fragments are at this node                28/14/7
+	 *      ushort flags; //bitfield of good stuff                                 30/15/7.5
+	 *
+	 *      int primStart; //start of node's own primitives (fragments) list       32/16/8
+	 * };
+	 * => sizeof(Node) = 36 bytes
+
+	 * Definition for lean nodes (for ray casting): when a node is either inner node (just children, no primitives)
+	 * or leaf (just primitives, no children).
+	 * struct Node {
+	 *      float worldBox[6]; //world box of the node node
+	 *      union {
+	 *          int leftChildIndex; //pointer to left child node (right is left+1)
+	 *          int primStart; //start of node's own primitives (fragments) list
+	 *      };
+	 *      ushort primCount; //how many fragments are at this node
+	 *      ushort flags; //bitfield of good stuff
+	 * };
+	 * => sizeof(Node) = 32 bytes
+	 *
+	 * The class below encapsulates an array of such nodes using ArrayBuffer as backing store.
+	 *
+	 * @param {ArrayBuffer|number} initialData  Initial content of the NodeArray, or initial allocation of empty nodes
+	 * @param {boolean} useLeanNode Use minimal node structure size. Currently this parameter must be set to false.
+	 * @constructor
+	 */
+	function NodeArray(initialData, useLeanNode) {
+	    'use strict';
+
+	    if (useLeanNode) {
+	        this.bytes_per_node = 32;
+	    } else {
+	        this.bytes_per_node = 36;
+	    }
+
+	    var initialCount;
+	    var initialBuffer;
+
+	    if (initialData instanceof ArrayBuffer) {
+	        initialCount = initialData.byteLength / this.bytes_per_node;
+	        initialBuffer = initialData;
+	        this.nodeCount = initialCount;
+	    }
+	    else {
+	        initialCount = initialData | 0;
+	        initialBuffer =  new ArrayBuffer(this.bytes_per_node * initialCount);
+	        this.nodeCount = 0;
+	    }
+
+	    this.nodeCapacity = initialCount;
+	    this.nodesRaw = initialBuffer;
+
+	    this.is_lean_node = useLeanNode;
+	    this.node_stride = this.bytes_per_node  / 4;
+	    this.node_stride_short = this.bytes_per_node / 2;
+
+	    //Allocate memory buffer for all tree nodes
+	    this.nodesF = new Float32Array(this.nodesRaw);
+	    this.nodesI = new Int32Array(this.nodesRaw);
+	    this.nodesS = new Uint16Array(this.nodesRaw);
+	}
+
+	NodeArray.prototype.setLeftChild = function(nodeidx, childidx) {
+	    this.nodesI[nodeidx * this.node_stride + 6] = childidx;
+	};
+	NodeArray.prototype.getLeftChild = function(nodeidx) {
+	    return this.nodesI[nodeidx * this.node_stride + 6];
+	};
+
+	NodeArray.prototype.setPrimStart = function(nodeidx, start) {
+	    if (this.is_lean_node)
+	        this.nodesI[nodeidx * this.node_stride + 6] = start;
+	    else
+	        this.nodesI[nodeidx * this.node_stride + 8] = start;
+	};
+	NodeArray.prototype.getPrimStart = function(nodeidx) {
+	    if (this.is_lean_node)
+	        return this.nodesI[nodeidx * this.node_stride + 6];
+	    else
+	        return this.nodesI[nodeidx * this.node_stride + 8];
+	};
+
+	NodeArray.prototype.setPrimCount = function(nodeidx, count) {
+	    this.nodesS[nodeidx * this.node_stride_short + 14] = count;
+	};
+	NodeArray.prototype.getPrimCount = function(nodeidx) {
+	    return this.nodesS[nodeidx * this.node_stride_short + 14];
+	};
+
+	NodeArray.prototype.setFlags = function(nodeidx, axis, isFirst, isTransparent) {
+	    this.nodesS[nodeidx * this.node_stride_short + 15] = (isTransparent << 3) | (isFirst << 2) | (axis & 0x3);
+	};
+	NodeArray.prototype.getFlags = function(nodeidx) {
+	    return this.nodesS[nodeidx * this.node_stride_short + 15];
+	};
+
+	NodeArray.prototype.setBox0 = function(nodeidx, src) {
+	    var off = nodeidx * this.node_stride;
+	    var dst = this.nodesF;
+	    dst[off] = src[0];
+	    dst[off+1] = src[1];
+	    dst[off+2] = src[2];
+	    dst[off+3] = src[3];
+	    dst[off+4] = src[4];
+	    dst[off+5] = src[5];
+	};
+	NodeArray.prototype.getBoxThree = function(nodeidx, dst) {
+	    var off = nodeidx * this.node_stride;
+	    var src = this.nodesF;
+	    dst.min.x = src[off];
+	    dst.min.y = src[off+1];
+	    dst.min.z = src[off+2];
+	    dst.max.x = src[off+3];
+	    dst.max.y = src[off+4];
+	    dst.max.z = src[off+5];
+	};
+	NodeArray.prototype.setBoxThree = function(nodeidx, src) {
+	    var off = nodeidx * this.node_stride;
+	    var dst = this.nodesF;
+	    dst[off] = src.min.x;
+	    dst[off+1] = src.min.y;
+	    dst[off+2] = src.min.z;
+	    dst[off+3] = src.max.x;
+	    dst[off+4] = src.max.y;
+	    dst[off+5] = src.max.z;
+	};
+
+
+
+
+	NodeArray.prototype.makeEmpty = function(nodeidx) {
+
+	    var off = nodeidx * this.node_stride;
+	    var dst = this.nodesI;
+
+	    //No point to makeEmpty here, because the box gets set
+	    //directly when the node is initialized in bvh_subdivide.
+	    //box_make_empty(this.nodesF, off);
+
+	    //_this.setLeftChild(nodeidx,-1);
+	    dst[off + 6] = -1;
+
+	    //both prim count and flags to 0
+	    dst[off + 7] = 0;
+
+	    //_this.setPrimStart(nodeidx, -1);
+	    if (!this.is_lean_node)
+	        dst[off + 8] = -1;
+
+	};
+
+	NodeArray.prototype.realloc = function(extraSize) {
+	    if (this.nodeCount + extraSize > this.nodeCapacity) {
+	        var nsz = 0 | (this.nodeCapacity * 3 / 2);
+	        if (nsz < this.nodeCount + extraSize)
+	            nsz = this.nodeCount + extraSize;
+
+	        var nnodes = new ArrayBuffer(nsz * this.bytes_per_node);
+	        var nnodesI = new Int32Array(nnodes);
+	        nnodesI.set(this.nodesI);
+
+	        this.nodeCapacity = nsz;
+	        this.nodesRaw = nnodes;
+	        this.nodesF = new Float32Array(nnodes);
+	        this.nodesI = nnodesI;
+	        this.nodesS = new Uint16Array(nnodes);
+	    }
+	};
+
+	NodeArray.prototype.nextNodes = function(howMany) {
+
+	    this.realloc(howMany);
+
+	    var res = this.nodeCount;
+	    this.nodeCount += howMany;
+
+	    for (var i=0; i<howMany; i++) {
+	        this.makeEmpty(res+i);
+	    }
+
+	    return res;
+	};
+
+	NodeArray.prototype.getRawData = function() {
+	    return this.nodesRaw.slice(0, this.nodeCount * this.bytes_per_node);
+	};
+
+	var BOX_STRIDE = 6;
+	var POINT_STRIDE = 3;
+	var BOX_EPSILON = 1e-5;
+	var BOX_SCALE_EPSILON = 1e-5;
+	var MAX_DEPTH = 15; /* max tree depth */
+	var MAX_BINS = 16;
+
+	/**
+	* Bounding Volume Hierarchy build algorithm.
+	* Uses top down binning -- see "On fast Construction of SAH-based Bounding Volume Hierarchies" by I.Wald
+	* Ported from the C version here: https://git.autodesk.com/stanevt/t-ray/blob/master/render3d/t-ray/t-core/t-bvh.c
+	* Optimized for JavaScript.
+	*/
+	var BVHModule = function() {
+	    //There be dragons in this closure.
+
+	"use strict";
+
+
+	/**
+	 * Utilities for manipulating bounding boxes stored
+	 * in external array (as sextuplets of float32)
+	 */
+
+
+	function box_get_centroid(dst, dst_off, src, src_off) {
+	    dst[dst_off] = 0.5*(src[src_off] + src[src_off + 3]);
+	    dst[dst_off+1] = 0.5*(src[src_off + 1] + src[src_off + 4]);
+	    dst[dst_off+2] = 0.5*(src[src_off + 2] + src[src_off + 5]);
+	}
+
+	function box_add_point_0(dst, src, src_off) {
+
+	    if (dst[0] > src[src_off])   dst[0] = src[src_off];
+	    if (dst[3] < src[src_off])   dst[3] = src[src_off];
+
+	    if (dst[1] > src[src_off+1]) dst[1] = src[src_off+1];
+	    if (dst[4] < src[src_off+1]) dst[4] = src[src_off+1];
+
+	    if (dst[2] > src[src_off+2]) dst[2] = src[src_off+2];
+	    if (dst[5] < src[src_off+2]) dst[5] = src[src_off+2];
+
+	}
+
+	function box_add_box_0(dst, src, src_off) {
+
+	    if (dst[0] > src[src_off]) dst[0] = src[src_off];
+	    if (dst[1] > src[src_off+1]) dst[1] = src[src_off+1];
+	    if (dst[2] > src[src_off+2]) dst[2] = src[src_off+2];
+
+	    if (dst[3] < src[src_off+3]) dst[3] = src[src_off+3];
+	    if (dst[4] < src[src_off+4]) dst[4] = src[src_off+4];
+	    if (dst[5] < src[src_off+5]) dst[5] = src[src_off+5];
+	}
+
+	function box_add_box_00(dst, src) {
+	    if (dst[0] > src[0]) dst[0] = src[0];
+	    if (dst[1] > src[1]) dst[1] = src[1];
+	    if (dst[2] > src[2]) dst[2] = src[2];
+
+	    if (dst[3] < src[3]) dst[3] = src[3];
+	    if (dst[4] < src[4]) dst[4] = src[4];
+	    if (dst[5] < src[5]) dst[5] = src[5];
+	}
+
+	function box_get_size(dst, dst_off, src, src_off) {
+	    for (var i=0; i<3; i++) {
+	        dst[dst_off+i] = src[src_off+3+i] - src[src_off+i];
+	    }
+	}
+
+	//function box_copy(dst, dst_off, src, src_off) {
+	//    for (var i=0; i<6; i++) {
+	//        dst[dst_off+i] = src[src_off+i];
+	//    }
+	//}
+
+	// unwound version of box_copy
+	function box_copy_00(dst, src) {
+	    dst[0] = src[0];
+	    dst[1] = src[1];
+	    dst[2] = src[2];
+	    dst[3] = src[3];
+	    dst[4] = src[4];
+	    dst[5] = src[5];
+	}
+
+	var dbl_max = Infinity;
+
+	//function box_make_empty(dst, dst_off) {
+	//        dst[dst_off]   =  dbl_max;
+	//        dst[dst_off+1] =  dbl_max;
+	//        dst[dst_off+2] =  dbl_max;
+	//        dst[dst_off+3] = -dbl_max;
+	//        dst[dst_off+4] = -dbl_max;
+	//        dst[dst_off+5] = -dbl_max;
+	//}
+
+	function box_make_empty_0(dst) {
+	    dst[0] =  dbl_max;
+	    dst[1] =  dbl_max;
+	    dst[2] =  dbl_max;
+	    dst[3] = -dbl_max;
+	    dst[4] = -dbl_max;
+	    dst[5] = -dbl_max;
+	}
+
+	function box_area(src, src_off) {
+
+	    var dx = src[src_off+3] - src[src_off];
+	    var dy = src[src_off+4] - src[src_off+1];
+	    var dz = src[src_off+5] - src[src_off+2];
+
+	    if (dx < 0 || dy < 0 || dz < 0)
+	        return 0;
+
+	    return 2.0 * (dx * dy + dy * dz + dz * dx);
+	}
+
+	function box_area_0(src) {
+
+	    var dx = src[3] - src[0];
+	    var dy = src[4] - src[1];
+	    var dz = src[5] - src[2];
+
+	    if (dx < 0 || dy < 0 || dz < 0)
+	        return 0;
+
+	    return 2.0 * (dx * dy + dy * dz + dz * dx);
+	}
+
+
+
+
+
+	function bvh_split_info() {
+	    this.vb_left = new Float32Array(6);
+	    this.vb_right = new Float32Array(6);
+	    this.cb_left = new Float32Array(6);
+	    this.cb_right = new Float32Array(6);
+	    this.num_left = 0;
+	    this.best_split = -1;
+	    this.best_cost = -1;
+	    this.num_bins = -1;
+	}
+
+	bvh_split_info.prototype.reset = function () {
+	    this.num_left = 0;
+	    this.best_split = -1;
+	    this.best_cost = -1;
+	    this.num_bins = -1;
+	};
+
+
+	function bvh_bin() {
+	    this.box_bbox = new Float32Array(6); // bbox of all primitive bboxes
+	    this.box_centroid = new Float32Array(6); // bbox of all primitive centroids
+	    this.num_prims = 0; // number of primitives in the bin
+	}
+
+	bvh_bin.prototype.reset = function() {
+	    this.num_prims = 0; // number of primitives in the bin
+	    box_make_empty_0(this.box_bbox);
+	    box_make_empty_0(this.box_centroid);
+	};
+
+	function accum_bin_info() {
+	    this.BL = new Float32Array(6);
+	    this.CL = new Float32Array(6);
+	    this.NL = 0;
+	    this.AL = 0;
+	}
+
+	accum_bin_info.prototype.reset = function() {
+	    this.NL = 0;
+	    this.AL = 0;
+
+	    box_make_empty_0(this.BL);
+	    box_make_empty_0(this.CL);
+	};
+
+
+	//Scratch variables used by bvh_bin_axis
+	//TODO: can be replaced by a flat ArrayBuffer
+	var bins = [];
+	var i;
+	for (i=0; i<MAX_BINS; i++) {
+	    bins.push(new bvh_bin());
+	}
+
+	//TODO: can be replaced by a flat ArrayBuffer
+	var ai = [];
+	for (i=0; i<MAX_BINS-1; i++)
+	    ai.push(new accum_bin_info());
+
+	var BR = new Float32Array(6);
+	var CR = new Float32Array(6);
+
+
+	function assign_bins(bvh, start, end, axis, cb, cbdiag, num_bins) {
+
+	    var centroids = bvh.centroids;
+	    var primitives = bvh.primitives;
+	    var boxes = bvh.boxes;
+
+	    /* bin assignment */
+	    var k1 = num_bins * (1.0 - BOX_SCALE_EPSILON) / cbdiag[axis];
+	    var cbaxis = cb[axis];
+	    var sp = bvh.sort_prims;
+
+	    for (var j = start; j <= end; j++)
+	    {
+	        /* map array index to primitive index -- since primitive index array gets reordered by the BVH build*/
+	        /* while the primitive info array is not reordered */
+	        var iprim = primitives[j]|0;
+
+	        var fpbin = k1 * (centroids[iprim * 3/*POINT_STRIDE*/ + axis] - cbaxis);
+	        var binid = fpbin|0; //Truncate to int is algorithmic -> not an optimization thing!
+
+	        /* possible floating point problems */
+	        if (binid < 0)
+	        {
+	            binid = 0;
+	            //debug("Bin index out of range " + fpbin);
+	        }
+	        else if (binid >= num_bins)
+	        {
+	            binid = num_bins-1;
+	            //debug("Bin index out of range. " + fpbin);
+	        }
+
+	        /* Store the bin index for the partitioning step, so we don't recompute it there */
+	        sp[j] = binid;
+
+	        /* update other bin data with the new primitive */
+	        //var bin = bins[binid];
+	        bins[binid].num_prims ++;
+
+	        box_add_box_0(bins[binid].box_bbox, boxes, iprim * 6/*BOX_STRIDE*/);
+	        box_add_point_0(bins[binid].box_centroid, centroids, iprim * 3 /*POINT_STRIDE*/);
+	    }
+	    /* at this point all primitves are assigned to a bin */
+	}
+
+
+	function bvh_bin_axis(bvh, start, end, axis, cb, cbdiag, split_info) {
+
+	    /* if size is near 0 on this axis, cost of split is infinite */
+	    if (cbdiag[axis] < bvh.scene_epsilon)
+	    {
+	        split_info.best_cost = Infinity;
+	        return;
+	    }
+
+	    var num_bins = MAX_BINS;
+	    if (num_bins > end-start+1)
+	        num_bins = end-start+1;
+
+	    var i;
+	    for (i=0; i<num_bins; i++)
+	        bins[i].reset();
+
+	    for (i=0; i<num_bins-1; i++)
+	        ai[i].reset();
+
+	    split_info.num_bins = num_bins;
+
+	    assign_bins(bvh, start, end, axis, cb, cbdiag, num_bins);
+
+
+	    /* now do the accumulation sweep from left to right */
+	    box_copy_00(ai[0].BL, bins[0].box_bbox);
+	    box_copy_00(ai[0].CL, bins[0].box_centroid);
+	    ai[0].AL = box_area_0(ai[0].BL);
+	    ai[0].NL = bins[0].num_prims;
+	    var bin;
+	    for (i=1; i<num_bins-1; i++)
+	    {
+	        bin = bins[i];
+	        var aii = ai[i];
+	        box_copy_00(aii.BL, ai[i-1].BL);
+	        box_add_box_00(aii.BL, bin.box_bbox);
+	        aii.AL = box_area_0(aii.BL);
+
+	        box_copy_00(aii.CL, ai[i-1].CL);
+	        box_add_box_00(aii.CL, bin.box_centroid);
+
+	        aii.NL = ai[i-1].NL + bin.num_prims;
+	    }
+
+	    /* sweep from right to left, keeping track of lowest cost and split */
+	    i = num_bins - 1;
+	    box_copy_00(BR, bins[i].box_bbox);
+	    box_copy_00(CR, bins[i].box_centroid);
+	    var AR = box_area_0(BR);
+	    var NR = bins[i].num_prims;
+
+	    var best_split = i;
+	    var best_cost = AR * NR + ai[i-1].AL * ai[i-1].NL;
+	    box_copy_00(split_info.vb_right, BR);
+	    box_copy_00(split_info.cb_right, bins[i].box_centroid);
+	    box_copy_00(split_info.vb_left, ai[i-1].BL);
+	    box_copy_00(split_info.cb_left, ai[i-1].CL);
+	    split_info.num_left = ai[i-1].NL;
+
+	    for (i=i-1; i>=1; i--)
+	    {
+	        bin = bins[i];
+	        box_add_box_00(BR, bin.box_bbox);
+	        box_add_box_00(CR, bin.box_centroid);
+	        AR = box_area_0(BR);
+	        NR += bin.num_prims;
+
+	        var cur_cost = AR * NR + ai[i-1].AL * ai[i-1].NL;
+
+	        if (cur_cost <= best_cost)
+	        {
+	            best_cost = cur_cost;
+	            best_split = i;
+
+	            box_copy_00(split_info.vb_right, BR);
+	            box_copy_00(split_info.cb_right, CR);
+	            box_copy_00(split_info.vb_left, ai[i-1].BL);
+	            box_copy_00(split_info.cb_left, ai[i-1].CL);
+	            split_info.num_left = ai[i-1].NL;
+	        }
+	    }
+
+	    split_info.best_split = best_split;
+	    split_info.best_cost = best_cost;
+	}
+
+	function bvh_partition(bvh, start, end, axis, cb, cbdiag, split_info) {
+
+	    //At this point, the original algorithm does an in-place NON-STABLE partition
+	    //to move primitives to the left and right sides of the split plane
+	    //into contiguous location of the primitives list for use by
+	    //the child nodes. But, we want to preserve the ordering by size
+	    //without having to do another sort, so we have to use
+	    //a temporary storage location to copy into. We place right-side primitives
+	    //in temporary storage, then copy back into the original storage in the right order.
+	    //Left-side primitives are still put directly into the destination location.
+	    var primitives = bvh.primitives;
+	    //var centroids = bvh.centroids;
+	    var i,j;
+
+	    //sort_prims contains bin indices computed during the split step.
+	    //Here we read those and also use sort_prims as temporary holding
+	    //of primitive indices. Hopefully the read happens before the write. :)
+	    //In C it was cheap enough to compute this again...
+	    //var k1 = split_info.num_bins * (1.0 - BOX_SCALE_EPSILON) / cbdiag[axis];
+	    //var cbaxis = cb[axis];
+	    var sp = bvh.sort_prims;
+
+	    var right = 0;
+	    var left = start|0;
+	    var best_split = split_info.best_split|0;
+
+	    for (i=start; i<=end; i++) {
+	        var iprim = primitives[i]|0;
+	        //var fpbin = (k1 * (centroids[3/*POINT_STRIDE*/ * iprim + axis] - cbaxis));
+	        var binid = sp[i]; /* fpbin|0; */
+
+	        if (binid < best_split) {
+	            primitives[left++] = iprim;
+	        } else {
+	            sp[right++] = iprim;
+	        }
+	    }
+
+	    //if ((left-start) != split_info.num_left)
+	    //    debug("Mismatch between binning and partitioning.");
+
+	    //Copy back the right-side primitives into main primitives array, while
+	    //maintaining order
+	    for (j=0; j<right; j++) {
+	        primitives[left+j] = sp[j];
+	    }
+	    /* at this point the binning is complete and we have computed a split */
+	}
+
+
+	function bvh_fatten_inner_node(bvh, nodes, nodeidx, start, end, cb, cbdiag, poly_cut_off) {
+
+	    var primitives = bvh.primitives;
+	    var centroids = bvh.centroids;
+
+	    //Take the first few items to place into the inner node,
+	    //but do not go over the max item or polygon count.
+	    var prim_count = end - start + 1;
+
+	    if (prim_count > bvh.frags_per_inner_node)
+	        prim_count = bvh.frags_per_inner_node;
+
+	    if (prim_count > poly_cut_off)
+	        prim_count = poly_cut_off;
+
+
+	    nodes.setPrimStart(nodeidx, start);
+	    nodes.setPrimCount(nodeidx, prim_count);
+	    start += prim_count;
+
+	    //Because we take some primitives off the input, we have to recompute
+	    //the bounding box used for computing the node split.
+	    box_make_empty_0(cb);
+	    for (var i=start; i<=end; i++) {
+	        box_add_point_0(cb, centroids, 3/*POINT_STRIDE*/ * primitives[i]);
+	    }
+
+	    //Also update the split axis -- it could possibly change too.
+	    box_get_size(cbdiag, 0, cb, 0);
+	    //Decide which axis to split on.
+	    var axis = 0;
+	    if (cbdiag[1] > cbdiag[0])
+	        axis = 1;
+	    if (cbdiag[2] > cbdiag[axis])
+	        axis = 2;
+
+	    return axis;
+	}
+
+
+	var cbdiag = new Float32Array(3); //scratch variable used in bvh_subdivide
+
+	function bvh_subdivide(bvh,
+	                       nodeidx, /* current parent node to consider splitting */
+	                       start, end, /* primitive sub-range to be considered at this recursion step */
+	                       vb, /* bounding volume of the primitives' bounds in the sub-range */
+	                       cb, /* bounding box of primitive centroids in this range */
+	                       transparent, /* does the node contain opaque or transparent objects */
+	                       depth /* recursion depth */
+	                       )
+	{
+	    box_get_size(cbdiag, 0, cb, 0);
+	    var nodes = bvh.nodes;
+	    var frags_per_leaf = transparent ? bvh.frags_per_leaf_node_transparent : bvh.frags_per_leaf_node;
+	    var frags_per_inner = transparent ? bvh.frags_per_inner_node_transparent : bvh.frags_per_inner_node;
+	    var polys_per_node = bvh.max_polys_per_node;
+
+	    //Decide which axis to split on.
+	    var axis = 0;
+	    if (cbdiag[1] > cbdiag[0])
+	        axis = 1;
+	    if (cbdiag[2] > cbdiag[axis])
+	        axis = 2;
+
+	    //Whether the node gets split or not, it gets
+	    //the same overall bounding box.
+	    nodes.setBox0(nodeidx, vb);
+
+	    //Check the expected polygon count of the node
+	    var poly_count = 0;
+	    var poly_cut_off = 0;
+	    if (bvh.polygonCounts) {
+	        for (var i=start; i<=end; i++) {
+	            poly_count += bvh.polygonCounts[bvh.primitives[i]];
+	            poly_cut_off++;
+	            if (poly_count > polys_per_node)
+	                break;
+	        }
+	    }
+
+	    var prim_count = end - start + 1;
+
+	    var isSmall = ((prim_count <= frags_per_leaf) && (poly_count < polys_per_node)) ||
+	                  (prim_count === 1);
+
+	    //Decide whether to terminate recursion
+	    if (isSmall ||
+	      depth > MAX_DEPTH || //max recusrion depth
+	      cbdiag[axis] < bvh.scene_epsilon) //node would be way too tiny for math to make sense (a point)
+	    {
+	        nodes.setLeftChild(nodeidx, -1);
+	        nodes.setPrimStart(nodeidx, start);
+	        nodes.setPrimCount(nodeidx, end-start+1);
+	        nodes.setFlags(nodeidx, 0, 0, transparent ? 1 : 0);
+	        return;
+	    }
+
+	    //Pick the largest (first) primitives to live in this node
+	    //NOTE: this assumes primitives are sorted by size.
+	    //NOTE: This step is an optional departure from the original
+	    if (frags_per_inner) {
+	        axis = bvh_fatten_inner_node(bvh, nodes, nodeidx, start, end, cb, cbdiag, poly_cut_off);
+	        start = start + nodes.getPrimCount(nodeidx);
+	    }
+
+	    var split_info = new bvh_split_info();
+
+	    //Do the binning of the remaining primitives to go into child nodes
+	    bvh_bin_axis(bvh, start, end, axis, cb, cbdiag, split_info);
+
+	    if (split_info.num_bins < 0) {
+	        //Split was too costly, so add all objects to the current node and bail
+	        nodes.setPrimCount(nodeidx, nodes.getPrimCount(nodeidx) + end - start + 1);
+	        return;
+	    }
+
+	    bvh_partition(bvh, start, end, axis, cb, cbdiag, split_info);
+
+	    var child_idx = nodes.nextNodes(2);
+
+	    /* set info about split into the node */
+	    var cleft = (split_info.vb_left[3+axis] + split_info.vb_left[axis]) * 0.5;
+	    var cright = (split_info.vb_right[3+axis] + split_info.vb_right[axis]) * 0.5;
+
+	    nodes.setFlags(nodeidx, axis, cleft < cright ? 0 : 1, transparent ? 1 : 0);
+	    nodes.setLeftChild(nodeidx, child_idx);
+
+
+	    /* validate split */
+	    /*
+	    if (true) {
+	        for (var i=start; i< start+num_left; i++)
+	        {
+	            //int binid = (int)(k1 * (info->prim_info[info->bvh->iprims[i]].centroid.v[axis] - cb->min.v[axis]));
+	            var cen = primitives[i] * POINT_STRIDE;
+	            if (   centroids[cen] < split_info.cb_left[0]
+	                || centroids[cen] > split_info.cb_left[3]
+	                || centroids[cen+1] < split_info.cb_left[1]
+	                || centroids[cen+1] > split_info.cb_left[4]
+	                || centroids[cen+2] < split_info.cb_left[2]
+	                || centroids[cen+2] > split_info.cb_left[5])
+	            {
+	                debug ("wrong centroid box");
+	            }
+	        }
+
+	        for (i=start+num_left; i<=end; i++)
+	        {
+	            //int binid = (int)(k1 * (info->prim_info[info->bvh->iprims[i]].centroid.v[axis] - cb->min.v[axis]));
+	            var cen = primitives[i] * POINT_STRIDE;
+	            if (   centroids[cen] < split_info.cb_right[0]
+	                || centroids[cen] > split_info.cb_right[3]
+	                || centroids[cen+1] < split_info.cb_right[1]
+	                || centroids[cen+1] > split_info.cb_right[4]
+	                || centroids[cen+2] < split_info.cb_right[2]
+	                || centroids[cen+2] > split_info.cb_right[5])
+	            {
+	                debug ("wrong centroid box");
+	            }
+	        }
+	    }
+	    */
+
+	    /* recurse */
+	   //bvh_subdivide(bvh, child_idx, start, start + split_info.num_left - 1, split_info.vb_left, split_info.cb_left, transparent, depth+1);
+	   //bvh_subdivide(bvh, child_idx + 1, start + split_info.num_left, end, split_info.vb_right, split_info.cb_right, transparent, depth+1);
+
+	    //Iterative stack-based recursion for easier profiling
+	   bvh.recursion_stack.push([bvh, child_idx + 1, start + split_info.num_left, end, split_info.vb_right, split_info.cb_right, transparent, depth+1]);
+	   bvh.recursion_stack.push([bvh, child_idx, start, start + split_info.num_left - 1, split_info.vb_left, split_info.cb_left, transparent, depth+1]);
+
+	}
+
+
+	function compute_boxes(bvh) {
+
+	    var boxv_o = bvh.boxv_o;
+	    var boxc_o = bvh.boxc_o;
+	    var boxv_t = bvh.boxv_t;
+	    var boxc_t = bvh.boxc_t;
+
+	    box_make_empty_0(boxv_o);
+	    box_make_empty_0(boxc_o);
+	    box_make_empty_0(boxv_t);
+	    box_make_empty_0(boxc_t);
+
+	    var c = bvh.centroids;
+	    var b = bvh.boxes;
+
+	    for (var i=0, iEnd=bvh.prim_count; i<iEnd; i++) {
+
+
+	        box_get_centroid(c, 3/*POINT_STRIDE*/*i, b, 6/*BOX_STRIDE*/*i);
+
+	        if (i >= bvh.first_transparent) {
+
+	            box_add_point_0(boxc_t, c, 3/*POINT_STRIDE*/*i);
+	            box_add_box_0(boxv_t, b, 6/*BOX_STRIDE*/*i);
+
+	        } else {
+
+	            box_add_point_0(boxc_o, c, 3/*POINT_STRIDE*/*i);
+	            box_add_box_0(boxv_o, b, 6/*BOX_STRIDE*/*i);
+
+	        }
+	    }
+
+	    box_get_size(cbdiag, 0, bvh.boxv_o, 0);
+	    var maxsz = Math.max(cbdiag[0], cbdiag[1], cbdiag[2]);
+	    bvh.scene_epsilon = BOX_EPSILON * maxsz;
+	}
+
+
+
+
+	    //Module exports
+	    return {
+	        bvh_subdivide : bvh_subdivide,
+	        compute_boxes : compute_boxes,
+	        box_area : box_area
+	    };
+
+	}();
+
+
+
+	/**
+	 * Given a list of LMV fragments, builds a spatial index for view-dependent traversal and hit testing.
+	 * @constructor
+	 */
+	function BVHBuilder(fragments, materialDefs) {
+
+	    //Invariants
+	    this.boxes = fragments.boxes; //Array of Float32, each bbox is a sextuplet
+	    this.polygonCounts = fragments.polygonCounts;
+	    this.materials = fragments.materials; //material indices (we need to know which fragments are transparent)
+	    this.materialDefs = materialDefs;
+
+	    this.prim_count = fragments.length;
+
+	    //To be initialized by build() function based on build options
+	    this.frags_per_leaf_node = -1;
+	    this.frags_per_inner_node = -1;
+	    this.nodes = null;
+
+	    this.work_buf = new ArrayBuffer(this.prim_count * 4);
+	    this.sort_prims = new Int32Array(this.work_buf);
+
+	    //Allocate memory buffer for re-ordered fragment primitive indices,
+	    //which will be sorted by node ownership and point to the index
+	    //of the fragment data.
+	    this.primitives = new Int32Array(this.prim_count);
+
+	    //The BVH split algorithm works based on centroids of the bboxes.
+	    this.centroids = new Float32Array(POINT_STRIDE * this.prim_count);
+
+	    //BBoxes and centroid bboxes for opaque and transparent primitive sets
+	    this.boxv_o = new Float32Array(6);
+	    this.boxc_o = new Float32Array(6);
+	    this.boxv_t = new Float32Array(6);
+	    this.boxc_t = new Float32Array(6);
+
+
+	    this.recursion_stack = [];
+	}
+
+	BVHBuilder.prototype.sortPrimitives = function() {
+
+	    var prim_sizes = new Float32Array(this.work_buf);
+	    var matDefs = this.materialDefs;
+	    var matInds = this.materials;
+	    var primitives = this.primitives;
+	    var numTransparent = 0;
+
+	    var i, iEnd;
+	    for (i=0, iEnd=this.prim_count; i<iEnd; i++) {
+
+	        //Start with trivial 1:1 order of the indices array
+	        primitives[i] = i;
+
+	        var transparent = matDefs && matDefs[matInds[i]] ? matDefs[matInds[i]].transparent : false;
+
+	        if (transparent)
+	            numTransparent++;
+
+	        if (WANT_SORT) {
+	            prim_sizes[i] = BVHModule.box_area(this.boxes, BOX_STRIDE*i);
+
+	            //In order to make transparent objects appear last,
+	            //we give them a negative size, so that they are naturally
+	            //sorted last in the sort by size.
+	            if (transparent)
+	                prim_sizes[i] = -prim_sizes[i];
+	        } else {
+	            //We still need the transparency flag for the loop below
+	            //where we find the last opaque item, but we can
+	            //short-cut the size computation.
+	            prim_sizes[i] = transparent ? -1 : 1;
+	        }
+	    }
+
+	    //Sort the input objects by size
+	    //TODO: Actually, we assume all LMV SVF files come
+	    //sorted by draw priority already, so we can skip this step.
+	    //However, the transparent objects do not always come last (bug in LMVTK?),
+	    //so we still have to pull them out to the end of the list
+	    var WANT_SORT = false;
+
+	    if (WANT_SORT) {
+	        Array.prototype.sort.call(this.primitives, function(a, b) {
+	            return prim_sizes[b] - prim_sizes[a];
+	        });
+	    } else {
+	        if (numTransparent && numTransparent < this.prim_count) {
+
+	            var tmpTransparent = new Int32Array(numTransparent);
+	            var oidx = 0, tidx = 0;
+
+	            for (i=0, iEnd = this.prim_count; i<iEnd; i++) {
+	                if (prim_sizes[i] >= 0)
+	                    primitives[oidx++] = primitives[i];
+	                else
+	                    tmpTransparent[tidx++] = primitives[i];
+	            }
+
+	            primitives.set(tmpTransparent, this.prim_count - numTransparent);
+	        }
+	    }
+
+	    this.first_transparent = this.prim_count - numTransparent;
+	};
+
+
+	BVHBuilder.prototype.build = function(options) {
+	    //Kick off the BVH build.
+
+	    var useSlimNodes = options && !!options.useSlimNodes;
+
+	    var self = this;
+	    function assign_option(name, defaultVal) {
+	        if (options.hasOwnProperty(name))
+	            self[name] = options[name];
+	        else
+	            self[name] = defaultVal;
+	    }
+
+	    //options for build optimized for rasterization renderer scenes
+	    if (useSlimNodes) {
+	        assign_option("frags_per_leaf_node", 1);
+	        assign_option("frags_per_inner_node", 0);
+	        assign_option("frags_per_leaf_node_transparent", 1);
+	        assign_option("frags_per_inner_node_transparent", 0);
+	        assign_option("max_polys_per_node", Infinity);
+	    } else {
+	        var multiplier = options.isWeakDevice ? 0.5 : 1.0;
+
+	        //TODO: tune these constants
+	        assign_option("frags_per_leaf_node", 0 | (32 * multiplier));
+	        //Placing fragments at inner nodes places more emphasis on bigger objects during tree traversal
+	        //but it can only be done for opaque objects. Transparent objects have to be strictly back to front
+	        //traversal regardless of size, unless a unified traversal
+	        assign_option("frags_per_inner_node", 0|(this.frags_per_leaf_node) );
+	        assign_option("frags_per_leaf_node_transparent", this.frags_per_leaf_node);
+	        assign_option("frags_per_inner_node_transparent", 0);
+	        assign_option("max_polys_per_node", 0 | (10000 * multiplier));
+	    }
+
+	    //Reuse existing node array if there
+	    if (this.nodes && (this.nodes.is_lean_node == useSlimNodes))
+	        this.nodes.nodeCount = 0;
+	    else {
+	        var est_nodes = this.prim_count / this.frags_per_leaf_node;
+	        var num_nodes = 1;
+	        while (num_nodes < est_nodes)
+	            num_nodes *= 2;
+
+	        this.nodes = new NodeArray(num_nodes, options ? options.useSlimNodes : false);
+	    }
+
+	    this.sortPrimitives();
+
+	    BVHModule.compute_boxes(this);
+
+	    //Init the root nodes at 0 for opaque
+	    //and 1 for transparent objects
+	    var root = this.nodes.nextNodes(2);
+
+	    //Now kick off the recursive tree build
+
+	    //Opaque
+	    BVHModule.bvh_subdivide(this, root, 0, this.first_transparent - 1, this.boxv_o, this.boxc_o, false, 0);
+
+	    var a;
+	    while(this.recursion_stack.length) {
+	        a = this.recursion_stack.pop();
+	        BVHModule.bvh_subdivide(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
+	    }
+
+	    //Transparent
+	    BVHModule.bvh_subdivide(this, root+1, this.first_transparent, this.prim_count-1, this.boxv_t, this.boxc_t, true, 0);
+
+	    while(this.recursion_stack.length) {
+	        a = this.recursion_stack.pop();
+	        BVHModule.bvh_subdivide(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
+	    }
+	};
+
+	module.exports = {
+	    NodeArray: NodeArray,
+	    BVHBuilder: BVHBuilder
+	};
+
+
+/***/ }
+/******/ ]);
+if (typeof module !== "undefined" && module.exports) module.exports = WGS;
+
+
+function getGlobal() {
+    return (typeof window !== "undefined" && window !== null)
+            ? window
+            : (typeof self !== "undefined" && self !== null)
+                ? self
+                : global;
+}
+
+/**
+ * Create namespace
+ * @param {string} s - namespace (e.g. 'Autodesk.Viewing')
+ * @return {Object} namespace
+ */
+var AutodeskNamespace = function (s) {
+    var ns = getGlobal();
+
+    var parts = s.split('.');
+    for (var i = 0; i < parts.length; ++i) {
+        ns[parts[i]] = ns[parts[i]] || {};
+        ns = ns[parts[i]];
+    }
+
+    return ns;
+};
+
+// Define the most often used ones
+AutodeskNamespace("Autodesk.Viewing.Private");
+
+AutodeskNamespace("Autodesk.Viewing.Extensions");
+
+AutodeskNamespace("Autodesk.Viewing.Shaders");
+
+AutodeskNamespace('Autodesk.Viewing.UI');
+
+AutodeskNamespace('Autodesk.LMVTK');
+
+Autodesk.Viewing.getGlobal = getGlobal;
+Autodesk.Viewing.AutodeskNamespace = AutodeskNamespace;
+
+// Map wgs.js symbols back to Autodesk namespaces for backwards compatibility.
+// If the worker parameter is true, only worker-specific symbols are mapped.
+Autodesk.Viewing.Private.initializeLegacyNamespaces = function(worker) {
+    var av = Autodesk.Viewing;
+    var avs = av.Shaders;
+    var avp = av.Private;
+
+    avp.InstanceTreeStorage = WGS.InstanceTreeStorage;
+	avp.InstanceTreeAccess = WGS.InstanceTreeAccess;
+    avp.BVHBuilder = WGS.BVHBuilder;
+    avp.NodeArray = WGS.NodeArray;
+
+    if (worker)
+        return;
+
+    avs.PackDepthShaderChunk = WGS.PackDepthShaderChunk;
+    avs.TonemapShaderChunk = WGS.TonemapShaderChunk;
+    avs.OrderedDitheringShaderChunk = WGS.OrderedDitheringShaderChunk;
+    avs.CutPlanesUniforms = WGS.CutPlanesUniforms;
+    avs.CutPlanesShaderChunk = WGS.CutPlanesShaderChunk;
+    avs.PackNormalsShaderChunk = WGS.PackNormalsShaderChunk;
+    avs.HatchPatternShaderChunk = WGS.HatchPatternShaderChunk;
+    avs.EnvSamplingShaderChunk = WGS.EnvSamplingShaderChunk;
+    avs.IdUniforms = WGS.IdUniforms;
+    avs.IdFragmentDeclaration = WGS.IdFragmentDeclaration;
+    avs.IdOutputShaderChunk = WGS.IdOutputShaderChunk;
+    avs.FinalOutputShaderChunk = WGS.FinalOutputShaderChunk;
+    avs.ThemingUniform = WGS.ThemingUniform;
+    avs.ThemingFragmentDeclaration = WGS.ThemingFragmentDeclaration;
+    avs.ThemingFragmentShaderChunk = WGS.ThemingFragmentShaderChunk;
+
+    avs.BackgroundShader = WGS.BackgroundShader;
+
+    avs.BlendShader = WGS.BlendShader;
+
+    avs.CelShader = WGS.CelShader;
+
+    avs.CopyShader = WGS.CopyShader;
+
+    avs.FXAAShader = WGS.FXAAShader;
+
+    avs.SAOBlurShader = WGS.SAOBlurShader;
+
+    avs.SAOMinifyFirstShader = WGS.SAOMinifyFirstShader;
+    avs.SAOMinifyShader = WGS.SAOMinifyShader;
+
+    avs.SAOShader = WGS.SAOShader;
+
+    avs.NormalsShader = WGS.NormalsShader;
+
+    avs.LineShader = WGS.LineShader;
+
+    avp.LineStyleDefs = WGS.LineStyleDefs;
+    avp.CreateLinePatternTexture = WGS.CreateLinePatternTexture;
+
+    avp.FloatToHalf = WGS.FloatToHalf;
+    avp.HalfToFloat = WGS.HalfToFloat;
+    avp.IntToHalf = WGS.IntToHalf;
+    avp.HalfToInt = WGS.HalfToInt;
+    avp.HalfTest = WGS.HalfTest;
+
+    avs.createShaderMaterial = WGS.createShaderMaterial;
+    avs.setMacro = WGS.setMacro;
+    avs.removeMacro = WGS.removeMacro;
+
+    avs.LmvShaderPass = WGS.ShaderPass;
+
+    avs.GaussianPass = WGS.GaussianPass;
+
+    avs.GroundShadow = WGS.GroundShadow;
+    avs.createGroundShape = WGS.createGroundShape;
+    avs.setGroundShapeTransform = WGS.setGroundShapeTransform;
+
+    avs.GroundReflection = WGS.GroundReflection;
+
+    avp.FireflyWebGLShader = WGS.WebGLShader;
+
+    avp.PrismMaps = WGS.PrismMaps;
+    avp.GetPrismMapChunk = WGS.GetPrismMapChunk;
+    avp.FireflyWebGLProgram = WGS.WebGLProgram;
+
+    avs.ShadowMapCommonUniforms = WGS.ShadowMapCommonUniforms;
+    avs.ShadowMapUniforms = WGS.ShadowMapUniforms;
+    avs.ShadowMapDeclareCommonUniforms = WGS.ShadowMapDeclareCommonUniforms;
+    avs.ShadowMapVertexDeclaration = WGS.ShadowMapVertexDeclaration;
+    avs.ShadowMapVertexShaderChunk = WGS.ShadowMapVertexShaderChunk;
+    avs.ShadowMapFragmentDeclaration = WGS.ShadowMapFragmentDeclaration;
+
+    avs.FireflyPhongShader = WGS.PhongShader;
+
+    avs.PrismShader = WGS.PrismShader;
+    avs.GetPrismMapUniforms = WGS.GetPrismMapUniforms;
+    avs.GetPrismMapSampleChunk = WGS.GetPrismMapSampleChunk;
+    avs.GetPrismMapUniformChunk = WGS.GetPrismMapUniformChunk;
+    avs.AverageOfFloat3 = WGS.AverageOfFloat3;
+    avp.createPrismMaterial = WGS.createPrismMaterial;
+    avp.clonePrismMaterial = WGS.clonePrismMaterial;
+
+    avp.ShadowMapShader = WGS.ShadowMapShader;
+    avp.GroundShadowShader = WGS.GroundShadowShader;
+    avp.ShadowMapOverrideMaterials = WGS.ShadowMapOverrideMaterials;
+    avp.SHADOWMAP_NEEDS_UPDATE = WGS.SHADOWMAP_NEEDS_UPDATE;
+    avp.SHADOWMAP_INCOMPLETE = WGS.SHADOWMAP_INCOMPLETE;
+    avp.SHADOWMAP_VALID = WGS.SHADOWMAP_VALID;
+    avp.ShadowConfig = WGS.ShadowConfig;
+    avp.ShadowRender = WGS.ShadowRender;
+    avp.ShadowMaps = WGS.ShadowMaps;
+
+    avp.FrustumIntersector = WGS.FrustumIntersector;
+    avp.OUTSIDE = WGS.OUTSIDE;
+    avp.INTERSECTS = WGS.INTERSECTS;
+    avp.CONTAINS = WGS.CONTAINS;
+
+    avp.VBIntersector = WGS.VBIntersector;
+
+    avp.memoryOptimizedLoading = WGS.memoryOptimizedLoading;
+    avp.GPU_MEMORY_LIMIT = WGS.GPU_MEMORY_LIMIT;
+    avp.GPU_OBJECT_LIMIT = WGS.GPU_OBJECT_LIMIT;
+    avp.FRAGS_PERSISTENT_COUNT = WGS.FRAGS_PERSISTENT_COUNT;
+    avp.FRAGS_PERSISTENT_MAX_COUNT = WGS.FRAGS_PERSISTENT_MAX_COUNT;
+    avp.GEOMS_COUNT_LIMIT = WGS.GEOMS_COUNT_LIMIT;
+    avp.onDemandLoading = WGS.onDemandLoading;
+    avp.cullGeometryOnLoading = WGS.cullGeometryOnLoading;
+    avp.pageOutGeometryEnabled = WGS.pageOutGeometryEnabled;
+    avp.PAGEOUT_SUCCESS = WGS.PAGEOUT_SUCCESS;
+    avp.PAGEOUT_FAIL = WGS.PAGEOUT_FAIL;
+    avp.PAGEOUT_NONE = WGS.PAGEOUT_NONE;
+    avp.PAGEOUT_PERCENTAGE = WGS.PAGEOUT_PERCENTAGE;
+    avp.GEOMS_PAGEOUT_COUNT = WGS.GEOMS_PAGEOUT_COUNT;
+
+    avp.GeometryList = WGS.GeometryList;
+
+    avp.MESH_VISIBLE = WGS.MESH_VISIBLE;
+    avp.MESH_HIGHLIGHTED = WGS.MESH_HIGHLIGHTED;
+    avp.MESH_HIDE = WGS.MESH_HIDE;
+    avp.MESH_ISLINE = WGS.MESH_ISLINE;
+    avp.MESH_MOVED = WGS.MESH_MOVED;
+    avp.MESH_TRAVERSED = WGS.MESH_TRAVERSED;
+    avp.MESH_RENDERFLAG = WGS.MESH_RENDERFLAG;
+    avp.FragmentPointer = WGS.FragmentPointer;
+    avp.FragmentList = WGS.FragmentList;
+
+    avp.RENDER_NORMAL = WGS.RENDER_NORMAL;
+    avp.RENDER_HIGHLIGHTED = WGS.RENDER_HIGHLIGHTED;
+    avp.RENDER_HIDDEN = WGS.RENDER_HIDDEN;
+    avp.RENDER_SHADOWMAP = WGS.RENDER_SHADOWMAP;
+    avp.RENDER_FINISHED = WGS.RENDER_FINISHED;
+
+    avp.RenderBatch = WGS.RenderBatch;
+
+    av.rescueFromPolymer = WGS.rescueFromPolymer;
+
+    avp.FireflyWebGLRenderer = WGS.WebGLRenderer;
+
+    avp.ModelIteratorLinear = WGS.ModelIteratorLinear;
+    avp.ModelIteratorBVH = WGS.ModelIteratorBVH;
+
+    avp.BufferGeometryUtils = WGS.BufferGeometry;
+
+    avp.RenderScene = WGS.RenderScene;
+
+    avp.SortedList = WGS.SortedList;
+
+    avp.ModelIteratorTexQuad = WGS.ModelIteratorTexQuad;
+    avp.TexQuadConfig = WGS.TexQuadConfig;
+
+    avp.InstanceTree = WGS.InstanceTree;
+    av.SelectionMode = WGS.SelectionMode;
+
+    avp.MaterialConverter = WGS.MaterialConverter;
+};
+
+
+function getGlobal() {
+    return (typeof window !== "undefined" && window !== null)
+            ? window
+            : (typeof self !== "undefined" && self !== null)
+                ? self
+                : global;
+}
+
+var av = Autodesk.Viewing,
+    avp = av.Private;
+
+av.getGlobal = getGlobal;
+
+var isBrowser = av.isBrowser = (typeof navigator !== "undefined");
+
+var isIE11 = av.isIE11 = isBrowser && !!navigator.userAgent.match(/Trident\/7\./);
+
+// fix IE events
+if(typeof window !== "undefined" && isIE11){
+    (function () {
+        function CustomEvent ( event, params ) {
+            params = params || { bubbles: false, cancelable: false, detail: undefined };
+            var evt = document.createEvent( 'CustomEvent' );
+            evt.initCustomEvent( event, params.bubbles, params.cancelable, params.detail );
+            return evt;
+        };
+
+        CustomEvent.prototype = window.CustomEvent.prototype;
+
+        window.CustomEvent = CustomEvent;
+    })();
+}
+
+// IE does not implement ArrayBuffer slice. Handy!
+if (!ArrayBuffer.prototype.slice) {
+    ArrayBuffer.prototype.slice = function(start, end) {
+        // Normalize start/end values
+        if (!end || end > this.byteLength) {
+            end = this.byteLength;
+        }
+        else if (end < 0) {
+            end = this.byteLength + end;
+            if (end < 0) end = 0;
+        }
+        if (start < 0) {
+            start = this.byteLength + start;
+            if (start < 0) start = 0;
+        }
+
+        if (end <= start) {
+            return new ArrayBuffer();
+        }
+
+        // Bytewise copy- this will not be fast, but what choice do we have?
+        var len = end - start;
+        var view = new Uint8Array(this, start, len);
+        var out = new Uint8Array(len);
+        for (var i = 0; i < len; i++) {
+            out[i] = view[i];
+        }
+        return out.buffer;
+    }
+}
+
+// IE doesn't implement Math.log2
+(function(){
+    Math.log2 = Math.log2 || function(x) {
+        return Math.log(x) / Math.LN2;
+    };
+})();
+
+//The BlobBuilder object
+if (typeof window !== "undefined")
+    window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder || window.MSBlobBuilder;
+
+
+// Launch full screen on the given element with the available method
+var launchFullscreen = av.launchFullscreen = function(element, options) {
+    if (element.requestFullscreen) {
+        element.requestFullscreen(options);
+    } else if (element.mozRequestFullScreen) {
+        element.mozRequestFullScreen(options);
+    } else if (element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen(options);
+    } else if (element.msRequestFullscreen) {
+        element.msRequestFullscreen(options);
+    }
+}
+
+// Exit full screen with the available method
+var exitFullscreen = av.exitFullscreen = function() {
+    if (document.exitFullscreen) {
+        document.exitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+    }
+}
+
+// Determines if the browser is in full screen
+var inFullscreen = av.inFullscreen = function(){
+
+    // Special case for Ms-Edge that has webkitIsFullScreen with correct value
+    // and fullscreenEnabled with wrong value (thanks MS)
+    if ("webkitIsFullScreen" in document) return document.webkitIsFullScreen;
+    return !!(document.mozFullScreenElement ||
+        document.msFullscreenElement ||
+        document.fullscreenEnabled || // Check last-ish because it is true in Ms-Edge
+        document.querySelector(".viewer-fill-browser")); // Fallback for iPad
+}
+
+var fullscreenElement = av.fullscreenElement = function() {
+    return document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
+}
+
+var isFullscreenAvailable = av.isFullscreenAvailable = function(element) {
+    return element.requestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen || element.msRequestFullscreen;
+}
+
+// Get the version of the android device through user agent.
+// Return the version string of android device, e.g. 4.4, 5.0...
+var getAndroidVersion = av.getAndroidVersion = function(ua) {
+    var ua = ua || navigator.userAgent;
+    var match = ua.match(/Android\s([0-9\.]*)/);
+    return match ? match[1] : false;
+};
+
+// Determine if this is a touch or notouch device.
+var isTouchDevice = av.isTouchDevice = function() {
+    /*
+    // Temporarily disable touch support through hammer on Android 5, to debug
+    // some specific gesture issue with Chromium WebView when loading viewer3D.js.
+    if (parseInt(getAndroidVersion()) == 5) {
+        return false;
+    }
+    */
+
+    return (typeof window !== "undefined" &&  "ontouchstart" in window);
+}
+
+av.isIOSDevice = function() {
+    if (!isBrowser) return false;
+    return /ip(ad|hone|od)/.test(navigator.userAgent.toLowerCase());
+};
+
+av.isAndroidDevice = function() {
+    if (!isBrowser) return false;
+    return (navigator.userAgent.toLowerCase().indexOf('android') !== -1);
+};
+
+av.isMobileDevice = function() {
+    if (!isBrowser) return false;
+    return av.isIOSDevice() || av.isAndroidDevice();
+};
+
+av.isSafari = function() {
+    if (!isBrowser) return false;
+    var _ua = navigator.userAgent.toLowerCase();
+    return (_ua.indexOf("safari") !== -1) && (_ua.indexOf("chrome") === -1);
+};
+
+av.isFirefox = function() {
+    if (!isBrowser) return false;
+    var _ua = navigator.userAgent.toLowerCase();
+    return (_ua.indexOf("firefox") !== -1);
+};
+
+av.isMac = function() {
+    if (!isBrowser) return false;
+    var _ua = navigator.userAgent.toLowerCase();
+    return  (_ua.indexOf("mac os") !== -1);
+};
+
+av.isWindows = function() {
+    if (!isBrowser) return false;
+    var _ua = navigator.userAgent.toLowerCase();
+    return  (_ua.indexOf("win32") !== -1 || _ua.indexOf("windows") !== -1);
+};
+
+/**
+ * Detects if WebGL is enabled.
+ *
+ * @return { number } -1 for not Supported,
+ *                    0 for disabled
+ *                    1 for enabled
+ */
+var detectWebGL = av.detectWebGL = function()
+{
+    // Check for the webgl rendering context
+    if ( !! window.WebGLRenderingContext) {
+        var canvas = document.createElement("canvas"),
+            names = ["webgl", "experimental-webgl", "moz-webgl", "webkit-3d"],
+            context = false;
+
+        for (var i = 0; i < 4; i++) {
+            try {
+                context = canvas.getContext(names[i]);
+                context = rescueFromPolymer(context);
+                if (context && typeof context.getParameter === "function") {
+                    // WebGL is enabled.
+                    //
+                    return 1;
+                }
+            } catch (e) {}
+        }
+
+        // WebGL is supported, but disabled.
+        //
+        return 0;
+    }
+
+    // WebGL not supported.
+    //
+    return -1;
+};
+
+
+// Convert touchstart event to click to remove the delay between the touch and
+// the click event which is sent after touchstart with about 300ms deley.
+// Should be used in UI elements on touch devices.
+var touchStartToClick = av.touchStartToClick = function(e) {
+    e.preventDefault();  // Stops the firing of delayed click event.
+    e.stopPropagation();
+    e.target.click();    // Maps to immediate click.
+};
+
+//Safari doesn't have the Performance object
+//We only need the now() function, so that's easy to emulate.
+(function() {
+    var global = getGlobal();
+    if (!global.performance)
+        global.performance = Date;
+})();
+
+
+
+//This file is the first one when creating minified build
+//and is used to set certain flags that are needed
+//for the concatenated build.
+
+var av = Autodesk.Viewing;
+var avp = Autodesk.Viewing.Private;
+
+//avp.IS_CONCAT_BUILD = true; // Debugging source files without concatenation is no longer supported
+
+/** @define {string} */
+avp.BUILD_LMV_WORKER_URL = "lmvworker.js";
+avp.LMV_WORKER_URL = avp.BUILD_LMV_WORKER_URL;
+
+avp.ENABLE_DEBUG = avp.ENABLE_DEBUG || false;
+avp.ENABLE_TRACE = avp.ENABLE_TRACE || false;
+//avp.DEBUG_SHADERS = avp.DEBUG_SHADERS || false; // will be moved to wgs.js
+avp.ENABLE_INLINE_WORKER = true;
+
+(function() {
+
+var av = Autodesk.Viewing,
+    avp = av.Private;
+
+    var endpoint = "";
+    var useCredentials = false;
+    var needsBubble = false;
+    var isViewingV1 = true; // false to use derivativeservice/v2/
+
+    av.HTTP_REQUEST_HEADERS = {};
+
+    av.getApiEndpoint = function() {
+        return endpoint;
+    };
+
+    av.setApiEndpoint = function(val, bubbleManifest, isV1) {
+        endpoint = val;
+        needsBubble = bubbleManifest;
+        isViewingV1 = isV1;
+
+        if (!isViewingV1) {
+            needsBubble = false; // /v2/ doesn't support the /bubbles/ url-route
+        }
+    };
+
+    av.getViewingUrl = function(root) {
+        if (isViewingV1)
+            return (root || endpoint) + '/viewingservice/v1';
+        else
+            return (root || endpoint) + '/derivativeservice/v2';
+    };
+
+    av.getUseCredentials = function() {
+        return useCredentials;
+    };
+
+    av.setUseCredentials = function(val) {
+        useCredentials = val;
+    };
+
+    av.getManifestApi = function(root) {
+        var base = av.getViewingUrl(root);
+        if (needsBubble) 
+            return base + "/bubbles/";  // Only applies to /v1/ accessed from viewing.api
+        else if (isViewingV1)
+            return base + '/';
+        else
+            return base + '/manifest/';
+    };
+
+    av.getItemApi = function(root) {
+        if (isViewingV1)
+            return av.getViewingUrl(root) + "/items/";
+        else
+            return av.getViewingUrl(root) + "/derivatives/";
+    };
+
+    av.getThumbnailApi = function(root) {
+        return av.getViewingUrl(root) + "/thumbnails/";
+    };
+
+    av.makeOssPath = function(root, bucket, object) {
+        return (root || endpoint) + "/oss/v2/buckets/" + bucket + "/objects/" + encodeURIComponent(decodeURIComponent(object));
+    }
+
+})();
+
 /** @license zlib.js 2012 - imaya [ https://github.com/imaya/zlib.js ] The MIT License */(function() {'use strict';function n(e){throw e;}var p=void 0,aa=this;function r(e,c){var d=e.split("."),b=aa;!(d[0]in b)&&b.execScript&&b.execScript("var "+d[0]);for(var a;d.length&&(a=d.shift());)!d.length&&c!==p?b[a]=c:b=b[a]?b[a]:b[a]={}};var u="undefined"!==typeof Uint8Array&&"undefined"!==typeof Uint16Array&&"undefined"!==typeof Uint32Array;new (u?Uint8Array:Array)(256);var v;for(v=0;256>v;++v)for(var w=v,ba=7,w=w>>>1;w;w>>>=1)--ba;function x(e,c,d){var b,a="number"===typeof c?c:c=0,f="number"===typeof d?d:e.length;b=-1;for(a=f&7;a--;++c)b=b>>>8^y[(b^e[c])&255];for(a=f>>3;a--;c+=8)b=b>>>8^y[(b^e[c])&255],b=b>>>8^y[(b^e[c+1])&255],b=b>>>8^y[(b^e[c+2])&255],b=b>>>8^y[(b^e[c+3])&255],b=b>>>8^y[(b^e[c+4])&255],b=b>>>8^y[(b^e[c+5])&255],b=b>>>8^y[(b^e[c+6])&255],b=b>>>8^y[(b^e[c+7])&255];return(b^4294967295)>>>0}
 var z=[0,1996959894,3993919788,2567524794,124634137,1886057615,3915621685,2657392035,249268274,2044508324,3772115230,2547177864,162941995,2125561021,3887607047,2428444049,498536548,1789927666,4089016648,2227061214,450548861,1843258603,4107580753,2211677639,325883990,1684777152,4251122042,2321926636,335633487,1661365465,4195302755,2366115317,997073096,1281953886,3579855332,2724688242,1006888145,1258607687,3524101629,2768942443,901097722,1119000684,3686517206,2898065728,853044451,1172266101,3705015759,
 2882616665,651767980,1373503546,3369554304,3218104598,565507253,1454621731,3485111705,3099436303,671266974,1594198024,3322730930,2970347812,795835527,1483230225,3244367275,3060149565,1994146192,31158534,2563907772,4023717930,1907459465,112637215,2680153253,3904427059,2013776290,251722036,2517215374,3775830040,2137656763,141376813,2439277719,3865271297,1802195444,476864866,2238001368,4066508878,1812370925,453092731,2181625025,4111451223,1706088902,314042704,2344532202,4240017532,1658658271,366619977,
@@ -2829,6 +4380,7 @@ var QUAD_TRIANGLE_INDICES = [ 0,1,3, 0,3,2 ];
 function VertexBufferBuilder(useInstancing, allocSize)
 {
     var MAX_VCOUNT = allocSize || 65536;
+    this.FULL_COUNT = (MAX_VCOUNT / 2 - 1) | 0;
 
     this.useInstancing = useInstancing;
 
@@ -3225,7 +4777,7 @@ VertexBufferBuilder.prototype.isFull = function(addCount)
     addCount = addCount || 3;
     var mult = this.useInstancing ? 4 : 1;
 
-    return (this.vcount * mult + addCount > 32767);
+    return (this.vcount * mult + addCount > this.FULL_COUNT);
 };
 
 VertexBufferBuilder.prototype.toMesh = function()
@@ -4122,7 +5674,6 @@ function FragList() {
     this.entityIndexes = null;
 
     this.fragId2dbId = null;
-    this.mesh2frag = null;
 
     this.topoIndexes = null;
 }
@@ -4134,6 +5685,7 @@ function readGeometryMetadataIntoFragments(pfr, fragments) {
 
     // Read from cache if the same entry has been reading from stream.
     var entryCache = {};
+    var mesh2frag = fragments.mesh2frag = {};
     fragments.polygonCounts = fragments.geomDataIndexes;
     for (var g = 0; g < length; g++) {
         var entry = fragments.geomDataIndexes[g];
@@ -4162,6 +5714,25 @@ function readGeometryMetadataIntoFragments(pfr, fragments) {
 
             entryCache[entry] = g;
         }
+        
+        // Construct mesh2frag here directly
+        var meshid = fragments.packIds[g] + ":" + fragments.entityIndexes[g];
+        var meshRefs = mesh2frag[meshid];
+        if (meshRefs === undefined) {
+            //If it's the first fragments for this mesh,
+            //store the index directly -- most common case.
+            mesh2frag[meshid] = g;
+        }
+        else if (!Array.isArray(meshRefs)) {
+            //otherwise put the fragments that
+            //reference the mesh into an array
+            mesh2frag[meshid] = [meshRefs, g];
+        }
+        else {
+            //already is an array
+            meshRefs.push(g);
+        }
+
     }
     fragments.geomDataIndexes = null;
     entryCache = null;
@@ -4277,6 +5848,8 @@ function readFragments(pfr, frags, globalOffset, placementTransform, ids) {
         numFrags = NUM_FRAGMENT_LIMITS;
     }
 
+    // Recored the total length of the fragments
+    frags.totalLength = pfr.getEntryCounts();
     frags.length = numFrags;
     frags.numLoaded = 0;
 
@@ -4497,11 +6070,35 @@ var av = Autodesk.Viewing,
     lmv = Autodesk.LMVTK,
     avp = av.Private;
 
-// Threshold to enable loading/handling fragments and geometry metadata in a memory optimized way.
-// 6 Mb for weak device, 32 Mb for others. And the size is the compressed size.
-// currently not used: 
-//var MAX_FRAGMENT_PACK_SIZE = (av.isMobileDevice()) ? (6 * 1024 * 1024) : (32 * 1024 *1024);
 var MAX_PF_FILES = av.isMobileDevice() ? 50 : 2000;
+var MAX_TOPOLOGY = av.isMobileDevice() ? 20 :  100; // MegaBytes; Non-gzipped
+
+
+
+function getUnitScale(unit) {
+    //Why are translators not using standard strings for those?!?!?!?
+    switch (unit) {
+        case 'meter'      :
+        case 'meters'     :
+        case 'm'          : return 1.0;
+        case 'feet and inches':
+        case 'foot'       :
+        case 'feet'       :
+        case 'ft'         : return 0.3048;
+        case 'inch'       :
+        case 'inches'     :
+        case 'in'         : return 0.0254;
+        case 'centimeter' :
+        case 'centimeters':
+        case 'cm'         : return 0.01;
+        case 'millimeter' :
+        case 'millimeters':
+        case 'mm'         : return 0.001;
+        default: return 1.0;
+    }
+}
+        
+
 
 /** @constructor */
 function Package(zipPack) {
@@ -4546,7 +6143,6 @@ function Package(zipPack) {
 
     this.topology = null; // Topology json
 
-    this.memoryOptimizedMode = false;
 }
 
 
@@ -4591,6 +6187,31 @@ Package.prototype.loadManifest = function(loadContext) {
 
     var jdr = new lmv.InputStream(manifestJson);
     this.manifest = JSON.parse(jdr.getString(manifestJson.byteLength));
+};
+
+Package.prototype.parseFragmentList = function(asset, loadContext, path, contents) {
+
+    var self = this;
+    this.loadAsyncResource(loadContext, path, contents, function(data) {
+        var pfr = new lmv.PackFileReader(data);
+
+        //Use a single large blocks to store all fragment elements
+        //TODO: perhaps have a FragList per pack file to keep block size down?
+        var frags = self.fragments = new lmv.FragList();
+        lmv.readFragments(pfr, frags, self.globalOffset, loadContext.placementTransform);
+        pfr = null;
+
+    });
+};
+
+Package.prototype.parseGeometryMetadata = function(asset, loadContext, path, contents) {
+    var self = this;
+    this.loadAsyncResource(loadContext, path, contents, function(data) {
+        var pfr = new lmv.PackFileReader(data);
+
+        self.geomMetadata = {};
+        lmv.readGeometryMetadata(pfr, self.geomMetadata);
+    });    
 };
 
 Package.prototype.loadRemainingSvf = function(loadContext) {
@@ -4677,6 +6298,44 @@ Package.prototype.loadRemainingSvf = function(loadContext) {
                 this.placementTransform = loadContext.placementTransform = placement;
             }
 
+
+            // If requested in the load options, apply the scaling from metadata model units to requested target units. 
+            // * this is aimed at multiple 3D model situations where models potentialy have different units, but
+            //   one  doesn't up-front know what these units are.
+            // * the single argument is the desired unit type to scale to. 
+            // * Model methods: getUnitString , getUnitScale &  getDisplayUnit will be automatically return corrected values
+            //   as long as there are no additional placementTransform scalings applied.  
+            if (loadContext.applyScaling) {
+
+                // 'from' unit comes from metadata.
+                var scalingFromUnit = 'm';
+                if (this.metadata["distance unit"]) {
+                    scalingFromUnit = this.metadata["distance unit"]["value"];
+                } 
+
+                // 'to' unit is passed in.
+                this.scalingUnit = loadContext.applyScaling;
+
+                // Work out overall desired scaling factor.
+                var scalingFactor = getUnitScale(scalingFromUnit) / getUnitScale(this.scalingUnit);
+
+                if(1 != scalingFactor) {
+
+                     var scalingTransform = new LmvMatrix4(true);
+                     scalingTransform.elements[0] = scalingFactor;
+                     scalingTransform.elements[5]  = scalingFactor;
+                     scalingTransform.elements[10] = scalingFactor;
+
+                    if (!loadContext.placementTransform) {
+                        // There may well already be a placementTransform from previous options/operations.
+                        this.placementTransform = new LmvMatrix4(true);
+                    }
+
+                    this.placementTransform = loadContext.placementTransform = new LmvMatrix4().multiplyMatrices( scalingTransform, this.placementTransform );
+                }
+            }
+
+
             min.x -= this.globalOffset.x;
             min.y -= this.globalOffset.y;
             min.z -= this.globalOffset.z;
@@ -4708,8 +6367,6 @@ Package.prototype.loadRemainingSvf = function(loadContext) {
         typesets[ts['id']] = ts['types'];
     }
 
-    var pendingGeometryMetadataLoad = {};
-
     //Loop through the assets, and schedule non-embedded
     //ones for later loading.
     //TODO: currently only geometry pack files are stored for later
@@ -4730,6 +6387,8 @@ Package.prototype.loadRemainingSvf = function(loadContext) {
             type = type.substr(23);
         var uri = asset["URI"];
         var typeset = asset["typeset"] ? typesets[asset["typeset"]] : null;
+        var usize = asset["usize"] || 0;
+        var megaBytes = (Math.round(usize/1048576*100000)/100000) | 0;
 
         //If the asset is a geometry pack or property pack
         //just remember it for later demand loading
@@ -4741,8 +6400,7 @@ Package.prototype.loadRemainingSvf = function(loadContext) {
 
                     this.packFileTotalSize += asset["usize"] || 0;
 
-                    if (this.geompacks.length < MAX_PF_FILES)
-                        this.geompacks.push({ id: asset["id"], uri: uri });
+                    this.geompacks.push({ id: asset["id"], uri: uri });
                 }
             }
             else if (type == "PropertyAttributes") {
@@ -4799,51 +6457,14 @@ Package.prototype.loadRemainingSvf = function(loadContext) {
             }
         }
         else if (type == "FragmentList") {
-            this.memoryOptimizedMode = false;
 
-            var self = this;
-            this.loadAsyncResource(loadContext, path, contents, function(data) {
-                var pfr = new lmv.PackFileReader(data);
-
-                //Use a single large blocks to store all fragment elements
-                //TODO: perhaps have a FragList per pack file to keep block size down?
-                var frags = svf.fragments = new lmv.FragList();
-                lmv.readFragments(pfr, frags, svf.globalOffset, loadContext.placementTransform, loadContext.objectIds);
-                pfr = null;
-
-                // If there are any pending geometry metadata loading (as a result of enabled optimization
-                // code path to read geometry metadata directly into fragments instead of read separately then
-                // combine with fragments), load them and process them.
-                if (self.memoryOptimizedMode && pendingGeometryMetadataLoad.path) {
-                    svf.loadAsyncResource(loadContext, pendingGeometryMetadataLoad.path, pendingGeometryMetadataLoad.contents, function(data) {
-                    pfr = new lmv.PackFileReader(data);
-                    svf.primitiveCount = lmv.readGeometryMetadataIntoFragments(pfr, svf.fragments);
-                        pfr = null;
-                        pendingGeometryMetadataLoad.contents = null;
-                    });
-                }
-            });
+            this.parseFragmentList(asset, loadContext, path, contents);
 
         }
         else if (type == "GeometryMetadataList") {
-            var self = this;
-            this.loadAsyncResource(loadContext, path, contents, function(data) {
-                var pfr = new lmv.PackFileReader(data);
+            
+            this.parseGeometryMetadata(asset, loadContext, path, contents);
 
-                svf.geomMetadata = {};
-
-                if (self.memoryOptimizedMode) {
-                    if (svf.fragments && svf.fragments.finishLoading) {
-                        svf.primitiveCount = lmv.readGeometryMetadataIntoFragments(pfr, svf.fragments);
-                    } else {
-                        pendingGeometryMetadataLoad.path = path;
-                        pendingGeometryMetadataLoad.contents = contents;
-                        contents = null;
-                    }
-                } else {
-                    lmv.readGeometryMetadata(pfr, svf.geomMetadata);
-                }
-            });
         }
         else if (type == "PackFile") {
 
@@ -4925,7 +6546,8 @@ Package.prototype.loadRemainingSvf = function(loadContext) {
                 }
             });
         }
-        else if (type == "Topology") {
+        // HACK: Avoid downloading a topology file that is "too big".
+        else if (type == "Topology" && megaBytes < MAX_TOPOLOGY) {
             this.loadAsyncResource(loadContext, path, contents, function(data) {
                 var jdr = new lmv.InputStream(data);
                 var byteLength = data.byteLength;
@@ -4962,7 +6584,7 @@ Package.prototype.addTransparencyFlagsToMaterials = function(mats) {
     }
 };
 
-Package.prototype.postLoad = function(loadContext) {
+Package.prototype.postLoadOfCam = function(loadContext) {
 
     //Combine camera instances and camera definitions -- we need
     //both to be loaded to get the camera list
@@ -4987,6 +6609,9 @@ Package.prototype.postLoad = function(loadContext) {
         delete this.camInstPack;
     }
 
+};
+
+Package.prototype.postLoadOfLight = function(loadContext) {
 
     //Lights need the same thing as the cameras
     if (this.lightDefPack && this.lightInstPack) {
@@ -4998,6 +6623,10 @@ Package.prototype.postLoad = function(loadContext) {
         delete this.lightInstPack;
         delete this.lightDefPack;
     }
+
+};
+
+Package.prototype.postLoadOfFragments = function(loadContext) {
 
     //Post processing step -- splice geometry metadata information
     //into the fragments list, in case it was given separately
@@ -5071,6 +6700,19 @@ Package.prototype.postLoad = function(loadContext) {
         }
     }
 
+    // Constrain the max number of PF files here, if not use packageless class
+    // Previously geom pack file uri are directly discarded when read from 
+    // manifest, but with the on demand loading and paging enabled, it is expected
+    // to handle all the pack files.
+    // So, assume the packageless is used together with on demand loading enabled. 
+    // ??? probably better to have another option to control whether need this or not.
+    if (this.geompacks.length > MAX_PF_FILES) {
+        this.geompacks.splice(MAX_PF_FILES, this.geompacks.length - MAX_PF_FILES);
+    }
+};
+
+Package.prototype.postLoadOfBBox = function(loadContext) {
+
     //if we don't know the overall scene bounds, compute them from the
     //fragment boxes
     if (!this.bbox || loadContext.placementTransform) {
@@ -5079,6 +6721,7 @@ Package.prototype.postLoad = function(loadContext) {
             this.modelBox = this.bbox;
 
         var totalbox = [Infinity, Infinity, Infinity, -Infinity, -Infinity, -Infinity];
+        var frags = this.fragments;
         var fragBoxes = frags.boxes;
 
         for (var f= 0, fEnd=frags.length; f<fEnd; f++) {
@@ -5099,6 +6742,10 @@ Package.prototype.postLoad = function(loadContext) {
                      };
     }
 
+
+};
+
+Package.prototype.postLoadOfObjectIds = function(loadContext) {
 
     // If object ids are specified, clean up pack file list by only keeping the packs that's
     // we intended to load.
@@ -5149,11 +6796,11 @@ Package.prototype.postLoad = function(loadContext) {
                     };
     }
 
-    // POST svf once it's available if we don't care about keep the fragments in memory
-    // a little bit longer for BVH building.
-    if (!this.memoryOptimizedMode) {
-        loadContext.loadDoneCB("svf");
-    }
+};
+
+Package.prototype.postLoadComplete = function(loadContext) {
+
+    loadContext.loadDoneCB("svf");
 
     if (this.fragments.polygonCounts) {
         //Build the R-Tree
@@ -5166,18 +6813,26 @@ Package.prototype.postLoad = function(loadContext) {
         var t1 = performance.now();
         loadContext.worker.debug("BVH build time (worker thread):" + (t1 - t0));
 
-        if (this.memoryOptimizedMode) {
-            // In memory optimized mode, delay posting SVF by waiting until BVH build finishes;
-            // then post both BVH and SVF to main thread together.
-            loadContext.loadDoneCB("svf");
-        }
-        else {
-            // In normal mode, just post back BVH as svf is already posted back earlier.
-            loadContext.loadDoneCB("bvh");
-        }
+        // In normal mode, just post back BVH as svf is already posted back earlier.
+        loadContext.loadDoneCB("bvh");
     }
 
     loadContext.loadDoneCB("done");
+};
+
+Package.prototype.postLoad = function(loadContext) {
+
+    this.postLoadOfCam(loadContext);
+
+    this.postLoadOfLight(loadContext);
+
+    this.postLoadOfFragments(loadContext);
+
+    this.postLoadOfBBox(loadContext);
+
+    this.postLoadOfObjectIds(loadContext);
+
+    this.postLoadComplete(loadContext);
 };
 
 lmv.Package = Package;
@@ -5195,10 +6850,13 @@ function PropertyDatabase(dbjsons) {
 
     "use strict";
 
+    var _this = this;
+
     //The property db json arrays.
     //Some of them are held unparsed in blob form
     //with helper arrays containing offsets into the blobs for each value to be parsed on demand
-    var _attrs;
+    var _attrs; // Array of arrays. Inner array is in the form [attrName(0), category(1), dataType(2), dataTypeContext(3), description(4), displayName(5), flags(6) ] 
+                // See struct AttributeDef in https://git.autodesk.com/A360/platform-translation-propertydb/blob/master/propertydb/PropertyDatabase.h 
     var _offsets;
     var _avs;
     var _valuesBlob;
@@ -5214,10 +6872,6 @@ function PropertyDatabase(dbjsons) {
     var _viewableInAttrId;
     var _externalRefAttrId;
     var _nodeFlagsAttrId;
-
-    // externalId into dbInd node mapping, constructed upon first usage
-    var _externalIdToDbId;
-    //var _dbIdToExternalId;
 
     //dbjsons is expected to be of the form
     //{ attrs: {filename1:x, filename2:y}, ids: {filename1:x... }, values: {... }, offsets: {... }, avs: {... } }
@@ -5343,37 +6997,29 @@ function PropertyDatabase(dbjsons) {
 
         var parentProps = null;
 
-        //Start offset of this object's properties in the Attribute-Values table
-        var propStart = 2 * _offsets[dbId];
-
-        //End offset of this object's properties in the Attribute-Values table
-        var propEnd = 2 * _offsets[dbId+1];
-
         //Loop over the attribute index - value index pairs for the objects
         //and for each one look up the attribute and the value in their
         //respective arrays.
-        for (var i=propStart; i<propEnd; i+=2) {
-            var attrId = _avs[i];
-
+        this.enumObjectProperties(dbId, function(attrId, valId) {
             if (attrId == _instanceOfAttrId) {
                 //Recursively resolve any common properties from the parent of this instance
-                var res = this.getObjectProperties(this.getValueAt(_avs[i+1]), propFilter);
+                var res = _this.getObjectProperties(_this.getValueAt(valId), propFilter);
                 if (res && res.properties) {
                     parentProps = res;
                 }
-                continue;
+                return;
             }
 
             var attr = _attrs[attrId];
 
             if (propFilter && propFilter.indexOf(attr[0]) === -1 && propFilter.indexOf(attr[5]) === -1 )
-                continue;
+                return;
 
             if (propIgnored && (propIgnored.indexOf(attr[0]) > -1 || propIgnored.indexOf(attr[5]) > -1 ))
-                continue;
+                return;
 
             if (attrId == _nameAttrId) {
-                var val = this.getValueAt(_avs[i+1]);
+                var val = _this.getValueAt(valId);
                 needName = true;
                 result.name = val;
             }
@@ -5392,18 +7038,22 @@ function PropertyDatabase(dbjsons) {
                       || attrId == _externalRefAttrId;
 
                 if (ignoreHidden && hidden) {
-                    continue;
+                    return;
                 }
+
+                // type values match those in PropertyDatabase.h
+                // See: https://git.autodesk.com/A360/platform-translation-propertydb/blob/master/propertydb/PropertyDatabase.h#L67
                 result.properties.push({
                     displayName: displayName,
-                    displayValue: this.getValueAt(_avs[i+1]),
+                    displayValue: _this.getValueAt(valId),
                     displayCategory: attr[1],
+                    attributeName: attr[0],
                     type: attr[2],
                     units: attr[3],
                     hidden: hidden
                 });
             }
-        }
+        });
 
         //Combine instance properties with any parent object properties
         if (parentProps) {
@@ -5431,19 +7081,14 @@ function PropertyDatabase(dbjsons) {
     };
 
     this.getExternalIdMapping = function() {
-        if (!_externalIdToDbId) {
-            // build mapping //
-            _externalIdToDbId = {};
-            //_dbIdToExternalId = [];
-            if (_idsOffsets && 'length' in _idsOffsets) { // Check that it's an indexable type
-                for (var dbId=1, len=_idsOffsets.length; dbId<len; ++dbId) {
-                    var externalId = this.getIdAt(dbId);
-                    _externalIdToDbId[externalId] = dbId;
-                    //_dbIdToExternalId[dbId] = externalId;
-                }
+        var mapping = {};
+        if (_idsOffsets && 'length' in _idsOffsets) { // Check that it's an indexable type
+            for (var dbId=1, len=_idsOffsets.length; dbId<len; ++dbId) {
+                var externalId = this.getIdAt(dbId);
+                mapping[externalId] = dbId;
             }
         }
-        return _externalIdToDbId;
+        return mapping;
     };
 
     //Heuristically find the root node(s) of a scene
@@ -5453,21 +7098,17 @@ function PropertyDatabase(dbjsons) {
     //but we would have to uncompress and parse that in -- something that is
     //not currently done. This is good enough for now (if pretty slow).
     this.findRootNodes = function() {
+
         var idroots = [];
-        for (var id = 1, idend=_offsets.length; id<idend; id++) {
+
+        this.enumObjects(function(id) {
             var hasChild = false;
             var hasParent = false;
             var hasName = false;
 
-            var propStart = 2 * _offsets[id];
-
-            var propEnd = 2 * _offsets[id+1];
-
-            for (var i=propStart; i<propEnd; i+=2) {
-                var attrId = _avs[i];
-
+            _this.enumObjectProperties(id, function(attrId, valId) {
                 if (attrId == _parentAttrId) {
-                    if (this.getIntValueAt(_avs[i+1])) //checks for null or zero parent id, in which case it's considered non-parent
+                    if (_this.getIntValueAt(valId)) //checks for null or zero parent id, in which case it's considered non-parent
                         hasParent = true;
                 } else if (attrId == _childAttrId) {
                     hasChild = true;
@@ -5475,12 +7116,12 @@ function PropertyDatabase(dbjsons) {
                 else if (attrId == _nameAttrId) {
                     hasName = true;
                 }
-            }
+            });
 
             if (hasChild && hasName && !hasParent) {
                 idroots.push(id);
             }
-        }
+        });
 
         return idroots;
     };
@@ -5490,19 +7131,15 @@ function PropertyDatabase(dbjsons) {
 
         var id = node.dbId;
 
-        var propStart = 2 * _offsets[id];
-        var propEnd = 2 * _offsets[id+1];
-
         var children;
 
-        for (var i=propStart; i<propEnd; i+=2) {
-            var attrId = _avs[i];
+        this.enumObjectProperties(id, function(attrId, valId) {
             var val;
 
             if (attrId == _parentAttrId) {
-                //node.parent = this.getIntValueAt(_avs[i+1]); //eventually we will needs this instead of setting parent pointer when creating children below.
+                //node.parent = this.getIntValueAt(valId); //eventually we will needs this instead of setting parent pointer when creating children below.
             } else if (attrId == _childAttrId && !skipChildren) {
-                val = this.getIntValueAt(_avs[i+1]);
+                val = _this.getIntValueAt(valId);
                 var child = { dbId:val, parent:node.dbId };
                 if (!children)
                     children = [child];
@@ -5510,11 +7147,11 @@ function PropertyDatabase(dbjsons) {
                     children.push(child);
 
             } else if (attrId == _nameAttrId) {
-                node.name = this.getValueAt(_avs[i+1]); //name is necessary for GUI purposes, so add it to the node object explicitly
+                node.name = _this.getValueAt(valId); //name is necessary for GUI purposes, so add it to the node object explicitly
             } else if (attrId == _nodeFlagsAttrId) {
-                node.flags = this.getIntValueAt(_avs[i+1]); //flags are necessary for GUI/selection purposes, so add them to the node object
+                node.flags = _this.getIntValueAt(valId); //flags are necessary for GUI/selection purposes, so add them to the node object
             }
-        }
+        });
 
         //If this is an instance of another object,
         //try to get the object name from there.
@@ -5522,15 +7159,14 @@ function PropertyDatabase(dbjsons) {
         //we only want to do the expensive thing of going up the object hierarchy
         //if the node does not actually have a name attribute.
         if (!node.name) {
-            for (var i=propStart; i<propEnd; i+=2) {
-                var attrId = _avs[i];
+            this.enumObjectProperties(id, function(attrId, valId) {
                 if (attrId == _instanceOfAttrId) {
-                     var tmp = { dbId:this.getIntValueAt(_avs[i+1]), name:null };
-                     this.getNodeNameAndChildren(tmp, true);
+                     var tmp = { dbId:_this.getIntValueAt(valId), name:null };
+                     _this.getNodeNameAndChildren(tmp, true);
                      if (tmp && tmp.name && !node.name)
-                     node.name = tmp.name;
+                        node.name = tmp.name;
                 }
-            }
+            });
         }
 
         return children;
@@ -5650,32 +7286,30 @@ var NODE_TYPE_ASSEMBLY   = 0x0,    // Real world object as assembly of sub-objec
                 }
             }
 
-            //Collect database IDs of objects that contain the found property values
-            for (var id = 1, idend=_offsets.length; id<idend; id++) {
-                var propStart = 2 * _offsets[id];
-                var propEnd = 2 * _offsets[id+1];
+            this.enumObjects(function(id) {
                 var name = "";
                 var item = null;
 
-                for (var i=propStart; i<propEnd; i+=2) {
-                    var attrId = _avs[i];
+                _this.enumObjectProperties(id, function(attrId, valId) {
+
                     var attr = _attrs[attrId];
                     var displayName = (attr[5]) ? attr[5] : attr[0];
 
                     if(completeInfo && displayName.toLowerCase() === "name") {
-                        name = this.getValueAt(_avs[i + 1]);
+                        name = _this.getValueAt(valId);
                     }
 
-                    if (matching_vals.indexOf(_avs[i+1]) != -1) {
+                    if (matching_vals.indexOf(valId) != -1) {
                         //Check attribute name in case a restriction is passed in
-                        if (attributeNames && attributeNames.length && attributeNames.indexOf(_attrs[_avs[i]][0]) === -1)
-                            continue;
+                        if (attributeNames && attributeNames.length && attributeNames.indexOf(_attrs[attrId][0]) === -1)
+                            return;
 
                         result.push(id);
-                        item = {id: id, nodeName: "", value: this.getValueAt(_avs[i + 1]), name: displayName};
-                        break;
+                        item = {id: id, nodeName: "", value: _this.getValueAt(valId), name: displayName};
+                        return true;
                     }
-                }
+                });
+
                 if (item && completeInfo && k === 0) {
                     //since we return the intersection we just get the completeInfo for the first term
                     item.nodeName = name;
@@ -5684,9 +7318,9 @@ var NODE_TYPE_ASSEMBLY   = 0x0,    // Real world object as assembly of sub-objec
                     } else {
                         resultNames[id] = item;
                     }
-
                 }
-            }
+
+            });
 
             results.push(result);
         }
@@ -5734,6 +7368,85 @@ var NODE_TYPE_ASSEMBLY   = 0x0,    // Real world object as assembly of sub-objec
 
     };
 
+
+    //Low level access APIs
+    this.getAttributeDef = function(attrId) {
+        var _raw = _attrs[attrId];
+        return {
+            //attrName(0), category(1), dataType(2), dataTypeContext(3), description(4), displayName(5), flags(6)
+            name:_raw[0],
+            category: _raw[1],
+            dataType: _raw[2],
+            dataTypeContext: _raw[3],
+            description: _raw[4],
+            displayName: _raw[5],
+            flags: _raw[6]
+        };
+    };
+
+    this.enumAttributes = function(cb) {
+        for (var i=1; i<_attrs.length; i++) {
+            if (cb(i, this.getAttributeDef(i), _attrs[i]))
+                break;
+        }
+    };
+
+    this.enumObjectProperties = function(dbId, cb) {
+
+        //Start offset of this object's properties in the Attribute-Values table
+        var propStart = 2 * _offsets[dbId];
+
+        //End offset of this object's properties in the Attribute-Values table
+        var propEnd = 2 * _offsets[dbId+1];
+
+        //Loop over the attribute index - value index pairs for the objects
+        //and for each one look up the attribute and the value in their
+        //respective arrays.
+        for (var i=propStart; i<propEnd; i+=2) {
+            var attrId = _avs[i];
+            var valId = _avs[i+1];
+
+            if (cb(attrId, valId))
+                break;
+        }
+    };
+
+
+    this.enumObjects = function(cb) {
+        for (var id=1, idend=_offsets.length; id<idend; id++) {
+            if (cb(id))
+                break;
+        }
+    };
+
+    this.getAttrChild = function() {
+        return _childAttrId;
+    };
+
+    this.getAttrParent = function() {
+        return _parentAttrId;
+    };
+
+    this.getAttrName = function() {
+        return _nameAttrId;
+    };
+
+    this.getAttrInstanceOf = function() {
+        return _instanceOfAttrId;
+    };
+
+    this.getAttrViewableIn = function() {
+        return _viewableInAttrId;
+    };
+
+    this.getAttrXref = function() {
+        return _externalRefAttrId;
+    };
+
+    this.getAttrNodeFlags = function() {
+        return _nodeFlagsAttrId;
+    };
+
 }
 
 lmv.PropertyDatabase = PropertyDatabase;
@@ -5748,6 +7461,8 @@ lmv.PropertyDatabase = PropertyDatabase;
 var av = Autodesk.Viewing,
     avp = av.Private;
 var lmv = Autodesk.LMVTK;
+
+var MOBILE_MAX_VCOUNT = 32768;
 
 var F2dDataType = {
     //Fixed size types
@@ -5947,7 +7662,9 @@ function F2D(metadata, manifest, basePath, options) {
     if (this.hidePaper)
         this.contrastColor = 0xffffff00;
 
-    this.currentVbb = new avp.VertexBufferBuilder(false);
+    this.isMobile = options && ('isMobile' in options) && options.isMobile;
+    this.max_vcount = this.isMobile ? MOBILE_MAX_VCOUNT : undefined;
+    this.currentVbb = new avp.VertexBufferBuilder(false, this.max_vcount);
     this.meshes = [];
 
     this.numCircles = this.numEllipses = this.numPolylines = this.numLineSegs = 0;
@@ -6072,7 +7789,7 @@ F2D.prototype.flushBuffer = function(addCount, finalFlush)
                 this.currentImage = null;
             }
 
-            this.currentVbb = new avp.VertexBufferBuilder();
+            this.currentVbb = new avp.VertexBufferBuilder(false, this.max_vcount);
         }
 
         if (this.loadContext)
@@ -8298,11 +10015,44 @@ Gltf.prototype.deriveInstanceTree = function() {
 			maxDepth = depth;
 
 		var currentTransform = worldTransform.clone();
-
+		// nodes can have a matrix transform, or a TRS type transform
 		if (gltfNode.matrix) {
 			var mtx = new LmvMatrix4(true);
 			mtx.fromArray(gltfNode.matrix);
 			currentTransform.multiply(mtx);
+		}
+		else {
+			var t = gltfNode.translation;
+			var r = gltfNode.rotation;
+			var s = gltfNode.scale;
+			
+			// if none are defined, don't bother making the matrix -
+			// this may be a non-matrix-oriented node
+			if ( (t !== undefined) || (r !== undefined) || (s !== undefined) ) {
+
+				// Rotations are stored as quaternions in glTF. Here is a quick and dirty quaternion class.
+				// It's purely for storing the incoming data. We need this below to call the matrix.compose function.
+				// Feel free to make a whole separate LmvQuaternion.js file if you're doing serious quaternion work.
+				Quat = function ( x, y, z, w ) {
+
+					this.x = x || 0;
+					this.y = y || 0;
+					this.z = z || 0;
+					this.w = w || 0;
+
+				};
+
+				var position = t ? new LmvVector3(t[0], t[1], t[2]) :
+					new LmvVector3;
+				var rotation = r ? new Quat(r[0], r[1], r[2], r[3]) :
+					new Quat;
+				var scale = s ? new LmvVector3(s[0], s[1], s[2]) :
+					new LmvVector3(1, 1, 1);
+
+				var mtx = new LmvMatrix4(true);
+				mtx.compose(position, rotation, scale);
+				currentTransform.multiply(mtx);
+			}
 		}
 
 		var nodeBox = new LmvBox3();
@@ -8427,1275 +10177,6 @@ return Gltf;
 
 })();
 
-
-//Implements runtime flat array storage for the node tree encoded by the property database
-(function() {
-
-"use strict";
-
-var av = Autodesk.Viewing,
-    avp = av.Private;
-	
-	//
-	// struct Node {
-	//     int dbId;
-	//	   int parentDbId;
-	//	   int firstChild; //if negative it's a fragment list
-	//     int numChildren;
-	//     int flags;	
-	// };
-	// sizeof(Node) == 20
-	var SIZEOF_NODE = 5, //integers
-		OFFSET_DBID = 0,
-		OFFSET_PARENT = 1,
-		OFFSET_FIRST_CHILD = 2,
-		OFFSET_NUM_CHILD = 3,
-		OFFSET_FLAGS = 4;
-
-	// note: objectCount and fragmentCount are not used
-	function NodeArray(objectCount, fragmentCount) {
-
-		this.nodes = [];
-		this.nextNode = 0;
-		
-		this.children = [];
-		this.nextChild = 0;
-
-		this.dbIdToIndex = {};
-
-		this.names = [];
-		this.s2i = {}; //duplicate string pool
-		this.strings = [];
-		this.nameSuffixes = []; //integers
-
-		//Occupy index zero so that we can use index 0 as undefined
-		this.getIndex(0);
-	}
-
-	NodeArray.prototype.getIndex = function(dbId) {
-
-		var index = this.dbIdToIndex[dbId];
-
-		if (index)
-			return index;
-
-		index = this.nextNode++;
-
-		//Allocate space for new node
-		this.nodes.push(dbId); //store the dbId as first integer in the Node structure
-		//Add four blank integers to be filled by setNode
-		for (var i=1; i<SIZEOF_NODE; i++)
-			this.nodes.push(0);
-
-		this.dbIdToIndex[dbId] = index;
-
-		return index;
-	};
-
-	NodeArray.prototype.setNode = function(dbId, parentDbId, name, flags, childrenIds, isLeaf) {
-
-		var index = this.getIndex(dbId);
-
-		var baseOffset = index * SIZEOF_NODE;
-
-		this.nodes[baseOffset+OFFSET_PARENT] = parentDbId;
-		this.nodes[baseOffset+OFFSET_FIRST_CHILD] = this.nextChild;
-		this.nodes[baseOffset+OFFSET_NUM_CHILD] = isLeaf ? -childrenIds.length : childrenIds.length;
-		this.nodes[baseOffset+OFFSET_FLAGS] = flags;
-
-		for (var i=0; i<childrenIds.length; i++)
-			this.children[this.nextChild++] = isLeaf ? childrenIds[i] : this.getIndex(childrenIds[i]);
-
-		if (this.nextChild > this.children.length)
-			avp.logger.error("Child index out of bounds -- should not happen");
-	
-		this.processName(index, name);
-	};
-
-	NodeArray.prototype.processName = function(index, name) {
-
-		//Attempt to decompose the name into a base string + integer,
-		//like for example "Base Wall [12345678]" or "Crank Shaft:1"
-		//We will try to reduce memory usage by storing "Base Wall" just once.
-		var base;
-		var suffix;
-
-		//Try Revit style [1234] first
-		var iStart = -1;
-		var iEnd = -1;
-
-		if (name) { //name should not be empty, but hey, it happens.
-			iEnd = name.lastIndexOf("]");
-			iStart = name.lastIndexOf("[");
-
-			//Try Inventor style :1234
-			if (iStart === -1 || iEnd === -1) {
-				iStart = name.lastIndexOf(":");
-				iEnd = name.length;
-			}		
-		}
-
-		//TODO: Any other separators? What does AutoCAD use?
-
-		if (iStart >= 0 && iEnd > iStart) {
-			base = name.slice(0, iStart+1);
-			var ssuffix = name.slice(iStart+1, iEnd);
-			suffix = parseInt(ssuffix, 10);
-			
-			//make sure we get the same thing back when
-			//converting back to string, otherwise don't 
-			//decompose it.
-			if (!suffix || suffix+"" !== ssuffix) {
-				base = name;
-				suffix = 0;
-			}
-		} else {
-			base = name;
-			suffix = 0;
-		}
-
-
-		var idx = this.s2i[base];
-		if (idx === undefined) {
-			this.strings.push(base);
-			idx = this.strings.length-1;
-			this.s2i[base] = idx;
-		}
-
-		this.names[index] = idx;
-		this.nameSuffixes[index] = suffix;
-	};
-
-
-	function arrayToBuffer(a) {
-		var b = new Int32Array(a.length);
-		b.set(a);
-		return b;
-	}
-
-    // note none of these arguments are used
-	NodeArray.prototype.flatten = function(dbId, parentDbId, name, flags, childrenIds, isLeaf) {
-		this.nodes = arrayToBuffer(this.nodes);
-		this.children = arrayToBuffer(this.children);
-		this.names = arrayToBuffer(this.names);
-		this.nameSuffixes = arrayToBuffer(this.nameSuffixes);
-		this.s2i = null; //we don't need this temporary map once we've built the strings list
-	};
-
-
-
-	function InstanceTreeAccess(nodeArray, rootId, nodeBoxes) {
-		this.nodes = nodeArray.nodes;
-		this.children = nodeArray.children;
-		this.dbIdToIndex = nodeArray.dbIdToIndex;
-		this.names = nodeArray.names;
-		this.nameSuffixes = nodeArray.nameSuffixes;
-		this.strings = nodeArray.strings;
-		this.rootId = rootId;
-		this.numNodes = this.nodes.length / SIZEOF_NODE;
-		this.visibleIds = null;
-
-
-		this.nodeBoxes = nodeBoxes || new Float32Array(6 * this.numNodes);
-	}
-
-    // note dbId is not used
-	InstanceTreeAccess.prototype.getNumNodes = function(dbId) {
-		return this.numNodes;
-	};
-
-	InstanceTreeAccess.prototype.getIndex = function(dbId) {
-		return this.dbIdToIndex[dbId];
-	};
-
-	InstanceTreeAccess.prototype.name = function(dbId) {
-		var idx = this.dbIdToIndex[dbId];
-		var base = this.strings[this.names[idx]];
-		var suffix = this.nameSuffixes[idx];
-		if (suffix) {
-			//NOTE: update this logic if more separators are supported in processName above
-			var lastChar = base.charAt(base.length-1);
-			if (lastChar === "[")
-				return base + suffix + "]";
-			else
-				return base + suffix;
-		} else {
-			return base;
-		}
-	};
-
-	InstanceTreeAccess.prototype.getParentId = function(dbId) {
-		return this.nodes[this.dbIdToIndex[dbId] * SIZEOF_NODE + OFFSET_PARENT];
-	};
-
-	InstanceTreeAccess.prototype.getNodeFlags = function(dbId) {
-		return this.nodes[this.dbIdToIndex[dbId] * SIZEOF_NODE + OFFSET_FLAGS];
-	};
-
-	InstanceTreeAccess.prototype.setNodeFlags = function(dbId, flags) {
-		this.nodes[this.dbIdToIndex[dbId] * SIZEOF_NODE + OFFSET_FLAGS] = flags;
-	};
-
-	InstanceTreeAccess.prototype.getNumChildren = function(dbId) {
-		var numChildren = this.nodes[this.dbIdToIndex[dbId] * SIZEOF_NODE + OFFSET_NUM_CHILD];
-		if (numChildren > 0)
-			return numChildren;
-		return 0;		
-	};
-
-	InstanceTreeAccess.prototype.getNumFragments = function(dbId) {
-		var numChildren = this.nodes[this.dbIdToIndex[dbId] * SIZEOF_NODE + OFFSET_NUM_CHILD];
-		if (numChildren < 0)
-			return -numChildren;
-		return 0;		
-	};
-
-	InstanceTreeAccess.prototype.getNodeBox = function(dbId, dst) {
-		var off = this.getIndex(dbId) * 6;
-		for (var i=0; i<6; i++)
-			dst[i] = this.nodeBoxes[off+i];
-	};
-
-	//Returns an array containing the dbIds of all objects
-	//that are physically represented in the scene. Not all
-	//objects in the property database occur physically in each graphics viewable.
-	InstanceTreeAccess.prototype.getVisibleIds = function() {
-		if (!this.visibleIds) {
-			this.visibleIds = Object.keys(this.dbIdToIndex).map(function(k) { return parseInt(k); });
-		}
-
-		return this.visibleIds;
-	};
-
-
-	InstanceTreeAccess.prototype.enumNodeChildren = function(dbId, callback) {
-		var idx = this.dbIdToIndex[dbId];
-		var firstChild = this.nodes[idx * SIZEOF_NODE + OFFSET_FIRST_CHILD];
-		var numChildren = this.nodes[idx * SIZEOF_NODE + OFFSET_NUM_CHILD];
-
-		if (numChildren > 0) {
-			for (var i=0; i<numChildren; i++) {
-				var childDbId = this.nodes[this.children[firstChild+i] * SIZEOF_NODE];
-				callback(childDbId, dbId, idx);
-			}
-		}
-	};
-
-	InstanceTreeAccess.prototype.enumNodeFragments = function(dbId, callback) {
-		var idx = this.dbIdToIndex[dbId];
-		var firstChild = this.nodes[idx * SIZEOF_NODE + OFFSET_FIRST_CHILD];
-		var numChildren = this.nodes[idx * SIZEOF_NODE + OFFSET_NUM_CHILD];
-
-		//If numChildren is negative, it means leaf node and children are fragments
-		if (numChildren < 0) {
-			numChildren = -numChildren;
-			for (var i=0; i<numChildren; i++) {
-				callback(this.children[firstChild+i], dbId, idx);
-			}
-		}
-	};
-
-	avp.InstanceTreeStorage = NodeArray;
-	avp.InstanceTreeAccess = InstanceTreeAccess;
-
-
-})();
-
-(function() {
-
-"use strict";
-
-var av = Autodesk.Viewing,
-    avp = av.Private;
-
-
-/**
- * BVH definitions:
- *
- * BVH Node: if this was C (the only real programming language), it would go something like this,
- * but with better alignment.
- *
- * This is definition for "fat" nodes (for rasterization),
- * i.e. when inner nodes also contain primitives.
- * struct Node {                                                            byte/short/int offset
- *      float worldBox[6]; //world box of the node node                         0/0/0
- *      int leftChildIndex; //pointer to left child node (right is left+1)     24/12/6
- *      ushort primCount; //how many fragments are at this node                28/14/7
- *      ushort flags; //bitfield of good stuff                                 30/15/7.5
- *
- *      int primStart; //start of node's own primitives (fragments) list       32/16/8
- * };
- * => sizeof(Node) = 36 bytes
-
- * Definition for lean nodes (for ray casting): when a node is either inner node (just children, no primitives)
- * or leaf (just primitives, no children).
- * struct Node {
- *      float worldBox[6]; //world box of the node node
- *      union {
- *          int leftChildIndex; //pointer to left child node (right is left+1)
- *          int primStart; //start of node's own primitives (fragments) list
- *      };
- *      ushort primCount; //how many fragments are at this node
- *      ushort flags; //bitfield of good stuff
- * };
- * => sizeof(Node) = 32 bytes
- *
- * The class below encapsulates an array of such nodes using ArrayBuffer as backing store.
- *
- * @param {ArrayBuffer|number} initialData  Initial content of the NodeArray, or initial allocation of empty nodes
- * @param {boolean} useLeanNode Use minimal node structure size. Currently this parameter must be set to false.
- */
-function NodeArray(initialData, useLeanNode) {
-    'use strict';
-
-    if (useLeanNode) {
-        this.bytes_per_node = 32;
-    } else {
-        this.bytes_per_node = 36;
-    }
-
-    var initialCount;
-    var initialBuffer;
-
-    if (initialData instanceof ArrayBuffer) {
-        initialCount = initialData.byteLength / this.bytes_per_node;
-        initialBuffer = initialData;
-        this.nodeCount = initialCount;
-    }
-    else {
-        initialCount = initialData | 0;
-        initialBuffer =  new ArrayBuffer(this.bytes_per_node * initialCount);
-        this.nodeCount = 0;
-    }
-
-    this.nodeCapacity = initialCount;
-    this.nodesRaw = initialBuffer;
-
-    this.is_lean_node = useLeanNode;
-    this.node_stride = this.bytes_per_node  / 4;
-    this.node_stride_short = this.bytes_per_node / 2;
-
-    //Allocate memory buffer for all tree nodes
-    this.nodesF = new Float32Array(this.nodesRaw);
-    this.nodesI = new Int32Array(this.nodesRaw);
-    this.nodesS = new Uint16Array(this.nodesRaw);
-}
-
-NodeArray.prototype.setLeftChild = function(nodeidx, childidx) {
-    this.nodesI[nodeidx * this.node_stride + 6] = childidx;
-};
-NodeArray.prototype.getLeftChild = function(nodeidx) {
-    return this.nodesI[nodeidx * this.node_stride + 6];
-};
-
-NodeArray.prototype.setPrimStart = function(nodeidx, start) {
-    if (this.is_lean_node)
-        this.nodesI[nodeidx * this.node_stride + 6] = start;
-    else
-        this.nodesI[nodeidx * this.node_stride + 8] = start;
-};
-NodeArray.prototype.getPrimStart = function(nodeidx) {
-    if (this.is_lean_node)
-        return this.nodesI[nodeidx * this.node_stride + 6];
-    else
-        return this.nodesI[nodeidx * this.node_stride + 8];
-};
-
-NodeArray.prototype.setPrimCount = function(nodeidx, count) {
-    this.nodesS[nodeidx * this.node_stride_short + 14] = count;
-};
-NodeArray.prototype.getPrimCount = function(nodeidx) {
-    return this.nodesS[nodeidx * this.node_stride_short + 14];
-};
-
-NodeArray.prototype.setFlags = function(nodeidx, axis, isFirst, isTransparent) {
-    this.nodesS[nodeidx * this.node_stride_short + 15] = (isTransparent << 3) | (isFirst << 2) | (axis & 0x3);
-};
-NodeArray.prototype.getFlags = function(nodeidx) {
-    return this.nodesS[nodeidx * this.node_stride_short + 15];
-};
-
-NodeArray.prototype.setBox0 = function(nodeidx, src) {
-    var off = nodeidx * this.node_stride;
-    var dst = this.nodesF;
-    dst[off] = src[0];
-    dst[off+1] = src[1];
-    dst[off+2] = src[2];
-    dst[off+3] = src[3];
-    dst[off+4] = src[4];
-    dst[off+5] = src[5];
-};
-NodeArray.prototype.getBoxThree = function(nodeidx, dst) {
-    var off = nodeidx * this.node_stride;
-    var src = this.nodesF;
-    dst.min.x = src[off];
-    dst.min.y = src[off+1];
-    dst.min.z = src[off+2];
-    dst.max.x = src[off+3];
-    dst.max.y = src[off+4];
-    dst.max.z = src[off+5];
-};
-NodeArray.prototype.setBoxThree = function(nodeidx, src) {
-    var off = nodeidx * this.node_stride;
-    var dst = this.nodesF;
-    dst[off] = src.min.x;
-    dst[off+1] = src.min.y;
-    dst[off+2] = src.min.z;
-    dst[off+3] = src.max.x;
-    dst[off+4] = src.max.y;
-    dst[off+5] = src.max.z;
-};
-
-
-
-
-NodeArray.prototype.makeEmpty = function(nodeidx) {
-
-    var off = nodeidx * this.node_stride;
-    var dst = this.nodesI;
-
-    //No point to makeEmpty here, because the box gets set
-    //directly when the node is initialized in bvh_subdivide.
-    //box_make_empty(this.nodesF, off);
-
-    //_this.setLeftChild(nodeidx,-1);
-    dst[off + 6] = -1;
-
-    //both prim count and flags to 0
-    dst[off + 7] = 0;
-
-    //_this.setPrimStart(nodeidx, -1);
-    if (!this.is_lean_node)
-        dst[off + 8] = -1;
-
-};
-
-NodeArray.prototype.realloc = function(extraSize) {
-    if (this.nodeCount + extraSize > this.nodeCapacity) {
-        var nsz = 0 | (this.nodeCapacity * 3 / 2);
-        if (nsz < this.nodeCount + extraSize)
-            nsz = this.nodeCount + extraSize;
-
-        var nnodes = new ArrayBuffer(nsz * this.bytes_per_node);
-        var nnodesI = new Int32Array(nnodes);
-        nnodesI.set(this.nodesI);
-
-        this.nodeCapacity = nsz;
-        this.nodesRaw = nnodes;
-        this.nodesF = new Float32Array(nnodes);
-        this.nodesI = nnodesI;
-        this.nodesS = new Uint16Array(nnodes);
-    }
-};
-
-NodeArray.prototype.nextNodes = function(howMany) {
-
-    this.realloc(howMany);
-
-    var res = this.nodeCount;
-    this.nodeCount += howMany;
-
-    for (var i=0; i<howMany; i++) {
-        this.makeEmpty(res+i);
-    }
-
-    return res;
-};
-
-NodeArray.prototype.getRawData = function() {
-    return this.nodesRaw.slice(0, this.nodeCount * this.bytes_per_node);
-};
-
-var BOX_STRIDE = 6;
-var POINT_STRIDE = 3;
-var BOX_EPSILON = 1e-5;
-var BOX_SCALE_EPSILON = 1e-5;
-var MAX_DEPTH = 15; /* max tree depth */
-var MAX_BINS = 16;
-
-/**
-* Bounding Volume Hierarchy build algorithm.
-* Uses top down binning -- see "On fast Construction of SAH-based Bounding Volume Hierarchies" by I.Wald
-* Ported from the C version here: https://git.autodesk.com/stanevt/t-ray/blob/master/render3d/t-ray/t-core/t-bvh.c
-* Optimized for JavaScript.
-*/
-var BVHModule = function() {
-    //There be dragons in this closure.
-
-"use strict";
-
-
-/**
- * Utilities for manipulating bounding boxes stored
- * in external array (as sextuplets of float32)
- */
-
-
-function box_get_centroid(dst, dst_off, src, src_off) {
-    dst[dst_off] = 0.5*(src[src_off] + src[src_off + 3]);
-    dst[dst_off+1] = 0.5*(src[src_off + 1] + src[src_off + 4]);
-    dst[dst_off+2] = 0.5*(src[src_off + 2] + src[src_off + 5]);
-}
-
-function box_add_point_0(dst, src, src_off) {
-
-    if (dst[0] > src[src_off])   dst[0] = src[src_off];
-    if (dst[3] < src[src_off])   dst[3] = src[src_off];
-
-    if (dst[1] > src[src_off+1]) dst[1] = src[src_off+1];
-    if (dst[4] < src[src_off+1]) dst[4] = src[src_off+1];
-
-    if (dst[2] > src[src_off+2]) dst[2] = src[src_off+2];
-    if (dst[5] < src[src_off+2]) dst[5] = src[src_off+2];
-
-}
-
-function box_add_box_0(dst, src, src_off) {
-
-    if (dst[0] > src[src_off]) dst[0] = src[src_off];
-    if (dst[1] > src[src_off+1]) dst[1] = src[src_off+1];
-    if (dst[2] > src[src_off+2]) dst[2] = src[src_off+2];
-
-    if (dst[3] < src[src_off+3]) dst[3] = src[src_off+3];
-    if (dst[4] < src[src_off+4]) dst[4] = src[src_off+4];
-    if (dst[5] < src[src_off+5]) dst[5] = src[src_off+5];
-}
-
-function box_add_box_00(dst, src) {
-    if (dst[0] > src[0]) dst[0] = src[0];
-    if (dst[1] > src[1]) dst[1] = src[1];
-    if (dst[2] > src[2]) dst[2] = src[2];
-
-    if (dst[3] < src[3]) dst[3] = src[3];
-    if (dst[4] < src[4]) dst[4] = src[4];
-    if (dst[5] < src[5]) dst[5] = src[5];
-}
-
-function box_get_size(dst, dst_off, src, src_off) {
-    for (var i=0; i<3; i++) {
-        dst[dst_off+i] = src[src_off+3+i] - src[src_off+i];
-    }
-}
-
-//function box_copy(dst, dst_off, src, src_off) {
-//    for (var i=0; i<6; i++) {
-//        dst[dst_off+i] = src[src_off+i];
-//    }
-//}
-
-// unwound version of box_copy
-function box_copy_00(dst, src) {
-    dst[0] = src[0];
-    dst[1] = src[1];
-    dst[2] = src[2];
-    dst[3] = src[3];
-    dst[4] = src[4];
-    dst[5] = src[5];
-}
-
-var dbl_max = Infinity;
-
-//function box_make_empty(dst, dst_off) {
-//        dst[dst_off]   =  dbl_max;
-//        dst[dst_off+1] =  dbl_max;
-//        dst[dst_off+2] =  dbl_max;
-//        dst[dst_off+3] = -dbl_max;
-//        dst[dst_off+4] = -dbl_max;
-//        dst[dst_off+5] = -dbl_max;
-//}
-
-function box_make_empty_0(dst) {
-    dst[0] =  dbl_max;
-    dst[1] =  dbl_max;
-    dst[2] =  dbl_max;
-    dst[3] = -dbl_max;
-    dst[4] = -dbl_max;
-    dst[5] = -dbl_max;
-}
-
-function box_area(src, src_off) {
-
-    var dx = src[src_off+3] - src[src_off];
-    var dy = src[src_off+4] - src[src_off+1];
-    var dz = src[src_off+5] - src[src_off+2];
-
-    if (dx < 0 || dy < 0 || dz < 0)
-        return 0;
-
-    return 2.0 * (dx * dy + dy * dz + dz * dx);
-}
-
-function box_area_0(src) {
-
-    var dx = src[3] - src[0];
-    var dy = src[4] - src[1];
-    var dz = src[5] - src[2];
-
-    if (dx < 0 || dy < 0 || dz < 0)
-        return 0;
-
-    return 2.0 * (dx * dy + dy * dz + dz * dx);
-}
-
-
-
-
-
-function bvh_split_info() {
-    this.vb_left = new Float32Array(6);
-    this.vb_right = new Float32Array(6);
-    this.cb_left = new Float32Array(6);
-    this.cb_right = new Float32Array(6);
-    this.num_left = 0;
-    this.best_split = -1;
-    this.best_cost = -1;
-    this.num_bins = -1;
-}
-
-bvh_split_info.prototype.reset = function () {
-    this.num_left = 0;
-    this.best_split = -1;
-    this.best_cost = -1;
-    this.num_bins = -1;
-};
-
-
-function bvh_bin() {
-    this.box_bbox = new Float32Array(6); // bbox of all primitive bboxes
-    this.box_centroid = new Float32Array(6); // bbox of all primitive centroids
-    this.num_prims = 0; // number of primitives in the bin
-}
-
-bvh_bin.prototype.reset = function() {
-    this.num_prims = 0; // number of primitives in the bin
-    box_make_empty_0(this.box_bbox);
-    box_make_empty_0(this.box_centroid);
-};
-
-function accum_bin_info() {
-    this.BL = new Float32Array(6);
-    this.CL = new Float32Array(6);
-    this.NL = 0;
-    this.AL = 0;
-}
-
-accum_bin_info.prototype.reset = function() {
-    this.NL = 0;
-    this.AL = 0;
-
-    box_make_empty_0(this.BL);
-    box_make_empty_0(this.CL);
-};
-
-
-//Scratch variables used by bvh_bin_axis
-//TODO: can be replaced by a flat ArrayBuffer
-var bins = [];
-var i;
-for (i=0; i<MAX_BINS; i++) {
-    bins.push(new bvh_bin());
-}
-
-//TODO: can be replaced by a flat ArrayBuffer
-var ai = [];
-for (i=0; i<MAX_BINS-1; i++)
-    ai.push(new accum_bin_info());
-
-var BR = new Float32Array(6);
-var CR = new Float32Array(6);
-
-
-function assign_bins(bvh, start, end, axis, cb, cbdiag, num_bins) {
-
-    var centroids = bvh.centroids;
-    var primitives = bvh.primitives;
-    var boxes = bvh.boxes;
-
-    /* bin assignment */
-    var k1 = num_bins * (1.0 - BOX_SCALE_EPSILON) / cbdiag[axis];
-    var cbaxis = cb[axis];
-    var sp = bvh.sort_prims;
-
-    for (var j = start; j <= end; j++)
-    {
-        /* map array index to primitive index -- since primitive index array gets reordered by the BVH build*/
-        /* while the primitive info array is not reordered */
-        var iprim = primitives[j]|0;
-
-        var fpbin = k1 * (centroids[iprim * 3/*POINT_STRIDE*/ + axis] - cbaxis);
-        var binid = fpbin|0; //Truncate to int is algorithmic -> not an optimization thing!
-
-        /* possible floating point problems */
-        if (binid < 0)
-        {
-            binid = 0;
-            //debug("Bin index out of range " + fpbin);
-        }
-        else if (binid >= num_bins)
-        {
-            binid = num_bins-1;
-            //debug("Bin index out of range. " + fpbin);
-        }
-
-        /* Store the bin index for the partitioning step, so we don't recompute it there */
-        sp[j] = binid;
-
-        /* update other bin data with the new primitive */
-        //var bin = bins[binid];
-        bins[binid].num_prims ++;
-
-        box_add_box_0(bins[binid].box_bbox, boxes, iprim * 6/*BOX_STRIDE*/);
-        box_add_point_0(bins[binid].box_centroid, centroids, iprim * 3 /*POINT_STRIDE*/);
-    }
-    /* at this point all primitves are assigned to a bin */
-}
-
-
-function bvh_bin_axis(bvh, start, end, axis, cb, cbdiag, split_info) {
-
-    /* if size is near 0 on this axis, cost of split is infinite */
-    if (cbdiag[axis] < bvh.scene_epsilon)
-    {
-        split_info.best_cost = Infinity;
-        return;
-    }
-
-    var num_bins = MAX_BINS;
-    if (num_bins > end-start+1)
-        num_bins = end-start+1;
-
-    var i;
-    for (i=0; i<num_bins; i++)
-        bins[i].reset();
-
-    for (i=0; i<num_bins-1; i++)
-        ai[i].reset();
-
-    split_info.num_bins = num_bins;
-
-    assign_bins(bvh, start, end, axis, cb, cbdiag, num_bins);
-
-
-    /* now do the accumulation sweep from left to right */
-    box_copy_00(ai[0].BL, bins[0].box_bbox);
-    box_copy_00(ai[0].CL, bins[0].box_centroid);
-    ai[0].AL = box_area_0(ai[0].BL);
-    ai[0].NL = bins[0].num_prims;
-    var bin;
-    for (i=1; i<num_bins-1; i++)
-    {
-        bin = bins[i];
-        var aii = ai[i];
-        box_copy_00(aii.BL, ai[i-1].BL);
-        box_add_box_00(aii.BL, bin.box_bbox);
-        aii.AL = box_area_0(aii.BL);
-
-        box_copy_00(aii.CL, ai[i-1].CL);
-        box_add_box_00(aii.CL, bin.box_centroid);
-
-        aii.NL = ai[i-1].NL + bin.num_prims;
-    }
-
-    /* sweep from right to left, keeping track of lowest cost and split */
-    i = num_bins - 1;
-    box_copy_00(BR, bins[i].box_bbox);
-    box_copy_00(CR, bins[i].box_centroid);
-    var AR = box_area_0(BR);
-    var NR = bins[i].num_prims;
-
-    var best_split = i;
-    var best_cost = AR * NR + ai[i-1].AL * ai[i-1].NL;
-    box_copy_00(split_info.vb_right, BR);
-    box_copy_00(split_info.cb_right, bins[i].box_centroid);
-    box_copy_00(split_info.vb_left, ai[i-1].BL);
-    box_copy_00(split_info.cb_left, ai[i-1].CL);
-    split_info.num_left = ai[i-1].NL;
-
-    for (i=i-1; i>=1; i--)
-    {
-        bin = bins[i];
-        box_add_box_00(BR, bin.box_bbox);
-        box_add_box_00(CR, bin.box_centroid);
-        AR = box_area_0(BR);
-        NR += bin.num_prims;
-
-        var cur_cost = AR * NR + ai[i-1].AL * ai[i-1].NL;
-
-        if (cur_cost <= best_cost)
-        {
-            best_cost = cur_cost;
-            best_split = i;
-
-            box_copy_00(split_info.vb_right, BR);
-            box_copy_00(split_info.cb_right, CR);
-            box_copy_00(split_info.vb_left, ai[i-1].BL);
-            box_copy_00(split_info.cb_left, ai[i-1].CL);
-            split_info.num_left = ai[i-1].NL;
-        }
-    }
-
-    split_info.best_split = best_split;
-    split_info.best_cost = best_cost;
-}
-
-function bvh_partition(bvh, start, end, axis, cb, cbdiag, split_info) {
-
-    //At this point, the original algorithm does an in-place NON-STABLE partition
-    //to move primitives to the left and right sides of the split plane
-    //into contiguous location of the primitives list for use by
-    //the child nodes. But, we want to preserve the ordering by size
-    //without having to do another sort, so we have to use
-    //a temporary storage location to copy into. We place right-side primitives
-    //in temporary storage, then copy back into the original storage in the right order.
-    //Left-side primitives are still put directly into the destination location.
-    var primitives = bvh.primitives;
-    //var centroids = bvh.centroids;
-    var i,j;
-
-    //sort_prims contains bin indices computed during the split step.
-    //Here we read those and also use sort_prims as temporary holding
-    //of primitive indices. Hopefully the read happens before the write. :)
-    //In C it was cheap enough to compute this again...
-    //var k1 = split_info.num_bins * (1.0 - BOX_SCALE_EPSILON) / cbdiag[axis];
-    //var cbaxis = cb[axis];
-    var sp = bvh.sort_prims;
-
-    var right = 0;
-    var left = start|0;
-    var best_split = split_info.best_split|0;
-
-    for (i=start; i<=end; i++) {
-        var iprim = primitives[i]|0;
-        //var fpbin = (k1 * (centroids[3/*POINT_STRIDE*/ * iprim + axis] - cbaxis));
-        var binid = sp[i]; /* fpbin|0; */
-
-        if (binid < best_split) {
-            primitives[left++] = iprim;
-        } else {
-            sp[right++] = iprim;
-        }
-    }
-
-    //if ((left-start) != split_info.num_left)
-    //    debug("Mismatch between binning and partitioning.");
-
-    //Copy back the right-side primitives into main primitives array, while
-    //maintaining order
-    for (j=0; j<right; j++) {
-        primitives[left+j] = sp[j];
-    }
-    /* at this point the binning is complete and we have computed a split */
-}
-
-
-function bvh_fatten_inner_node(bvh, nodes, nodeidx, start, end, cb, cbdiag, poly_cut_off) {
-
-    var primitives = bvh.primitives;
-    var centroids = bvh.centroids;
-
-    //Take the first few items to place into the inner node,
-    //but do not go over the max item or polygon count.
-    var prim_count = end - start + 1;
-
-    if (prim_count > bvh.frags_per_inner_node)
-        prim_count = bvh.frags_per_inner_node;
-
-    if (prim_count > poly_cut_off)
-        prim_count = poly_cut_off;
-
-
-    nodes.setPrimStart(nodeidx, start);
-    nodes.setPrimCount(nodeidx, prim_count);
-    start += prim_count;
-
-    //Because we take some primitives off the input, we have to recompute
-    //the bounding box used for computing the node split.
-    box_make_empty_0(cb);
-    for (var i=start; i<=end; i++) {
-        box_add_point_0(cb, centroids, 3/*POINT_STRIDE*/ * primitives[i]);
-    }
-
-    //Also update the split axis -- it could possibly change too.
-    box_get_size(cbdiag, 0, cb, 0);
-    //Decide which axis to split on.
-    var axis = 0;
-    if (cbdiag[1] > cbdiag[0])
-        axis = 1;
-    if (cbdiag[2] > cbdiag[axis])
-        axis = 2;
-
-    return axis;
-}
-
-
-var cbdiag = new Float32Array(3); //scratch variable used in bvh_subdivide
-
-function bvh_subdivide(bvh,
-                       nodeidx, /* current parent node to consider splitting */
-                       start, end, /* primitive sub-range to be considered at this recursion step */
-                       vb, /* bounding volume of the primitives' bounds in the sub-range */
-                       cb, /* bounding box of primitive centroids in this range */
-                       transparent, /* does the node contain opaque or transparent objects */
-                       depth /* recursion depth */
-                       )
-{
-    box_get_size(cbdiag, 0, cb, 0);
-    var nodes = bvh.nodes;
-    var frags_per_leaf = transparent ? bvh.frags_per_leaf_node_transparent : bvh.frags_per_leaf_node;
-    var frags_per_inner = transparent ? bvh.frags_per_inner_node_transparent : bvh.frags_per_inner_node;
-    var polys_per_node = bvh.max_polys_per_node;
-
-    //Decide which axis to split on.
-    var axis = 0;
-    if (cbdiag[1] > cbdiag[0])
-        axis = 1;
-    if (cbdiag[2] > cbdiag[axis])
-        axis = 2;
-
-    //Whether the node gets split or not, it gets
-    //the same overall bounding box.
-    nodes.setBox0(nodeidx, vb);
-
-    //Check the expected polygon count of the node
-    var poly_count = 0;
-    var poly_cut_off = 0;
-    if (bvh.polygonCounts) {
-        for (var i=start; i<=end; i++) {
-            poly_count += bvh.polygonCounts[bvh.primitives[i]];
-            poly_cut_off++;
-            if (poly_count > polys_per_node)
-                break;
-        }
-    }
-
-    var prim_count = end - start + 1;
-
-    var isSmall = ((prim_count <= frags_per_leaf) && (poly_count < polys_per_node)) ||
-                  (prim_count === 1);
-
-    //Decide whether to terminate recursion
-    if (isSmall ||
-      depth > MAX_DEPTH || //max recusrion depth
-      cbdiag[axis] < bvh.scene_epsilon) //node would be way too tiny for math to make sense (a point)
-    {
-        nodes.setLeftChild(nodeidx, -1);
-        nodes.setPrimStart(nodeidx, start);
-        nodes.setPrimCount(nodeidx, end-start+1);
-        nodes.setFlags(nodeidx, 0, 0, transparent ? 1 : 0);
-        return;
-    }
-
-    //Pick the largest (first) primitives to live in this node
-    //NOTE: this assumes primitives are sorted by size.
-    //NOTE: This step is an optional departure from the original
-    if (frags_per_inner) {
-        axis = bvh_fatten_inner_node(bvh, nodes, nodeidx, start, end, cb, cbdiag, poly_cut_off);
-        start = start + nodes.getPrimCount(nodeidx);
-    }
-
-    var split_info = new bvh_split_info();
-
-    //Do the binning of the remaining primitives to go into child nodes
-    bvh_bin_axis(bvh, start, end, axis, cb, cbdiag, split_info);
-
-    if (split_info.num_bins < 0) {
-        //Split was too costly, so add all objects to the current node and bail
-        nodes.setPrimCount(nodeidx, nodes.getPrimCount(nodeidx) + end - start + 1);
-        return;
-    }
-
-    bvh_partition(bvh, start, end, axis, cb, cbdiag, split_info);
-
-    var child_idx = nodes.nextNodes(2);
-
-    /* set info about split into the node */
-    var cleft = (split_info.vb_left[3+axis] + split_info.vb_left[axis]) * 0.5;
-    var cright = (split_info.vb_right[3+axis] + split_info.vb_right[axis]) * 0.5;
-
-    nodes.setFlags(nodeidx, axis, cleft < cright ? 0 : 1, transparent ? 1 : 0);
-    nodes.setLeftChild(nodeidx, child_idx);
-
-
-    /* validate split */
-    /*
-    if (true) {
-        for (var i=start; i< start+num_left; i++)
-        {
-            //int binid = (int)(k1 * (info->prim_info[info->bvh->iprims[i]].centroid.v[axis] - cb->min.v[axis]));
-            var cen = primitives[i] * POINT_STRIDE;
-            if (   centroids[cen] < split_info.cb_left[0]
-                || centroids[cen] > split_info.cb_left[3]
-                || centroids[cen+1] < split_info.cb_left[1]
-                || centroids[cen+1] > split_info.cb_left[4]
-                || centroids[cen+2] < split_info.cb_left[2]
-                || centroids[cen+2] > split_info.cb_left[5])
-            {
-                debug ("wrong centroid box");
-            }
-        }
-
-        for (i=start+num_left; i<=end; i++)
-        {
-            //int binid = (int)(k1 * (info->prim_info[info->bvh->iprims[i]].centroid.v[axis] - cb->min.v[axis]));
-            var cen = primitives[i] * POINT_STRIDE;
-            if (   centroids[cen] < split_info.cb_right[0]
-                || centroids[cen] > split_info.cb_right[3]
-                || centroids[cen+1] < split_info.cb_right[1]
-                || centroids[cen+1] > split_info.cb_right[4]
-                || centroids[cen+2] < split_info.cb_right[2]
-                || centroids[cen+2] > split_info.cb_right[5])
-            {
-                debug ("wrong centroid box");
-            }
-        }
-    }
-    */
-
-    /* recurse */
-   //bvh_subdivide(bvh, child_idx, start, start + split_info.num_left - 1, split_info.vb_left, split_info.cb_left, transparent, depth+1);
-   //bvh_subdivide(bvh, child_idx + 1, start + split_info.num_left, end, split_info.vb_right, split_info.cb_right, transparent, depth+1);
-
-    //Iterative stack-based recursion for easier profiling
-   bvh.recursion_stack.push([bvh, child_idx + 1, start + split_info.num_left, end, split_info.vb_right, split_info.cb_right, transparent, depth+1]);
-   bvh.recursion_stack.push([bvh, child_idx, start, start + split_info.num_left - 1, split_info.vb_left, split_info.cb_left, transparent, depth+1]);
-
-}
-
-
-function compute_boxes(bvh) {
-
-    var boxv_o = bvh.boxv_o;
-    var boxc_o = bvh.boxc_o;
-    var boxv_t = bvh.boxv_t;
-    var boxc_t = bvh.boxc_t;
-
-    box_make_empty_0(boxv_o);
-    box_make_empty_0(boxc_o);
-    box_make_empty_0(boxv_t);
-    box_make_empty_0(boxc_t);
-
-    var c = bvh.centroids;
-    var b = bvh.boxes;
-
-    for (var i=0, iEnd=bvh.prim_count; i<iEnd; i++) {
-
-
-        box_get_centroid(c, 3/*POINT_STRIDE*/*i, b, 6/*BOX_STRIDE*/*i);
-
-        if (i >= bvh.first_transparent) {
-
-            box_add_point_0(boxc_t, c, 3/*POINT_STRIDE*/*i);
-            box_add_box_0(boxv_t, b, 6/*BOX_STRIDE*/*i);
-
-        } else {
-
-            box_add_point_0(boxc_o, c, 3/*POINT_STRIDE*/*i);
-            box_add_box_0(boxv_o, b, 6/*BOX_STRIDE*/*i);
-
-        }
-    }
-
-    box_get_size(cbdiag, 0, bvh.boxv_o, 0);
-    var maxsz = Math.max(cbdiag[0], cbdiag[1], cbdiag[2]);
-    bvh.scene_epsilon = BOX_EPSILON * maxsz;
-}
-
-
-
-
-    //Module exports
-    return {
-        bvh_subdivide : bvh_subdivide,
-        compute_boxes : compute_boxes,
-        box_area : box_area
-    };
-
-}();
-
-
-
-//Given a list of LMV fragments, builds a spatial index for view-dependent traversal and hit testing
-function BVHBuilder(fragments, materialDefs) {
-
-    //Invariants
-    this.boxes = fragments.boxes; //Array of Float32, each bbox is a sextuplet
-    this.polygonCounts = fragments.polygonCounts;
-    this.materials = fragments.materials; //material indices (we need to know which fragments are transparent)
-    this.materialDefs = materialDefs;
-
-    this.prim_count = fragments.length;
-
-    //To be initialized by build() function based on build options
-    this.frags_per_leaf_node = -1;
-    this.frags_per_inner_node = -1;
-    this.nodes = null;
-
-    this.work_buf = new ArrayBuffer(this.prim_count * 4);
-    this.sort_prims = new Int32Array(this.work_buf);
-
-    //Allocate memory buffer for re-ordered fragment primitive indices,
-    //which will be sorted by node ownership and point to the index
-    //of the fragment data.
-    this.primitives = new Int32Array(this.prim_count);
-
-    //The BVH split algorithm works based on centroids of the bboxes.
-    this.centroids = new Float32Array(POINT_STRIDE * this.prim_count);
-
-    //BBoxes and centroid bboxes for opaque and transparent primitive sets
-    this.boxv_o = new Float32Array(6);
-    this.boxc_o = new Float32Array(6);
-    this.boxv_t = new Float32Array(6);
-    this.boxc_t = new Float32Array(6);
-
-
-    this.recursion_stack = [];
-}
-
-BVHBuilder.prototype.sortPrimitives = function() {
-
-    var prim_sizes = new Float32Array(this.work_buf);
-    var matDefs = this.materialDefs;
-    var matInds = this.materials;
-    var primitives = this.primitives;
-    var numTransparent = 0;
-
-    var i, iEnd;
-    for (i=0, iEnd=this.prim_count; i<iEnd; i++) {
-
-        //Start with trivial 1:1 order of the indices array
-        primitives[i] = i;
-
-        var transparent = matDefs && matDefs[matInds[i]] ? matDefs[matInds[i]].transparent : false;
-
-        if (transparent)
-            numTransparent++;
-
-        if (WANT_SORT) {
-            prim_sizes[i] = BVHModule.box_area(this.boxes, BOX_STRIDE*i);
-
-            //In order to make transparent objects appear last,
-            //we give them a negative size, so that they are naturally
-            //sorted last in the sort by size.
-            if (transparent)
-                prim_sizes[i] = -prim_sizes[i];
-        } else {
-            //We still need the transparency flag for the loop below
-            //where we find the last opaque item, but we can
-            //short-cut the size computation.
-            prim_sizes[i] = transparent ? -1 : 1;
-        }
-    }
-
-    //Sort the input objects by size
-    //TODO: Actually, we assume all LMV SVF files come
-    //sorted by draw priority already, so we can skip this step.
-    //However, the transparent objects do not always come last (bug in LMVTK?),
-    //so we still have to pull them out to the end of the list
-    var WANT_SORT = false;
-
-    if (WANT_SORT) {
-        Array.prototype.sort.call(this.primitives, function(a, b) {
-            return prim_sizes[b] - prim_sizes[a];
-        });
-    } else {
-        if (numTransparent && numTransparent < this.prim_count) {
-
-            var tmpTransparent = new Int32Array(numTransparent);
-            var oidx = 0, tidx = 0;
-
-            for (i=0, iEnd = this.prim_count; i<iEnd; i++) {
-                if (prim_sizes[i] >= 0)
-                    primitives[oidx++] = primitives[i];
-                else
-                    tmpTransparent[tidx++] = primitives[i];
-            }
-
-            primitives.set(tmpTransparent, this.prim_count - numTransparent);
-        }
-    }
-
-    this.first_transparent = this.prim_count - numTransparent;
-};
-
-
-BVHBuilder.prototype.build = function(options) {
-    //Kick off the BVH build.
-
-    var useSlimNodes = options && !!options.useSlimNodes;
-
-    var self = this;
-    function assign_option(name, defaultVal) {
-        if (options.hasOwnProperty(name))
-            self[name] = options[name];
-        else
-            self[name] = defaultVal;
-    }
-
-    //options for build optimized for rasterization renderer scenes
-    if (useSlimNodes) {
-        assign_option("frags_per_leaf_node", 1);
-        assign_option("frags_per_inner_node", 0);
-        assign_option("frags_per_leaf_node_transparent", 1);
-        assign_option("frags_per_inner_node_transparent", 0);
-        assign_option("max_polys_per_node", Infinity);
-    } else {
-        var multiplier = options.isWeakDevice ? 0.5 : 1.0;
-
-        //TODO: tune these constants
-        assign_option("frags_per_leaf_node", 0 | (32 * multiplier));
-        //Placing fragments at inner nodes places more emphasis on bigger objects during tree traversal
-        //but it can only be done for opaque objects. Transparent objects have to be strictly back to front
-        //traversal regardless of size, unless a unified traversal
-        assign_option("frags_per_inner_node", 0|(this.frags_per_leaf_node) );
-        assign_option("frags_per_leaf_node_transparent", this.frags_per_leaf_node);
-        assign_option("frags_per_inner_node_transparent", 0);
-        assign_option("max_polys_per_node", 0 | (10000 * multiplier));
-    }
-
-    //Reuse existing node array if there
-    if (this.nodes && (this.nodes.is_lean_node == useSlimNodes))
-        this.nodes.nodeCount = 0;
-    else {
-        var est_nodes = this.prim_count / this.frags_per_leaf_node;
-        var num_nodes = 1;
-        while (num_nodes < est_nodes)
-            num_nodes *= 2;
-
-        this.nodes = new NodeArray(num_nodes, options ? options.useSlimNodes : false);
-    }
-
-    this.sortPrimitives();
-
-    BVHModule.compute_boxes(this);
-
-    //Init the root nodes at 0 for opaque
-    //and 1 for transparent objects
-    var root = this.nodes.nextNodes(2);
-
-    //Now kick off the recursive tree build
-
-    //Opaque
-    BVHModule.bvh_subdivide(this, root, 0, this.first_transparent - 1, this.boxv_o, this.boxc_o, false, 0);
-
-    var a;
-    while(this.recursion_stack.length) {
-        a = this.recursion_stack.pop();
-        BVHModule.bvh_subdivide(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
-    }
-
-    //Transparent
-    BVHModule.bvh_subdivide(this, root+1, this.first_transparent, this.prim_count-1, this.boxv_t, this.boxc_t, true, 0);
-
-    while(this.recursion_stack.length) {
-        a = this.recursion_stack.pop();
-        BVHModule.bvh_subdivide(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
-    }
-};
-
-avp.NodeArray = NodeArray;
-avp.BVHBuilder = BVHBuilder;
-
-})();
 
 (function() {
 
@@ -10517,8 +10998,7 @@ avp.ModelSettingsEnvironment = null; // env. settings provided by the last call 
             var bucket = ossPath.substr(0, ossPath.indexOf("/"));
             var object = ossPath.substr(ossPath.indexOf("/") + 1);
             object = simplifyPath(object);
-            var ret = options.oss_url + "/buckets/" + bucket + "/objects/" + encodeURIComponent(decodeURIComponent(object));
-            return ret;
+            return av.makeOssPath(options.endpoint, bucket, object);
         }
     };
 
@@ -10531,27 +11011,21 @@ avp.ModelSettingsEnvironment = null; // env. settings provided by the last call 
         path = simplifyPath(path);
 
         //Check if it's a viewing service item path
-        if (path.indexOf('urn:') !== 0)
+        //Public/static content will not have the urn: prefix.
+        //So URL construction is a no-op
+        if (decodeURIComponent(path).indexOf('urn:') !== 0)
             return path;
 
-        var res = baseUrl + "/";
-
+        //Remove "urn:" prefix when getting URN-based stuff (manifests and thumbnails)
         if (api !== 'items') {
-            // Remove 'urn:' prefix when calling /items API.
             path = path.substr(4);
         }
 
-        //TODO: WTF... we should not be checking the env parameter like this.
-        //Check the endpoint URL for being raw viewing service or something....
-        if (api === "bubbles" && avp.env.indexOf('Autodesk') == 0) {
-            // The bubbles API for PAAS endpoint (where environment is prefixed with 'Autodesk')
-            // has no explicit 'bubble' in the URL path.
-            res += path;
-        } else {
-            res += api + "/" + path;
+        switch (api) {
+            case "items": return av.getItemApi(baseUrl) + path;
+            case "bubbles": return av.getManifestApi(baseUrl) + path;
+            case "thumbnails": return av.getThumbnailApi(baseUrl) + path;
         }
-
-        return res;
     };
 
     function isRemotePath(baseUrl, path) {
@@ -10649,7 +11123,8 @@ avp.ModelSettingsEnvironment = null; // env. settings provided by the last call 
         var request = new XhrConstructor();
 
         function onError(e) {
-            onFailure(request.status, request.statusText, {url: url});
+            if (onFailure)
+                onFailure(request.status, request.statusText, {url: url});
         }
 
         function onLoad(e) {
@@ -10658,9 +11133,10 @@ avp.ModelSettingsEnvironment = null; // env. settings provided by the last call 
                 if (request.response
                     && request.response instanceof ArrayBuffer) {
                     var rawbuf = new Uint8Array(request.response);
-                    //It's possible that if the Content-Encoding header is set,
-                    //the browser unzips the file by itself, so let's check if it did.
-                    if (rawbuf[0] == 31 && rawbuf[1] == 139) {
+                    // It's possible that if the Content-Encoding header is set,
+                    // the browser unzips the file by itself, so let's check if it did.
+                    // Return raw buffer if skip decompress is true
+                    if (!options.skipDecompress && rawbuf[0] == 31 && rawbuf[1] == 139) {
                         if (!warnedGzip) {
                             warnedGzip = true;
                             avp.logger.warn("An LMV resource (" + url + ") was not uncompressed by the browser. This hurts performance. Check the Content-Encoding header returned by the server and check whether you're getting double-compressed streams. The warning prints only once but it's likely the problem affects multiple resources.");
@@ -10820,7 +11296,7 @@ avp.ModelSettingsEnvironment = null; // env. settings provided by the last call 
         options.withCredentials = !!loadContext.auth;
         options.headers = loadContext.headers;
         options.queryParams = loadContext.queryParams;
-        options.oss_url = loadContext.oss_url;
+        options.endpoint = loadContext.endpoint;
     }
 
     //Utility function called from the web worker to set up the options for a get request,
@@ -10831,7 +11307,19 @@ avp.ModelSettingsEnvironment = null; // env. settings provided by the last call 
 
         copyOptions(loadContext, options);
 
-        ViewingService.rawGet(loadContext.viewing_url, 'items', url, onSuccess, onFailure, options);
+        // VIEWING V2 can only handle encoded URN
+        var index1 = url.indexOf('urn:');
+        var index2 = url.indexOf('?');
+        if (index1 !== -1) {
+            if (index2 !== -1) {
+                url = url.substr(0, index1) + encodeURIComponent(url.substring(index1, index2)) + url.substr(index2);
+            }
+            else {
+                url = url.substr(0, index1) + encodeURIComponent(url.substr(index1));
+            }
+        }
+
+        ViewingService.rawGet(loadContext.endpoint, 'items', url, onSuccess, onFailure, options);
 
     };
 
@@ -10846,7 +11334,7 @@ avp.ModelSettingsEnvironment = null; // env. settings provided by the last call 
 
         copyOptions(loadContext, options);
 
-        ViewingService.rawGet(loadContext.viewing_url, 'bubbles', url, onSuccess, onFailure, options);
+        ViewingService.rawGet(loadContext.endpoint, 'bubbles', url, onSuccess, onFailure, options);
 
     };
 
@@ -10864,12 +11352,12 @@ avp.ModelSettingsEnvironment = null; // env. settings provided by the last call 
             options.queryParams = "guid=" + encodeURIComponent(options.guid) + "&role=" + role + "&width=" + sz + "&height=" + sz;
         }
 
-        ViewingService.rawGet(loadContext.viewing_url, 'thumbnails', url, onSuccess, onFailure, options);
+        ViewingService.rawGet(loadContext.endpoint, 'thumbnails', url, onSuccess, onFailure, options);
 
     };
 
 
-    ViewingService.getACMSession = function (acmUrl, acmProperties, onSuccess, onFailure) {
+    ViewingService.getACMSession = function (endpoint, acmProperties, onSuccess, onFailure) {
 
         var acmHeaders = {};
         var token;
@@ -10888,7 +11376,7 @@ avp.ModelSettingsEnvironment = null; // env. settings provided by the last call 
         acmHeaders.application = "autodesk";
 
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", acmUrl, true);
+        xhr.open("POST", endpoint + '/oss-ext/v2/acmsessions', true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.setRequestHeader("Authorization", "Bearer " + token);
         xhr.responseType = "json";
@@ -10924,6 +11412,671 @@ avp.ModelSettingsEnvironment = null; // env. settings provided by the last call 
 
 })();
 
+
+
+(function() {
+
+"use strict";
+
+var lmv = Autodesk.LMVTK;
+
+
+/** @constructor */
+// This class will read value from compressed data,
+// decopress only necessary data and throw away unused.
+function InputStreamLess(buf, usize) {
+
+    // Offset is the offset to decompressed data.
+    // byteLength is the total size of decompressed data.
+    this.offset = 0;
+    this.byteLength = usize;
+    this.range = 0;
+    // Assume the buffer is compressed.
+    this.compressedBuffer = buf;
+    this.compressedByteLength = buf.length;
+    this.compressedOffset = 0;
+    this.decompressEnd = false;
+    // This is to record how many times decompress from scratch. for debug purpose.
+    this.resetCount = 0; 
+
+    //We will use these shared memory arrays to
+    //convert from bytes to the desired data type.
+    this.convBuf = new ArrayBuffer(8);
+    this.convUint8 = new Uint8Array(this.convBuf);
+    this.convUint16 = new Uint16Array(this.convBuf);
+    this.convInt32 = new Int32Array(this.convBuf);
+    this.convUint32 = new Uint32Array(this.convBuf);
+    this.convFloat32 = new Float32Array(this.convBuf);
+    this.convFloat64 = new Float64Array(this.convBuf);
+
+    // Compressed chunk size is the size for decompressing each time.
+    // Decompressed chunk size is the buffer to hold decompressed data.
+    this.COMPRESSED_chunk_SIZE = 512*1024;
+    this.DECOMPRESSED_chunk_SIZE = 256*1024;
+
+    // chunks for decompressed data.
+    this.chunks = [];
+    this.chunksByteLengthMax = 0;
+    this.chunksByteLengthMin = 0;
+
+    // Maintain chunk and chunk offset for reading current data.
+    this.chunkPointer = null;
+    this.chunkOffset = 0;
+    // temp chunk is for reading data that stride over multiple chunks.
+    this.tempchunk = {
+        startIdx: 0,
+        endIdx: 0,
+        buffer: null
+    };
+
+    // Infalte for decompressing incremantally. The lib we used is pako_inflate.min.js
+    this.inflate = this.getInflate();
+
+    // Prepare first 1K data for quick access.
+    this.prepare(0, 1024);
+}
+
+InputStreamLess.prototype.getInflate = function() {
+    if (!this.inflate) {
+        this.inflate = new pako.Inflate({ level: 3, chunkSize: this.DECOMPRESSED_chunk_SIZE});
+
+        var self = this;
+        this.inflate.onData = function(chunk) {
+
+            // Remove unused chunk for current decompressing.
+            self.chunksByteLengthMax += chunk.byteLength;
+            if (self.chunksByteLengthMax < self.offset) {
+                chunk = null;
+                self.chunksByteLengthMin = self.chunksByteLengthMax;
+            }
+
+            self.chunks.push(chunk);
+        };
+
+        this.inflate.onEnd = function() {
+            self.decompressEnd = true;
+            self.inflate = null;
+            // Check decompressed size is expected.
+            if (self.chunksByteLengthMax != self.byteLength)
+                throw "Decompress error, unexpected size.";
+        };
+    }
+
+    return this.inflate;
+}
+
+InputStreamLess.prototype.prepare = function(off, range, donotclear) {
+    // If required data hasn't decompressed yet, let's do it. 
+    if (this.chunksByteLengthMin > off) {
+        // In this case, need to reset stream and decompress from scratch again.
+        this.reset();
+        this.offset = off;
+        this.range = range;
+    }
+
+    // Remove unused chunks if no longer used for subsequent reading.
+    if (!donotclear) {
+        var idx = Math.floor(off / this.DECOMPRESSED_chunk_SIZE);
+        var startIdx = Math.floor(this.chunksByteLengthMin / this.DECOMPRESSED_chunk_SIZE);
+        var endIdx = this.chunks.length < idx ? this.chunks.length : idx;
+        for (var i = startIdx; i<endIdx; i++) {
+            this.chunks[i] = null;
+        }
+        this.chunksByteLengthMin = endIdx * this.DECOMPRESSED_chunk_SIZE;        
+    }
+
+    // Prepare further decompressed data.
+    var range = range || 1;
+    var expectEnd = off + range;
+    expectEnd = expectEnd > this.byteLength ? this.byteLength : expectEnd;
+    var reachEnd = false;
+    while (expectEnd > this.chunksByteLengthMax)
+    {
+        var len = this.COMPRESSED_chunk_SIZE;
+        if (this.compressedOffset + len >= this.compressedByteLength) {
+            len = this.compressedByteLength - this.compressedOffset;
+            reachEnd = true;
+        }
+
+        // Push another compressed data chunk to decompress.
+        var data = new Uint8Array(this.compressedBuffer.buffer, this.compressedOffset, len);
+        this.getInflate().push(data, reachEnd);
+
+        // Move offset forward as decompress processing.
+        this.compressedOffset += len;
+
+        if (reachEnd) {
+            break;
+        }
+    }
+
+}
+
+InputStreamLess.prototype.ensurechunkData = function(len) {
+    // ensure the data is ready for immediate reading.
+    len = len || 1;
+    var chunkLen = this.chunks.length;
+
+    var chunkIdx = Math.floor(this.offset / this.DECOMPRESSED_chunk_SIZE);
+    var endIdx = Math.floor((this.offset + len - 1) / this.DECOMPRESSED_chunk_SIZE);
+    if (endIdx >= chunkLen) {
+        var length = (endIdx - chunkLen + 1) * this.DECOMPRESSED_chunk_SIZE;
+        // When do another prepare in the middle of ensuring data, 
+        // do not clear any chunk yet, as it may be still in use.
+        this.prepare(this.DECOMPRESSED_chunk_SIZE*chunkLen, length, true);
+    }
+
+    if (chunkIdx < endIdx) {
+        if (this.tempchunk.startIdx>chunkIdx || this.tempchunk.endIdx<endIdx) {
+            var size = (endIdx-chunkIdx+1) * this.DECOMPRESSED_chunk_SIZE;
+            this.tempchunk.buffer = new Uint8Array(size);
+            var pos = 0;
+            for (var i=chunkIdx; i<=endIdx; i++) {
+                this.tempchunk.buffer.set(this.chunks[i], pos);
+                pos += this.DECOMPRESSED_chunk_SIZE;
+            }
+            this.tempchunk.startIdx = chunkIdx;
+            this.tempchunk.endIdx = endIdx;
+        }
+        this.chunkPointer = this.tempchunk.buffer;
+    }
+    else {
+        this.chunkPointer = this.chunks[chunkIdx];
+    }
+
+    this.chunkOffset = this.offset - chunkIdx * this.DECOMPRESSED_chunk_SIZE;
+    this.offset += len;
+}
+
+InputStreamLess.prototype.seek = function(off, range, donotclear) {
+    this.offset = off;
+    this.range = range;
+    this.prepare(off, range, donotclear);
+};
+
+InputStreamLess.prototype.getBytes = function(len) {
+    this.ensurechunkData(len);
+    var ret = new Uint8Array(this.chunkPointer.buffer, this.chunkOffset, len);
+
+    return ret;
+};
+
+InputStreamLess.prototype.getVarints = function () {
+    var b;
+    var value = 0;
+    var shiftBy = 0;
+    do {
+        this.ensurechunkData();
+        b = this.chunkPointer[this.chunkOffset];
+        value |= (b & 0x7f) << shiftBy;
+        shiftBy += 7;
+    } while (b & 0x80);
+    return value;
+}
+
+InputStreamLess.prototype.getUint8 = function() {
+    this.ensurechunkData();
+    return this.chunkPointer[this.chunkOffset];
+};
+
+InputStreamLess.prototype.getUint16 = function() {
+
+    this.ensurechunkData();
+    this.convUint8[0] = this.chunkPointer[this.chunkOffset];
+    this.ensurechunkData();
+    this.convUint8[1] = this.chunkPointer[this.chunkOffset];
+    return this.convUint16[0];
+};
+
+InputStreamLess.prototype.getInt16 = function() {
+    var tmp = this.getUint16();
+    //make negative integer if the ushort is negative
+    if (tmp > 0x7fff)
+        tmp = tmp | 0xffff0000;
+    return tmp;
+};
+
+InputStreamLess.prototype.getInt32 = function() {
+
+    var dst = this.convUint8;
+
+    this.ensurechunkData();
+    dst[0] = this.chunkPointer[this.chunkOffset];
+    this.ensurechunkData();
+    dst[1] = this.chunkPointer[this.chunkOffset];
+    this.ensurechunkData();
+    dst[2] = this.chunkPointer[this.chunkOffset];
+    this.ensurechunkData();
+    dst[3] = this.chunkPointer[this.chunkOffset];
+
+    return this.convInt32[0];
+};
+
+InputStreamLess.prototype.getUint32 = function() {
+
+    var dst = this.convUint8;
+
+    this.ensurechunkData();
+    dst[0] = this.chunkPointer[this.chunkOffset];
+    this.ensurechunkData();
+    dst[1] = this.chunkPointer[this.chunkOffset];
+    this.ensurechunkData();
+    dst[2] = this.chunkPointer[this.chunkOffset];
+    this.ensurechunkData();
+    dst[3] = this.chunkPointer[this.chunkOffset];
+    
+    return this.convUint32[0];
+};
+
+InputStreamLess.prototype.getFloat32 = function() {
+
+    var dst = this.convUint8;
+
+    this.ensurechunkData();
+    dst[0] = this.chunkPointer[this.chunkOffset];
+    this.ensurechunkData();
+    dst[1] = this.chunkPointer[this.chunkOffset];
+    this.ensurechunkData();
+    dst[2] = this.chunkPointer[this.chunkOffset];
+    this.ensurechunkData();
+    dst[3] = this.chunkPointer[this.chunkOffset];
+    
+    return this.convFloat32[0];
+};
+
+InputStreamLess.prototype.getFloat64 = function() {
+
+    var dst = this.convUint8;
+    for (var i=0; i<8; i++) {
+        this.ensurechunkData();
+        dst[i] = this.chunkPointer[this.chunkOffset];
+    }
+
+    return this.convFloat64[0];
+};
+
+InputStreamLess.prototype.getString = function(len) {
+    var dst = "";
+    this.ensurechunkData(len);
+    var src = this.chunkPointer;
+
+    for (var i = this.chunkOffset, iEnd = this.chunkOffset + len; i < iEnd; i++) {
+        dst += String.fromCharCode(src[i]);
+    }
+
+    var res;
+    try {
+        res = decodeURIComponent(escape(dst));
+    } catch (e) {
+        res = dst;
+        debug("Failed to decode string " + res);
+    }
+
+    return res;
+};
+
+InputStreamLess.prototype.reset = function (buf) {
+    this.resetCount++;
+    debug("InputStream Less Reset: " + this.resetCount);
+
+    if (buf) {
+        this.compressedBuffer = buf;
+        this.compressedByteLength = buf.length;
+    }
+
+    this.offset = 0;
+    this.chunks = [];
+    this.chunksByteLengthMax = 0;
+    this.chunksByteLengthMin = 0;
+    this.compressedOffset = 0;
+    this.decompressEnd = false;
+    this.chunkPointer = null;
+    this.chunkOffset = 0;
+    this.inflate = null;
+
+    this.tempchunk.startIdx = 0;
+    this.tempchunk.endIdx = 0;
+    this.tempchunk.buffer = null;
+};
+
+lmv.InputStreamLess = InputStreamLess;
+
+})();
+(function() {
+    'use strict';
+
+	var av = Autodesk.Viewing,
+	    lmv = Autodesk.LMVTK,
+	    avp = av.Private;
+
+	// Threshold to enable loading/handling fragments and geometry metadata in a memory optimized way.
+	// 6 Mb for weak device, 32 Mb for others. And the size is the compressed size.
+	// TODO: adjust threshold according to different devices.
+	var MAX_FRAGMENT_PACK_SIZE = (av.isMobileDevice()) ? (6 * 1024 * 1024) : (32 * 1024 *1024);
+
+	function PackageLess(zipPack) {
+		lmv.Package.call(this, zipPack);
+
+		// This is the flag to represent whether an aggresive memory constrained mode is in use
+		// to read/parse fragment and geometry metadata and how to post process. 
+		this.memoryOptimizedMode = false;
+
+		// This is the object that will be used for pending geometry metadata load until fragment is ready,
+		// so that can process the most memory hunger process one by one.
+		this.pendingGeometryMetadataLoad = {};
+	};
+
+	PackageLess.prototype = Object.create(lmv.Package.prototype);
+	PackageLess.prototype.constructor = PackageLess;
+
+	PackageLess.prototype.loadAsyncResource = function(loadContext, resourcePath, contents, callback, skipDecompress) {
+		// [BIM customize] by passing an additional paramter - skipDecompress, to control
+		// 				   whether request to decompress right after getting the data or 
+		//				   decompress it later (for memory consumption concern)
+
+	    //Data is immediately available from the SVF zip
+	    if (contents) {
+	        callback(contents);
+	        return;
+	    }
+
+	    //Launch an XHR to load the data from external file
+	    var svf = this;
+
+	    this.pendingRequests ++;
+
+	    function xhrCB(responseData) {
+	        svf.pendingRequests--;
+
+	        callback(responseData);
+
+	        if (svf.pendingRequests == 0)
+	            svf.postLoad(loadContext);
+	    }
+
+	    avp.ViewingService.getItem(loadContext, loadContext.basePath + resourcePath,
+	                            	xhrCB,
+	                            	loadContext.onFailureCallback,
+	                            	{ 
+	                            		asynchronous:true, 
+	                            	  	skipDecompress: skipDecompress 
+	                            	});
+	};
+
+	PackageLess.prototype.parseFragmentList = function(asset, loadContext, path, contents) {
+		// [BIM customize] The main change for parsing the fragment list is that,
+		// 1. If the uncompressed size is larger than the threshold of current allowed size,
+		//	  then go with below process,
+		//	  1.1 pending geometry metadata loading if it comes first.
+		// 	  1.2 load fragment list and specify 'skipDecompress' to be true.
+		// 	  1.3 read and parse fragments, as the data is still gzipped so it will choose a 
+		//		  different stream reader to read the data chunk by chunk.
+		//	  1.4 load geometry metadata and also specify 'skipDecompress' to be true.
+		//    1.5 parse geometry metadata and read it into fragment data directly. 
+		//        (this can also reduce some temporary memory used in post load processing.)
+		// 2. Otherwise, go with the normal workflow, which is almost the same as its parent implementation,
+		//    
+
+        // Enable the memory optimized handling when fragment pack file is too big.
+        this.memoryOptimizedMode = loadContext.perfOpt.forceMemoryOptimizedMode || (asset["size"] > MAX_FRAGMENT_PACK_SIZE);
+
+        debug("PackageLess: memory optimized mode: " + this.memoryOptimizedMode);
+
+        var self = this;
+        this.loadAsyncResource(loadContext, path, contents, function(data) {
+
+        	var usize = asset["usize"];
+            var pfr = new lmv.PackFileReaderLess(data, usize);
+
+            var frags = self.fragments = new lmv.FragList();
+            lmv.readFragments(pfr, frags, self.globalOffset, loadContext.placementTransform, loadContext.objectIds);
+
+            pfr = null;
+
+            // If there is pending geometry metadata load request (as a result of enabled optimization
+            // code path to read geometry metadata directly into fragments instead of read separately then
+            // combine with fragments), then start to load it now after fragment list is ready.
+            if ( self.pendingGeometryMetadataLoad.path) {
+                self.loadAsyncResource(loadContext, self.pendingGeometryMetadataLoad.path, self.pendingGeometryMetadataLoad.contents, function(data) {
+
+                    var pfr = new lmv.PackFileReaderLess(data, self.pendingGeometryMetadataLoad.usize);
+                    debug("PackageLess: read geometry metadata into fragment directly.");
+                    self.primitiveCount = lmv.readGeometryMetadataIntoFragments(pfr, self.fragments);
+
+                    pfr = null;
+                    self.pendingGeometryMetadataLoad.contents = null;
+                }, self.memoryOptimizedMode);
+            }
+        }, self.memoryOptimizedMode);
+
+        // If fragment reading optimization not enabled and there is a pending geometry metadata load request, 
+        // then load geometry data right away as usual.
+        if (!this.memoryOptimizedMode && this.pendingGeometryMetadataLoad.path) {
+        		var path = this.pendingGeometryMetadataLoad.path;
+        		var contents = this.pendingGeometryMetadataLoad.contents;
+        		this.pendingGeometryMetadataLoad = {};
+                
+                // Then fallback to the normal way of parsing geometry metadata.
+                debug("PackageLess: read geometry metadata as usual.");
+                lmv.Package.prototype.parseGeometryMetadata.call(this, null, loadContext, path, contents);               
+        }
+	};
+
+	PackageLess.prototype.parseGeometryMetadata = function(asset, loadContext, path, contents) {
+		// [BIM customize] the sequence of reading fragment and geometry metadata is not fixed. So, 
+		// 1. If fragments is ready first, then load geometry metadata and read into fragment directly,
+		//    no matter memory optimized mode is true or not.
+		// 2. If fragments is not ready yet, pending geometry metadata loading, and decide when to
+		//    load it after memory optimized mode is set.
+
+        var usize = asset["usize"];
+
+        if (this.fragments) {
+        	var self = this;
+            this.loadAsyncResource(loadContext, path, contents, function(data) {
+
+                var pfr = new lmv.PackFileReaderLess(data, usize);
+                self.primitiveCount = lmv.readGeometryMetadataIntoFragments(pfr, self.fragments);
+                pfr = null;
+            }, self.memoryOptimizedMode);
+        }
+        else {
+            this.pendingGeometryMetadataLoad.path = path;
+            this.pendingGeometryMetadataLoad.contents = contents;
+            this.pendingGeometryMetadataLoad.usize = usize;
+        }
+
+	};
+
+	PackageLess.prototype.postLoadOfFragments = function(loadContext) {
+		// [BIM customize] If memory optimized mode is not set, then go with 
+		// the normal workflow.
+		if (!this.memoryOptimizedMode) {
+			lmv.Package.prototype.postLoadOfFragments.call(this, loadContext);
+		}
+		else {
+			// Otherwise, do nothing. Because, 
+			// * Geometry metadata has already been read into fragments list.
+			// * mesh2frag has already been constructed.
+		}
+	};
+
+	PackageLess.prototype.postLoadOfObjectIds = function(loadContext) {
+		// [BIM customize] If memory optimized mode is not set, then go with 
+		// the normal workflow.
+		if (!this.memoryOptimizedMode) {
+			lmv.Package.prototype.postLoadOfObjectIds.call(this, loadContext);
+		}
+		else {
+			// Otherwise, clean up unused pack files.
+			// The implementation is different from its parent, because the fragments are
+			// filtered right away after reading it so that the pack ids only represents
+			// the used ones, so can direct remove the geompacks which are not used any more.
+		    if (loadContext.objectIds && loadContext.objectIds.length > 0) {
+		        // Find out how many pack files are really used.
+		        var len = this.geompacks.length,
+                    frags = this.fragments,
+		            i = 0;
+		        var usedPackFile = new Int8Array(len);
+
+		        for (i=0; i<frags.packIds.length; i++) {
+		        	// Set 0xF to the index which the pack id is used.
+		            usedPackFile[frags.packIds[i]] = 0xF;
+		        }
+
+		        var pt = 0;
+		        for (i=0; i<usedPackFile.length; i++) {
+		            if (usedPackFile[i] === 0xF) {
+		                this.geompacks[pt] = this.geompacks[i];
+		                pt++;
+		            }
+		        }
+
+		        // Cut unused one.
+		        if (pt < len) {
+		            this.geompacks.splice(pt, len-pt);
+		        }
+		        
+		    }			
+		}
+	};
+
+    PackageLess.prototype.postLoadComplete = function(loadContext) {
+        // [BIM customize] If memory optimized mode is on, then 
+        // Delay posting SVF by waiting until BVH build finishes;
+        // then post both BVH and SVF to main thread together.
+        if (!this.memoryOptimizedMode) {
+            lmv.Package.prototype.postLoadComplete.call(this, loadContext);
+        }
+        else {
+            
+            if (this.fragments.polygonCounts) {
+                //Build the R-Tree
+                var t0 = performance.now();
+                var mats = this.materials ? this.materials["materials"] : null;
+                if (mats)
+                    this.addTransparencyFlagsToMaterials(mats);
+                this.bvh = new avp.BVHBuilder(this.fragments, mats);
+                this.bvh.build(loadContext.bvhOptions);
+                var t1 = performance.now();
+                loadContext.worker.debug("BVH build time (worker thread):" + (t1 - t0));
+
+                loadContext.loadDoneCB("svf");
+            }
+
+            loadContext.loadDoneCB("done");
+        }
+    };
+    
+	lmv.PackageLess = PackageLess;
+})();
+(function() {
+
+	"use strict";
+
+	var lmv = Autodesk.LMVTK;
+
+	// [BIM customize] Construct a different pack file reader, that use a different input stream
+	// implementation that use much less memory.
+	function PackFileReaderLess(data, usize) {
+
+	    // When server side (S3 and viewing service) is configured properly,
+	    // browser can decompress the pack file for us.
+	    // Here the check is for backward compatibility purpose.
+	    // ??? we actually rely on the server doesn't configure to let browser do the compress automatically.
+	    // ??? Luckily at the moment, seems this is the case.
+	    // ??? TODO: if we can't control the decompress on our own, then we have to 
+	    // ??? 	     chunk fragment list to a reasonable size.
+	    var stream;
+	    var chunckStreamEnabled = false;
+	    if (data[0] == 31 && data[1] == 139) {
+	        
+	        // If usize is specified, we assume it is going to read pack file in a steaming style.
+	        if (usize) {
+	            // Decompress in a streaming style.
+
+	            // Ok, let's use input steam less to decompress data chunck by chunck,
+	            // so as to reduce the overall memory footprint.
+	            // In theory, to read all the data there are 2 more times decompress needed.
+	            // Round 1, decompress and get the first few values and then all the way to the end,
+	            //          and get toc/types offset, then throw all.
+	            // Round 2, decompress to read content of toc and types only, then throw all.
+	            // Round 3, decompress to each offset of fragment, and throw unused decompressed chunck.
+	            // However, we could combine 1 and 2 together.
+	            chunckStreamEnabled = true;
+	            stream = new lmv.InputStreamLess(data, usize);
+
+	            var len = stream.getInt32();
+	            this.type = stream.getString(len);
+	            this.version = stream.getInt32();
+
+	            // To reduce the times for re-decompress the data, let's prepare the data 
+	            // for both round 1 and 2 cases.
+	            var off = Math.floor(stream.byteLength * 0.9);
+	            stream.seek(off, stream.byteLength - off);
+	        }
+	        else {
+	            // Decompress all at once, and use InputStream to read.
+	            var gunzip = new Zlib.Gunzip(data);
+	            data = gunzip.decompress();
+
+	            stream = new lmv.InputStream(data);
+
+	            var len = stream.getInt32();
+	            this.type = stream.getString(len);
+	            this.version = stream.getInt32();
+
+	        }
+	    }
+	    else 
+	    {
+	        // Already decopressed, so use InputStream.
+	        // Input stream read data from the source that is alreay decompressed.
+	        stream = new lmv.InputStream(data);
+	    }
+
+	    this.stream = stream;
+	    this.types = null;
+	    this.entryOffsets = [];
+
+	    //read the table of contents
+	    {
+	        // Jump to file footer.
+	        stream.seek(stream.byteLength - 8, 8, chunckStreamEnabled);
+
+	        // Jump to toc.
+	        var tocOffset = stream.getUint32();
+	        this.typesOffset = stream.getUint32();
+
+	        // Populate type sets.
+	        stream.seek(this.typesOffset, 1, chunckStreamEnabled);
+	        var typesCount = this.readU32V();
+	        this.types = [];
+	        for (var i = 0; i < typesCount; ++i)
+	            this.types.push({
+	                "entryClass": this.readString(),
+	                "entryType": this.readString(),
+	                "version": this.readU32V()
+	            });
+
+	        // Populate data offset list.
+	        stream.seek(tocOffset, 1, chunckStreamEnabled);
+	        var entryCount = this.readU32V();
+	        var dso = this.entryOffsets;
+	        for (var i = 0; i < entryCount; ++i)
+	            dso.push(stream.getUint32());
+
+	        // Restore sanity of the world.
+	        stream.seek(0);
+	    }
+	};
+
+	PackFileReaderLess.prototype = Object.create(lmv.PackFileReader.prototype);
+
+	lmv.PackFileReaderLess = PackFileReaderLess;
+})();
+/* pako 0.2.6 nodeca/pako */
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var t;t="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this,t.pako=e()}}(function(){return function e(t,i,n){function a(o,s){if(!i[o]){if(!t[o]){var f="function"==typeof require&&require;if(!s&&f)return f(o,!0);if(r)return r(o,!0);var l=new Error("Cannot find module '"+o+"'");throw l.code="MODULE_NOT_FOUND",l}var d=i[o]={exports:{}};t[o][0].call(d.exports,function(e){var i=t[o][1][e];return a(i?i:e)},d,d.exports,e,t,i,n)}return i[o].exports}for(var r="function"==typeof require&&require,o=0;o<n.length;o++)a(n[o]);return a}({1:[function(e,t,i){"use strict";var n="undefined"!=typeof Uint8Array&&"undefined"!=typeof Uint16Array&&"undefined"!=typeof Int32Array;i.assign=function(e){for(var t=Array.prototype.slice.call(arguments,1);t.length;){var i=t.shift();if(i){if("object"!=typeof i)throw new TypeError(i+"must be non-object");for(var n in i)i.hasOwnProperty(n)&&(e[n]=i[n])}}return e},i.shrinkBuf=function(e,t){return e.length===t?e:e.subarray?e.subarray(0,t):(e.length=t,e)};var a={arraySet:function(e,t,i,n,a){if(t.subarray&&e.subarray)return void e.set(t.subarray(i,i+n),a);for(var r=0;n>r;r++)e[a+r]=t[i+r]},flattenChunks:function(e){var t,i,n,a,r,o;for(n=0,t=0,i=e.length;i>t;t++)n+=e[t].length;for(o=new Uint8Array(n),a=0,t=0,i=e.length;i>t;t++)r=e[t],o.set(r,a),a+=r.length;return o}},r={arraySet:function(e,t,i,n,a){for(var r=0;n>r;r++)e[a+r]=t[i+r]},flattenChunks:function(e){return[].concat.apply([],e)}};i.setTyped=function(e){e?(i.Buf8=Uint8Array,i.Buf16=Uint16Array,i.Buf32=Int32Array,i.assign(i,a)):(i.Buf8=Array,i.Buf16=Array,i.Buf32=Array,i.assign(i,r))},i.setTyped(n)},{}],2:[function(e,t,i){"use strict";function n(e,t){if(65537>t&&(e.subarray&&o||!e.subarray&&r))return String.fromCharCode.apply(null,a.shrinkBuf(e,t));for(var i="",n=0;t>n;n++)i+=String.fromCharCode(e[n]);return i}var a=e("./common"),r=!0,o=!0;try{String.fromCharCode.apply(null,[0])}catch(s){r=!1}try{String.fromCharCode.apply(null,new Uint8Array(1))}catch(s){o=!1}for(var f=new a.Buf8(256),l=0;256>l;l++)f[l]=l>=252?6:l>=248?5:l>=240?4:l>=224?3:l>=192?2:1;f[254]=f[254]=1,i.string2buf=function(e){var t,i,n,r,o,s=e.length,f=0;for(r=0;s>r;r++)i=e.charCodeAt(r),55296===(64512&i)&&s>r+1&&(n=e.charCodeAt(r+1),56320===(64512&n)&&(i=65536+(i-55296<<10)+(n-56320),r++)),f+=128>i?1:2048>i?2:65536>i?3:4;for(t=new a.Buf8(f),o=0,r=0;f>o;r++)i=e.charCodeAt(r),55296===(64512&i)&&s>r+1&&(n=e.charCodeAt(r+1),56320===(64512&n)&&(i=65536+(i-55296<<10)+(n-56320),r++)),128>i?t[o++]=i:2048>i?(t[o++]=192|i>>>6,t[o++]=128|63&i):65536>i?(t[o++]=224|i>>>12,t[o++]=128|i>>>6&63,t[o++]=128|63&i):(t[o++]=240|i>>>18,t[o++]=128|i>>>12&63,t[o++]=128|i>>>6&63,t[o++]=128|63&i);return t},i.buf2binstring=function(e){return n(e,e.length)},i.binstring2buf=function(e){for(var t=new a.Buf8(e.length),i=0,n=t.length;n>i;i++)t[i]=e.charCodeAt(i);return t},i.buf2string=function(e,t){var i,a,r,o,s=t||e.length,l=new Array(2*s);for(a=0,i=0;s>i;)if(r=e[i++],128>r)l[a++]=r;else if(o=f[r],o>4)l[a++]=65533,i+=o-1;else{for(r&=2===o?31:3===o?15:7;o>1&&s>i;)r=r<<6|63&e[i++],o--;o>1?l[a++]=65533:65536>r?l[a++]=r:(r-=65536,l[a++]=55296|r>>10&1023,l[a++]=56320|1023&r)}return n(l,a)},i.utf8border=function(e,t){var i;for(t=t||e.length,t>e.length&&(t=e.length),i=t-1;i>=0&&128===(192&e[i]);)i--;return 0>i?t:0===i?t:i+f[e[i]]>t?i:t}},{"./common":1}],3:[function(e,t){"use strict";function i(e,t,i,n){for(var a=65535&e|0,r=e>>>16&65535|0,o=0;0!==i;){o=i>2e3?2e3:i,i-=o;do a=a+t[n++]|0,r=r+a|0;while(--o);a%=65521,r%=65521}return a|r<<16|0}t.exports=i},{}],4:[function(e,t){t.exports={Z_NO_FLUSH:0,Z_PARTIAL_FLUSH:1,Z_SYNC_FLUSH:2,Z_FULL_FLUSH:3,Z_FINISH:4,Z_BLOCK:5,Z_TREES:6,Z_OK:0,Z_STREAM_END:1,Z_NEED_DICT:2,Z_ERRNO:-1,Z_STREAM_ERROR:-2,Z_DATA_ERROR:-3,Z_BUF_ERROR:-5,Z_NO_COMPRESSION:0,Z_BEST_SPEED:1,Z_BEST_COMPRESSION:9,Z_DEFAULT_COMPRESSION:-1,Z_FILTERED:1,Z_HUFFMAN_ONLY:2,Z_RLE:3,Z_FIXED:4,Z_DEFAULT_STRATEGY:0,Z_BINARY:0,Z_TEXT:1,Z_UNKNOWN:2,Z_DEFLATED:8}},{}],5:[function(e,t){"use strict";function i(){for(var e,t=[],i=0;256>i;i++){e=i;for(var n=0;8>n;n++)e=1&e?3988292384^e>>>1:e>>>1;t[i]=e}return t}function n(e,t,i,n){var r=a,o=n+i;e=-1^e;for(var s=n;o>s;s++)e=e>>>8^r[255&(e^t[s])];return-1^e}var a=i();t.exports=n},{}],6:[function(e,t){"use strict";function i(){this.text=0,this.time=0,this.xflags=0,this.os=0,this.extra=null,this.extra_len=0,this.name="",this.comment="",this.hcrc=0,this.done=!1}t.exports=i},{}],7:[function(e,t){"use strict";var i=30,n=12;t.exports=function(e,t){var a,r,o,s,f,l,d,h,u,c,b,w,m,k,g,_,v,p,x,y,S,B,E,Z,A;a=e.state,r=e.next_in,Z=e.input,o=r+(e.avail_in-5),s=e.next_out,A=e.output,f=s-(t-e.avail_out),l=s+(e.avail_out-257),d=a.dmax,h=a.wsize,u=a.whave,c=a.wnext,b=a.window,w=a.hold,m=a.bits,k=a.lencode,g=a.distcode,_=(1<<a.lenbits)-1,v=(1<<a.distbits)-1;e:do{15>m&&(w+=Z[r++]<<m,m+=8,w+=Z[r++]<<m,m+=8),p=k[w&_];t:for(;;){if(x=p>>>24,w>>>=x,m-=x,x=p>>>16&255,0===x)A[s++]=65535&p;else{if(!(16&x)){if(0===(64&x)){p=k[(65535&p)+(w&(1<<x)-1)];continue t}if(32&x){a.mode=n;break e}e.msg="invalid literal/length code",a.mode=i;break e}y=65535&p,x&=15,x&&(x>m&&(w+=Z[r++]<<m,m+=8),y+=w&(1<<x)-1,w>>>=x,m-=x),15>m&&(w+=Z[r++]<<m,m+=8,w+=Z[r++]<<m,m+=8),p=g[w&v];i:for(;;){if(x=p>>>24,w>>>=x,m-=x,x=p>>>16&255,!(16&x)){if(0===(64&x)){p=g[(65535&p)+(w&(1<<x)-1)];continue i}e.msg="invalid distance code",a.mode=i;break e}if(S=65535&p,x&=15,x>m&&(w+=Z[r++]<<m,m+=8,x>m&&(w+=Z[r++]<<m,m+=8)),S+=w&(1<<x)-1,S>d){e.msg="invalid distance too far back",a.mode=i;break e}if(w>>>=x,m-=x,x=s-f,S>x){if(x=S-x,x>u&&a.sane){e.msg="invalid distance too far back",a.mode=i;break e}if(B=0,E=b,0===c){if(B+=h-x,y>x){y-=x;do A[s++]=b[B++];while(--x);B=s-S,E=A}}else if(x>c){if(B+=h+c-x,x-=c,y>x){y-=x;do A[s++]=b[B++];while(--x);if(B=0,y>c){x=c,y-=x;do A[s++]=b[B++];while(--x);B=s-S,E=A}}}else if(B+=c-x,y>x){y-=x;do A[s++]=b[B++];while(--x);B=s-S,E=A}for(;y>2;)A[s++]=E[B++],A[s++]=E[B++],A[s++]=E[B++],y-=3;y&&(A[s++]=E[B++],y>1&&(A[s++]=E[B++]))}else{B=s-S;do A[s++]=A[B++],A[s++]=A[B++],A[s++]=A[B++],y-=3;while(y>2);y&&(A[s++]=A[B++],y>1&&(A[s++]=A[B++]))}break}}break}}while(o>r&&l>s);y=m>>3,r-=y,m-=y<<3,w&=(1<<m)-1,e.next_in=r,e.next_out=s,e.avail_in=o>r?5+(o-r):5-(r-o),e.avail_out=l>s?257+(l-s):257-(s-l),a.hold=w,a.bits=m}},{}],8:[function(e,t,i){"use strict";function n(e){return(e>>>24&255)+(e>>>8&65280)+((65280&e)<<8)+((255&e)<<24)}function a(){this.mode=0,this.last=!1,this.wrap=0,this.havedict=!1,this.flags=0,this.dmax=0,this.check=0,this.total=0,this.head=null,this.wbits=0,this.wsize=0,this.whave=0,this.wnext=0,this.window=null,this.hold=0,this.bits=0,this.length=0,this.offset=0,this.extra=0,this.lencode=null,this.distcode=null,this.lenbits=0,this.distbits=0,this.ncode=0,this.nlen=0,this.ndist=0,this.have=0,this.next=null,this.lens=new k.Buf16(320),this.work=new k.Buf16(288),this.lendyn=null,this.distdyn=null,this.sane=0,this.back=0,this.was=0}function r(e){var t;return e&&e.state?(t=e.state,e.total_in=e.total_out=t.total=0,e.msg="",t.wrap&&(e.adler=1&t.wrap),t.mode=F,t.last=0,t.havedict=0,t.dmax=32768,t.head=null,t.hold=0,t.bits=0,t.lencode=t.lendyn=new k.Buf32(be),t.distcode=t.distdyn=new k.Buf32(we),t.sane=1,t.back=-1,A):N}function o(e){var t;return e&&e.state?(t=e.state,t.wsize=0,t.whave=0,t.wnext=0,r(e)):N}function s(e,t){var i,n;return e&&e.state?(n=e.state,0>t?(i=0,t=-t):(i=(t>>4)+1,48>t&&(t&=15)),t&&(8>t||t>15)?N:(null!==n.window&&n.wbits!==t&&(n.window=null),n.wrap=i,n.wbits=t,o(e))):N}function f(e,t){var i,n;return e?(n=new a,e.state=n,n.window=null,i=s(e,t),i!==A&&(e.state=null),i):N}function l(e){return f(e,ke)}function d(e){if(ge){var t;for(w=new k.Buf32(512),m=new k.Buf32(32),t=0;144>t;)e.lens[t++]=8;for(;256>t;)e.lens[t++]=9;for(;280>t;)e.lens[t++]=7;for(;288>t;)e.lens[t++]=8;for(p(y,e.lens,0,288,w,0,e.work,{bits:9}),t=0;32>t;)e.lens[t++]=5;p(S,e.lens,0,32,m,0,e.work,{bits:5}),ge=!1}e.lencode=w,e.lenbits=9,e.distcode=m,e.distbits=5}function h(e,t,i,n){var a,r=e.state;return null===r.window&&(r.wsize=1<<r.wbits,r.wnext=0,r.whave=0,r.window=new k.Buf8(r.wsize)),n>=r.wsize?(k.arraySet(r.window,t,i-r.wsize,r.wsize,0),r.wnext=0,r.whave=r.wsize):(a=r.wsize-r.wnext,a>n&&(a=n),k.arraySet(r.window,t,i-n,a,r.wnext),n-=a,n?(k.arraySet(r.window,t,i-n,n,0),r.wnext=n,r.whave=r.wsize):(r.wnext+=a,r.wnext===r.wsize&&(r.wnext=0),r.whave<r.wsize&&(r.whave+=a))),0}function u(e,t){var i,a,r,o,s,f,l,u,c,b,w,m,be,we,me,ke,ge,_e,ve,pe,xe,ye,Se,Be,Ee=0,Ze=new k.Buf8(4),Ae=[16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15];if(!e||!e.state||!e.output||!e.input&&0!==e.avail_in)return N;i=e.state,i.mode===G&&(i.mode=X),s=e.next_out,r=e.output,l=e.avail_out,o=e.next_in,a=e.input,f=e.avail_in,u=i.hold,c=i.bits,b=f,w=l,ye=A;e:for(;;)switch(i.mode){case F:if(0===i.wrap){i.mode=X;break}for(;16>c;){if(0===f)break e;f--,u+=a[o++]<<c,c+=8}if(2&i.wrap&&35615===u){i.check=0,Ze[0]=255&u,Ze[1]=u>>>8&255,i.check=_(i.check,Ze,2,0),u=0,c=0,i.mode=U;break}if(i.flags=0,i.head&&(i.head.done=!1),!(1&i.wrap)||(((255&u)<<8)+(u>>8))%31){e.msg="incorrect header check",i.mode=he;break}if((15&u)!==T){e.msg="unknown compression method",i.mode=he;break}if(u>>>=4,c-=4,xe=(15&u)+8,0===i.wbits)i.wbits=xe;else if(xe>i.wbits){e.msg="invalid window size",i.mode=he;break}i.dmax=1<<xe,e.adler=i.check=1,i.mode=512&u?q:G,u=0,c=0;break;case U:for(;16>c;){if(0===f)break e;f--,u+=a[o++]<<c,c+=8}if(i.flags=u,(255&i.flags)!==T){e.msg="unknown compression method",i.mode=he;break}if(57344&i.flags){e.msg="unknown header flags set",i.mode=he;break}i.head&&(i.head.text=u>>8&1),512&i.flags&&(Ze[0]=255&u,Ze[1]=u>>>8&255,i.check=_(i.check,Ze,2,0)),u=0,c=0,i.mode=D;case D:for(;32>c;){if(0===f)break e;f--,u+=a[o++]<<c,c+=8}i.head&&(i.head.time=u),512&i.flags&&(Ze[0]=255&u,Ze[1]=u>>>8&255,Ze[2]=u>>>16&255,Ze[3]=u>>>24&255,i.check=_(i.check,Ze,4,0)),u=0,c=0,i.mode=L;case L:for(;16>c;){if(0===f)break e;f--,u+=a[o++]<<c,c+=8}i.head&&(i.head.xflags=255&u,i.head.os=u>>8),512&i.flags&&(Ze[0]=255&u,Ze[1]=u>>>8&255,i.check=_(i.check,Ze,2,0)),u=0,c=0,i.mode=H;case H:if(1024&i.flags){for(;16>c;){if(0===f)break e;f--,u+=a[o++]<<c,c+=8}i.length=u,i.head&&(i.head.extra_len=u),512&i.flags&&(Ze[0]=255&u,Ze[1]=u>>>8&255,i.check=_(i.check,Ze,2,0)),u=0,c=0}else i.head&&(i.head.extra=null);i.mode=j;case j:if(1024&i.flags&&(m=i.length,m>f&&(m=f),m&&(i.head&&(xe=i.head.extra_len-i.length,i.head.extra||(i.head.extra=new Array(i.head.extra_len)),k.arraySet(i.head.extra,a,o,m,xe)),512&i.flags&&(i.check=_(i.check,a,m,o)),f-=m,o+=m,i.length-=m),i.length))break e;i.length=0,i.mode=M;case M:if(2048&i.flags){if(0===f)break e;m=0;do xe=a[o+m++],i.head&&xe&&i.length<65536&&(i.head.name+=String.fromCharCode(xe));while(xe&&f>m);if(512&i.flags&&(i.check=_(i.check,a,m,o)),f-=m,o+=m,xe)break e}else i.head&&(i.head.name=null);i.length=0,i.mode=K;case K:if(4096&i.flags){if(0===f)break e;m=0;do xe=a[o+m++],i.head&&xe&&i.length<65536&&(i.head.comment+=String.fromCharCode(xe));while(xe&&f>m);if(512&i.flags&&(i.check=_(i.check,a,m,o)),f-=m,o+=m,xe)break e}else i.head&&(i.head.comment=null);i.mode=P;case P:if(512&i.flags){for(;16>c;){if(0===f)break e;f--,u+=a[o++]<<c,c+=8}if(u!==(65535&i.check)){e.msg="header crc mismatch",i.mode=he;break}u=0,c=0}i.head&&(i.head.hcrc=i.flags>>9&1,i.head.done=!0),e.adler=i.check=0,i.mode=G;break;case q:for(;32>c;){if(0===f)break e;f--,u+=a[o++]<<c,c+=8}e.adler=i.check=n(u),u=0,c=0,i.mode=Y;case Y:if(0===i.havedict)return e.next_out=s,e.avail_out=l,e.next_in=o,e.avail_in=f,i.hold=u,i.bits=c,R;e.adler=i.check=1,i.mode=G;case G:if(t===E||t===Z)break e;case X:if(i.last){u>>>=7&c,c-=7&c,i.mode=fe;break}for(;3>c;){if(0===f)break e;f--,u+=a[o++]<<c,c+=8}switch(i.last=1&u,u>>>=1,c-=1,3&u){case 0:i.mode=W;break;case 1:if(d(i),i.mode=te,t===Z){u>>>=2,c-=2;break e}break;case 2:i.mode=V;break;case 3:e.msg="invalid block type",i.mode=he}u>>>=2,c-=2;break;case W:for(u>>>=7&c,c-=7&c;32>c;){if(0===f)break e;f--,u+=a[o++]<<c,c+=8}if((65535&u)!==(u>>>16^65535)){e.msg="invalid stored block lengths",i.mode=he;break}if(i.length=65535&u,u=0,c=0,i.mode=J,t===Z)break e;case J:i.mode=Q;case Q:if(m=i.length){if(m>f&&(m=f),m>l&&(m=l),0===m)break e;k.arraySet(r,a,o,m,s),f-=m,o+=m,l-=m,s+=m,i.length-=m;break}i.mode=G;break;case V:for(;14>c;){if(0===f)break e;f--,u+=a[o++]<<c,c+=8}if(i.nlen=(31&u)+257,u>>>=5,c-=5,i.ndist=(31&u)+1,u>>>=5,c-=5,i.ncode=(15&u)+4,u>>>=4,c-=4,i.nlen>286||i.ndist>30){e.msg="too many length or distance symbols",i.mode=he;break}i.have=0,i.mode=$;case $:for(;i.have<i.ncode;){for(;3>c;){if(0===f)break e;f--,u+=a[o++]<<c,c+=8}i.lens[Ae[i.have++]]=7&u,u>>>=3,c-=3}for(;i.have<19;)i.lens[Ae[i.have++]]=0;if(i.lencode=i.lendyn,i.lenbits=7,Se={bits:i.lenbits},ye=p(x,i.lens,0,19,i.lencode,0,i.work,Se),i.lenbits=Se.bits,ye){e.msg="invalid code lengths set",i.mode=he;break}i.have=0,i.mode=ee;case ee:for(;i.have<i.nlen+i.ndist;){for(;Ee=i.lencode[u&(1<<i.lenbits)-1],me=Ee>>>24,ke=Ee>>>16&255,ge=65535&Ee,!(c>=me);){if(0===f)break e;f--,u+=a[o++]<<c,c+=8}if(16>ge)u>>>=me,c-=me,i.lens[i.have++]=ge;else{if(16===ge){for(Be=me+2;Be>c;){if(0===f)break e;f--,u+=a[o++]<<c,c+=8}if(u>>>=me,c-=me,0===i.have){e.msg="invalid bit length repeat",i.mode=he;break}xe=i.lens[i.have-1],m=3+(3&u),u>>>=2,c-=2}else if(17===ge){for(Be=me+3;Be>c;){if(0===f)break e;f--,u+=a[o++]<<c,c+=8}u>>>=me,c-=me,xe=0,m=3+(7&u),u>>>=3,c-=3}else{for(Be=me+7;Be>c;){if(0===f)break e;f--,u+=a[o++]<<c,c+=8}u>>>=me,c-=me,xe=0,m=11+(127&u),u>>>=7,c-=7}if(i.have+m>i.nlen+i.ndist){e.msg="invalid bit length repeat",i.mode=he;break}for(;m--;)i.lens[i.have++]=xe}}if(i.mode===he)break;if(0===i.lens[256]){e.msg="invalid code -- missing end-of-block",i.mode=he;break}if(i.lenbits=9,Se={bits:i.lenbits},ye=p(y,i.lens,0,i.nlen,i.lencode,0,i.work,Se),i.lenbits=Se.bits,ye){e.msg="invalid literal/lengths set",i.mode=he;break}if(i.distbits=6,i.distcode=i.distdyn,Se={bits:i.distbits},ye=p(S,i.lens,i.nlen,i.ndist,i.distcode,0,i.work,Se),i.distbits=Se.bits,ye){e.msg="invalid distances set",i.mode=he;break}if(i.mode=te,t===Z)break e;case te:i.mode=ie;case ie:if(f>=6&&l>=258){e.next_out=s,e.avail_out=l,e.next_in=o,e.avail_in=f,i.hold=u,i.bits=c,v(e,w),s=e.next_out,r=e.output,l=e.avail_out,o=e.next_in,a=e.input,f=e.avail_in,u=i.hold,c=i.bits,i.mode===G&&(i.back=-1);break}for(i.back=0;Ee=i.lencode[u&(1<<i.lenbits)-1],me=Ee>>>24,ke=Ee>>>16&255,ge=65535&Ee,!(c>=me);){if(0===f)break e;f--,u+=a[o++]<<c,c+=8}if(ke&&0===(240&ke)){for(_e=me,ve=ke,pe=ge;Ee=i.lencode[pe+((u&(1<<_e+ve)-1)>>_e)],me=Ee>>>24,ke=Ee>>>16&255,ge=65535&Ee,!(c>=_e+me);){if(0===f)break e;f--,u+=a[o++]<<c,c+=8}u>>>=_e,c-=_e,i.back+=_e}if(u>>>=me,c-=me,i.back+=me,i.length=ge,0===ke){i.mode=se;break}if(32&ke){i.back=-1,i.mode=G;break}if(64&ke){e.msg="invalid literal/length code",i.mode=he;break}i.extra=15&ke,i.mode=ne;case ne:if(i.extra){for(Be=i.extra;Be>c;){if(0===f)break e;f--,u+=a[o++]<<c,c+=8}i.length+=u&(1<<i.extra)-1,u>>>=i.extra,c-=i.extra,i.back+=i.extra}i.was=i.length,i.mode=ae;case ae:for(;Ee=i.distcode[u&(1<<i.distbits)-1],me=Ee>>>24,ke=Ee>>>16&255,ge=65535&Ee,!(c>=me);){if(0===f)break e;f--,u+=a[o++]<<c,c+=8}if(0===(240&ke)){for(_e=me,ve=ke,pe=ge;Ee=i.distcode[pe+((u&(1<<_e+ve)-1)>>_e)],me=Ee>>>24,ke=Ee>>>16&255,ge=65535&Ee,!(c>=_e+me);){if(0===f)break e;f--,u+=a[o++]<<c,c+=8}u>>>=_e,c-=_e,i.back+=_e}if(u>>>=me,c-=me,i.back+=me,64&ke){e.msg="invalid distance code",i.mode=he;break}i.offset=ge,i.extra=15&ke,i.mode=re;case re:if(i.extra){for(Be=i.extra;Be>c;){if(0===f)break e;f--,u+=a[o++]<<c,c+=8}i.offset+=u&(1<<i.extra)-1,u>>>=i.extra,c-=i.extra,i.back+=i.extra}if(i.offset>i.dmax){e.msg="invalid distance too far back",i.mode=he;break}i.mode=oe;case oe:if(0===l)break e;if(m=w-l,i.offset>m){if(m=i.offset-m,m>i.whave&&i.sane){e.msg="invalid distance too far back",i.mode=he;break}m>i.wnext?(m-=i.wnext,be=i.wsize-m):be=i.wnext-m,m>i.length&&(m=i.length),we=i.window}else we=r,be=s-i.offset,m=i.length;m>l&&(m=l),l-=m,i.length-=m;do r[s++]=we[be++];while(--m);0===i.length&&(i.mode=ie);break;case se:if(0===l)break e;r[s++]=i.length,l--,i.mode=ie;break;case fe:if(i.wrap){for(;32>c;){if(0===f)break e;f--,u|=a[o++]<<c,c+=8}if(w-=l,e.total_out+=w,i.total+=w,w&&(e.adler=i.check=i.flags?_(i.check,r,w,s-w):g(i.check,r,w,s-w)),w=l,(i.flags?u:n(u))!==i.check){e.msg="incorrect data check",i.mode=he;break}u=0,c=0}i.mode=le;case le:if(i.wrap&&i.flags){for(;32>c;){if(0===f)break e;f--,u+=a[o++]<<c,c+=8}if(u!==(4294967295&i.total)){e.msg="incorrect length check",i.mode=he;break}u=0,c=0}i.mode=de;case de:ye=z;break e;case he:ye=C;break e;case ue:return O;case ce:default:return N}return e.next_out=s,e.avail_out=l,e.next_in=o,e.avail_in=f,i.hold=u,i.bits=c,(i.wsize||w!==e.avail_out&&i.mode<he&&(i.mode<fe||t!==B))&&h(e,e.output,e.next_out,w-e.avail_out)?(i.mode=ue,O):(b-=e.avail_in,w-=e.avail_out,e.total_in+=b,e.total_out+=w,i.total+=w,i.wrap&&w&&(e.adler=i.check=i.flags?_(i.check,r,w,e.next_out-w):g(i.check,r,w,e.next_out-w)),e.data_type=i.bits+(i.last?64:0)+(i.mode===G?128:0)+(i.mode===te||i.mode===J?256:0),(0===b&&0===w||t===B)&&ye===A&&(ye=I),ye)}function c(e){if(!e||!e.state)return N;var t=e.state;return t.window&&(t.window=null),e.state=null,A}function b(e,t){var i;return e&&e.state?(i=e.state,0===(2&i.wrap)?N:(i.head=t,t.done=!1,A)):N}var w,m,k=e("../utils/common"),g=e("./adler32"),_=e("./crc32"),v=e("./inffast"),p=e("./inftrees"),x=0,y=1,S=2,B=4,E=5,Z=6,A=0,z=1,R=2,N=-2,C=-3,O=-4,I=-5,T=8,F=1,U=2,D=3,L=4,H=5,j=6,M=7,K=8,P=9,q=10,Y=11,G=12,X=13,W=14,J=15,Q=16,V=17,$=18,ee=19,te=20,ie=21,ne=22,ae=23,re=24,oe=25,se=26,fe=27,le=28,de=29,he=30,ue=31,ce=32,be=852,we=592,me=15,ke=me,ge=!0;i.inflateReset=o,i.inflateReset2=s,i.inflateResetKeep=r,i.inflateInit=l,i.inflateInit2=f,i.inflate=u,i.inflateEnd=c,i.inflateGetHeader=b,i.inflateInfo="pako inflate (from Nodeca project)"},{"../utils/common":1,"./adler32":3,"./crc32":5,"./inffast":7,"./inftrees":9}],9:[function(e,t){"use strict";var i=e("../utils/common"),n=15,a=852,r=592,o=0,s=1,f=2,l=[3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227,258,0,0],d=[16,16,16,16,16,16,16,16,17,17,17,17,18,18,18,18,19,19,19,19,20,20,20,20,21,21,21,21,16,72,78],h=[1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,257,385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577,0,0],u=[16,16,16,16,17,17,18,18,19,19,20,20,21,21,22,22,23,23,24,24,25,25,26,26,27,27,28,28,29,29,64,64];t.exports=function(e,t,c,b,w,m,k,g){var _,v,p,x,y,S,B,E,Z,A=g.bits,z=0,R=0,N=0,C=0,O=0,I=0,T=0,F=0,U=0,D=0,L=null,H=0,j=new i.Buf16(n+1),M=new i.Buf16(n+1),K=null,P=0;for(z=0;n>=z;z++)j[z]=0;for(R=0;b>R;R++)j[t[c+R]]++;for(O=A,C=n;C>=1&&0===j[C];C--);if(O>C&&(O=C),0===C)return w[m++]=20971520,w[m++]=20971520,g.bits=1,0;for(N=1;C>N&&0===j[N];N++);for(N>O&&(O=N),F=1,z=1;n>=z;z++)if(F<<=1,F-=j[z],0>F)return-1;if(F>0&&(e===o||1!==C))return-1;for(M[1]=0,z=1;n>z;z++)M[z+1]=M[z]+j[z];for(R=0;b>R;R++)0!==t[c+R]&&(k[M[t[c+R]]++]=R);if(e===o?(L=K=k,S=19):e===s?(L=l,H-=257,K=d,P-=257,S=256):(L=h,K=u,S=-1),D=0,R=0,z=N,y=m,I=O,T=0,p=-1,U=1<<O,x=U-1,e===s&&U>a||e===f&&U>r)return 1;for(var q=0;;){q++,B=z-T,k[R]<S?(E=0,Z=k[R]):k[R]>S?(E=K[P+k[R]],Z=L[H+k[R]]):(E=96,Z=0),_=1<<z-T,v=1<<I,N=v;do v-=_,w[y+(D>>T)+v]=B<<24|E<<16|Z|0;while(0!==v);for(_=1<<z-1;D&_;)_>>=1;if(0!==_?(D&=_-1,D+=_):D=0,R++,0===--j[z]){if(z===C)break;z=t[c+k[R]]}if(z>O&&(D&x)!==p){for(0===T&&(T=O),y+=N,I=z-T,F=1<<I;C>I+T&&(F-=j[I+T],!(0>=F));)I++,F<<=1;if(U+=1<<I,e===s&&U>a||e===f&&U>r)return 1;p=D&x,w[p]=O<<24|I<<16|y-m|0}}return 0!==D&&(w[y+D]=z-T<<24|64<<16|0),g.bits=O,0}},{"../utils/common":1}],10:[function(e,t){"use strict";t.exports={2:"need dictionary",1:"stream end",0:"","-1":"file error","-2":"stream error","-3":"data error","-4":"insufficient memory","-5":"buffer error","-6":"incompatible version"}},{}],11:[function(e,t){"use strict";function i(){this.input=null,this.next_in=0,this.avail_in=0,this.total_in=0,this.output=null,this.next_out=0,this.avail_out=0,this.total_out=0,this.msg="",this.state=null,this.data_type=2,this.adler=0}t.exports=i},{}],"/lib/inflate.js":[function(e,t,i){"use strict";function n(e,t){var i=new c(t);if(i.push(e,!0),i.err)throw i.msg;return i.result}function a(e,t){return t=t||{},t.raw=!0,n(e,t)}var r=e("./zlib/inflate.js"),o=e("./utils/common"),s=e("./utils/strings"),f=e("./zlib/constants"),l=e("./zlib/messages"),d=e("./zlib/zstream"),h=e("./zlib/gzheader"),u=Object.prototype.toString,c=function(e){this.options=o.assign({chunkSize:16384,windowBits:0,to:""},e||{});var t=this.options;t.raw&&t.windowBits>=0&&t.windowBits<16&&(t.windowBits=-t.windowBits,0===t.windowBits&&(t.windowBits=-15)),!(t.windowBits>=0&&t.windowBits<16)||e&&e.windowBits||(t.windowBits+=32),t.windowBits>15&&t.windowBits<48&&0===(15&t.windowBits)&&(t.windowBits|=15),this.err=0,this.msg="",this.ended=!1,this.chunks=[],this.strm=new d,this.strm.avail_out=0;var i=r.inflateInit2(this.strm,t.windowBits);if(i!==f.Z_OK)throw new Error(l[i]);this.header=new h,r.inflateGetHeader(this.strm,this.header)};c.prototype.push=function(e,t){var i,n,a,l,d,h=this.strm,c=this.options.chunkSize;if(this.ended)return!1;n=t===~~t?t:t===!0?f.Z_FINISH:f.Z_NO_FLUSH,h.input="string"==typeof e?s.binstring2buf(e):"[object ArrayBuffer]"===u.call(e)?new Uint8Array(e):e,h.next_in=0,h.avail_in=h.input.length;do{if(0===h.avail_out&&(h.output=new o.Buf8(c),h.next_out=0,h.avail_out=c),i=r.inflate(h,f.Z_NO_FLUSH),i!==f.Z_STREAM_END&&i!==f.Z_OK)return this.onEnd(i),this.ended=!0,!1;h.next_out&&(0===h.avail_out||i===f.Z_STREAM_END||0===h.avail_in&&n===f.Z_FINISH)&&("string"===this.options.to?(a=s.utf8border(h.output,h.next_out),l=h.next_out-a,d=s.buf2string(h.output,a),h.next_out=l,h.avail_out=c-l,l&&o.arraySet(h.output,h.output,a,l,0),this.onData(d)):this.onData(o.shrinkBuf(h.output,h.next_out)))}while(h.avail_in>0&&i!==f.Z_STREAM_END);return i===f.Z_STREAM_END&&(n=f.Z_FINISH),n===f.Z_FINISH?(i=r.inflateEnd(this.strm),this.onEnd(i),this.ended=!0,i===f.Z_OK):!0},c.prototype.onData=function(e){this.chunks.push(e)},c.prototype.onEnd=function(e){e===f.Z_OK&&(this.result="string"===this.options.to?this.chunks.join(""):o.flattenChunks(this.chunks)),this.chunks=[],this.err=e,this.msg=this.strm.msg},i.Inflate=c,i.inflate=n,i.inflateRaw=a,i.ungzip=n},{"./utils/common":1,"./utils/strings":2,"./zlib/constants":4,"./zlib/gzheader":6,"./zlib/inflate.js":8,"./zlib/messages":10,"./zlib/zstream":11}]},{},[])("/lib/inflate.js")});
 
 (function() {
 
@@ -11010,7 +12163,12 @@ function doGeomLoad(loadContext) {
 
     }
 
-    avp.ViewingService.getItem(loadContext, loadContext.url, onSuccess, loadContext.onFailureCallback);
+    // With this option to control whether want to record assets request.
+    // Skip it when on demand loading enabled.
+    var options = {
+        skipAssetCallback: loadContext.skipAssetCallback
+    };
+    avp.ViewingService.getItem(loadContext, loadContext.url, onSuccess, loadContext.onFailureCallback, options);
 
 }
 
@@ -11142,7 +12300,13 @@ function doLoadSvf(loadContext) {
                 svf = new lmv.GltfPackage(result);
             } else {
                 // result is arraybuffer
-                svf = new lmv.Package(new Uint8Array(result));
+                if (loadContext.perfOpt && 
+                    loadContext.perfOpt.memoryOptimizedSvfLoading) {
+                  svf = new lmv.PackageLess(new Uint8Array(result));
+                }
+                else {
+                  svf = new lmv.Package(new Uint8Array(result));
+                }
             }
             loadContext.svf = svf;
             svf.loadManifest(loadContext);
@@ -11303,7 +12467,7 @@ function requestFile(filename, loadContext, onRequestCompletion, storage) {
         onRequestCompletion(null);
     }
 
-    var url = loadContext.url + filename;
+    var url = resolveRelativePath(loadContext.url, filename);
     var onSuccess = function(response)
     {
         storage[filename] = response;
@@ -11312,6 +12476,45 @@ function requestFile(filename, loadContext, onRequestCompletion, storage) {
 
     avp.ViewingService.getItem(loadContext, url, onSuccess, onFailure);
 
+}
+
+// This method resolves situation such as:
+// 
+//      base: hello/this/path/is/cool/
+//  filename: ../../some-file.json
+//
+//    output: hello/this/path/some-file.json
+//
+function resolveRelativePath(base, filename) {
+
+    if (!base) {
+        return filename;
+    }
+
+    // Handle relative paths
+    var filenameParts = filename.split('../');
+    var baseParts = base.split('/');
+    
+    // Probably all paths end with slash anyway
+    var baseEndsWithSlash = false;
+    if (baseParts[baseParts.length-1].length === 0) {
+        baseEndsWithSlash = true;
+        baseParts.pop();
+    }
+
+    // So many assumptions here
+    while (filenameParts.length > 0 && filenameParts[0].length === 0) {
+        filenameParts.shift();
+        baseParts.pop();
+    }
+
+    // Add back the right-most backlash by adding an empty space. It will get join('/')-ed in the next step.
+    if (baseEndsWithSlash) {
+        baseParts.push('');
+    }
+
+    var url = baseParts.join('/') + filenameParts.join('');
+    return url;
 }
 
 
@@ -11477,7 +12680,7 @@ function doObjectTreeParse(loadContext) {
         var idroots = loadContext.worker.idroots;
         if (idroots && idroots.length)
         {
-            storage = new avp.InstanceTreeStorage(propertyDb.getObjectCount(), loadContext.fragToDbId.length);
+            storage = new avp.InstanceTreeStorage(propertyDb.getObjectCount(), loadContext.fragToDbId ? loadContext.fragToDbId.length : 0);
 
             if (idroots.length == 1) {
                 //Case of a single root in the property database,
@@ -11958,10 +13161,12 @@ var av = Autodesk.Viewing;
 /**
  * Error code constants
  *
- * These constants will be used in onErrorCallbacks.
+ * These constants will be used in `onErrorCallback` functions.
  *
  * @enum {number}
  * @readonly
+ * @alias Autodesk.Viewing.ErrorCodes
+ * @category Core
  */
 av.ErrorCodes = {
     /** An unknown failure has occurred. */
@@ -12001,6 +13206,7 @@ av.ErrorCodes = {
     RTC_ERROR: 12
 
 };
+
 
 (function() {
 
@@ -12071,6 +13277,10 @@ var IS_WORKER = (typeof self !== 'undefined') && (typeof window === 'undefined')
 if (IS_WORKER)
 {
 
+avp.initializeLegacyNamespaces(true);
+
+// Debugging source files without concatenation is no longer supported
+/*
 if (!avp.IS_CONCAT_BUILD)
 {
     //Everything below will get compiled into the worker JS during build
@@ -12093,6 +13303,11 @@ if (!avp.IS_CONCAT_BUILD)
         importScripts("../lmvtk/zlib/inflate.min.js"); //for OCTM MG2 compression
         importScripts("../lmvtk/svf/octm_mg2.js"); //for OCTM MG2 compression
     }
+
+    importScripts("../lmvtk/common/InputStreamLess.js");
+    importScripts("../lmvtk/svf/PackageLess.js");
+    importScripts("../lmvtk/svf/PackReaderLess.js");
+    importScripts("../lmvtk/zlib/pako_inflate.min.js");
 
     importScripts("../scene/BVHBuilder.js");
     importScripts("../scene/InstanceTreeStorage.js");
@@ -12125,6 +13340,7 @@ if (!avp.IS_CONCAT_BUILD)
 
     importScripts("MainWorker.js");
 }
+*/
 
 //Web worker dispatcher function -- received a message
 //from the main thread and calls the appropriate handler
@@ -12144,7 +13360,7 @@ self.raiseError = function(code, msg, args) {
 
 // Shared by all workers to output debug message on console of main thread.
 function debug(msg) {
-//    self.postMessage({debug : 1, message : msg});
+    self.postMessage({debug : 1, message : msg});
 }
 
 self.debug = debug;

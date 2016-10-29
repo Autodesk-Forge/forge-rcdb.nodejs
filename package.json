@@ -10,7 +10,6 @@
   "scripts": {
     "postinstall": "npm run build-prod",
     "clean": "rimraf dist",
-
     "build-server": "babel --presets es2015,stage-0 ./src/server -d ./bin/static",
     "build-dev": "NODE_ENV=development better-npm-run build",
     "build-prod": "NODE_ENV=production npm run clean && node bin/build",
@@ -155,6 +154,7 @@
     "raw-loader": "^0.5.1",
     "react": "^15.3.2",
     "react-bootstrap": "^0.30.3",
+    "react-color": "^2.4.0",
     "react-contenteditable": "^2.0.1",
     "react-dimensions": "^1.3.0",
     "react-dom": "^15.3.2",

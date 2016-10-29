@@ -2,7 +2,7 @@
 //
 //
 /////////////////////////////////////////////////////////////////
-import './ToolPanelBase.scss'
+import './ToolPanelBase.css'
 
 function getDefaultOptions () {
 
@@ -142,15 +142,13 @@ export default class ToolPanelBase extends
       this.titleLabel || this.container.id,
       this.options)
 
-    if (this.options.movable) {
-
+    if(this.options.movable) {
       this.initializeMoveHandlers(this.title)
     }
 
-    if (this.options.closable) {
-
+    if(this.options.closable){
       this.closer = this.createCloseButton()
-      this.container.appendChild(this.closer)
+      $(this.title).append(this.closer)
     }
 
     var $content = $(this.htmlContent(
@@ -168,7 +166,7 @@ export default class ToolPanelBase extends
   //
   /////////////////////////////////////////////////////////////
   createTitleBar (title) {
-
+    
     var titleBar = document.createElement("div")
 
     titleBar.className = "dockingPanelTitle"
@@ -187,17 +185,17 @@ export default class ToolPanelBase extends
     $(titleBar).append(html)
 
     this.addEventListener(titleBar, 'click', (event)=> {
-
+      
       if (!this.movedSinceLastClick) {
-
+        
         this.onTitleClick(event)
       }
-
+      
       this.movedSinceLastClick = false
     })
 
     this.addEventListener(titleBar, 'dblclick', (event) => {
-
+      
       this.onTitleDoubleClick(event)
     })
 
@@ -209,13 +207,13 @@ export default class ToolPanelBase extends
   //
   /////////////////////////////////////////////////////////////
   setTitle (text, options) {
-
+  
     if (options && options.localizeTitle) {
 
       $(`#${this.titleTextId}`).attr('data-i18n', text)
 
       text = Autodesk.Viewing.i18n.translate(text)
-
+      
     } else {
 
       $(`#${this.titleTextId}`).removeAttr('data-i18n')

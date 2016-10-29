@@ -1,0 +1,81 @@
+
+.tool-panel-modal {
+    overflow: visible;
+    height: 150px;
+    width: 450px;
+    resize: none;
+    z-index: 1000;
+}
+
+.tool-panel-modal.dockingPanel,
+.tool-panel-modal.dockingPanel:hover {
+    background: rgb(231, 231, 231);
+    transition-property: none;
+    opacity: 1.0;
+    z-index: 1000;
+}
+
+.tool-panel-modal .dockingPanelTitle {
+    background: rgb(165, 165, 165);
+    border-radius: 4px;
+    color: #040707;
+    cursor: auto;
+}
+
+.tool-panel-modal .container {
+    height: calc(100% - 70px);
+    width: calc(100% - 40px);
+    padding: 0;
+}
+
+.tool-panel-modal-background {
+    background-color: black;
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
+    opacity: 0.5;
+    z-index: 10;
+    left: 0px;
+    top: 0px;
+}
+
+.tool-panel-modal .tool-panel-modal-footer {
+    border-top: solid 1px #a7a7a7;
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+}
+
+.tool-panel-modal .tool-panel-modal-footer .btn {
+    background-color: transparent;
+    color: #838484;
+}
+
+.tool-panel-modal .tool-panel-modal-footer .btn:hover {
+    color:#E2580B
+}
+
+.tool-panel-modal .lmv-dropdown .btn {
+    background-color: #e7e7e7;
+    vertical-align: top;
+    line-height: 0;
+    height: 28px;
+    border: 1px solid #a5a5a5;
+}
+
+.tool-panel-modal .lmv-dropdown .caret {
+    border-top: 4px solid #a5a5a5;
+}
+
+.tool-panel-modal .lmv-dropdown .label {
+    font: normal 14px Times New Roman;
+    color: #323535;
+}
+
+.tool-panel-modal .open>.dropdown-menu {
+    background-color: #f8f8f8;
+}
+
+.tool-panel-modal .dropdown-menu>li>a {
+    color: #040707;
+}

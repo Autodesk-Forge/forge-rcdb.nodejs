@@ -104,6 +104,9 @@ export class BaseTreeDelegate extends
   ///////////////////////////////////////////////////////////////////
   onTreeNodeRightClick (tree, node, event) {
 
+    event.stopPropagation()
+    event.preventDefault()
+
     if (this.nodeClickSelector(event)) {
 
       this.contextMenu.show(event, node)

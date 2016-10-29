@@ -158,18 +158,8 @@ const envConfig = {
         materials: 'rcdb.materials',
         models: 'rcdb.models'
       }
-    }, {
-      type: 'mongo',
-      dbName: 'forge-rcdb2',
-      user: '',
-      pass: '',
-      dbhost: 'localhost',
-      port: 27017,
-      collections: {
-        materials: 'rcdb.materials',
-        models: 'rcdb.models'
-      }
-  }]
+    }
+  ]
 }
 
 Object.assign(config, envConfig)

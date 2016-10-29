@@ -64,9 +64,10 @@ export default class TabManager extends CustomWebComponent {
 
     var tabHtml = `
       <li id="${tabHeaderId}" tabId="${tabId}">
-        <a id="${tabHeaderLinkId}" tabId="${tabId}"
-          class="tab-link">
-          ${tabInfo.name}
+        <a id="${tabHeaderLinkId}" tabId="${tabId}" class="tab-link">
+          <label tabId="${tabId}">
+            ${tabInfo.name}
+          </label>
         </a>
       </li>
     `

@@ -40,6 +40,12 @@ div.markup3D {
   border: 1px solid #636363;
 }
 
+.markup3D .lmv-dropdown .dropdown-menu>li>a {
+  line-height: 20px;
+  padding: 3px 20px;
+  height: 20px;
+}
+
 .markup3D .dropdown-menu {
   background-color: #ccc;
 }

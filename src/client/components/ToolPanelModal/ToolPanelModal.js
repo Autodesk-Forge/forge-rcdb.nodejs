@@ -8,7 +8,7 @@ import './ToolPanelModal.css'
 
 export default class ToolPanelModal extends ToolPanelBase {
 
-  constructor (container, options) {
+  constructor (container, options = {}) {
 
     super(container, options.title || '', {
       closable: true,
@@ -17,6 +17,17 @@ export default class ToolPanelModal extends ToolPanelBase {
     })
 
     $(this.container).addClass('tool-panel-modal')
+
+    $(window).resize(() => {
+
+      var h = $(this.container).height()
+      var w = $(this.container).width()
+
+      $(this.container).css({
+        left: `calc(50% - ${w/2}px)`,
+        top: `calc(50% - ${h/2}px)`
+      })
+    })
   }
 
   /////////////////////////////////////////////////////////////
@@ -74,9 +85,9 @@ export default class ToolPanelModal extends ToolPanelBase {
   //
   //
   /////////////////////////////////////////////////////////////
-  bodyContent (html) {
+  bodyContent (bodyContent) {
 
-    $('#' + this.bodyId).html(html)
+    $('#' + this.bodyId).append(bodyContent)
   }
 
   /////////////////////////////////////////////////////////////

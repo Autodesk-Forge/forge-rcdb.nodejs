@@ -3,6 +3,7 @@
     vertical-align: top;
     line-height: 0;
     height: 28px;
+    width: 100%;
 }
 
 .lmv-dropdown .label {
@@ -23,4 +24,10 @@
 
 .lmv-dropdown .caret {
     border-top:4px solid white;
+}
+
+.lmv-dropdown .dropdown-menu > li > a {
+  height: 14px;
+  line-height: 10px;
+  padding: 3px 20px;
 }
