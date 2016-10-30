@@ -36,13 +36,16 @@ To run these samples, you need your own Forge API credentials:
 
 WORK IN PROGRESS!!
 
-    npm install
+    npm install         # Install project dependencies
 
     // by default post-install step will run a production build
     // so for dev you need to run
     npm run build-dev
+    
+    npm run dev       # Compile and launch
 
-    http://localhost:3000
+
+* To see your project open your browser `http://localhost:3000`
 
 For database configuration, refer to config/
 
