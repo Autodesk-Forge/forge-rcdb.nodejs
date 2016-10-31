@@ -347,7 +347,7 @@ export default class ViewerToolkit {
   // Gets all existing properties from component  dbIds
   //
   /////////////////////////////////////////////////////////////////
-  static getPropertyList(model, dbIds) {
+  static getPropertyList (model, dbIds) {
 
     return new Promise(async(resolve, reject)=>{
 
