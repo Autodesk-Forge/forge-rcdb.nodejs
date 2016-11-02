@@ -5,7 +5,6 @@
 }
 
 .widget-container .title {
-  //border: 1px solid rgb(217, 217, 217);
   background-color: rgb(248, 248, 248);
   color: rgb(0, 0, 0);
   text-align: left;
@@ -14,7 +13,7 @@
 }
 
 .widget-container .title label{
-  margin-left: 10px;
+  margin-left: 27px;
   margin-top: 13px;
 }
 
@@ -22,4 +21,20 @@
   height: calc(100% - 48px);
   overflow: auto;
   width:100%;
+}
+
+.legend-scroll::-webkit-scrollbar {
+  -webkit-appearance: none;
+  &:vertical{
+    width: 11px;
+  }
+  &:horizontal{
+    height: 11px;
+  }
+}
+
+.legend-scroll::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  border: 2px solid white; /* should match background, can't be transparent */
+  background-color: rgba(0, 0, 0, .5);
 }

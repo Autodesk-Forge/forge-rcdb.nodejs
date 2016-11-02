@@ -20,7 +20,7 @@ class Legend  extends EventsEmitter {
       textMaxLength: 25,
       circleRadius: 6,
       fontSize: 13,
-      fontName: 'Artifakt',
+      fontName: 'ArtifaktElementRegular',
       strokeWidth: 3
     }
 

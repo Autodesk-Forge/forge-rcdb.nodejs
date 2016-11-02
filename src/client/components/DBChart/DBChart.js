@@ -81,18 +81,19 @@ class DBChart extends React.Component {
           return entry.value > 0
         })
 
-      const size = Math.min(
-        $('#pie-chart-container').height(),
-        $('#pie-chart-container').width())
-
-      $('#pie-chart-container').css({
-        'margin-left': `calc(50% - ${size/2}px)`
-      })
+      const pieChartHeight = $('#pie-chart-container').height(),
+            pieChartWidth = $('#pie-chart-container').width()
 
       this.pieChart = new PieChart(
         '#pie-chart-container',
         filteredChartData,
-        { effects: { load: { effect: "none" }}})
+        { effects: { load: { effect: "none" }},
+          size: {
+            canvasHeight: pieChartHeight * 0.9,
+            canvasWidth: pieChartWidth * 0.9,
+            pieInnerRadius: '0%',
+            pieOuterRadius: '98%'
+          }})
 
       this.pieChart.on('pieSegment.click', (item) => {
 

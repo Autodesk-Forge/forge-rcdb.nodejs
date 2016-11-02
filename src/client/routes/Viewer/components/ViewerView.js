@@ -530,7 +530,7 @@ class ViewerView extends React.Component {
 
     var colors = d3.scale.linear()
       .domain([0, keys.length * .33, keys.length * .66, keys.length])
-      .range(['#B58929', '#C61C6F', '#268BD2', '#85992C'])
+      .range(['#FCB843', '#C2149F', '#0CC4BD', '#0270E9'])
 
     let totalCost = 0.0
     let totalMass = 0.0
@@ -560,7 +560,7 @@ class ViewerView extends React.Component {
       const legendLabel = [
         {text: key, spacing: 0},
         {text: `% ${costPercent}`, spacing: 170},
-        {text: `$USD ${cost}`, spacing: 230},
+        {text: `$USD ${cost}`, spacing: 230}
       ]
 
       return {

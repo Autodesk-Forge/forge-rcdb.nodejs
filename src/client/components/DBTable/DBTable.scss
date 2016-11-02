@@ -1,5 +1,4 @@
 .footable {
-  font-family: 'trebuchet MS' , 'Lucida sans' , Arial;
   border-collapse: separate;
   border-radius: 6px;
   border-spacing: 0;
@@ -10,7 +9,7 @@
 }
 
 .footable > tbody > tr > td:first-child {
-  margin-left: 0px;
+  margin-left: 0;
   cursor: pointer;
 }
 
@@ -35,7 +34,7 @@
 }
 
 .footable > tbody > tr:hover {
-  background: rgb(215, 215, 215);
+  background: #f8f8f8;
   color: #000;
 }
 
@@ -67,16 +66,11 @@
   overflow: visible;
 }
 
-.footable > thead > tr > th label {
-  font-family: Artifakt;
-}
-
 .footable > tbody > tr > td label {
   display: inline-block;
   max-width: 100%;
-  margin-bottom: 0px;
+  margin-bottom: 0;
   font-weight: normal;
-  font-family: Artifakt;
 }
 
 .footable > thead > tr > th:first-child label {
@@ -197,7 +191,7 @@
 }
 
 .db-table {
-  height: calc(100% - 12px);
+  height: calc(100%);
   width: 100%;
 }
 

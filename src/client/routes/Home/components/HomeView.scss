@@ -12,8 +12,6 @@
 }
 
 .home .logo-hero {
-  height: calc(100vh - 65px);
-  opacity: 1.0;
   opacity: 1;
   display: block;
   width: auto;
@@ -25,8 +23,7 @@
   .home .models {
     border-radius: 4px;
     position: absolute;
-    border: 1px solid #b3b3b3;
-    background-color: whitesmoke;
+    background-color: white;
     top: calc(50% - 150px);
     left: calc(50% - 225px);
     height: 250px;
@@ -45,20 +42,15 @@
 
   .home .models .responsive-grid img {
     transition: transform .2s ease-in-out;
-    background: #ccc;
     max-width: 100%;
     display: block;
-    height: auto;
-    border: none;
+    border: 1px solid #EAEAEA;
     width: 115px;
     height: 115px;
     margin: 4px;
   }
 
   .home .models .responsive-grid figure {
-    background-color: #e0e0e0;
-    border: 1px solid #d2d2d2;
-    border-radius: 4px;
     overflow: hidden;
     height: 150px;
     margin: 0;
@@ -66,12 +58,10 @@
 
   .home .models .title {
     margin-bottom: 26px;
-    border-bottom: 1px solid #cccccc;
-    background-color: #f5f5f5;
+    border-bottom: 2px solid #EAEAEA;
     text-align: center;
     overflow: hidden;
-    padding-top: 3px;
-    height: 30px;
+    padding: 11px 0;
   }
 }
 
@@ -82,7 +72,7 @@
     border-radius: 4px;
     position: absolute;
     border: 1px solid #b3b3b3;
-    background-color: whitesmoke;
+    background-color: white;
     top: calc(50% - 100px);
     left: calc(50% - 150px);
     height: 164px;
@@ -101,10 +91,8 @@
 
   .home .models .responsive-grid img {
     transition: transform .2s ease-in-out;
-    background: #ccc;
     max-width: 100%;
     display: block;
-    height: auto;
     border: none;
     width: 90px;
     height: 82px;
@@ -112,7 +100,7 @@
   }
 
   .home .models .responsive-grid figure {
-    background-color: #e0e0e0;
+    background-color: white;
     border: 1px solid #d2d2d2;
     border-radius: 4px;
     overflow: hidden;
@@ -122,7 +110,6 @@
 
   .home .models .title {
     border-bottom: 1px solid #cccccc;
-    background-color: #f5f5f5;
     text-align: center;
     overflow: hidden;
     padding-top: 3px;
@@ -145,7 +132,6 @@
 }
 
 .home .models .responsive-grid {
-  height: calc(100% - 40px);
   justify-content: center;
   flex-wrap: wrap;
   display: flex;
@@ -160,8 +146,12 @@
   margin-right: 0;
 }
 
-.home .models .responsive-grid a:hover img {
-  transform: scale(1.10);
+.home .models .responsive-grid a:hover figcaption{
+  color: #333333;
+}
+.home .models .responsive-grid a img:hover {
+  //transform: scale(1.10);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
 .home .models .responsive-grid figcaption {

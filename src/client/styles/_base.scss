@@ -10,3 +10,40 @@ For example:
 @import './variables/components';
 @import './themes/default';
 */
+
+// Artifakt Regular Fonts
+@font-face {
+  font-family: 'ArtifaktElementRegular';
+  src:  url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Element%20Regular.woff") format("woff"),
+        url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Element%20Regular.ttf") format("ttf"),
+        url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Element%20Regular.eot") format("eot"),
+        url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Element%20Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'ArtifaktElementMedium';
+  src:  url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Element%20Medium.woff") format("woff"),
+  url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Element%20Medium.ttf") format("ttf"),
+  url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Element%20Medium.eot") format("eot"),
+  url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Element%20Medium.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+// Artifakt Legend Fonts
+@font-face {
+  font-family: 'ArtifaktLegendRegular';
+  src:  url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Legend%20Regular.woff") format("woff"),
+        url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Legend%20Regular.ttf") format("ttf"),
+        url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Legend%20Regular.eot") format("eot"),
+        url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Legend%20Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: "ArtifaktElementRegular", Helvetica, Arial, sans-serif;
+}

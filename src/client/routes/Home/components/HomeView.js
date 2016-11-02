@@ -105,13 +105,10 @@ class HomeView extends React.Component {
 
     return (
       <div className="home">
-        <div className="welcome">
-          <h2>Welcome!</h2>
-        </div>
         <img className='logo-hero'/>
         <div className="models">
           <div className="title">
-            Select Model
+            Choose Model:
           </div>
 
           <div className="content responsive-grid">
@@ -120,11 +117,11 @@ class HomeView extends React.Component {
               return (
                 <a key={model.urn} href={`/viewer?id=${model._id}`}>
                   <figure>
+                    <figcaption>
+                      {model.name}
+                    </figcaption>
                     <img className={model.thumbnail ? "":"default-thumbnail"}
                       src={model.thumbnail ? "data:image/png;base64," + model.thumbnail : ""}/>
-                    <figcaption>
-                    {model.name}
-                    </figcaption>
                   </figure>
                 </a>)
               })

@@ -1,6 +1,9 @@
 svg.legend {
   height: 100%;
   width: 100%;
+  circle{
+    stroke: none;
+  }
 }
 
 .legend .clickable {

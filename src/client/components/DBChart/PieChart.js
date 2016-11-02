@@ -51,7 +51,7 @@ export default class PieChart extends EventsEmitter {
           backgroundOpacity: 0.85,
           color: "#00",
           borderRadius: 2,
-          font: "arial",
+          font: "ArtifaktElementRegular",
           fontSize: 10,
           padding: 4
         }
@@ -107,8 +107,7 @@ export default class PieChart extends EventsEmitter {
 
     $(`${this.selector} > svg`).css({
       transform: `translate(0px, -2px)`,
-      overflow: 'visible',
-      width: '100%'
+      overflow: 'visible'
     })
 
     setTimeout(()=> {
