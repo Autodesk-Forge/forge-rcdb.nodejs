@@ -49,8 +49,8 @@ export default class Dropdown extends UIComponent {
         data-toggle="dropdown" disabled>
         <div class="label-container">
           <label id="${this.labelId}" class="label">${this.title}</label>
-          <span class="caret"></span>
         </div>
+        <span class="caret"></span>
       </button>
       <ul id="${this.listId}" class="dropdown-menu scrollable-menu">
       </ul>

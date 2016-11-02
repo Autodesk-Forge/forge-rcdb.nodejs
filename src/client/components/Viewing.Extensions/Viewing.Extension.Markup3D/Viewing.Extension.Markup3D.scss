@@ -46,6 +46,13 @@ div.markup3D {
   height: 20px;
 }
 
+.markup3D .lmv-dropdown .caret {
+  border-top: 4px solid #fff;
+  position: absolute;
+  top: 45%;
+  right: -10px;
+}
+
 .markup3D .dropdown-menu {
   background-color: #ccc;
 }
