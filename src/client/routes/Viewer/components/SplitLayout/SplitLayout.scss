@@ -17,8 +17,6 @@
 
 .Resizer.horizontal {
   margin: 0;
-  border-top: 1px solid rgba(238, 238, 238, 0);
-  border-bottom: 1px solid rgba(238, 238, 238, 0);
   cursor: row-resize;
   width: 100%;
 }
@@ -52,7 +50,7 @@
 .Pane{
   background-color: #E3E3E3;
   &.horizontal{
-    padding: 10px 4px 0 0;
+    padding: 8px 4px 0 0;
   }
 }
 
