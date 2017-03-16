@@ -1,0 +1,56 @@
+
+import ClientAPI from 'ClientAPI'
+import BaseSvc from './BaseSvc'
+
+export default class SocketSvc extends BaseSvc {
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  constructor(opts) {
+
+    super (opts)
+
+    this._api = new ClientAPI(this._config.apiUrl)
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  name() {
+
+    return 'MaterialSvc';
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  getMaterials (dbName) {
+
+    var url = `${this._config.apiUrl}/${dbName}`
+
+    return this._api.ajax(url)
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  postMaterial(dbName, material) {
+
+    var url = `${this._config.apiUrl}/${dbName}`
+
+    return this._api.ajax({
+      url: url,
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      data: JSON.stringify(material)
+    })
+  }
+}

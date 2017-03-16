@@ -1,0 +1,48 @@
+.pie-chart .title {
+  overflow: visible;
+  float: left;
+}
+
+.pie-chart .title  > label{
+  white-space: nowrap;
+  font-weight: normal;
+  user-select: none;
+  margin-left: 27px;
+  margin-top: 10px;
+  select: none;
+  width: 80px;
+}
+
+.pie-chart .title  > .dropdown {
+  position: relative;
+  top: -1px;
+}
+
+.pie-chart .title  > button {
+  margin-left: 4px;
+  height: 26px;
+}
+
+.pie-chart .title  > .dropdown > button {
+  padding: 2px 12px;
+  height: 26px;
+}
+
+.pie-chart .title  .dropdown-menu {
+  overflow: scroll;
+}
+
+.pie-chart .loader-background {
+  background: #fdfdfd;
+}
+
+.pie-chart .loader,
+.pie-chart .loader:before,
+.pie-chart .loader:after {
+  top: 35%;
+}
+
+.pie-chart .loader:before,
+.pie-chart .loader:after {
+  margin: -9px auto;
+}

@@ -1,0 +1,106 @@
+
+.visual-report {
+  top: 10px;
+  left: 10px;
+  width: 400px;
+  height: 450px;
+  resize: auto;
+}
+
+.visual-report .container {
+  transition: opacity 1.5s ease-in-out;
+  opacity: 0.2;
+  height: calc(100% - 40px);
+  width: 100%;
+  padding-top: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin: 0;
+}
+
+.visual-report .container:hover {
+  opacity: 1;
+}
+
+.visual-report .btn {
+  height: 6px;
+  line-height: 0;
+  vertical-align: top;
+}
+
+.visual-report .btn-save {
+  float: left;
+  height: 14px;
+  margin-right: 4px;
+  padding-top: 1px;
+}
+
+.visual-report .input-name {
+  border-radius: 4px;
+  width: calc(100% - 123px);
+  height: 17px;
+}
+
+.visual-report .btn-dropdown {
+  width: 170px;
+  height: 10px;
+}
+
+.visual-report .lmv-dropdown .dropdown-menu>li>a {
+  height: 30px;
+  line-height: 24px;
+  padding: 3px 20px;
+}
+
+.visual-report .btn-span {
+  margin-right: 0px;
+  top: 3px;
+}
+
+.visual-report .btn-span-list {
+  margin-right: 0px;
+  line-height: 0.3;
+  top: 1px;
+}
+
+.visual-report .v-spacer {
+  border-width: 0px;
+  margin: 2px;
+}
+
+.visual-report .v-spacer-large {
+  border-width: 0px;
+  margin: 10px;
+}
+
+.visual-report .props-container {
+  border: 1px solid #aeaeae;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+.visual-report .tabs-container {
+  height: calc(100% - 42px);
+}
+
+.visual-report .lmv-dropdown .btn {
+  width: 100%;
+  height: 100%;
+  background-color: #E8E8E8;
+}
+
+.visual-report .lmv-dropdown .label {
+  color: rgb(71, 72, 72);;
+}
+
+.visual-report .lmv-dropdown .caret{
+  border-top:4px solid #aeaeae;
+}
+
+.visual-report .d3 {
+  height: 100%;
+}
+
+.visual-report .tabs div {
+  max-height: 569px;
+}

@@ -1,0 +1,38 @@
+.lmv-dropdown .btn {
+    background-color: #3C3F40;
+    vertical-align: top;
+    line-height: 0;
+    height: 28px;
+    width: 100%;
+}
+
+.lmv-dropdown .label {
+    font: normal 14px Times New Roman;
+}
+
+.scrollable-menu {
+    height: auto;
+    max-height: 250px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.lmv-dropdown .label-container {
+    width: calc(100% - 18px);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.lmv-dropdown .caret {
+  border-top: 4px solid #fff;
+  position: absolute;
+  top: 45%;
+  right: 10px;
+}
+
+.lmv-dropdown .dropdown-menu>li>a {
+  padding: 0px 20px;
+  line-height: 24px;
+  height: 24px;
+}
+

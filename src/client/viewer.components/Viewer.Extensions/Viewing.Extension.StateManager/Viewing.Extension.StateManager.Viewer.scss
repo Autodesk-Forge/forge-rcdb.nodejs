@@ -1,0 +1,265 @@
+
+.state-manager {
+  background: rgba(255, 255, 255, 0.0);
+  box-shadow: 0 3px 5px rgba(0,0,0,0.0);
+  height: calc(40% + 10px);
+  text-align: left;
+  top: 4px;
+  left: 4px;
+  width: 350px;
+  resize: none;
+
+  position: absolute;
+  z-index: 1;
+  font-size: 14px;
+  min-width: 100px;
+  min-height: 100px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  border: 1px solid rgba(150, 150, 150, 0.15);
+  border-radius: 5px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border-color: transparent;
+  transition-property: background,box-shadow,border;
+  transition-duration: 0.2s;
+  transition-timing-function: ease;
+  transition-delay: 0.5s;
+}
+
+.state-manager .sequence {
+  margin-bottom: 4px;
+  height: 24px;
+
+
+  display: none;
+}
+
+.state-manager .sequence .seq-dropdown {
+  width: calc(100% - 208px);
+  float: left;
+}
+
+.state-manager .sequence .lmv-dropdown .btn {
+  background-color: #ffffff;
+  border: 1px solid #aeaeae;
+  height: 9px;
+  width: 92px;
+}
+
+.state-manager .sequence .lmv-dropdown .label-container {
+  position: relative;
+  top: -2px;
+}
+
+.state-manager .sequence .lmv-dropdown .label {
+  color: #aeaeae;
+}
+
+.state-manager .sequence .lmv-dropdown .caret {
+  border-top: 4px solid #aeaeae;
+  background-color: #ffffff;
+  left: 104px;
+}
+
+.state-manager:hover {
+  border: 1px solid rgba(138, 138, 138, 0.31);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.state-manager .dockingPanelTitle {
+  cursor: auto;
+}
+
+.state-manager .dockingPanelTitleText {
+  margin-top: 4px;
+}
+
+.state-manager .dockingPanelClose {
+  position: absolute;
+  top: -3px;
+}
+
+.state-manager .container {
+  height: calc(100% - 55px);
+  width: calc(100% - 20px);
+  padding-top: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin: 0;
+}
+
+.state-manager .item-list {
+  height: calc(100% - 24px);
+  margin-top: 6px;
+  overflow: auto;
+  float: left;
+  width: 100%;
+}
+
+.state-manager .btn {
+  line-height: 0;
+  vertical-align: top;
+}
+
+.state-btn-list {
+  width: 5px;
+  line-height: 0;
+  vertical-align: top;
+  margin-top: -6px;
+  float: right;
+}
+
+.state-manager .btn-del-seq {
+  border: 1px solid #aeaeae;
+  margin-right: 4px;
+  padding-top: 2px;
+  height: 12px;
+  width: 44px;
+  float: left;
+}
+
+.state-manager .btn-del-seq span {
+  position: relative;
+  left: -6px;
+}
+
+.state-manager .btn-del-seq label {
+  position: relative;
+  left: -6px;
+}
+
+.state-manager .btn-save,
+.state-manager .btn-add-seq {
+  border: 1px solid #aeaeae;
+  margin-right: 4px;
+  padding-top: 2px;
+  height: 12px;
+  width: 48px;
+  float: left;
+}
+
+.state-manager .btn-play-container {
+  margin-right: 4px;
+  padding-top: 0;
+  height: 20px;
+  float: left;
+  width: 70px;
+}
+
+.state-manager .toggle-btn {
+  border: 1px solid #aeaeae;
+  background-color: #5bc0de;
+  margin-right: 4px;
+  padding-left: 4px;
+  padding-top: 0;
+  height: 14px;
+  width: 52px;
+  float: left;
+  color: #fff;
+}
+
+.state-manager .switch-loop {
+  margin-top: 1.3px;
+  height: 20px;
+  float: left;
+}
+
+.state-manager .onoffswitch {
+  width: 54px;
+}
+
+.state-manager .onoffswitch-inner:before {
+  text-align: center;
+  margin-left: -5px;
+  content: "LOOP";
+}
+
+.state-manager .onoffswitch-inner:after {
+  padding-right: 4px;
+  margin-left: 5px;
+  content: "LOOP";
+}
+
+.state-manager .onoffswitch-switch {
+  right: 34px;
+}
+
+.state-manager .input-name {
+  border: 1px solid #aeaeae;
+  width: calc(100% - 216px);
+  border-radius: 4px;
+  margin-right: 4px;
+  height: 18px;
+  float: left;
+}
+
+.state-manager .btn-dropdown {
+  width: 170px;
+  height: 10px;
+}
+
+.state-manager .btn-span {
+  margin-right: 0;
+  top: 3px;
+}
+
+.state-btn-span-list {
+  margin-left: -4px;
+  line-height: 0.3;
+  top: 0px;
+}
+
+.minimized {
+  height: 34px;
+  min-height: 34px
+}
+
+.state-manager .v-spacer {
+  border-width: 0;
+  margin: 2px;
+}
+
+.state-manager .v-spacer-large {
+  border-width: 0;
+  margin: 10px;
+}
+
+.state-list-group-item {
+  width: calc(100% - 22px);
+  height: 6px;
+  line-height: 0.3;
+  border-radius: 4px;
+  margin-top: 1px;
+  margin-bottom: 0;
+  background-color: rgba(232, 232, 232, 0.20);
+  border: 1px solid #aeaeae;
+  cursor: pointer;
+  position: relative;
+  display: block;
+  padding: 10px 10px;
+  overflow: hidden;
+}
+
+.state-list-group-item label {
+  width: calc(100% - 45px)!important;
+  overflow-x: hidden;
+  margin-top: -4px;
+  position: relative;
+  height: 15px;
+  line-height: 0.9;
+  font-weight: inherit;
+  font-size: 13px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.state-list-group-item.active,
+.state-list-group-item:hover {
+  border: 1px solid #1547de;
+  background-color: #5BC0DE;
+}

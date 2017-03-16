@@ -1,0 +1,13 @@
+.pie-chart {
+  background-color: #fdfdfd;
+  user-select: none;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+
+svg [class*="_pieChart"],
+svg [class*="_labelGroup"] {
+  cursor: pointer;
+}
+

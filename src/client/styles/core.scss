@@ -1,0 +1,100 @@
+// Artifakt Regular Fonts
+@font-face {
+  font-family: 'ArtifaktElementRegular';
+  src:  url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Element%20Regular.woff") format("woff"),
+  url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Element%20Regular.ttf") format("ttf"),
+  url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Element%20Regular.eot") format("eot"),
+  url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Element%20Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'ArtifaktElementMedium';
+  src:  url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Element%20Medium.woff") format("woff"),
+  url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Element%20Medium.ttf") format("ttf"),
+  url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Element%20Medium.eot") format("eot"),
+  url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Element%20Medium.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+// Artifakt Legend Fonts
+@font-face {
+  font-family: 'ArtifaktLegendRegular';
+  src:  url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Legend%20Regular.woff") format("woff"),
+  url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Legend%20Regular.ttf") format("ttf"),
+  url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Legend%20Regular.eot") format("eot"),
+  url("https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Legend%20Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: "ArtifaktElementRegular", Helvetica, Arial, sans-serif;
+}
+
+
+/////////////////////////////////////////////////////////
+// Some best-practice CSS that's useful for most apps
+//
+/////////////////////////////////////////////////////////
+html {
+  overflow-style: none;
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+  width: 0 !important;
+  display: none;
+}
+
+html,
+body {
+  overflow: -moz-scrollbars-none;
+  -ms-overflow-style: none;
+  user-select: none;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+.core-layout__viewport {
+  height: calc(100vh - 65px);
+}
+
+.container {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+/////////////////////////////////////////////////////////
+// Reflex Layout
+//
+/////////////////////////////////////////////////////////
+.reflex-layout.horizontal > .reflex-splitter.reflex-thin,
+.reflex-layout.horizontal > .reflex-splitter {
+  z-index: 1 !important;
+}
+
+.reflex-layout.vertical > .reflex-splitter.reflex-thin,
+.reflex-layout.vertical > .reflex-splitter {
+  z-index: 1 !important;
+}
+
+.reflex-layout.horizontal > .reflex-splitter {
+  height: 4px !important;
+}
+
+.reflex-layout.vertical > .reflex-splitter {
+  width: 4px !important;
+}
+

@@ -1,0 +1,108 @@
+
+@media screen and (min-width: 260px) {
+
+  .dialog.theme {
+    left: calc(50% - 125px);
+    top: calc(40% - 100px);
+    height: 174px;
+    width: 250px;
+  }
+
+  .theme .responsive-grid a {
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 4px;
+    margin-right: 4px;
+    margin-left: 4px;
+    color: #606060;
+    width: 100px;
+  }
+
+  .theme .responsive-grid img {
+    transition: transform .2s ease-in-out;
+    max-width: 100%;
+    display: block;
+    height: auto;
+    border: none;
+    width: 90px;
+    height: 82px;
+    margin: 4px;
+  }
+}
+
+@media screen and (max-width: 259px) {
+
+  .dialog.theme {
+    left: calc(50% - 175px);
+    top: calc(40% - 100px);
+    height: 188px;
+    width: 200px;
+  }
+
+  .theme .responsive-grid a {
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 4px;
+    margin-right: 4px;
+    margin-left: 4px;
+    color: #606060;
+    width: 100px;
+  }
+
+  .theme .responsive-grid img {
+    transition: transform .2s ease-in-out;
+    max-width: 100%;
+    display: block;
+    height: auto;
+    border: none;
+    width: 90px;
+    height: 82px;
+    margin: 4px;
+  }
+}
+
+.theme .responsive-grid {
+  height: calc(100% - 40px);
+  justify-content: center;
+  flex-wrap: wrap;
+  display: flex;
+}
+
+.theme .responsive-grid a:nth-of-type(2n) {
+  margin-right: 0;
+}
+
+.theme .responsive-grid a:hover img {
+  transform: scale(1.10);
+}
+
+.theme .responsive-grid figure {
+  background-color: #e0e0e0;
+  border: 1px solid #d2d2d2;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 0;
+}
+
+.theme .responsive-grid figcaption {
+  margin: 4px;
+}
+
+.forge-theme {
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffd65e+0,fcde8a+100 */
+  background: #ffd65e; /* Old browsers */
+  background: -moz-linear-gradient(top,  #ffd65e 0%, #fcde8a 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top,  #ffd65e 0%,#fcde8a 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom,  #ffd65e 0%,#fcde8a 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffd65e', endColorstr='#fcde8a',GradientType=0 ); /* IE6-9 */
+}
+
+.snow-theme {
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,f6f6f6+47,ededed+100;White+3D+%231 */
+  background: rgb(255,255,255); /* Old browsers */
+  background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(246,246,246,1) 47%, rgba(237,237,237,1) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(246,246,246,1) 47%,rgba(237,237,237,1) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(246,246,246,1) 47%,rgba(237,237,237,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+
+}

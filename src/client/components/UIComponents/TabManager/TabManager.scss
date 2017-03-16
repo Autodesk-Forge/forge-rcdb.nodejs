@@ -1,0 +1,72 @@
+.tabs {
+  user-select: none;
+  overflow:hidden;
+  height: 100%;
+  clear:both;
+}
+
+.tabs .headers {
+  list-style-type:none;
+  position:relative;
+  bottom: -1px;
+  width: 100%;
+  z-index: 0;
+  padding: 0;
+  margin: 0;
+  margin-bottom: 30px;
+  margin-left: 3px;
+}
+
+.tabs > div {
+  clear: both;
+  border:1px solid #CCC;
+  padding:5px;
+  font-family:verdana;
+  font-size:13px;
+  background-color: #E8E8E8;
+  display:none;
+  height: calc(100% - 32px);
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  border: 1px solid #aeaeae;
+}
+
+.tabs .headers li {
+  margin-right: 2px;
+  height: 20px;
+  float:left;
+}
+
+.tab-link, .tab-link:hover {
+  cursor: pointer;
+  display:block;
+  padding:5px 5px;
+  background-color: #E8E8E8;
+  color: rgb(71, 72, 72);
+  text-decoration: none;
+  margin: 0;
+  border-top: 1px solid #a5a5a5;
+  border-left: 1px solid #a5a5a5;
+  border-right: 1px solid #a5a5a5;
+  font:13px/18px verdana,arial,sans-serif;
+  border-bottom:1px solid #EEE;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  overflow-x: hidden;
+}
+
+.tabs a label {
+  font-weight: normal;
+  white-space: nowrap;
+  overflow-x: hidden;
+  cursor: pointer;
+}
+
+.tabs a.active {
+  background-color: #fdfdfd;
+  border-bottom:1px solid #E8E8E8;
+  color: rgb(71, 72, 72);
+  text-decoration: none;
+}
