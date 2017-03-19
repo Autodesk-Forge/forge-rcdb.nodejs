@@ -10,7 +10,6 @@ import {ReactLoader as Loader} from 'Loader'
 import './Viewing.Extension.BarChart.scss'
 import Toolkit from 'Viewer.Toolkit'
 import BarChart from 'BarChart'
-import Viewer from 'Viewer'
 import React from 'react'
 import d3 from 'd3'
 

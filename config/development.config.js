@@ -48,6 +48,17 @@ const config = {
         materials: 'rcdb.materials',
         models: 'rcdb.models'
       }
+    },
+    {
+      type: 'mongo',
+      dbName: 'forge-configurator',
+      user: '',
+      pass: '',
+      dbhost: 'localhost',
+      port: 27017,
+      collections: {
+        models: 'configurator.models'
+      }
     }
   ]
 }

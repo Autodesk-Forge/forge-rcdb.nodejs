@@ -98,7 +98,8 @@ class PieChart extends React.Component {
           borderRadius: 2,
           font: "ArtifaktElementRegular",
           fontSize: 10,
-          padding: 4
+          padding: 4,
+          zIndex: 1000
         }
       },
 

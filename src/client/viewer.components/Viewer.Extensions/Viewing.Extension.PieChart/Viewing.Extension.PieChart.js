@@ -10,7 +10,6 @@ import {ReactLoader as Loader} from 'Loader'
 import './Viewing.Extension.PieChart.scss'
 import Toolkit from 'Viewer.Toolkit'
 import PieChart from 'PieChart'
-import Viewer from 'Viewer'
 import React from 'react'
 import d3 from 'd3'
 

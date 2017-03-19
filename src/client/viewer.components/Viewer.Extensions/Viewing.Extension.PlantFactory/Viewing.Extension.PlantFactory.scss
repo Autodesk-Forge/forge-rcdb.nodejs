@@ -1,0 +1,48 @@
+.property-bar-chart .title,
+.property-pie-chart .title,
+.property-list .title {
+  background-color: white !important;
+}
+
+.property-bar-chart .title,
+.property-pie-chart .title {
+  left: 20%;
+}
+
+.property-bar-chart .bar-chart,
+.property-pie-chart .pie-chart {
+  position: relative;
+  height: 200px;
+}
+
+.property-list .table {
+  margin-bottom: 0px;
+}
+
+.property-list .react-bs-container-body {
+  height: calc(100% - 40px) !important;
+  overflow: scroll;
+}
+
+.property-list-table {
+  border-bottom: 1px solid #dddddd;
+  border-top: 1px solid #dddddd;
+  margin-bottom: 10px;
+  overflow: hidden;
+  height: 192px;
+}
+
+.property-list-table .react-bs-table-container {
+  height: 100%;
+}
+
+.property-list-table .table-bordered {
+  border: none;
+}
+
+.property-list-table td {
+  text-align: left !important;
+  cursor: pointer;
+  outline: none;
+}
+
