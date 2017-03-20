@@ -69,6 +69,8 @@ class PlantFactoryExtension extends ExtensionBase {
 
     this.react.setState({
 
+      showLoader: true,
+
       // Project
       projectAreaData: [],
       projectDisciplineData: [],
@@ -157,12 +159,17 @@ class PlantFactoryExtension extends ExtensionBase {
     this.componentIds = await Toolkit.getLeafNodes(
       this.viewer.model)
 
+    //const chartProperties =
+    //  this.options.chartProperties ||
+    //  await Toolkit.getPropertyList(
+    //  this.viewer, this.componentIds)
+
     ///////////////////////////////////////////////////
     // Project
     //
     ///////////////////////////////////////////////////
     //Area - USER Yara : Yara Area (Pie)
-    this.buildPropertyData ('System Name').then(
+    this.buildPropertyData ('Yara Area').then(
       (projectAreaData) => {
 
         this.react.setState({
@@ -172,7 +179,7 @@ class PlantFactoryExtension extends ExtensionBase {
       })
 
     //Discipline - USER Yara : Yara Discipline (Pie)
-    this.buildPropertyData ('System Name').then(
+    this.buildPropertyData ('Yara Discipline').then(
       (projectDisciplineData) => {
 
         this.react.setState({
@@ -186,7 +193,7 @@ class PlantFactoryExtension extends ExtensionBase {
     //
     ///////////////////////////////////////////////////
     //System - WP : SystemName (Pie)
-    this.buildPropertyData ('System Name').then(
+    this.buildPropertyData ('SystemName').then(
         (pipingSystemData) => {
 
           this.react.setState({
@@ -196,7 +203,7 @@ class PlantFactoryExtension extends ExtensionBase {
         })
 
     //Priority - WP : ISO_Priority (Pie)
-    this.buildPropertyData ('System Name').then(
+    this.buildPropertyData ('ISO_Priority').then(
       (pipingPriorityData) => {
 
         this.react.setState({
@@ -205,8 +212,8 @@ class PlantFactoryExtension extends ExtensionBase {
         })
       })
 
-    //Fabrication Status - WP : Fab_Status (Pie)
-    this.buildPropertyData ('System Name').then(
+    //Fabrication Status - WP : Fab Status (Pie)
+    this.buildPropertyData ('Fab Status').then(
       (pipingFabricationStatusData) => {
 
         this.react.setState({
@@ -216,7 +223,7 @@ class PlantFactoryExtension extends ExtensionBase {
       })
 
     //Material Status - WP : PipeFieldMats (Pie)
-    this.buildPropertyData ('System Name').then(
+    this.buildPropertyData ('PipeFieldMats').then(
       (pipingMaterialStatusData) => {
 
         this.react.setState({
@@ -226,7 +233,7 @@ class PlantFactoryExtension extends ExtensionBase {
       })
 
     //Progress - WP : Cobra_AG_Pipe_P3 (Pie)
-    this.buildPropertyData ('System Name').then(
+    this.buildPropertyData ('Cobra_AG_Pipe_P3').then(
       (pipingProgressData) => {
 
         this.react.setState({
@@ -236,7 +243,7 @@ class PlantFactoryExtension extends ExtensionBase {
       })
 
     //IWP - WP : WorkPackName (List)
-    this.buildPropertyData ('System Name').then(
+    this.buildPropertyData ('WorkPackName').then(
       (pipingIWPData) => {
 
         this.react.setState({
@@ -250,7 +257,7 @@ class PlantFactoryExtension extends ExtensionBase {
     //
     ///////////////////////////////////////////////////
     //Status - WP : Foundation_Status (Pie)
-    this.buildPropertyData ('System Name').then(
+    this.buildPropertyData ('Foundation_Status').then(
       (foundationStatusData) => {
 
         this.react.setState({
@@ -260,7 +267,7 @@ class PlantFactoryExtension extends ExtensionBase {
       })
 
     //IWP - WP : Foundation_IWP (List)
-    this.buildPropertyData ('System Name').then(
+    this.buildPropertyData ('Foundation_IWP').then(
       (foundationIWPData) => {
 
         this.react.setState({
@@ -274,7 +281,7 @@ class PlantFactoryExtension extends ExtensionBase {
     //
     ///////////////////////////////////////////////////
     //Status - WP : Cobra_Sequence_Percent (Pie)
-    this.buildPropertyData ('System Name').then(
+    this.buildPropertyData ('Cobra_Sequence_Percent').then(
       (structureStatusData) => {
 
         this.react.setState({
@@ -284,7 +291,7 @@ class PlantFactoryExtension extends ExtensionBase {
       })
 
     //Progress - WP : Cobra_Sequence_ROC (Pie)
-    this.buildPropertyData ('System Name').then(
+    this.buildPropertyData ('Cobra_Sequence_ROC').then(
       (structureProgressData) => {
 
         this.react.setState({
@@ -298,7 +305,7 @@ class PlantFactoryExtension extends ExtensionBase {
     //
     ///////////////////////////////////////////////////
     // Tag - WP : Tag Number (List)
-    this.buildPropertyData ('System Name').then(
+    this.buildPropertyData ('Tag Number').then(
       (equipmentTagData) => {
 
         this.react.setState({
@@ -308,7 +315,7 @@ class PlantFactoryExtension extends ExtensionBase {
       })
 
     //ROS - WP : ActualReceipt (Line or Bar)
-    this.buildPropertyData ('System Name').then(
+    this.buildPropertyData ('ActualReceipt').then(
       (equipmentROSData) => {
 
         this.react.setState({
@@ -322,7 +329,7 @@ class PlantFactoryExtension extends ExtensionBase {
     //
     ///////////////////////////////////////////////////
     //Tag - WP : TAG NUMBER (List)
-    this.buildPropertyData ('System Name').then(
+    this.buildPropertyData ('TAG NUMBER').then(
       (instrumentationTagData) => {
 
         this.react.setState({
@@ -336,7 +343,7 @@ class PlantFactoryExtension extends ExtensionBase {
     //
     ///////////////////////////////////////////////////
     //Status - WP: Cobra_Tray (Pie)
-    this.buildPropertyData ('System Name').then(
+    this.buildPropertyData ('Cobra_Tray').then(
       (electricalStatusData) => {
 
         this.react.setState({
@@ -350,7 +357,7 @@ class PlantFactoryExtension extends ExtensionBase {
     //
     ///////////////////////////////////////////////////
     //Activities - WP : Activity Name (List)
-    this.buildPropertyData ('System Name').then(
+    this.buildPropertyData ('Activity Name').then(
       (scheduleActivitiesData) => {
 
         this.react.setState({
@@ -358,6 +365,10 @@ class PlantFactoryExtension extends ExtensionBase {
           scheduleActivitiesData
         })
       })
+
+    this.react.setState({
+      showLoader: false
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -508,9 +519,15 @@ class PlantFactoryExtension extends ExtensionBase {
 
     const state = this.react.getState()
 
-    return (
-      <div className={this.className}>
+    const style = state.showLoader ? {
+        overflow: 'hidden',
+        height: '100%'
+      }: {}
 
+    return (
+      <div className={this.className} style={style}>
+
+        <Loader show={state.showLoader}/>
 
         <WidgetContainer title="Project">
           <PropertyPieChart title="Area"
@@ -607,37 +624,43 @@ class PlantFactoryExtension extends ExtensionBase {
 
 
         <WidgetContainer title="Equipment">
-          <PropertyPieChart title="ROS"
-            style={{float:"left", width: "50%"}}
-            guid={state.equipmentROSGuid}
-            data={state.equipmentROSData}
-            viewer={this.viewer}/>
-
           <PropertyList title="Tag"
             style={{
-              width: "calc(50% - 0px)",
+              width: "calc(100% - 20px)",
               position: "relative",
               float:"left",
-              left:"-10px"
+              left:"10px"
             }}
             guid={state.equipmentTagGuid}
             data={state.equipmentTagData}
             viewer={this.viewer}/>
+
+          <PropertyBarChart title="ROS"
+            style={{float:"left", width: "100%"}}
+            guid={state.equipmentROSGuid}
+            data={state.equipmentROSData}
+            viewer={this.viewer}/>
         </WidgetContainer>
 
 
-        <WidgetContainer title="Instrumentation">
+        <WidgetContainer title="Instrumentation"
+          style={{
+            float:"left",
+            width: "50%"
+          }}>
           <PropertyPieChart title="Tag"
-            style={{float:"left", width: "50%"}}
             guid={state.instrumentationTagGuid}
             data={state.instrumentationTagData}
             viewer={this.viewer}/>
         </WidgetContainer>
 
 
-        <WidgetContainer title="Electrical">
+        <WidgetContainer title="Electrical"
+          style={{
+            float:"left",
+            width: "50%"
+          }}>
           <PropertyPieChart title="Status"
-            style={{float:"left", width: "50%"}}
             guid={state.electricalStatusGuid}
             data={state.electricalStatusData}
             viewer={this.viewer}/>

@@ -6,6 +6,7 @@
 import './Viewing.Extension.ExtensionManager.scss'
 import ExtensionBase from 'Viewer.ExtensionBase'
 import ExtensionPane from './ExtensionPane'
+import ServiceManager from 'SvcManager'
 import {PaneManager} from 'PaneWidget'
 import ReactDOM from 'react-dom'
 import React from 'react'
@@ -19,6 +20,9 @@ class ExtensionManager extends ExtensionBase {
   constructor(viewer, options) {
 
     super (viewer, options)
+
+    this.storageSvc = ServiceManager.getService(
+      'StorageSvc')
 
     this.renderTitle = this.renderTitle.bind(this)
 
@@ -108,7 +112,13 @@ class ExtensionManager extends ExtensionBase {
 
       const extensions = this.options.extensions || []
 
+      const storage = this.storageSvc.load(
+        'extension-manager')
+
       const loadExts = extensions.filter ((extension) => {
+
+        extension.enabled = extension.enabled ||
+          storage.extensions.includes(extension.id)
 
         return extension.enabled
       })
@@ -182,13 +192,38 @@ class ExtensionManager extends ExtensionBase {
   /////////////////////////////////////////////////////////
   loadDynamicExtension (extension) {
 
-    const options = Object.assign({},
-      extension.options, {
-        react: this.reactOpts
+    return new Promise((resolve, reject) => {
+
+      const { extensions } = this.react.getState()
+
+      extension.loading = true
+
+      this.react.setState({
+        extensions
       })
 
-    return this.viewer.loadDynamicExtension(
-      extension.id, options)
+      const options = Object.assign({},
+        extension.options, {
+          react: this.reactOpts
+        })
+
+      this.viewer.loadDynamicExtension(
+        extension.id, options).then((extInstance) => {
+
+          extension.loading = false
+          extension.enabled = true
+
+          this.react.setState({
+            extensions
+          })
+
+          resolve(extInstance)
+
+        }, (error) => {
+
+          reject(error)
+        })
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -223,27 +258,32 @@ class ExtensionManager extends ExtensionBase {
       }).then(() => {
 
         this.react.forceUpdate()
+
+        this.storageSvc.save(
+          'extension-manager', {
+            extensions: extensions.filter((ext) => {
+              return ext.enabled
+            }).map((ext) => {
+              return ext.id
+            })
+          })
       })
 
     } else {
 
       const { extensions } = this.react.getState()
 
-      extension.loading = true
-
-      this.react.setState({
-        extensions
-      })
-
       this.loadDynamicExtension (extension).then(
         (extInstance) => {
 
-          extension.loading = false
-          extension.enabled = true
-
-          this.react.setState({
-            extensions
-          })
+          this.storageSvc.save(
+            'extension-manager', {
+              extensions: extensions.filter((ext) => {
+                return ext.enabled
+              }).map((ext) => {
+                return ext.id
+              })
+            })
 
           for (const eventId in this.events) {
 
@@ -317,7 +357,7 @@ class ExtensionManager extends ExtensionBase {
 
     return extensions.map((extension) => {
 
-      const className = 'extension-item' +
+      const className = 'item' +
         (extension.enabled ? ' enabled' : '') +
         (extension.loading ? ' loading' : '')
 

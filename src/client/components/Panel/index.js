@@ -1,3 +1,3 @@
-import BarChart from './BarChart'
+import Panel from './Panel'
 
-export default BarChart
+export default Panel

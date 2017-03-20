@@ -33,6 +33,7 @@
 
 body {
   font-family: "ArtifaktElementRegular", Helvetica, Arial, sans-serif;
+  overflow: hidden;
 }
 
 
@@ -82,12 +83,12 @@ body {
 /////////////////////////////////////////////////////////
 .reflex-layout.horizontal > .reflex-splitter.reflex-thin,
 .reflex-layout.horizontal > .reflex-splitter {
-  z-index: 1 !important;
+  z-index: 0 !important;
 }
 
 .reflex-layout.vertical > .reflex-splitter.reflex-thin,
 .reflex-layout.vertical > .reflex-splitter {
-  z-index: 1 !important;
+  z-index: 0 !important;
 }
 
 .reflex-layout.horizontal > .reflex-splitter {

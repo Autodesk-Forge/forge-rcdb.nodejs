@@ -8,3 +8,13 @@
   background-color: #ababab;
   height: 100%;
 }
+
+.configurator-toolbar {
+  position: absolute;
+  bottom: 100px;
+  right: 86px;
+}
+
+.viewer-element {
+  overflow: visible !important;
+}

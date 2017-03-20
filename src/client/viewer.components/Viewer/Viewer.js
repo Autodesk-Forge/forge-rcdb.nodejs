@@ -97,7 +97,9 @@ class Viewer extends React.Component {
 
     return (
       <div className="viewer-container">
-        <div className="viewer" ref={ (div) => this.viewerContainer = div }>
+        <div className="viewer" ref={
+          (div) => this.viewerContainer = div
+        }>
         </div>
         { panels }
       </div>

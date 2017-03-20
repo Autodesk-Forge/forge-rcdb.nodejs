@@ -309,6 +309,32 @@ class ViewerConfigurator extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  createToolbar (viewer) {
+
+    let toolbarContainer = document.createElement('div')
+
+    toolbarContainer.className = 'configurator-toolbar'
+
+    viewer.container.appendChild(toolbarContainer)
+
+    const toolbar = new Autodesk.Viewing.UI.ToolBar (true)
+
+    const ctrlGroup =
+      new Autodesk.Viewing.UI.ControlGroup(
+        'configurator')
+
+    toolbar.addControl(ctrlGroup)
+
+    toolbarContainer.appendChild(
+      toolbar.container)
+
+    return ctrlGroup
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   async onViewerCreated (viewer, model) {
 
     try {
@@ -317,12 +343,7 @@ class ViewerConfigurator extends React.Component {
 
       viewer.start()
 
-      const ctrlGroup = new Autodesk.Viewing.UI.ControlGroup(
-        'toolbar-forge-configurator')
-
-      var viewerToolbar = viewer.getToolbar (true)
-
-      viewerToolbar.addControl (ctrlGroup)
+      const ctrlGroup = this.createToolbar (viewer)
 
       const defaultOptions = {
         apiUrl: `/api/models/${this.props.database}`,
@@ -483,7 +504,8 @@ class ViewerConfigurator extends React.Component {
               onStopResize={() => this.onStopResize()}
               onResize={() => this.onResize()}
             />
-            <ReflexElement propagateDimensions={true}>
+            <ReflexElement className="viewer-element"
+              propagateDimensions={true}>
               {this.renderModel(model)}
             </ReflexElement>
           </ReflexContainer>
@@ -493,7 +515,8 @@ class ViewerConfigurator extends React.Component {
         return (
           <ReflexContainer className="configurator"
             key="configurator" orientation='vertical'>
-            <ReflexElement propagateDimensions={true}>
+            <ReflexElement className="viewer-element"
+              propagateDimensions={true}>
               {this.renderModel(model)}
             </ReflexElement>
             <ReflexSplitter

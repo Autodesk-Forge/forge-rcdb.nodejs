@@ -1,0 +1,104 @@
+.screenshot-manager .title > label {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  white-space: nowrap;
+  font-weight: normal;
+  user-select: none;
+  margin-left: 27px;
+  margin-top: 10px;
+  select: none;
+  width: 80px;
+}
+
+.screenshot-manager .controls {
+  white-space: nowrap;
+  display: flex;
+  margin: 10px;
+  height: 30px;
+  width: 100%;
+}
+
+.screenshot-manager .controls > button {
+   border-radius: 4px;
+   width: 68px;
+   float: left;
+ }
+
+.screenshot-manager .controls > button > span {
+  position: relative;
+  font-size: 24px;
+  top: -1px;
+}
+
+.screenshot-manager .controls > label {
+  margin: 4px 10px 0 10px;
+  font-weight: normal;
+  float: left;
+}
+
+.screenshot-manager .controls > .size-input {
+  border: 1px solid #aeaeae;
+  width: calc(50% - 140px);
+  padding: 3px 0 0 10px;
+  white-space: nowrap;
+  border-radius: 4px;
+  text-align: left;
+  overflow: hidden;
+  height: 29px;
+  float: left;
+}
+
+.screenshot-manager .items {
+  height: calc(100% - 56px);
+  overflow: scroll;
+  margin: 4px;
+}
+
+.screenshot-manager .items > .item {
+  border: 1px solid #aeaeae;
+  width: calc(100% - 10px);
+  background: #ededed;
+  white-space: nowrap;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  height: 62px;
+  padding: 2px;
+  margin: 5px;
+}
+
+.screenshot-manager .items > :hover {
+  background: rgba(0, 105, 245, 0.35);
+  border: 1px solid #1bb1f4;
+}
+
+.screenshot-manager .items > .item > .preview {
+  pointer-events: none;
+  position: relative;
+  border-radius: 4px;
+  height: 54px;
+  width: 54px;
+  float: left;
+  left: 1px;
+  top: 1px;
+}
+
+.screenshot-manager .items > .item > label {
+  pointer-events: none;
+  font-weight: normal;
+  position: relative;
+  margin: 0 0 0 12px;
+  float: left;
+  top: 16px;
+}
+
+.screenshot-manager .items > .item > button {
+  background: #ededed;
+  border-radius: 4px;
+  position: relative;
+  outline: none;
+  float: right;
+  right: 4px;
+  top: 12px;
+}

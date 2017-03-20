@@ -94,14 +94,14 @@ class WidgetContainer extends React.Component {
       ...this.props.className.split(' ')
     ]
 
-    const style = this.props.showTitle
-      ? {height: 'calc(100% - 40px)'}
-      : {height: '100%'}
+    const height = this.props.showTitle
+      ? 'calc(100% - 40px)'
+      : '100%'
 
     return (
-      <div className={classNames.join(' ')}>
+      <div className={classNames.join(' ')} style={this.props.style}>
          { this.renderTitle() }
-        <div className="content" style={style}>
+        <div className="content" style={{height}}>
           {this.renderChildren()}
         </div>
       </div>
