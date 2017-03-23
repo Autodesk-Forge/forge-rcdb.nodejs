@@ -75,7 +75,7 @@ const configurations = [
   }
 ]
 
-const hotSpots = [
+const hotspots = [
   {
     id: 1,
     dbId: 97,
@@ -177,18 +177,13 @@ class BobCATConfiguratorExtension extends ExtensionBase {
 
     this.onSelection = this.onSelection.bind(this)
 
-    const viewerToolbar = viewer.getToolbar(true)
-
-    const parentControl = viewerToolbar.getControl(
-      'toolbar-forge-configurator')
-
     this.hotSpotCommand = new HotSpotCommand (viewer, {
-      parentControl,
-      hotSpots
+      parentControl: options.parentControl,
+      hotspots
     })
 
     this.operatorCommand = new OperatorCommand (viewer, {
-      parentControl
+      parentControl: options.parentControl
     })
 
     this.configuratorCommand =

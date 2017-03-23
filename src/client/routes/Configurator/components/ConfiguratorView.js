@@ -1,4 +1,5 @@
 import ViewerConfigurator from 'Viewer.Configurator'
+import ConfiguratorHome from './ConfiguratorHome'
 import React from 'react'
 
 class ConfiguratorView extends React.Component {
@@ -27,18 +28,20 @@ class ConfiguratorView extends React.Component {
     })
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   render () {
 
     return (
-      <ViewerConfigurator
-        viewerEnv={this.props.appState.viewerEnv}
-        setViewerEnv={this.props.setViewerEnv}
-        modelId={this.props.location.query.id}
-        database='forge-configurator'/>
+      this.props.location.query.id
+        ? <ViewerConfigurator
+          viewerEnv={this.props.appState.viewerEnv}
+          setViewerEnv={this.props.setViewerEnv}
+          modelId={this.props.location.query.id}
+          database='forge-configurator'/>
+        : <ConfiguratorHome/>
     )
   }
 }

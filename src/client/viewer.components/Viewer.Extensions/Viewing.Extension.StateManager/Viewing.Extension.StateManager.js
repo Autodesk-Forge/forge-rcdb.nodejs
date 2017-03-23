@@ -65,7 +65,7 @@ class StateManagerExtension extends ExtensionBase {
 
     this._panel.on('open', () => {
 
-      if(this._api) {
+      if (this._api) {
 
         this._api.getSequence(this._options.dbModel._id).then(
           async(sequence) => {

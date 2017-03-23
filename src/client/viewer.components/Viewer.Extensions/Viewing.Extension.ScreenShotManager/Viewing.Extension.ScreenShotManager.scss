@@ -1,3 +1,7 @@
+.screenshot-manager .title {
+  float: left;
+}
+
 .screenshot-manager .title > label {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -11,41 +15,44 @@
   width: 80px;
 }
 
-.screenshot-manager .controls {
+.screenshot-manager .content > .controls {
+  margin: 10px 10px 0px 10px;
   white-space: nowrap;
   display: flex;
-  margin: 10px;
-  height: 30px;
+  height: 26px;
   width: 100%;
 }
 
-.screenshot-manager .controls > button {
-   border-radius: 4px;
-   width: 68px;
-   float: left;
+.screenshot-manager .content > .controls > button {
+  background: whitesmoke;
+  border-radius: 4px;
+  outline: none;
+  width: 68px;
+  float: left;
  }
 
-.screenshot-manager .controls > button > span {
+.screenshot-manager .content > .controls > button > span {
   position: relative;
-  font-size: 24px;
+  font-size: 20px;
+  color: #9b9b9b;
   top: -1px;
 }
 
-.screenshot-manager .controls > label {
+.screenshot-manager .content > .controls > label {
   margin: 4px 10px 0 10px;
   font-weight: normal;
   float: left;
 }
 
-.screenshot-manager .controls > .size-input {
+.screenshot-manager .content > .controls > .size-input {
   border: 1px solid #aeaeae;
-  width: calc(50% - 140px);
+  width: calc(50% - 145px);
   padding: 3px 0 0 10px;
   white-space: nowrap;
   border-radius: 4px;
   text-align: left;
   overflow: hidden;
-  height: 29px;
+  height: 26px;
   float: left;
 }
 
@@ -56,6 +63,11 @@
 }
 
 .screenshot-manager .items > .item {
+  transition-timing-function: ease;
+  transition-duration: 1.5s;
+  transition-property: all;
+  transition-delay: 0.0s;
+
   border: 1px solid #aeaeae;
   width: calc(100% - 10px);
   background: #ededed;
@@ -68,7 +80,7 @@
   margin: 5px;
 }
 
-.screenshot-manager .items > :hover {
+.screenshot-manager .items > .item:hover {
   background: rgba(0, 105, 245, 0.35);
   border: 1px solid #1bb1f4;
 }
@@ -94,11 +106,11 @@
 }
 
 .screenshot-manager .items > .item > button {
-  background: #ededed;
+  background: #FF9800;
   border-radius: 4px;
   position: relative;
   outline: none;
   float: right;
   right: 4px;
-  top: 12px;
+  top: 13px;
 }

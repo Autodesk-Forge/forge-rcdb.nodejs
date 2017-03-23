@@ -15,7 +15,7 @@ export default class OperatorCommand extends ViewerCommand {
 
     this.control = this.createButtonControl({
       parentControl: options.parentControl,
-      caption: 'Toggle operator view',
+      caption: 'Operator view',
       icon: 'toolbar-operator',
       id: 'toolbar-operator',
       handler: () => {

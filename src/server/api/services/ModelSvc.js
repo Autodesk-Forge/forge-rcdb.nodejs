@@ -195,7 +195,7 @@ export default class ModelSvc extends BaseSvc {
   // set states sequence
   //
   ///////////////////////////////////////////////////////////////////
-  setSequence(modelId, sequence) {
+  setSequence (modelId, sequence) {
 
     var _thisSvc = this
 

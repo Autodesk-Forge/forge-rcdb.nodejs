@@ -19,7 +19,7 @@ export default class SocketSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   name() {
 
-    return 'SocketSvc';
+    return 'SocketSvc'
   }
 
   ///////////////////////////////////////////////////////////////////
@@ -30,15 +30,13 @@ export default class SocketSvc extends BaseSvc {
 
     return new Promise((resolve, reject) => {
 
-      console.log(`${this._config.host}:${this._config.port}`)
-
       this.socket = ioClient.connect(
         `${this._config.host}:${this._config.port}`, {
           reconnect: true
         })
 
       this.socket.on('connect', ()=> {
-        console.log('client socket connected')
+
         resolve(this.socket)
       })
     })

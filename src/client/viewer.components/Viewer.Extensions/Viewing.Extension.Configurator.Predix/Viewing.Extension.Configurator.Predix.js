@@ -8,11 +8,12 @@ import HotSpotPropertyPanel from './Predix.HotSpot.PropertyPanel'
 import ExtensionBase from 'Viewer.ExtensionBase'
 import PredixPopover from './Predix.Popover'
 import EventTool from 'Viewer.EventTool'
+import ServiceManager from 'SvcManager'
 import Toolkit from 'Viewer.Toolkit'
 
 // React Stuff
-import { TimeSeries as SmoothieTimeSeries, SmoothieChart } from './smoothie'
 import WidgetContainer from 'WidgetContainer'
+import IoTGraph from './IoTGraph'
 import React from 'react'
 import './Data.scss'
 
@@ -20,9 +21,10 @@ import './Data.scss'
 import HotSpotCommand from 'HotSpot.Command'
 
 
-const hotSpots = [
+const hotspots = [
 
   {
+    controlled: true, //controlled by IoT sensor
     id: 1,
     dbId: 17445,
     isolateIds:[17438],
@@ -1184,16 +1186,11 @@ class PredixConfiguratorExtension extends ExtensionBase {
 
     this.onSelection = this.onSelection.bind(this)
 
-    const viewerToolbar = viewer.getToolbar(true)
-
     this.react = this._options.react
 
-    const parentControl = viewerToolbar.getControl(
-      'toolbar-forge-configurator')
-
     this.hotSpotCommand = new HotSpotCommand (viewer, {
-      parentControl,
-      hotSpots
+      parentControl: options.parentControl,
+      hotspots
     })
 
     this.panel = new HotSpotPropertyPanel(
@@ -1201,7 +1198,21 @@ class PredixConfiguratorExtension extends ExtensionBase {
       this.guid(),
       'GE Predix - Hotspot Data')
 
+    var controlledHotspot = null
+
+    this.hotSpotCommand.on('hotspot.created', (hotspot) => {
+
+      if (hotspot.data.controlled) {
+
+        controlledHotspot = hotspot
+
+        hotspot.hide()
+      }
+    })
+
     this.hotSpotCommand.on('hotspot.clicked', (hotspot) => {
+
+      const state =  this.react.getState()
 
       //console.log(JSON.stringify(this.viewer.getState({viewport:true})))
 
@@ -1220,7 +1231,7 @@ class PredixConfiguratorExtension extends ExtensionBase {
 
       const id = hotspot.data.id
 
-      const stateHotSpots = hotSpots.map((hotspot) => {
+      const stateHotSpots = state.hotspots.map((hotspot) => {
 
         return Object.assign({}, hotspot, {
           active: hotspot.id === id
@@ -1229,8 +1240,67 @@ class PredixConfiguratorExtension extends ExtensionBase {
 
       this.react.setState({
         activeItem: hotspot.data,
-        hotSpots: stateHotSpots
+        hotspots: stateHotSpots
       })
+    })
+
+    this.socketSvc = ServiceManager.getService('SocketSvc')
+
+    this.socketSvc.on('sensor.temperature', (data) => {
+
+      if (!controlledHotspot) {
+
+        return
+      }
+
+      const state =  this.react.getState()
+
+      if (data.objectTemperature > data.threshold) {
+
+        this.react.setState({
+          graphData: data
+        })
+
+        clearTimeout(this.timeout)
+
+        if (!controlledHotspot.visible) {
+
+          controlledHotspot.show()
+
+          this.react.setState({
+            hotspots: [
+              ...state.hotspots,
+              controlledHotspot.data
+            ]
+          })
+        }
+
+      } else {
+
+        if (controlledHotspot.visible) {
+
+          this.timeout = setTimeout(() => {
+
+            controlledHotspot.hide()
+
+            this.react.setState({
+              graphData: null,
+              hotspots: state.hotspots.filter((hotspot) => {
+                return !hotspot.controlled
+              })
+            })
+
+            const activeItem = state.activeItem
+
+            if (activeItem && (activeItem.id === controlledHotspot.id)) {
+
+              this.react.setState({
+                activeItem: null
+              })
+            }
+          }, 20 * 1000)
+        }
+      }
     })
   }
 
@@ -1300,7 +1370,9 @@ class PredixConfiguratorExtension extends ExtensionBase {
     this.react.setRenderExtension(this)
 
     this.react.setState({
-      hotSpots
+      hotspots: hotspots.filter((hotspot) => {
+        return !hotspot.controlled
+      })
     })
 
     return true
@@ -1365,12 +1437,15 @@ class PredixConfiguratorExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////////////
   onItemClicked (item) {
 
-    const {activeItem} = this.react.getState()
+    const state = this.react.getState()
+
+    const activeItem = state.activeItem
+
+    const hs = state.hotspots
 
     if (activeItem && (activeItem.id === item.id)) {
 
       this.react.setState({
-        hotSpots: hotSpots,
         activeItem: null
       })
 
@@ -1397,7 +1472,7 @@ class PredixConfiguratorExtension extends ExtensionBase {
         this.viewer,
         item.isolateIds)
 
-      const stateHotSpots = hotSpots.map((hotspot) => {
+      const stateHotSpots = hs.map((hotspot) => {
 
         return Object.assign({}, hotspot, {
           active: hotspot.id === item.id
@@ -1405,7 +1480,7 @@ class PredixConfiguratorExtension extends ExtensionBase {
       })
 
       this.react.setState({
-        hotSpots: stateHotSpots,
+        hotspots: stateHotSpots,
         activeItem: item
       })
     }
@@ -1444,7 +1519,7 @@ class PredixConfiguratorExtension extends ExtensionBase {
 
     var renderGraph = false
 
-    const items = state.hotSpots.map((hotspot) => {
+    const items = state.hotspots.map((hotspot) => {
 
       const active = hotspot.active ? ' active' : ''
 
@@ -1473,10 +1548,18 @@ class PredixConfiguratorExtension extends ExtensionBase {
       )
     })
 
+    const threshold = state.graphData
+      ? state.graphData.threshold
+      : 20 + (0.5 - Math.random()) * 10
+
+    const value = state.graphData
+      ? state.graphData.objectTemperature
+      : null
+
     return (
       <WidgetContainer title="Incidents">
         <ReflexContainer key="incidents" orientation='horizontal'>
-          <ReflexElement>
+          <ReflexElement flex={0.35}>
             <div className="item-list-container">
               {items}
             </div>
@@ -1486,115 +1569,18 @@ class PredixConfiguratorExtension extends ExtensionBase {
             renderOnResize={true}
             propagateDimensions={true}>
 
-              <Graph activeItem={state.activeItem} tagIdx={0}/>
-              <Graph activeItem={state.activeItem} tagIdx={1}/>
-              <Graph activeItem={state.activeItem} tagIdx={2}/>
+              <IoTGraph
+                activeItem={state.activeItem}
+                threshold={threshold}
+                value={value}
+                tagIdx={0} />
+
+              <IoTGraph activeItem={state.activeItem} tagIdx={1}/>
+              <IoTGraph activeItem={state.activeItem} tagIdx={2}/>
 
           </ReflexElement>
         </ReflexContainer>
       </WidgetContainer>
-    )
-  }
-}
-
-/////////////////////////////////////////////////////////////////
-//
-//
-/////////////////////////////////////////////////////////////////
-class Graph extends React.Component {
-
-  componentDidMount () {
-
-    this.threshold = new SmoothieTimeSeries()
-    this.ts = new SmoothieTimeSeries()
-    this.chart = new SmoothieChart()
-    this.intervalId = 0
-
-    this.thresholdValue = 25 + Math.random() * 25
-
-    const t = new Date().getTime()
-
-    this.threshold.append(t, this.thresholdValue)
-    this.ts.append(t, Math.random() * 100)
-
-    this.chart.addTimeSeries(this.threshold, {
-      strokeStyle: 'rgba(255, 0, 0, 1)',
-      fillStyle: 'rgba(255, 0, 0, 0.0)',
-      lineWidth: 1
-    })
-
-    this.chart.addTimeSeries(this.ts, {
-      strokeStyle: 'rgba(0, 255, 0, 1)',
-      fillStyle: 'rgba(0, 255, 0, 0.2)',
-      lineWidth: 1
-    })
-
-    this.intervalId = setInterval(() => {
-      const t = new Date().getTime()
-      this.threshold.append(t, this.thresholdValue)
-      this.ts.append(t, Math.random() * 100)
-    }, 1000)
-
-    this.chart.streamTo(
-      this.canvas,
-      100)
-  }
-
-  componentDidUpdate (prevProps, prevState) {
-
-    if (!prevProps.activeItem || !this.props.activeItem) {
-      return
-    }
-
-    if (prevProps.activeItem.id !== this.props.activeItem.id) {
-
-      this.thresholdValue = 25 + Math.random() * 25
-
-      clearInterval(this.intervalId)
-
-      this.threshold.clear()
-      this.ts.clear()
-
-      this.intervalId = setInterval(() => {
-        const t = new Date().getTime()
-        this.threshold.append(t, this.thresholdValue)
-        this.ts.append(t, Math.random() * 100)
-      }, 1000)
-    }
-  }
-
-  render () {
-
-    const width = isNaN(this.props.dimensions.width)
-      ? 100
-      : this.props.dimensions.width
-
-    const height = isNaN(this.props.dimensions.height)
-      ? 100
-      : Math.floor((this.props.dimensions.height-10)/3)
-
-    const item = this.props.activeItem
-
-    const tagId = item
-      ? item.tags[this.props.tagIdx]
-      : ''
-
-    const style = {
-      display: item ? 'block' : 'none',
-      height: height
-    }
-
-    return (
-      <div style={style}>
-        <div className="graph-title">
-          <label>
-            Tag {tagId}
-          </label>
-        </div>
-        <canvas className="graph" width={width} height={height-30}
-          ref={ (div) => this.canvas = div }> 
-        </canvas> 
-      </div>
     )
   }
 }

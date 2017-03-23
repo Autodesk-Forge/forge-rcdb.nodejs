@@ -50,14 +50,11 @@ class ViewerView extends React.Component {
 
       this.mounted = true
 
-      this.socketSvc.connect().then(() => {
+      this.socketSvc.on('update.dbItem',
+        (updatedDbItem) => {
 
-        this.socketSvc.on('update.dbItem',
-          (updatedDbItem) => {
-
-            this.updateDbItem(updatedDbItem)
-          })
-      })
+          this.updateDbItem(updatedDbItem)
+        })
 
       this.materialSvc.getMaterials(
         'forge-rcdb').then((materials) => {

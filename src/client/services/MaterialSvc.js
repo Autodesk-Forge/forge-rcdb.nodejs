@@ -2,7 +2,7 @@
 import ClientAPI from 'ClientAPI'
 import BaseSvc from './BaseSvc'
 
-export default class SocketSvc extends BaseSvc {
+export default class MaterialSvc extends BaseSvc {
 
   /////////////////////////////////////////////////////////////////
   //

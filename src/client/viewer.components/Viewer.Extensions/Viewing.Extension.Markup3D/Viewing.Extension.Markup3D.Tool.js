@@ -252,6 +252,8 @@ export default class Markup3DTool extends EventsEmitter {
 
         markup.startDrag()
 
+        this.currentMarkup = markup
+
         this.emit('pinSelected')
 
       } else {
@@ -282,7 +284,9 @@ export default class Markup3DTool extends EventsEmitter {
       this.markupCollection[markup.id] = markup
     }
 
-    this.currentMarkup = null
+    setTimeout(() => {
+      this.currentMarkup = null
+    }, 100)
   }
 
   /////////////////////////////////////////////////////////////////

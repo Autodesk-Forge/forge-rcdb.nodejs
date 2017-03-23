@@ -161,7 +161,7 @@ app.get('*', express.static(path.resolve(process.cwd(), './dist')))
 //
 //
 /////////////////////////////////////////////////////////////////////
-function runServer(app) {
+const runServer = (app) => {
 
   try {
 
@@ -223,8 +223,8 @@ function runServer(app) {
 
         ServiceManager.registerService(socketSvc)
 
-        console.log('Server listening on: ')
-        console.log(server.address())
+        const port = server.address().port
+        console.log('Server listening on PORT: ' + port)
         console.log('ENV: ' + process.env.NODE_ENV)
       })
 

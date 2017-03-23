@@ -29,7 +29,7 @@ export default class HotSpotCommand extends ViewerCommand {
 
       this.control.container.classList.add('active')
 
-      options.hotSpots.forEach((data) => {
+      options.hotspots.forEach((data) => {
 
         const hotSpot = new HotSpot(
           this.viewer, data)
@@ -57,7 +57,7 @@ export default class HotSpotCommand extends ViewerCommand {
 
         this.emit('hotspot.created', hotSpot)
 
-        this.hotSpots.push(hotSpot)
+        this.hotspots.push(hotSpot)
       })
     })
 
@@ -65,13 +65,13 @@ export default class HotSpotCommand extends ViewerCommand {
 
       this.control.container.classList.remove('active')
 
-      this.hotSpots.forEach((hotSpot) => {
+      this.hotspots.forEach((hotSpot) => {
 
         hotSpot.remove()
       })
     })
 
-    this.hotSpots = []
+    this.hotspots = []
   }
 
   /////////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ export default class HotSpotCommand extends ViewerCommand {
   /////////////////////////////////////////////////////////
   isolate (ids) {
 
-    this.hotSpots.forEach((hotSpot) => {
+    this.hotspots.forEach((hotSpot) => {
 
       const idArray = this.toArray(ids)
 
@@ -97,9 +97,12 @@ export default class HotSpotCommand extends ViewerCommand {
         !idArray.length ||
         idArray.includes(hotSpot.id)
 
-      hotSpot.skipOcclusion = !show
+      if (!hotSpot.hidden) {
 
-      hotSpot.setVisible(show)
+        hotSpot.skipOcclusion = !show
+
+        hotSpot.setVisible(show)
+      }
     })
   }
 }

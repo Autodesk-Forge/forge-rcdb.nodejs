@@ -22,7 +22,9 @@ module.exports = function() {
         db + '-ModelSvc')
 
       var opts = {
-        fieldQuery:{},
+        fieldQuery:{
+          private: null
+        },
         pageQuery:{
           name: 1,
           urn: 1,

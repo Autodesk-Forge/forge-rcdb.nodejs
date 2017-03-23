@@ -103,6 +103,13 @@ class PieChartExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   unload () {
 
+    const state = this.react.getState()
+
+    if (state.theming) {
+
+      this.toggleTheming()
+    }
+
     this.viewer.removeEventListener(
       Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
       this.onGeometryLoaded)

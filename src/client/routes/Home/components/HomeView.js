@@ -1,5 +1,5 @@
-import { IndexLink, Link } from 'react-router'
 import ServiceManager from 'SvcManager'
+import { Link } from 'react-router'
 import React from 'react'
 import './HomeView.scss'
 
@@ -17,7 +17,7 @@ class HomeView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////////////
-  async componentDidMount () {
+  async componentWillMount () {
 
     try {
 

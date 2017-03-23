@@ -38,6 +38,14 @@ const socketSvc = new SocketSvc({
   port: config.client.port
 })
 
+socketSvc.connect().then((socket) => {
+
+  console.log(`${config.client.host}:${config.client.port}`)
+
+  const id = socket.id
+  console.log('Client socket connected: ' + id)
+})
+
 const modelSvc = new ModelSvc({
   apiUrl: '/api/models'
 })
