@@ -10,6 +10,7 @@ import React from 'react'
 import ServiceManager from 'SvcManager'
 import MaterialSvc from 'MaterialSvc'
 import StorageSvc from 'StorageSvc'
+import DialogSvc from 'DialogSvc'
 import SocketSvc from 'SocketSvc'
 import FalcorSvc from 'FalcorSvc'
 import ModelSvc from 'ModelSvc'
@@ -50,6 +51,10 @@ const modelSvc = new ModelSvc({
   apiUrl: '/api/models'
 })
 
+const dialogSvc = new DialogSvc({
+
+})
+
 const eventSvc = new EventSvc({
 
 })
@@ -61,6 +66,7 @@ ServiceManager.registerService(materialSvc)
 ServiceManager.registerService(storageSvc)
 ServiceManager.registerService(socketSvc)
 ServiceManager.registerService(falcorSvc)
+ServiceManager.registerService(dialogSvc)
 ServiceManager.registerService(modelSvc)
 ServiceManager.registerService(eventSvc)
 

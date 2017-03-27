@@ -38,6 +38,10 @@
   top: -1px;
 }
 
+.screenshot-manager .content > .controls > button:hover > span {
+  color: #FF9800;
+}
+
 .screenshot-manager .content > .controls > label {
   margin: 4px 10px 0 10px;
   font-weight: normal;
@@ -96,21 +100,35 @@
   top: 1px;
 }
 
-.screenshot-manager .items > .item > label {
+.screenshot-manager .items > .item > div {
+  width: calc(100% - 100px);
   pointer-events: none;
-  font-weight: normal;
   position: relative;
-  margin: 0 0 0 12px;
   float: left;
   top: 16px;
 }
 
+.screenshot-manager .items > .item > div > .label {
+  font-weight: normal;
+  font-size: small;
+  color: black;
+}
+
 .screenshot-manager .items > .item > button {
-  background: #FF9800;
+  transition-timing-function: ease;
+  transition-duration: 1.5s;
+  transition-property: all;
+  transition-delay: 0.0s;
+
+  background: #f58b00;
   border-radius: 4px;
   position: relative;
   outline: none;
   float: right;
   right: 4px;
   top: 13px;
+}
+
+.screenshot-manager .items > .item > button:hover {
+  background: #ff9100;
 }

@@ -8,8 +8,14 @@ import ContentEditable from 'react-contenteditable'
 import ExtensionBase from 'Viewer.ExtensionBase'
 import './Viewing.Extension.StateManager.scss'
 import WidgetContainer from 'WidgetContainer'
+import Label from 'react-text-truncate'
+import ServiceManager from 'SvcManager'
 import Toolkit from 'Viewer.Toolkit'
 import React from 'react'
+import {
+  DropdownButton,
+  MenuItem
+} from 'react-bootstrap'
 
 class StateManagerExtension extends ExtensionBase {
 
@@ -20,6 +26,9 @@ class StateManagerExtension extends ExtensionBase {
   constructor (viewer, options) {
 
     super (viewer, options)
+
+    this.dialogSvc = ServiceManager.getService(
+      'DialogSvc')
 
     this.react = options.react
 
@@ -56,7 +65,11 @@ class StateManagerExtension extends ExtensionBase {
 
     this.react.setState({
 
+      sequenceDisabled: true,
+      newSequenceName: '',
+      sequenceName: '',
       stateName: '',
+      sequences: [],
       items: []
 
     }).then (() => {
@@ -109,10 +122,57 @@ class StateManagerExtension extends ExtensionBase {
     return true
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
+  addSequence () {
+
+    this.react.setState({
+      newSequenceName: ''
+    })
+
+    const onClose = (result) => {
+
+      if (result === 'OK') {
+
+        const {newSequenceName} = this.react.getState()
+
+        console.log('New sequence: ' + newSequenceName)
+      }
+
+      this.dialogSvc.off('dialog.close', onClose)
+    }
+
+    this.dialogSvc.on('dialog.close', onClose)
+
+    this.dialogSvc.setState({
+      className: 'state-manager-dlg',
+      title: 'Add Sequence ...',
+      content:
+        <div>
+          <ContentEditable
+            onChange={(e) => this.onInputChanged(e, 'newSequenceName')}
+            onKeyDown={(e) => this.onKeyDown(e)}
+            className="sequence-name-input"
+            html={''}/>
+        </div>,
+      open: true
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  deleteSequence () {
+
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   addItem (item) {
 
     const state = this.react.getState()
@@ -188,10 +248,10 @@ class StateManagerExtension extends ExtensionBase {
 
     if (e.keyCode === 13) {
 
+      e.stopPropagation()
+      e.preventDefault()
+      return
     }
-
-    e.stopPropagation()
-    e.preventDefault()
   }
 
   /////////////////////////////////////////////////////////
@@ -295,14 +355,47 @@ class StateManagerExtension extends ExtensionBase {
 
     const state = this.react.getState()
 
+    const sequences = state.sequences.map((item, idx) => {
+      return (
+        <MenuItem eventKey={idx} key={idx} onClick={() => {
+
+        }}>
+          { item.name }
+        </MenuItem>
+      )
+    })
+
     return (
       <div className="controls">
+
+        <DropdownButton
+          title={"Sequence: " + state.sequenceName }
+          disabled={state.sequenceDisabled}
+          className="sequence-dropdown"
+          key="sequence-dropdown"
+          id="sequence-dropdown">
+         { sequences }
+        </DropdownButton>
+
+        <button onClick={() => this.addSequence()}
+          title="Add sequence">
+          <span className="fa fa-plus">
+          </span>
+        </button>
+
+        <button onClick={() => this.deleteSequence()}
+          title="Delete sequence">
+          <span className="fa fa-times">
+          </span>
+        </button>
+
+        <br/>
 
         <ContentEditable
           onChange={(e) => this.onInputChanged(e, 'stateName')}
           onKeyDown={(e) => this.onKeyDown(e)}
           className="state-name-input"
-          html={state.width}/>
+          html={''}/>
 
         <button onClick={() => this.addItem()}
           title="Save state">
@@ -330,14 +423,17 @@ class StateManagerExtension extends ExtensionBase {
 
     const items = state.items.map((item) => {
 
+      const text = item.name
+
       return (
         <div key={item.guid} className="item" onClick={
             () => this.onItemClicked (item)
           }>
 
-          <label>
-            { item.name }
-          </label>
+          <Label truncateText=" …"
+            text={text}
+            line={1}
+          />
 
           <button onClick={(e) => {
             this.deleteItem(item.guid)

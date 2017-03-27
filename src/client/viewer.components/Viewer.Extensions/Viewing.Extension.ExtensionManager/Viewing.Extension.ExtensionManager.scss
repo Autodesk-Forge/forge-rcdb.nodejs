@@ -1,5 +1,9 @@
 .extension-manager .title {
-  float: left;
+    float: left;
+}
+
+.extension-manager .content {
+  background: white;
 }
 
 .extension-manager .title  > label{
@@ -13,9 +17,10 @@
 }
 
 .extension-manager .extension-list {
+  height: calc(100% - 12px);
   background-color: white;
+  margin: 6px 0 0 0;
   overflow: scroll;
-  height: 100%;
 }
 
 .extension-manager .item {

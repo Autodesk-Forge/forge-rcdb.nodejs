@@ -42,8 +42,9 @@ body {
 //
 /////////////////////////////////////////////////////////
 html {
-  overflow-style: none;
   box-sizing: border-box;
+  overflow-style: none;
+  overflow: hidden;
 }
 
 ::-webkit-scrollbar {

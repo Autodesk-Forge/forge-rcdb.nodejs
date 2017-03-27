@@ -7,6 +7,7 @@ import './Viewing.Extension.ScreenShotManager.scss'
 import ContentEditable from 'react-contenteditable'
 import ExtensionBase from 'Viewer.ExtensionBase'
 import WidgetContainer from 'WidgetContainer'
+import Label from 'react-text-truncate'
 import Toolkit from 'Viewer.Toolkit'
 import React from 'react'
 
@@ -258,6 +259,9 @@ class ScreenShotManagerExtension extends ExtensionBase {
 
     const items = state.items.map((item) => {
 
+      const text =
+        `${item.name} [${item.width} x ${item.height}]`
+
       return (
         <div key={item.id} className="item" onClick={
             () => this.onItemClicked (item)
@@ -268,12 +272,10 @@ class ScreenShotManagerExtension extends ExtensionBase {
           }}>
           </div>
 
-          <label>
-            { item.name + ' [' +
-              item.width + ' x ' +
-              item.height + ']'
-            }
-          </label>
+          <Label truncateText=" …"
+            text={text}
+            line={1}
+          />
 
           <button onClick={(e) => {
             this.deleteItem(item.id)
