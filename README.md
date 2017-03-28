@@ -39,7 +39,7 @@ To run these samples, you need your own Forge API credentials:
 
     * `npm install`    *(downloads project dependencies locally)*
 
-    * `npm start`      *(builds client on the fly and run server)*
+    * `FORGE_CLIENT_ID=<YOUR-CLIENT-ID> FORGE_CLIENT_SECRET=<YOUR-CLIENT-SECRET> NODE_ENV=development npm start`      *(builds client on the fly and run server)*
 
     * open [http://localhost:3000](http://localhost:3000) in your favorite browser
 
