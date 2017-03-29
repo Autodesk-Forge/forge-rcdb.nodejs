@@ -6,6 +6,12 @@
   width: 100%;
 }
 
+.pie-chart > svg {
+  position: relative;
+  margin: 0 auto;
+  display: table;
+}
+
 svg [class*="_pieChart"],
 svg [class*="_labelGroup"] {
   cursor: pointer;

@@ -29,7 +29,7 @@ class ExtensionManager extends ExtensionBase {
     this.render = this.render.bind(this)
 
     this.reactOpts = {
-      setRenderExtension: (extension) => {
+      pushRenderExtension: (extension) => {
 
         return new Promise((resolve) => {
 
@@ -40,6 +40,27 @@ class ExtensionManager extends ExtensionBase {
               ...state.renderExtensions, extension
             ]
 
+          }).then(async() => {
+
+            resolve()
+
+            await this.react.forceUpdate()
+
+            this.onStopResize()
+          })
+        })
+      },
+      popRenderExtension: (extension) => {
+
+        return new Promise((resolve) => {
+
+          const state = this.react.getState()
+
+          this.react.setState({
+            renderExtensions:
+              state.renderExtensions.filter((ext) => {
+                return ext.id !== extension.id
+              })
           }).then(async() => {
 
             resolve()
@@ -74,19 +95,6 @@ class ExtensionManager extends ExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  sleep (ms) {
-
-    return new Promise((resolve) => {
-      setTimeout(() =>  {
-        resolve()
-      }, ms)
-    })
-  }
-
-  /////////////////////////////////////////////////////////
   // Load callback
   //
   /////////////////////////////////////////////////////////
@@ -108,7 +116,7 @@ class ExtensionManager extends ExtensionBase {
 
     }).then (async() => {
 
-      await this.react.setRenderExtension(this)
+      await this.react.pushRenderExtension(this)
 
       const extensions = this.options.extensions || []
 
@@ -230,7 +238,7 @@ class ExtensionManager extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onExtensionItemClicked (extension) {
+  async onExtensionItemClicked (extension) {
 
     if (extension.loading) {
 
@@ -238,6 +246,8 @@ class ExtensionManager extends ExtensionBase {
     }
 
     if (extension.enabled) {
+
+      await this.react.popViewerPanel(extension)
 
       this.viewer.unloadExtension(extension.id)
 
@@ -251,50 +261,47 @@ class ExtensionManager extends ExtensionBase {
           return ext.id !== extension.id
         })
 
-      this.react.setState({
-        renderExtensions: renderExts,
-        extensions
+      await this.react.setState({
+          renderExtensions: renderExts,
+          extensions
+        })
 
-      }).then(() => {
+      this.react.forceUpdate()
 
-        this.react.forceUpdate()
-
-        this.storageSvc.save(
-          'extension-manager', {
-            extensions: extensions.filter((ext) => {
-              return ext.enabled
-            }).map((ext) => {
-              return ext.id
-            })
+      this.storageSvc.save(
+        'extension-manager', {
+          extensions: extensions.filter((ext) => {
+            return ext.enabled
+          }).map((ext) => {
+            return ext.id
           })
-      })
+        })
 
     } else {
 
       const { extensions } = this.react.getState()
 
-      this.loadDynamicExtension (extension).then(
-        (extInstance) => {
+      const extInstance =
+        await this.loadDynamicExtension (extension)
 
-          this.storageSvc.save(
-            'extension-manager', {
-              extensions: extensions.filter((ext) => {
-                return ext.enabled
-              }).map((ext) => {
-                return ext.id
-              })
-            })
-
-          for (const eventId in this.events) {
-
-            const event = this.events[eventId]
-
-            if (extInstance[event.handler]) {
-
-              extInstance[event.handler](event.args)
-            }
-          }
+      this.storageSvc.save(
+        'extension-manager', {
+          extensions: extensions.filter((ext) => {
+            return ext.enabled
+          }).map((ext) => {
+            return ext.id
+          })
         })
+
+      for (const eventId in this.events) {
+
+        const event = this.events[eventId]
+
+        if (extInstance[event.handler]) {
+
+          extInstance[event.handler](event.args)
+        }
+      }
     }
   }
 
@@ -410,15 +417,19 @@ class ExtensionManager extends ExtensionBase {
       (extension) => {
 
         return (
-          <ExtensionPane renderTitle={extension.renderTitle}
+          <ExtensionPane
+            renderTitle={() => extension.renderTitle(true)}
             onStopResize={(e) => this.onStopResize()}
             onResize={(e) => this.onResize()}
             className={extension.className}
             flex={extension.options.flex}
             key={extension.id}>
-
-            { extension.render({showTitle: false}) }
-
+            {
+              extension.render({
+                showTitle: false,
+                docked: true
+              })
+            }
           </ExtensionPane>
         )
       })

@@ -71,7 +71,7 @@ class PieChartExtension extends ExtensionBase {
       data: []
     }).then (() => {
 
-      this.react.setRenderExtension(this)
+      this.react.pushRenderExtension(this)
     })
 
     this.viewer.addEventListener(

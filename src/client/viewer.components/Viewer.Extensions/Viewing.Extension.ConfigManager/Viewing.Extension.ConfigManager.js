@@ -32,6 +32,8 @@ class ConfigManagerExtension extends ExtensionBase {
 
     super (viewer, options)
 
+    this.renderTitle = this.renderTitle.bind(this)
+
     this.dialogSvc =
       ServiceManager.getService('DialogSvc')
 
@@ -45,6 +47,8 @@ class ConfigManagerExtension extends ExtensionBase {
         options.apiUrl +
         `/config/${options.database}/${modelId}`)
     }
+
+    this.id = ConfigManagerExtension.ExtensionId
   }
 
   /////////////////////////////////////////////////////////
@@ -81,7 +85,7 @@ class ConfigManagerExtension extends ExtensionBase {
 
     }).then (() => {
 
-      this.react.setRenderExtension(this).then(async() => {
+      this.react.pushRenderExtension(this).then(async() => {
 
         const component = this.react.getComponent()
 
@@ -125,6 +129,8 @@ class ConfigManagerExtension extends ExtensionBase {
   //
   /////////////////////////////////////////////////////////
   unload () {
+
+    this.react.popViewerPanel(this)
 
     console.log('Viewing.Extension.ConfigManager unloaded')
 
@@ -245,8 +251,6 @@ class ConfigManagerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   onUpdateSequence () {
 
-    const state = this.react.getState()
-
     const component = this.react.getComponent()
 
     const domItems = ReactDOM.findDOMNode(
@@ -258,6 +262,8 @@ class ConfigManagerExtension extends ExtensionBase {
 
           return childNode.dataset.id
         })
+
+    const state = this.react.getState()
 
     var sequence = state.sequence
 
@@ -479,13 +485,46 @@ class ConfigManagerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  renderTitle () {
+  toggleDocking (docked) {
+
+    if (docked) {
+
+      this.react.popRenderExtension(this).then(() => {
+
+        this.react.pushViewerPanel(this)
+      })
+
+    } else {
+
+      this.react.popViewerPanel(this).then(() => {
+
+        this.react.pushRenderExtension(this)
+      })
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  renderTitle (docked) {
+
+    const spanClass = docked
+      ? 'fa fa-chain-broken'
+      : 'fa fa-chain'
 
     return (
       <div className="title">
         <label>
           Config Manager
         </label>
+        <div className="config-manager-controls">
+          <button onClick={() => this.toggleDocking(docked)}
+            title="Toggle docking mode">
+            <span className={spanClass}>
+            </span>
+          </button>
+        </div>
       </div>
     )
   }
@@ -621,10 +660,11 @@ class ConfigManagerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  render (opts = {showTitle: true}) {
+  render (opts) {
 
     return (
-      <WidgetContainer renderTitle={this.renderTitle}
+      <WidgetContainer
+        renderTitle={() => this.renderTitle(opts.docked)}
         showTitle={opts.showTitle}
         className={this.className}>
 

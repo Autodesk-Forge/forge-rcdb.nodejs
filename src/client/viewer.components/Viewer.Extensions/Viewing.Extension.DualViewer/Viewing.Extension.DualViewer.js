@@ -81,7 +81,7 @@ class DualViewerExtension extends ExtensionBase {
 
     }).then (() => {
 
-      this.react.setRenderExtension(this)
+      this.react.pushRenderExtension(this)
     })
 
     this.viewer.addEventListener(

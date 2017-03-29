@@ -3,6 +3,7 @@ import { ReactLoader, Loader } from 'Loader'
 import ServiceManager from 'SvcManager'
 import './Viewer.Configurator.scss'
 import Viewer from 'Viewer'
+import Panel from 'Panel'
 import React from 'react'
 
 class ViewerConfigurator extends React.Component {
@@ -210,12 +211,25 @@ class ViewerConfigurator extends React.Component {
       const fullDefaultOptions = Object.assign({},
         defaultOptions, {
           react: {
-            setRenderExtension: (ext) => {
+            pushRenderExtension: (ext) => {
 
               return new Promise ((resolve) => {
                 const newState = Object.assign({},
                   this.state, {
                     renderExtension: ext
+                  })
+
+                this.setState(newState, () => {
+                  resolve ()
+                })
+              })
+            },
+            popRenderExtension: (ext) => {
+
+              return new Promise ((resolve) => {
+                const newState = Object.assign({},
+                  this.state, {
+                    renderExtension: null
                   })
 
                 this.setState(newState, () => {
@@ -260,9 +274,11 @@ class ViewerConfigurator extends React.Component {
                 })
               })
             },
-            addViewerPanel: (panel) => {
+            pushViewerPanel: (extension) => {
 
               return new Promise ((resolve) => {
+
+                const panel = new Panel(extension)
 
                 const newState = Object.assign({},
                   this.state, {
@@ -270,6 +286,23 @@ class ViewerConfigurator extends React.Component {
                       ...this.state.viewerPanels,
                       panel
                   ]})
+
+                this.setState(newState, () => {
+                  resolve ()
+                })
+              })
+            },
+            popViewerPanel: (extension) => {
+
+              return new Promise ((resolve) => {
+
+                const newState = Object.assign({},
+                  this.state, {
+                    viewerPanels:
+                      this.state.viewerPanels.filter((panel) => {
+                        return panel.id !==  extension.id
+                      })
+                  })
 
                 this.setState(newState, () => {
                   resolve ()
@@ -417,10 +450,15 @@ class ViewerConfigurator extends React.Component {
   /////////////////////////////////////////////////////////////////
   renderExtension () {
 
-    const {renderExtension} = this.state
+    const { renderExtension } = this.state
+
+    const renderOptions = {
+      showTitle: true,
+      docked: true
+    }
 
     const content = renderExtension
-      ? this.state.renderExtension.render()
+      ? this.state.renderExtension.render(renderOptions)
       : <div></div>
 
     return (

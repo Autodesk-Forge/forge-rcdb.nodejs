@@ -67,7 +67,7 @@ class ScreenShotManagerExtension extends ExtensionBase {
 
     }).then (() => {
 
-      this.react.setRenderExtension(this)
+      this.react.pushRenderExtension(this)
     })
 
     console.log('Viewing.Extension.ScreenShotManager loaded')

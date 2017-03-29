@@ -1367,7 +1367,7 @@ class PredixConfiguratorExtension extends ExtensionBase {
     this.viewer.setGroundShadow(false)
     this.viewer.setLightPreset(1)
 
-    this.react.setRenderExtension(this)
+    this.react.pushRenderExtension(this)
 
     this.react.setState({
       hotspots: hotspots.filter((hotspot) => {

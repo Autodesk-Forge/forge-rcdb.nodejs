@@ -19,7 +19,7 @@
   margin: 10px 10px 0px 10px;
   display: inline-block;
   white-space: nowrap;
-  height: 62px;
+  height: 54px;
   width: 100%;
 }
 
@@ -188,4 +188,44 @@
   overflow: hidden;
   height: 26px;
   width: 100%;
+}
+
+/////////////////////////////////////////////////////////
+// title controls
+//
+/////////////////////////////////////////////////////////
+.config-manager-controls {
+  display: inline-block;
+  position: absolute;
+  left: 140px;
+}
+
+.config-manager-controls > button {
+  border: 1px solid #c6c6c6;
+  background-color: #e1e1e1;
+  border-radius: 6px;
+  position: relative;
+  margin-right: 4px;
+  overflow: hidden;
+  margin-top: 8px;
+  outline: none;
+  height: 24px;
+  width: 26px;
+}
+
+.config-manager-controls > button:hover {
+  border: 1px solid #878787;
+  background-color: #f5f5f5;
+}
+
+.config-manager-controls > button > label {
+  position: relative;
+  font-size: 20px;
+  color: #f0fcff;
+  top: -8px;
+}
+
+.config-manager-controls > button > span {
+  pointer-events: none;
+  color: #9b9b9b
 }
