@@ -1,10 +1,10 @@
 ////////////////////////////////////////////////////////////////
-// StateManager API
+// ConfigManager API
 //
 /////////////////////////////////////////////////////////////////
 import ClientAPI from 'ClientAPI'
 
-export default class StateAPI extends ClientAPI {
+export default class ConfigAPI extends ClientAPI {
 
   ///////////////////////////////////////////////////////////////
   // Class constructor
@@ -12,27 +12,16 @@ export default class StateAPI extends ClientAPI {
   ///////////////////////////////////////////////////////////////
   constructor (apiUrl) {
 
-    super(apiUrl)
+    super (apiUrl)
   }
 
   ///////////////////////////////////////////////////////////////
   //
   //
   ///////////////////////////////////////////////////////////////
-  async getSequence(modelId) {
+  getSequences () {
 
-  var url = this.apiUrl + `/${modelId}/states/sequence`
-
-  return this.ajax(url)
-}
-
-  ///////////////////////////////////////////////////////////////
-  //
-  //
-  ///////////////////////////////////////////////////////////////
-  getStates(modelId) {
-
-    var url = this.apiUrl + `/${modelId}/states`
+    const url = this.apiUrl + `/sequences`
 
     return this.ajax(url)
   }
@@ -41,13 +30,13 @@ export default class StateAPI extends ClientAPI {
   //
   //
   ///////////////////////////////////////////////////////////////
-  saveSequence(modelId, sequence) {
+  addSequence (sequence) {
 
-    var payload = {
-      sequence: sequence
+    const payload = {
+      sequence
     }
 
-    var url = this.apiUrl + `/${modelId}/states/sequence`
+    const url = this.apiUrl + `/sequences`
 
     return this.ajax({
       url: url,
@@ -64,13 +53,61 @@ export default class StateAPI extends ClientAPI {
   //
   //
   ///////////////////////////////////////////////////////////////
-  addState(modelId, state) {
+  updateSequence (sequence) {
 
-    var payload = {
-      state: state
+    const payload = {
+      sequence
     }
 
-    var url = this.apiUrl + `/${modelId}/states`
+    const url = this.apiUrl + `/sequences`
+
+    return this.ajax({
+      url: url,
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      data: JSON.stringify(payload)
+    })
+  }
+
+  ///////////////////////////////////////////////////////////////
+  //
+  //
+  ///////////////////////////////////////////////////////////////
+  deleteSequence (sequenceId) {
+
+    const url = this.apiUrl + `/sequences/${sequenceId}`
+
+    return this.ajax({
+      url: url,
+      method: 'DELETE'
+    })
+  }
+
+  ///////////////////////////////////////////////////////////////
+  //
+  //
+  ///////////////////////////////////////////////////////////////
+  getStates (sequenceId) {
+
+    const url = this.apiUrl + `/sequences/${sequenceId}/states`
+
+    return this.ajax(url)
+  }
+
+  ///////////////////////////////////////////////////////////////
+  //
+  //
+  ///////////////////////////////////////////////////////////////
+  addState (sequenceId, state) {
+
+    const payload = {
+      state
+    }
+
+    const url = this.apiUrl + `/sequences/${sequenceId}/states`
 
     return this.ajax({
       url: url,
@@ -87,13 +124,14 @@ export default class StateAPI extends ClientAPI {
   //
   //
   ///////////////////////////////////////////////////////////////
-  removeState(modelId, stateId) {
+  deleteState (sequenceId, stateId) {
 
-    var url = this.apiUrl + `/${modelId}/states/${stateId}/remove`
+    const url = this.apiUrl +
+      `/sequences/${sequenceId}/states/${stateId}`
 
     return this.ajax({
       url: url,
-      method: 'POST'
+      method: 'DELETE'
     })
   }
 }

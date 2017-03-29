@@ -346,13 +346,13 @@ class ViewerConfigurator extends React.Component {
       const ctrlGroup = this.createToolbar (viewer)
 
       const defaultOptions = {
-        apiUrl: `/api/models/${this.props.database}`,
         getViewablePath: this.getViewablePath,
         loadDocument: this.loadDocument,
         database: this.props.database,
         dbModel: this.state.dbModel,
         parentControl: ctrlGroup,
         loader: this.loader,
+        apiUrl: `/api`,
         model: model
       }
 

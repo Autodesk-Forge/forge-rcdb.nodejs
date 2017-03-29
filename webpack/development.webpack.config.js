@@ -178,7 +178,7 @@ module.exports = {
       },
 
       {
-        test: /\.(sass|scss)$/,
+        test: /\.(sass|scss|less)$/,
         use: [{
           loader:'style-loader'
         },  {

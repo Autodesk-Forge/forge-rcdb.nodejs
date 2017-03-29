@@ -135,7 +135,7 @@ export default class ModelSvc extends BaseSvc {
   //
   //
   ///////////////////////////////////////////////////////////////////////////////
-  download(modelId, path) {
+  download (modelId, path) {
 
     var _thisSvc = this
 
@@ -341,6 +341,338 @@ export default class ModelSvc extends BaseSvc {
         return resolve(stateId)
 
       } catch(ex){
+
+        return reject(ex)
+      }
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // returns config sequences
+  //
+  /////////////////////////////////////////////////////////
+  getConfigSequences (modelId) {
+
+    return new Promise(async(resolve, reject)=> {
+
+      try {
+
+        var dbSvc = ServiceManager.getService(
+          this._config.dbName)
+
+        var query = {
+          fieldQuery:{
+            _id: new mongo.ObjectId(modelId)
+          },
+          pageQuery:{
+            sequences: 1
+          }
+        }
+
+        var model = await dbSvc.findOne(
+          this._config.collections.models,
+          query)
+
+        return resolve (model.sequences || [])
+
+      } catch(ex){
+
+        return reject(ex)
+      }
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // add new config sequence
+  //
+  /////////////////////////////////////////////////////////
+  addConfigSequence (modelId, sequence) {
+
+    return new Promise(async(resolve, reject) => {
+
+      try {
+
+        const dbSvc = ServiceManager.getService(
+          this._config.dbName)
+
+        const collection = await dbSvc.getCollection(
+          this._config.collections.models)
+
+        collection.update(
+          {
+            '_id': new mongo.ObjectID(modelId)
+          },
+          {
+            $push: {
+              'sequences': sequence
+            }
+          },
+          (err) => {
+
+            if (err) {
+
+              return reject(err)
+            }
+
+            return resolve (sequence)
+          })
+
+      } catch (ex) {
+
+        return reject(ex)
+      }
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // update existing config sequence
+  //
+  /////////////////////////////////////////////////////////
+  updateConfigSequence (modelId, sequence) {
+
+    return new Promise(async(resolve, reject) => {
+
+      try {
+
+        const dbSvc = ServiceManager.getService(
+          this._config.dbName)
+
+        const collection = await dbSvc.getCollection(
+          this._config.collections.models)
+
+        collection.update(
+          {
+            '_id': new mongo.ObjectID(modelId),
+            'sequences.id': sequence.id
+          },
+          {
+            $set: {
+              'sequences.$.stateIds': sequence.stateIds
+            }
+          },
+          (err) => {
+
+            if (err) {
+
+              return reject(err)
+            }
+
+            return resolve (sequence)
+          })
+
+      } catch (ex) {
+
+        return reject(ex)
+      }
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // delete config sequence
+  //
+  /////////////////////////////////////////////////////////
+  deleteConfigSequence (modelId, sequenceId) {
+
+    return new Promise(async(resolve, reject) => {
+
+      try {
+
+        const dbSvc = ServiceManager.getService(
+          this._config.dbName)
+
+        const collection = await dbSvc.getCollection(
+          this._config.collections.models)
+
+        const states =
+          await this.getConfigSequenceStates (
+            modelId, sequenceId)
+
+        collection.update(
+          {
+            '_id': new mongo.ObjectID(modelId)
+          },
+          { '$pull': {
+              'sequences': {id: sequenceId},
+              'states': {$in: states}
+            }
+          },
+          { multi: true }, (err) => {
+
+            if (err) {
+
+              console.log(err)
+              return reject(err)
+            }
+
+            return resolve (sequenceId)
+          })
+
+      } catch (ex) {
+
+        console.log(ex)
+
+        return reject(ex)
+      }
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // get states from specific sequence
+  //
+  /////////////////////////////////////////////////////////
+  getConfigSequenceStates (modelId, sequenceId) {
+
+    return new Promise(async(resolve, reject) => {
+
+      try {
+
+        const dbSvc = ServiceManager.getService(
+          this._config.dbName)
+
+        const collection = await dbSvc.getCollection(
+          this._config.collections.models)
+
+        collection.aggregate([
+
+          {
+            $match: {
+              '_id': new mongo.ObjectId(modelId)
+            }
+          },
+          {
+            $project: {
+              states: 1,
+              sequences: 1
+            }
+          },
+          {
+            $unwind: '$sequences'
+          },
+          {
+            $match: {
+              'sequences.id': sequenceId
+            }
+          },
+
+        ], function (err, result) {
+
+          if (err) {
+
+            return reject(err)
+          }
+
+          if(!result || !result.length){
+
+            return reject({error: 'Not Found'})
+          }
+
+          const sequence = result[0].sequences
+
+          const stateMap = {};
+
+          result[0].states.forEach((state) => {
+
+            if (sequence.stateIds.indexOf(state.id) > -1){
+
+              stateMap[state.id] = state
+            }
+          })
+
+          const states = sequence.stateIds.map((id) => {
+            return stateMap[id]
+          })
+
+          return resolve(states)
+        })
+
+      } catch (ex) {
+
+        return reject(ex)
+      }
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // add states to specific sequence
+  //
+  /////////////////////////////////////////////////////////
+  addConfigSequenceState (modelId, sequenceId, state) {
+
+    return new Promise(async(resolve, reject) => {
+
+      try {
+
+        const dbSvc = ServiceManager.getService(
+          this._config.dbName)
+
+        const collection = await dbSvc.getCollection(
+          this._config.collections.models)
+
+        collection.update(
+          {
+            '_id': new mongo.ObjectID(modelId),
+            'sequences.id': sequenceId
+          },
+          {
+            $push: {
+              'sequences.$.stateIds': state.id,
+              'states': state
+            }
+          }, (err) => {
+
+            if (err) {
+
+              return reject(err)
+            }
+
+            return resolve (state)
+          })
+
+      } catch (ex) {
+
+        return reject(ex)
+      }
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // delete config sequence state
+  //
+  /////////////////////////////////////////////////////////
+  deleteConfigSequenceState (modelId, sequenceId, stateId) {
+
+    return new Promise(async(resolve, reject) => {
+
+      try {
+
+        const dbSvc = ServiceManager.getService(
+          this._config.dbName)
+
+        const collection = await dbSvc.getCollection(
+          this._config.collections.models)
+
+        collection.update(
+          {
+            '_id': new mongo.ObjectID(modelId),
+            'sequences.id': sequenceId
+          },
+          {
+            '$pull': {
+              'sequences.$.stateIds': stateId,
+              'states': {id: stateId}
+            }
+          },
+          { multi: true }, (err) => {
+
+            if (err) {
+
+              return reject(err)
+            }
+
+            return resolve (sequenceId)
+          })
+
+      } catch (ex) {
 
         return reject(ex)
       }

@@ -100,3 +100,11 @@ body {
   width: 4px !important;
 }
 
+/////////////////////////////////////////////////////////
+// content editable placeholder
+//
+/////////////////////////////////////////////////////////
+[contenteditable]:empty:not(:focus):before {
+  content: attr(data-placeholder);
+  color: darkgrey;
+}

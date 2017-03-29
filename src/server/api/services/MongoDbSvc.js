@@ -168,7 +168,7 @@ export default class DbSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////////////
-  insert(collectionName, item) {
+  insert (collectionName, item) {
 
     var _thisSvc = this;
 
@@ -308,6 +308,46 @@ export default class DbSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////////////
+  updateItem(collectionName, item, query) {
+
+    var _thisSvc = this;
+
+    return new Promise(async(resolve, reject)=> {
+
+      try{
+
+        var collection =
+          await _thisSvc.getCollection(
+            collectionName)
+
+        if (typeof item._id === 'string') {
+
+          item._id = new mongo.ObjectId(item._id)
+        }
+
+        collection.update(
+          query,
+          item, (err, res)=> {
+
+            if(err){
+
+              return reject(err)
+            }
+
+            return resolve(res)
+          })
+
+      } catch (ex) {
+
+        reject(ex)
+      }
+    })
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
   upsertItem(collectionName, item, query) {
 
     var _thisSvc = this;
@@ -378,7 +418,7 @@ export default class DbSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////////////
-  getCursor(collectionName, opts = {}) {
+  getCursor (collectionName, opts = {}) {
 
     var _thisSvc = this;
 
@@ -407,32 +447,32 @@ export default class DbSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////////////
-  getItems(collectionName, opts = {}) {
+  getItems (collectionName, opts = {}) {
 
-    var _thisSvc = this;
+    var _thisSvc = this
 
-    var promise = new Promise(async(resolve, reject)=> {
+    var promise = new Promise(async(resolve, reject) => {
 
       try {
 
         var cursor = await _thisSvc.getCursor(
-          collectionName, opts);
+          collectionName, opts)
 
-        cursor.toArray((err, items)=> {
+        cursor.toArray((err, items) => {
 
           if (err) {
 
-            return reject(err);
+            return reject(err)
           }
 
-          return resolve(items);
-        });
-      }
-      catch(ex){
+          return resolve(items)
+        })
 
-        return reject(ex);
+      } catch (ex) {
+
+        return reject(ex)
       }
-    });
+    })
 
     return promise;
   }

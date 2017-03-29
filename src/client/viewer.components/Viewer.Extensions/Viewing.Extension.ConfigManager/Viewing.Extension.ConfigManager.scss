@@ -1,8 +1,8 @@
-.state-manager .title {
+.config-manager .title {
   float: left;
 }
 
-.state-manager .title > label {
+.config-manager .title > label {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -15,57 +15,61 @@
   width: 80px;
 }
 
-.state-manager .content > .controls {
+.config-manager .content > .controls {
   margin: 10px 10px 0px 10px;
   display: inline-block;
   white-space: nowrap;
-  overflow: hidden;
   height: 62px;
   width: 100%;
 }
 
-.state-manager .content > .controls > .dropdown {
-  width: calc(100% - 164px);
+.config-manager .content > .controls > .row {
+  margin: 0;
+}
+
+.config-manager .content > .controls .dropdown {
+  width: calc(100% - 90px);
   margin-bottom: 6px;
   float: left;
 }
 
-.state-manager .content > .controls > .dropdown > button {
+.config-manager .content > .controls .dropdown > button {
   height: 26px;
   width: 100%;
   padding: 0;
+  margin: 0;
 }
 
-.state-manager .content > .controls > button {
+.config-manager .content > .controls button {
   background: whitesmoke;
   border-radius: 4px;
   margin-left: 4px;
   outline: none;
   height: 26px;
-  width: 68px;
+  width: 30px;
   float: left;
 }
 
-.state-manager .content > .controls > button > span {
+.config-manager .content > .controls button > span {
   position: relative;
-  font-size: 20px;
+  font-size: 16px;
   color: #9b9b9b;
   top: -1px;
 }
 
-.state-manager .content > .controls > button:hover > span {
+.config-manager .content > .controls button:hover > span {
   color: #FF9800;
 }
 
-.state-manager .content > .controls > label {
+.config-manager .content > .controls label {
   margin: 4px 10px 0 10px;
   font-weight: normal;
   float: left;
 }
 
-.state-manager .content > .controls > .state-name-input {
+.config-manager .content > .controls .state-name-input {
   border: 1px solid #aeaeae;
-  width: calc(100% - 236px);
+  width: calc(100% - 159px);
   padding: 3px 0 0 10px;
   white-space: nowrap;
   border-radius: 4px;
@@ -75,13 +79,18 @@
   float: left;
 }
 
-.state-manager .items {
+.config-manager .content > .controls .loop > label {
+  margin: 0 0 0 6px;
+}
+
+.config-manager .items {
   height: calc(100% - 92px);
   overflow: scroll;
   margin: 4px;
 }
 
-.state-manager .items > .item {
+.config-manager .items > .item,
+.gu-mirror.item {
   transition-timing-function: ease;
   transition-duration: 1.5s;
   transition-property: all;
@@ -99,12 +108,13 @@
   margin: 5px;
 }
 
-.state-manager .items > .item:hover {
+.config-manager .items > .item:hover {
   background: rgba(0, 105, 245, 0.35);
   border: 1px solid #1bb1f4;
 }
 
-.state-manager .items > .item > div {
+.config-manager .items > .item > div,
+.gu-mirror.item > div {
   width: calc(100% - 50px);
   pointer-events: none;
   position: relative;
@@ -112,14 +122,16 @@
   float: left;
 }
 
-.state-manager .items > .item > div > .label {
+.config-manager .items > .item > div > .label,
+.gu-mirror.item > div > .label {
   font-weight: normal;
   font-size: small;
   color: black;
   width: 100%;
 }
 
-.state-manager .items > .item > button {
+.config-manager .items > .item > button,
+.gu-mirror.item > button {
   transition-timing-function: ease;
   transition-duration: 1.5s;
   transition-property: all;
@@ -134,11 +146,12 @@
   right: 1px;
 }
 
-.state-manager .items > .item > button:hover {
+.config-manager .items > .item > button:hover {
   background: #ff9000;
 }
 
-.state-manager .items > .item > button > span {
+.config-manager .items > .item > button > span,
+.gu-mirror.item > button > span{
   transition-timing-function: ease;
   transition-duration: 1.5s;
   transition-property: all;
@@ -149,7 +162,7 @@
   top: -4px;
 }
 
-.state-manager .items > .item > button:hover > span {
+.config-manager .items > .item > button:hover > span {
   color: #000000;
 }
 
@@ -157,14 +170,14 @@
 // Sequence Name dialog
 //
 /////////////////////////////////////////////////////////
-.state-manager-dlg {
+.config-manager-dlg {
   left: calc(50% - 150px) !important;
   top: calc(40% - 100px) !important;
   height: 116px !important;
   width: 300px !important;
 }
 
-.state-manager-dlg > .content .sequence-name-input {
+.config-manager-dlg > .content .sequence-name-input {
   border: 1px solid #aeaeae;
   width: calc(100% - 236px);
   padding: 3px 0 0 10px;

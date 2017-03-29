@@ -87,6 +87,6 @@ export default class EventTool extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   handleKeyDown (event, keyCode) {
 
-    return this.emit('keydown', event, keycode)
+    return this.emit('keydown', event, keyCode)
   }
 }

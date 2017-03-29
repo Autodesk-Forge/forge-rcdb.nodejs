@@ -3,7 +3,8 @@
 node_modules
 dist
 coverage
-.idea/
+.idea
+.vscode
 resources/models/210 King
 resources/models/loader
 resources/models/office

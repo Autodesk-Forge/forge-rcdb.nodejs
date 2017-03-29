@@ -18,6 +18,7 @@ import MaterialAPI from './api/endpoints/materials'
 import LMVProxy from './api/endpoints/lmv-proxy'
 import SocketAPI from './api/endpoints/socket'
 import UploadAPI from './api/endpoints/upload'
+import ConfigAPI from './api/endpoints/config'
 import ModelAPI from './api/endpoints/models'
 import ForgeAPI from './api/endpoints/forge'
 
@@ -97,6 +98,7 @@ app.use(helmet())
 app.use('/api/materials', MaterialAPI())
 app.use('/api/socket', SocketAPI())
 app.use('/api/upload', UploadAPI())
+app.use('/api/config', ConfigAPI())
 app.use('/api/models', ModelAPI())
 app.use('/api/forge', ForgeAPI())
 
