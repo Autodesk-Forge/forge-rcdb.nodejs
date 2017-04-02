@@ -7,7 +7,7 @@ import './Viewing.Extension.ExtensionManager.scss'
 import ExtensionBase from 'Viewer.ExtensionBase'
 import ExtensionPane from './ExtensionPane'
 import ServiceManager from 'SvcManager'
-import {PaneManager} from 'PaneWidget'
+import PaneManager from 'PaneManager'
 import ReactDOM from 'react-dom'
 import React from 'react'
 
@@ -50,7 +50,7 @@ class ExtensionManager extends ExtensionBase {
           })
         })
       },
-      popRenderExtension: (extension) => {
+      popRenderExtension: (extensionId) => {
 
         return new Promise((resolve) => {
 
@@ -59,7 +59,7 @@ class ExtensionManager extends ExtensionBase {
           this.react.setState({
             renderExtensions:
               state.renderExtensions.filter((ext) => {
-                return ext.id !== extension.id
+                return ext.id !== extensionId
               })
           }).then(async() => {
 
@@ -247,7 +247,7 @@ class ExtensionManager extends ExtensionBase {
 
     if (extension.enabled) {
 
-      await this.react.popViewerPanel(extension)
+      await this.react.popViewerPanel(extension.id)
 
       this.viewer.unloadExtension(extension.id)
 

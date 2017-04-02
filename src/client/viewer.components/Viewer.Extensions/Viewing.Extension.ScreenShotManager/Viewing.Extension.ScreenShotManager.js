@@ -7,8 +7,8 @@ import './Viewing.Extension.ScreenShotManager.scss'
 import ContentEditable from 'react-contenteditable'
 import ExtensionBase from 'Viewer.ExtensionBase'
 import WidgetContainer from 'WidgetContainer'
-import Label from 'react-text-truncate'
 import Toolkit from 'Viewer.Toolkit'
+import Label from 'Label'
 import React from 'react'
 
 class ScreenShotManagerExtension extends ExtensionBase {
@@ -198,13 +198,48 @@ class ScreenShotManagerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  renderTitle () {
+  setDocking (docked) {
+
+    const id = ScreenShotManagerExtension.ExtensionId
+
+    if (docked) {
+
+      this.react.popRenderExtension(id).then(() => {
+
+        this.react.pushViewerPanel(this)
+      })
+
+    } else {
+
+      this.react.popViewerPanel(id).then(() => {
+
+        this.react.pushRenderExtension(this)
+      })
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  renderTitle (docked) {
+
+    const spanClass = docked
+      ? 'fa fa-chain-broken'
+      : 'fa fa-chain'
 
     return (
       <div className="title">
         <label>
           Screenshot Manager
         </label>
+        <div className="screenshot-manager-controls">
+          <button onClick={() => this.setDocking(docked)}
+            title="Toggle docking mode">
+            <span className={spanClass}>
+            </span>
+          </button>
+        </div>
       </div>
     )
   }
@@ -220,31 +255,31 @@ class ScreenShotManagerExtension extends ExtensionBase {
     return (
       <div className="controls">
 
-        <button onClick={this.addItem}
-          title="Take Screenshot">
-          <span className="fa fa-camera">
-          </span>
-        </button>
+        <div className="row">
 
-        <label>
-          Width (px):
-        </label>
+          <button onClick={this.addItem}
+            title="Take Screenshot">
+            <span className="fa fa-camera">
+            </span>
+          </button>
 
-        <ContentEditable
-          onChange={(e) => this.onInputChanged(e, 'width')}
-          onKeyDown={(e) => this.onKeyDownNumeric(e)}
-          className="size-input"
-          html={state.width}/>
+          <Label text={'Width (px):'}/>
 
-        <label>
-          x Height (px):
-        </label>
+          <ContentEditable
+            onChange={(e) => this.onInputChanged(e, 'width')}
+            onKeyDown={(e) => this.onKeyDownNumeric(e)}
+            className="size-input"
+            html={state.width}/>
 
-        <ContentEditable
-          onChange={(e) => this.onInputChanged(e, 'height')}
-          onKeyDown={(e) => this.onKeyDownNumeric(e)}
-          className="size-input"
-          html={state.height}/>
+          <Label text={'x Height (px):'}/>
+
+          <ContentEditable
+            onChange={(e) => this.onInputChanged(e, 'height')}
+            onKeyDown={(e) => this.onKeyDownNumeric(e)}
+            className="size-input"
+            html={state.height}/>
+
+        </div>
       </div>
     )
   }
@@ -272,10 +307,7 @@ class ScreenShotManagerExtension extends ExtensionBase {
           }}>
           </div>
 
-          <Label truncateText=" …"
-            text={text}
-            line={1}
-          />
+          <Label text={text}/>
 
           <button onClick={(e) => {
             this.deleteItem(item.id)

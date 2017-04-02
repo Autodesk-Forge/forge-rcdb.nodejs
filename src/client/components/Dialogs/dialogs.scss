@@ -4,7 +4,7 @@
 }
 
 .ReactModal__Overlay {
-  transition-property: opacity, background-color;
+  transition-property: opacity, background-color, box-shadow;
   transition-duration: 2s;
 
   opacity: 0;
@@ -15,7 +15,7 @@
 }
 
 .ReactModal__Content {
-  transition-property: opacity, transform;
+  transition-property: opacity, transform, box-shadow;
   transition-duration: 1s;
 
   transform: rotateY(90deg);
@@ -40,6 +40,7 @@
 .dialog .title {
   border-radius: 4px 4px 0 0;
   background-color: #d2d2d2;
+  text-align: left;
   overflow: hidden;
   padding-top: 3px;
   height: 30px;

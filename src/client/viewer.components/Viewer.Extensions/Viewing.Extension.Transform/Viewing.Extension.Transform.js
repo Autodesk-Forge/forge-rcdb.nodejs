@@ -129,7 +129,7 @@ class TransformExtension extends ExtensionBase {
     }
 
     this._comboCtrl = new Autodesk.Viewing.UI.ComboButton(
-      'transform-combo')
+      'toolbar-transform')
 
     this._comboCtrl.setToolTip('Transform Tools')
 

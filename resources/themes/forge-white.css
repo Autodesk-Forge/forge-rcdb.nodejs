@@ -1,5 +1,5 @@
 .tooltip {
-  position: relative;
+  position: absolute;
   display: inline-block;
 }
 
@@ -8,7 +8,7 @@
   width: 120px;
   background-color: rgb(72, 72, 72);
   color: #fff;
-  text-align: center;
+  text-align: left;
   border-radius: 6px;
   padding: 5px 0;
   position: absolute;
@@ -31,6 +31,7 @@
 }
 
 .adsk-control-tooltip {
+  bottom: 120%;           /* Position tooltip above the element */
   background-color: #FFFFFF;
   border: 1px solid rgb(72, 72, 72);
   color: rgb(72, 72, 72);

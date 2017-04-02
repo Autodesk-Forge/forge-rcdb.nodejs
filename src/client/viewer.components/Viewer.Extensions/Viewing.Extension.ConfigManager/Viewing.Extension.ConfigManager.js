@@ -9,13 +9,13 @@ import ExtensionBase from 'Viewer.ExtensionBase'
 import './Viewing.Extension.ConfigManager.scss'
 import WidgetContainer from 'WidgetContainer'
 import 'react-dragula/dist/dragula.min.css'
-import Label from 'react-text-truncate'
 import ServiceManager from 'SvcManager'
 import Toolkit from 'Viewer.Toolkit'
 import Dragula from 'react-dragula'
 import DOMPurify from 'dompurify'
 import ReactDOM from 'react-dom'
 import Switch from 'Switch'
+import Label from 'Label'
 import React from 'react'
 import {
   DropdownButton,
@@ -47,8 +47,6 @@ class ConfigManagerExtension extends ExtensionBase {
         options.apiUrl +
         `/config/${options.database}/${modelId}`)
     }
-
-    this.id = ConfigManagerExtension.ExtensionId
   }
 
   /////////////////////////////////////////////////////////
@@ -74,6 +72,12 @@ class ConfigManagerExtension extends ExtensionBase {
   //
   /////////////////////////////////////////////////////////
   load () {
+
+    this.viewer.addEventListener(
+      Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT, (e) => {
+
+        this.options.loader.hide()
+      })
 
     this.react.setState({
 
@@ -106,15 +110,11 @@ class ConfigManagerExtension extends ExtensionBase {
           const sequence = sequences.length ?
             sequences[0] : null
 
-          const items = sequence
-            ? await this.api.getStates(sequence.id)
-            : []
-
           this.react.setState({
-            sequences,
-            sequence,
-            items
+            sequences
           })
+
+          this.setActiveSequence (sequence)
         }
       })
     })
@@ -249,7 +249,7 @@ class ConfigManagerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onUpdateSequence () {
+  getStateIds () {
 
     const component = this.react.getComponent()
 
@@ -263,14 +263,21 @@ class ConfigManagerExtension extends ExtensionBase {
           return childNode.dataset.id
         })
 
-    const state = this.react.getState()
+    return stateIds
+  }
 
-    var sequence = state.sequence
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onUpdateSequence () {
 
-    sequence.stateIds = stateIds
+    const { sequence } = this.react.getState()
 
     this.react.setState({
-      sequence
+      sequence: Object.assign({}, sequence, {
+          stateIds: this.getStateIds()
+        })
     })
 
     if (this.api) {
@@ -309,6 +316,13 @@ class ConfigManagerExtension extends ExtensionBase {
         newStateName: ''
       })
 
+      this.on(`restoreState.${viewerState.id}`, () => {
+
+        console.log(viewerState)
+
+        this.onRestoreState(viewerState)
+      })
+
     } else {
 
       this.react.setState({
@@ -321,12 +335,14 @@ class ConfigManagerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////////////
-  onItemClicked (viewerState) {
+  onRestoreState (viewerState) {
 
     this.viewer.getState (viewerState)
 
     const filteredState = this.filterState(
-      viewerState, 'objectSet', 'explodeScale')
+      viewerState,
+      'objectSet',
+      'explodeScale')
 
     this.viewer.restoreState(filteredState)
   }
@@ -449,6 +465,8 @@ class ConfigManagerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   setActiveSequence (sequence) {
 
+    this.off ()
+
     this.react.setState({
       sequence
     })
@@ -458,6 +476,14 @@ class ConfigManagerExtension extends ExtensionBase {
       if (sequence) {
 
         this.api.getStates(sequence.id).then((states) => {
+
+          states.map((state) => {
+
+            this.on(`restoreState.${state.id}`, () => {
+
+              this.onRestoreState(state)
+            })
+          })
 
           this.react.setState({
             items: states
@@ -473,30 +499,72 @@ class ConfigManagerExtension extends ExtensionBase {
     }
   }
 
-  /////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////
-  playSequence () {
+  /////////////////////////////////////////////////////////////
+  playSequence (period) {
 
+    const { loop } = this.react.getState()
+
+    const stateIds = this.getStateIds()
+
+    var sequenceIdx = 0
+
+    const step = (stateId) => {
+
+      this.emit(`restoreState.${stateId}`)
+
+      //$(`#${id}`).addClass('active')
+
+      setTimeout(() => {
+        //$(`#${id}`).removeClass('active')
+      }, period * 0.9)
+
+      ++sequenceIdx
+
+      if (sequenceIdx == stateIds.length) {
+
+        if (!loop) {
+
+          //this.playToggleBtn.setState(0)
+          return
+        }
+
+        sequenceIdx = 0
+      }
+
+      setTimeout(() => {
+
+        step(stateIds[sequenceIdx])
+
+      }, period)
+    }
+
+    if (stateIds.length > 0) {
+
+      step(stateIds[sequenceIdx])
+    }
   }
 
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  toggleDocking (docked) {
+  setDocking (docked) {
+
+    const id = ConfigManagerExtension.ExtensionId
 
     if (docked) {
 
-      this.react.popRenderExtension(this).then(() => {
+      this.react.popRenderExtension(id).then(() => {
 
         this.react.pushViewerPanel(this)
       })
 
     } else {
 
-      this.react.popViewerPanel(this).then(() => {
+      this.react.popViewerPanel(id).then(() => {
 
         this.react.pushRenderExtension(this)
       })
@@ -519,7 +587,7 @@ class ConfigManagerExtension extends ExtensionBase {
           Config Manager
         </label>
         <div className="config-manager-controls">
-          <button onClick={() => this.toggleDocking(docked)}
+          <button onClick={() => this.setDocking(docked)}
             title="Toggle docking mode">
             <span className={spanClass}>
             </span>
@@ -597,7 +665,7 @@ class ConfigManagerExtension extends ExtensionBase {
             </span>
           </button>
 
-          <button onClick={() => this.playSequence()}
+          <button onClick={() => this.playSequence(2000)}
             disabled={!state.sequence}
             title="Play sequence">
             <span className="fa fa-play">
@@ -628,12 +696,11 @@ class ConfigManagerExtension extends ExtensionBase {
         <div data-id={item.id} key={item.id}
           className="item"
           onClick={
-            () => this.onItemClicked (item)
+            () => this.onRestoreState (item)
           }>
 
           <Label truncateText=" …"
             text={text}
-            line={1}
           />
 
           <button onClick={(e) => {

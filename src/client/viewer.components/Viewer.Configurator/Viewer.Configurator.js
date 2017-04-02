@@ -2,6 +2,7 @@ import {ReflexContainer, ReflexElement, ReflexSplitter} from 'react-reflex'
 import { ReactLoader, Loader } from 'Loader'
 import ServiceManager from 'SvcManager'
 import './Viewer.Configurator.scss'
+import Stopwatch from 'Stopwatch'
 import Viewer from 'Viewer'
 import Panel from 'Panel'
 import React from 'react'
@@ -27,15 +28,41 @@ class ViewerConfigurator extends React.Component {
 
     super (props)
 
-    this.state = {
-      dataExtension: null,
-      viewerPanels: [],
-      dbModel: null
-    }
-
     this.getViewablePath = this.getViewablePath.bind(this)
 
     this.modelSvc = ServiceManager.getService('ModelSvc')
+
+    this.pushRenderExtension =
+      this.pushRenderExtension.bind(this)
+
+    this.popRenderExtension =
+      this.popRenderExtension.bind(this)
+
+    this.state = {
+      dataExtension: null,
+      viewerPanels: [],
+      viewerFlex: 1.0,
+      dbModel: null
+    }
+
+    this.viewerFlex = 1.0
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  setReactState (state) {
+
+    return new Promise((resolve) => {
+
+      const newState = Object.assign(
+        {}, this.state, state)
+
+      this.setState(newState, () => {
+        resolve()
+      })
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -47,7 +74,8 @@ class ViewerConfigurator extends React.Component {
     this.loader = new Loader(this.loaderContainer)
 
     const dbModel = await this.modelSvc.getModel(
-      this.props.database, this.props.modelId)
+      this.props.database,
+      this.props.modelId)
 
     if (!this.props.viewerEnv) {
 
@@ -69,9 +97,9 @@ class ViewerConfigurator extends React.Component {
       Autodesk.Viewing.Private.memoryOptimizedSvfLoading = true
     }
 
-    this.setState(Object.assign({}, this.state, {
+    this.setReactState({
       dbModel
-    }))
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -116,10 +144,10 @@ class ViewerConfigurator extends React.Component {
     })
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   toArray (obj) {
 
     return obj ? (Array.isArray(obj) ? obj : [obj]) : []
@@ -178,10 +206,7 @@ class ViewerConfigurator extends React.Component {
 
         extState[extension.id] = {}
 
-        const newState = Object.assign({},
-          this.state, extState)
-
-        this.setState(newState, () => {
+        this.setReactState(extState).then(() => {
 
           if (viewer.loadExtension (extension.id, options)) {
 
@@ -204,6 +229,100 @@ class ViewerConfigurator extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  pushRenderExtension (extension) {
+
+    return new Promise (async(resolve) => {
+
+      const layout = this.state.dbModel.layout
+
+      this.viewerFlex = 1.0 -
+        (layout.leftFlex || layout.rightFlex || 0.3)
+
+      const done = (start, end) => {
+        return start <= end
+      }
+
+      const update = (viewerFlex) => {
+
+        return new Promise((resolve) => {
+
+          this.setReactState({
+              viewerFlex
+            }).then(() => resolve())
+        })
+      }
+
+      await this.animate (
+        1.0, this.viewerFlex, -0.7,
+        done, update)
+
+      await this.setReactState({
+          paneExtStyle: {display: 'block'},
+          viewerFlex: this.viewerFlex
+        })
+
+      setTimeout(() => {
+
+        this.setReactState({
+          renderExtension: extension
+        }).then(() => {
+
+          resolve ()
+        })
+
+      }, 300)
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  popRenderExtension () {
+
+    return new Promise ((resolve) => {
+
+      this.setReactState({
+        renderExtension: null
+      }).then(() => {
+        resolve ()
+      })
+
+      setTimeout(async() => {
+
+        const done = (start, end) => {
+          return start >= end
+        }
+
+        const update = (viewerFlex) => {
+
+          return new Promise((resolve) => {
+
+            this.setReactState({
+              viewerFlex
+            }).then(() => resolve())
+          })
+        }
+
+        await this.animate (
+          this.viewerFlex, 1.0, 0.7,
+          done, update)
+
+        await this.setReactState({
+          paneExtStyle: { display: 'none' },
+          viewerFlex: 1.0
+        })
+
+        resolve ()
+
+      }, 300)
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   setupDynamicExtensions (viewer, extensions, defaultOptions) {
 
     const createDefaultOptions = (id) => {
@@ -211,32 +330,13 @@ class ViewerConfigurator extends React.Component {
       const fullDefaultOptions = Object.assign({},
         defaultOptions, {
           react: {
-            pushRenderExtension: (ext) => {
 
-              return new Promise ((resolve) => {
-                const newState = Object.assign({},
-                  this.state, {
-                    renderExtension: ext
-                  })
+            pushRenderExtension:
+              this.pushRenderExtension,
 
-                this.setState(newState, () => {
-                  resolve ()
-                })
-              })
-            },
-            popRenderExtension: (ext) => {
+            popRenderExtension:
+              this.popRenderExtension,
 
-              return new Promise ((resolve) => {
-                const newState = Object.assign({},
-                  this.state, {
-                    renderExtension: null
-                  })
-
-                this.setState(newState, () => {
-                  resolve ()
-                })
-              })
-            },
             forceUpdate: () => {
 
               return new Promise ((resolve) => {
@@ -265,10 +365,7 @@ class ViewerConfigurator extends React.Component {
                   ? _.merge({}, extState, state)
                   : Object.assign({}, extState, state)
 
-                const newState = Object.assign({},
-                  this.state, newExtState)
-
-                this.setState(newState, () => {
+                this.setReactState(newExtState).then(() => {
 
                   resolve (newExtState)
                 })
@@ -280,31 +377,26 @@ class ViewerConfigurator extends React.Component {
 
                 const panel = new Panel(extension)
 
-                const newState = Object.assign({},
-                  this.state, {
-                    viewerPanels: [
-                      ...this.state.viewerPanels,
-                      panel
-                  ]})
+                this.setReactState({
+                  viewerPanels: [
+                    ...this.state.viewerPanels,
+                    panel
+                  ]}).then(() => {
 
-                this.setState(newState, () => {
                   resolve ()
                 })
               })
             },
-            popViewerPanel: (extension) => {
+            popViewerPanel: (extensionId) => {
 
               return new Promise ((resolve) => {
 
-                const newState = Object.assign({},
-                  this.state, {
-                    viewerPanels:
-                      this.state.viewerPanels.filter((panel) => {
-                        return panel.id !==  extension.id
-                      })
-                  })
-
-                this.setState(newState, () => {
+                this.setReactState({
+                  viewerPanels:
+                    this.state.viewerPanels.filter((panel) => {
+                      return panel.id !==  extensionId
+                    })
+                }).then(() => {
                   resolve ()
                 })
               })
@@ -336,6 +428,37 @@ class ViewerConfigurator extends React.Component {
       })
 
     return Promise.all (extensionTasks)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  animate (start, end, speed, done, fn) {
+
+    return new Promise((resolve) => {
+
+      const stopwatch = new Stopwatch()
+
+      const stepFn = () => {
+
+        const dt = stopwatch.getElapsedMs() * 0.001
+
+        if (!done(start, end)) {
+
+          fn (start += speed * dt).then(() => {
+
+            window.requestAnimationFrame(stepFn)
+          })
+
+        } else {
+
+          resolve()
+        }
+      }
+
+      stepFn ()
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -431,10 +554,10 @@ class ViewerConfigurator extends React.Component {
     }
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   renderLoader () {
 
     return (
@@ -444,10 +567,10 @@ class ViewerConfigurator extends React.Component {
     )
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   renderExtension () {
 
     const { renderExtension } = this.state
@@ -469,26 +592,28 @@ class ViewerConfigurator extends React.Component {
     )
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   renderModel (model) {
 
     return (
       <Viewer panels= {this.state.viewerPanels}
-        onViewerCreated={
-          (viewer) => this.onViewerCreated(viewer, model)
-          }
+        onViewerCreated={(viewer) => {
+          this.onViewerCreated(viewer, model)
+        }}
       />
     )
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
-  onStopResize () {
+  /////////////////////////////////////////////////////////
+  onStopResize (e) {
+
+    this.viewerFlex = e.component.props.flex
 
     if (this.state.renderExtension) {
 
@@ -499,10 +624,10 @@ class ViewerConfigurator extends React.Component {
     }
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   onResize () {
 
     if (this.state.renderExtension) {
@@ -514,20 +639,21 @@ class ViewerConfigurator extends React.Component {
     }
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   render () {
 
-    // dbModel not loaded yet -> render loader
+    const { dbModel, viewerFlex, paneExtStyle } = this.state
 
-    if (!this.state.dbModel) {
+    if (!dbModel) {
 
+      // dbModel not loaded yet -> render loader
       return this.renderLoader ()
     }
 
-    const { model, layout } = this.state.dbModel
+    const { layout, model } = dbModel
 
     switch (layout ? layout.type : 'default') {
 
@@ -535,15 +661,16 @@ class ViewerConfigurator extends React.Component {
         return (
           <ReflexContainer className="configurator"
             key="configurator" orientation='vertical'>
-            <ReflexElement flex={layout.leftFlex || 0.3}>
+            <ReflexElement style={paneExtStyle}>
               {this.renderExtension()}
             </ReflexElement>
-            <ReflexSplitter
-              onStopResize={() => this.onStopResize()}
-              onResize={() => this.onResize()}
+            <ReflexSplitter onStopResize={() => this.forceUpdate()}
+              style={paneExtStyle}
             />
-            <ReflexElement className="viewer-element"
-              propagateDimensions={true}>
+            <ReflexElement onStopResize={(e) => this.onStopResize(e)}
+              onResize={(e) => this.onResize(e)}
+              propagateDimensions={true}
+              flex={viewerFlex}>
               {this.renderModel(model)}
             </ReflexElement>
           </ReflexContainer>
@@ -553,15 +680,16 @@ class ViewerConfigurator extends React.Component {
         return (
           <ReflexContainer className="configurator"
             key="configurator" orientation='vertical'>
-            <ReflexElement className="viewer-element"
-              propagateDimensions={true}>
+            <ReflexElement onStopResize={(e) => this.onStopResize(e)}
+              onResize={(e) => this.onResize(e)}
+              propagateDimensions={true}
+              flex={viewerFlex}>
               {this.renderModel(model)}
             </ReflexElement>
-            <ReflexSplitter
-              onStopResize={() => this.onStopResize()}
-              onResize={() => this.onResize()}
+            <ReflexSplitter onStopResize={() => this.forceUpdate()}
+              style={paneExtStyle}
             />
-            <ReflexElement flex={layout.rightFlex || 0.7}>
+            <ReflexElement style={paneExtStyle}>
               {this.renderExtension()}
             </ReflexElement>
           </ReflexContainer>

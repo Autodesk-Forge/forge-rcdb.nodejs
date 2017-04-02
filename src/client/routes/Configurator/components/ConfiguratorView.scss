@@ -1,10 +1,7 @@
-.configurator-loader {
-  height: calc(100vh - 65px);
-  position: relative;
-  top: 0px;
-}
 
-.configurator .data-pane {
-  background-color: #ababab;
-  height: 100%;
+.configurator-view {
+  height: calc(100vh - 69px);
+  background-color: #dadada;
+  position: relative;
+  width: 100vw;
 }

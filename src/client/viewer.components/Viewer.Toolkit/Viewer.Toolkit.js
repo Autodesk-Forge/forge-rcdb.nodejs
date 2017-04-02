@@ -116,17 +116,17 @@ export default class ViewerToolkit {
   /////////////////////////////////////////////////////////////////
   static createButton(id, className, tooltip, handler) {
 
-    var button = new Autodesk.Viewing.UI.Button(id);
+    var button = new Autodesk.Viewing.UI.Button(id)
 
-    button.icon.style.fontSize = '24px';
+    button.icon.style.fontSize = '24px'
 
-    button.icon.className = className;
+    button.icon.className = className
 
-    button.setToolTip(tooltip);
+    button.setToolTip(tooltip)
 
-    button.onClick = handler;
+    button.onClick = handler
 
-    return button;
+    return button
   }
 
   /////////////////////////////////////////////////////////////////
@@ -135,16 +135,16 @@ export default class ViewerToolkit {
   /////////////////////////////////////////////////////////////////
   static createControlGroup (viewer, ctrlGroupName) {
 
-    var viewerToolbar = viewer.getToolbar(true);
+    var viewerToolbar = viewer.getToolbar(true)
 
-    if(viewerToolbar){
+    if (viewerToolbar) {
 
       var ctrlGroup =  new Autodesk.Viewing.UI.ControlGroup(
-        ctrlGroupName);
+        ctrlGroupName)
 
-      viewerToolbar.addControl(ctrlGroup);
+      viewerToolbar.addControl(ctrlGroup)
 
-      return ctrlGroup;
+      return ctrlGroup
     }
   }
 

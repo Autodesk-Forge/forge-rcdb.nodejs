@@ -22,6 +22,10 @@ import './Panel.scss'
 
 class Panel extends EventsEmitter {
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   constructor (renderable) {
 
     super ()
@@ -32,26 +36,57 @@ class Panel extends EventsEmitter {
   }
 
   /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  renderTitle () {
+
+    if (this.renderable.renderTitle) {
+
+      return(
+        <div className="title">
+          { this.renderable.renderTitle() }
+        </div>
+      )
+    }
+
+    return (
+      <div className="title">
+        <label>
+          { this.renderable.title }
+        </label>
+      </div>
+    )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  renderContent () {
+
+    const renderOptions = {
+      showTitle: false,
+      docked: false
+    }
+
+    return(
+      <div className="content">
+        { this.renderable.render(renderOptions) }
+      </div>
+    )
+  }
+
+  /////////////////////////////////////////////////////////
   // Render component
   //
   /////////////////////////////////////////////////////////
   render () {
 
-    const renderOptions = {
-      showTitle: true,
-      docked: false
-    }
-
     return (
       <div key={this.id} className="react-panel">
-
-        <div className="title">
-        </div>
-
-        <div className="content">
-          { this.renderable.render(renderOptions) }
-        </div>
-
+        { this.renderTitle() }
+        { this.renderContent() }
       </div>
     )
   }

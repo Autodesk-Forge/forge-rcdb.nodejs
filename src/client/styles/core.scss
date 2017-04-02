@@ -56,6 +56,7 @@ html,
 body {
   overflow: -moz-scrollbars-none;
   -ms-overflow-style: none;
+  text-align: center;
   user-select: none;
   height: 100%;
   padding: 0;
@@ -101,10 +102,19 @@ body {
 }
 
 /////////////////////////////////////////////////////////
+// disabled controls
+/////////////////////////////////////////////////////////
+button[disabled],
+div[disabled] {
+  cursor: not-allowed;
+}
+
+/////////////////////////////////////////////////////////
 // content editable placeholder
 //
 /////////////////////////////////////////////////////////
 [contenteditable]:empty:not(:focus):before {
   content: attr(data-placeholder);
+  pointer-events: none;
   color: darkgrey;
 }

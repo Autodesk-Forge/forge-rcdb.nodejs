@@ -125,9 +125,9 @@ class PaneElement extends React.Component {
       })
     }
 
-    const done = (from, to) => {
+    const done = (start, end) => {
 
-      return from > to
+      return start >= end
     }
 
     this.animate (currentSize,
@@ -166,7 +166,7 @@ class PaneElement extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  animate (from, to, speed, done, fn) {
+  animate (start, end, speed, done, fn) {
 
     return new Promise((resolve) => {
 
@@ -176,11 +176,11 @@ class PaneElement extends React.Component {
 
         const dt = stopwatch.getElapsedMs() * 0.001
 
-        if (!done(from, to)) {
+        if (!done(start, end)) {
 
-          fn (from += speed * dt).then(() => {
+          fn (start += speed * dt).then(() => {
 
-            setTimeout(stepFn, 8)
+            window.requestAnimationFrame(stepFn)
           })
 
         } else {

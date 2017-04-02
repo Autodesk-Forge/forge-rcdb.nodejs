@@ -1,0 +1,47 @@
+.forge-fader .content > .controls {
+  margin: 10px 0 0 0;
+}
+
+.forge-fader .content > .controls > .row {
+  width: calc(100% - 20px);
+  margin: 5px 0 5px 10px;
+}
+
+.forge-fader .content > .controls .control-element {
+  float:left;
+}
+
+.rc-slider.control-element {
+  width: calc(100% - 30px);
+  margin: 10px 0 0 6px;
+}
+
+.rc-slider-track {
+  background-color: #33bd08;
+}
+
+.rc-slider-handle {
+  transition-timing-function: ease;
+  transition-property: border;
+  transition-duration: 1.5s;
+  transition-delay: 0.0s;
+
+  border: solid 2px #33bd08;
+}
+
+.rc-slider-handle:hover {
+  border: solid 2px #44eb08;
+}
+
+.fader-tooltip {
+  transition-timing-function: ease;
+  transition-property: opacity;
+  transition-duration: 1.0s;
+  transition-delay: 0.0s;
+
+  position: absolute;
+  font-weight: bold;
+  color: #44eb08;
+  display: none;
+  opacity: 0;
+}

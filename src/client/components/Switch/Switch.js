@@ -7,7 +7,8 @@ export default class Switch extends React.Component {
   //
   /////////////////////////////////////////////////////////
   static propTypes = {
-    className: React.PropTypes.string
+    className: React.PropTypes.string,
+    checked: React.PropTypes.bool
   }
 
   /////////////////////////////////////////////////////////
@@ -15,7 +16,7 @@ export default class Switch extends React.Component {
   //
   /////////////////////////////////////////////////////////
   static defaultProps = {
-    isChecked: true,
+    checked: true,
     className: ''
   }
 
@@ -23,15 +24,15 @@ export default class Switch extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  constructor (props) {
+  constructor () {
 
-    super (props)
+    super ()
 
     this.state = {
-      isChecked: true
+      checked: true
     }
 
-    this.handleChange =  this.handleChange.bind(this)
+    this.handleChange = this.handleChange.bind(this)
   }
 
   /////////////////////////////////////////////////////////
@@ -41,7 +42,7 @@ export default class Switch extends React.Component {
   componentWillMount () {
 
     this.setState({
-      isChecked: this.props.isChecked
+      checked: this.props.checked
     })
   }
 
@@ -51,9 +52,16 @@ export default class Switch extends React.Component {
   /////////////////////////////////////////////////////////
   handleChange () {
 
+    const checked = !this.state.checked
+
     this.setState({
-      isChecked: !this.state.isChecked
+      checked
     })
+
+    if (this.props.onChange) {
+
+      this.props.onChange (checked)
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -71,9 +79,9 @@ export default class Switch extends React.Component {
       <div className={classNames.join(' ')}>
         <label>
           <input ref="switch" className="switch"
-            checked={this.state.isChecked}
-            value={this.state.isChecked}
             onChange={this.handleChange}
+            checked={this.state.checked}
+            value={this.state.checked}
             type="checkbox"
           />
           <div>

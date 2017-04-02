@@ -1,5 +1,6 @@
 import Snap from 'imports-loader?this=>window,fix=>module.exports=0!snapsvg/dist/snap.svg.js'
 import EventsEmitter from 'EventsEmitter'
+import velocity from 'velocity-animate'
 import './Viewer.Tooltip.scss'
 
 export default class ViewerTooltip extends EventsEmitter {
@@ -8,13 +9,19 @@ export default class ViewerTooltip extends EventsEmitter {
   // Class constructor
   //
   /////////////////////////////////////////////////////////////////
-  constructor (viewer) {
+  constructor (viewer, opts = {}) {
 
     super()
 
     this.markerId = this.guid()
 
     this.svgId = this.guid()
+
+    this.viewer = viewer
+
+    this.active = false
+
+    this.options = opts
 
     const htmlMarker = `
       <div id="${this.markerId}" class="tooltip-marker">
@@ -30,9 +37,7 @@ export default class ViewerTooltip extends EventsEmitter {
     this.pointer = this.createPointer(
       $(`#${this.svgId}`)[0])
 
-    this.viewer = viewer
-
-    this.active = false
+    this.timeout = null
   }
 
   /////////////////////////////////////////////////////////////////
@@ -43,15 +48,14 @@ export default class ViewerTooltip extends EventsEmitter {
 
     const snap = Snap(element)
 
-    let circle = snap.paper.circle(
-      25, 25, 0)
+    const circle = snap.paper.circle(25, 25, 0)
 
     circle.attr({
-      stroke: '#FF0000',
-      fillOpacity: 0.4,
-      fill: '#FF0000',
-      strokeWidth: 2,
-      opacity: 1
+      fillOpacity: this.options.fillOpacity || 0.4,
+      strokeWidth: this.options.strokeWidth || 2,
+      stroke: this.options.stroke || '#FF0000',
+      fill: this.options.fill || '#FF0000',
+      opacity: this.options.opacity || 1
     })
 
     return circle
@@ -122,7 +126,11 @@ export default class ViewerTooltip extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   activate () {
 
-    if(!this.active) {
+    if(!this.active || this.timeout) {
+
+      clearTimeout(this.timeout)
+
+      this.timeout = null
 
       this.active = true
 
@@ -131,6 +139,10 @@ export default class ViewerTooltip extends EventsEmitter {
 
       $(this.tooltipSelector).css({
         display: 'block'
+      })
+
+      $(this.tooltipSelector).velocity({
+        opacity: 1.0
       })
 
       this.emit('activate')
@@ -143,16 +155,25 @@ export default class ViewerTooltip extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   deactivate () {
 
-    if (this.active) {
+    if (this.active && !this.timeout) {
 
-      this.active = false
+      this.timeout = setTimeout(() => {
 
-      this.viewer.toolController.deactivateTool(
-        this.getName())
+        this.viewer.toolController.deactivateTool(
+          this.getName())
 
-      $(this.tooltipSelector).css({
-        display: 'none'
-      })
+        $(this.tooltipSelector).css({
+          display: 'none',
+          opacity: 0.0
+        })
+
+        this.active = false
+
+      }, 1000)
+
+      //$(this.tooltipSelector).velocity({
+      //
+      //})
 
       this.pointerVisible = false
 
@@ -182,7 +203,7 @@ export default class ViewerTooltip extends EventsEmitter {
     const $offset = $(this.viewer.container).offset()
 
     $(this.tooltipSelector).css({
-      top  : event.clientY - $offset.top - 30 + 'px',
+      top  : event.clientY - $offset.top - 35 + 'px',
       left : event.clientX - $offset.left + 'px'
     })
 
@@ -194,8 +215,6 @@ export default class ViewerTooltip extends EventsEmitter {
     const worldPoint = this.screenToWorld(screenPoint)
 
     if (worldPoint && this.active) {
-
-      //console.log(worldPoint)
 
       const offset = $(this.viewer.container).offset()
 
@@ -268,20 +287,20 @@ export default class ViewerTooltip extends EventsEmitter {
     // better to throw markers to the screen sides.
     if (p.w > 0) {
 
-      p.x /= p.w;
-      p.y /= p.w;
-      p.z /= p.w;
+      p.x /= p.w
+      p.y /= p.w
+      p.z /= p.w
     }
 
     // This one is multiplying by width/2 and height/2,
     // and offsetting by canvas location
-    var point = this._viewer.impl.viewportToClient(p.x, p.y);
+    var point = this._viewer.impl.viewportToClient(p.x, p.y)
 
     // snap to the center of the pixel
-    point.x = Math.floor(point.x) + 0.5;
-    point.y = Math.floor(point.y) + 0.5;
+    point.x = Math.floor(point.x) + 0.5
+    point.y = Math.floor(point.y) + 0.5
 
-    return point;
+    return point
   }
 
   /////////////////////////////////////////////////////////////////

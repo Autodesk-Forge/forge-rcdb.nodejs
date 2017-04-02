@@ -1,4 +1,5 @@
 .config-manager .title {
+  display: inline-flex;
   float: left;
 }
 
@@ -13,6 +14,7 @@
   margin-top: 10px;
   select: none;
   width: 80px;
+  float: left;
 }
 
 .config-manager .content > .controls {
@@ -24,6 +26,7 @@
 }
 
 .config-manager .content > .controls > .row {
+  width: 100%;
   margin: 0;
 }
 
@@ -57,7 +60,7 @@
   top: -1px;
 }
 
-.config-manager .content > .controls button:hover > span {
+.config-manager .content > .controls button:hover:not(:disabled) > span {
   color: #FF9800;
 }
 
@@ -84,7 +87,7 @@
 }
 
 .config-manager .items {
-  height: calc(100% - 92px);
+  height: calc(100% - 82px);
   overflow: scroll;
   margin: 4px;
 }
@@ -195,9 +198,9 @@
 //
 /////////////////////////////////////////////////////////
 .config-manager-controls {
-  display: inline-block;
-  position: absolute;
-  left: 140px;
+  margin: auto 0 auto 65px;
+  position: relative;
+  float: left;
 }
 
 .config-manager-controls > button {
@@ -205,9 +208,7 @@
   background-color: #e1e1e1;
   border-radius: 6px;
   position: relative;
-  margin-right: 4px;
   overflow: hidden;
-  margin-top: 8px;
   outline: none;
   height: 24px;
   width: 26px;

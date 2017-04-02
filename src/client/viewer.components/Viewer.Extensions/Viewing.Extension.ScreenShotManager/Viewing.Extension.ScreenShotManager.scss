@@ -1,4 +1,5 @@
 .screenshot-manager .title {
+  display: inline-flex;
   float: left;
 }
 
@@ -12,45 +13,51 @@
   margin-left: 27px;
   margin-top: 10px;
   select: none;
+  float: left;
   width: 80px;
 }
 
 .screenshot-manager .content > .controls {
   margin: 10px 10px 0px 10px;
+  width: calc(100% - 20px);
   white-space: nowrap;
   display: flex;
-  height: 26px;
-  width: 100%;
+  height: 32px;
 }
 
-.screenshot-manager .content > .controls > button {
+.screenshot-manager .content > .controls > .row {
+  width: 100%;
+  margin: 0;
+}
+
+.screenshot-manager .content > .controls button {
   background: whitesmoke;
   border-radius: 4px;
   outline: none;
-  width: 68px;
+  width: 38px;
   float: left;
  }
 
-.screenshot-manager .content > .controls > button > span {
+.screenshot-manager .content > .controls button > span {
   position: relative;
   font-size: 20px;
   color: #9b9b9b;
-  top: -1px;
+  top: 1px;
 }
 
-.screenshot-manager .content > .controls > button:hover > span {
+.screenshot-manager .content > .controls button:hover > span {
   color: #FF9800;
 }
 
-.screenshot-manager .content > .controls > label {
+.screenshot-manager .content > .controls .label-container {
   margin: 4px 10px 0 10px;
   font-weight: normal;
   float: left;
 }
 
-.screenshot-manager .content > .controls > .size-input {
+.screenshot-manager .content > .controls .size-input {
   border: 1px solid #aeaeae;
-  width: calc(50% - 145px);
+  width: calc(50% - 122px);
   padding: 3px 0 0 10px;
   white-space: nowrap;
   border-radius: 4px;
@@ -131,4 +138,42 @@
 
 .screenshot-manager .items > .item > button:hover {
   background: #ff9100;
+}
+
+/////////////////////////////////////////////////////////
+// title controls
+//
+/////////////////////////////////////////////////////////
+.screenshot-manager-controls {
+  margin: auto 0 auto 65px;
+  position: relative;
+  float: left;
+}
+
+.screenshot-manager-controls > button {
+  border: 1px solid #c6c6c6;
+  background-color: #e1e1e1;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+  outline: none;
+  height: 24px;
+  width: 26px;
+}
+
+.screenshot-manager-controls > button:hover {
+  border: 1px solid #878787;
+  background-color: #f5f5f5;
+}
+
+.screenshot-manager-controls > button > label {
+  position: relative;
+  font-size: 20px;
+  color: #f0fcff;
+  top: -8px;
+}
+
+.screenshot-manager-controls > button > span {
+  pointer-events: none;
+  color: #9b9b9b
 }

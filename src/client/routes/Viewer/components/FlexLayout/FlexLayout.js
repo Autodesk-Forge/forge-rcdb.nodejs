@@ -45,9 +45,7 @@ class FlexLayout extends React.Component {
                     </ResponsiveView>
                   </WidgetContainer>
                 </ReflexElement>
-                <ReflexSplitter
-                  onStopResize={() => this.forceUpdate()}
-                />
+                <ReflexSplitter onStopResize={() => this.forceUpdate()}/>
                 <ReflexElement>
                   <WidgetContainer title="Cost Breakdown">
                     <DBChart
@@ -59,13 +57,9 @@ class FlexLayout extends React.Component {
                 </ReflexElement>
               </ReflexContainer>
             </ReflexElement>
-            <ReflexSplitter
-              onStopResize={() => this.refs.viewer.forceUpdate()}
-            />
+            <ReflexSplitter onStopResize={() => this.forceUpdate()}/>
             <ReflexElement propagateDimensions={true}>
-              <Viewer
-                onViewerCreated={this.props.onViewerCreated}
-              />
+              <Viewer onViewerCreated={this.props.onViewerCreated}/>
             </ReflexElement>
           </ReflexContainer>
         )
@@ -77,9 +71,7 @@ class FlexLayout extends React.Component {
 
           <ReflexContainer key="flexLayoutRight" orientation='vertical'>
             <ReflexElement flex={0.6} propagateDimensions={true}>
-              <Viewer
-                onViewerCreated={this.props.onViewerCreated}
-              />
+              <Viewer onViewerCreated={this.props.onViewerCreated}/>
             </ReflexElement>
             <ReflexSplitter onStopResize={() => this.forceUpdate()}/>
             <ReflexElement>

@@ -19,6 +19,19 @@ export default class IoTGraph extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  constructor () {
+
+    super()
+
+    this.state = {
+      value: 0
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   componentDidMount () {
 
     this.thresholdSeries = new SmoothieTimeSeries()
@@ -69,8 +82,12 @@ export default class IoTGraph extends React.Component {
 
         const value = this.props.value || 30 + (0.5 - Math.random()) * 10
 
+        this.setState({
+          value
+        })
+
         this.dataSeries.append(t, value)
-      }, 250)
+      }, 500)
     }
   }
 
@@ -103,7 +120,7 @@ export default class IoTGraph extends React.Component {
       <div style={style}>
         <div className="graph-title">
           <label>
-            Tag {tagId}
+            Tag {tagId} - Value: {this.state.value.toFixed(2)}
           </label>
         </div>
         <canvas className="graph" width={width} height={height-30}

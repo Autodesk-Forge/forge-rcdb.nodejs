@@ -1,6 +1,6 @@
 import ServiceManager from 'SvcManager'
-import React from 'react'
 import './UploadView.scss'
+import React from 'react'
 
 class UploadView extends React.Component {
 
@@ -8,19 +8,12 @@ class UploadView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////////////
-  componentDidMount () {
-
-  }
-
-  /////////////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////////////
   render() {
+
+    console.log(this.props.location.query)
 
     return (
       <div className="upload">
-
       </div>
     )
   }

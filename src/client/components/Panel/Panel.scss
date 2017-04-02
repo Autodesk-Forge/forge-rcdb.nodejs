@@ -1,12 +1,50 @@
 .react-panel {
+  transition-timing-function: ease;
+  transition-duration: 1.5s;
+  transition-property: border;
+  transition-delay: 0.0s;
+
   box-shadow: 0 3px 5px rgba(0,0,0,.2);
+  border: 1px solid #d9d9d9;
   border-radius: 4px;
   position: absolute;
   overflow: hidden;
+  height: 300px;
+  width: 350px;
   z-index: 1;
   left: 10px;
   top: 10px;
-  width: 300px;
-  height: 300px;
-  background: beige;
 }
+
+.react-panel:hover {
+  border: 1px solid #afafaf;
+}
+
+.react-panel .title {
+  background: whitesmoke;
+  display: inline-flex;
+  cursor: move;
+  height: 35px;
+  float: left;
+  width: 100%;
+  z-index: 1;
+}
+
+.react-panel .title > label {
+  white-space: nowrap;
+  font-weight: normal;
+  user-select: none;
+  margin-left: 10px;
+  font-weight: bold;
+  line-height: 14px;
+  margin-top: 10px;
+  font-size: 14px;
+  select: none;
+  width: 80px;
+  float: left;
+}
+
+.react-panel > .content {
+  height: calc(100% - 35px);
+}
+
