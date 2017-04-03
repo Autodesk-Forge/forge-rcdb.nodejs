@@ -54,7 +54,7 @@ module.exports = {
     // Sort the chunks by a field
     chunksSort: "field",
     // Context directory for request shortening
-    context: "../src/",
+    context: path.resolve("../src/"),
     // `webpack --colors` equivalent
     colors: true,
     // Add errors
