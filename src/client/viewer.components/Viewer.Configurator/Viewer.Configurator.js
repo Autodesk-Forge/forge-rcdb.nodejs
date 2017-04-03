@@ -235,8 +235,9 @@ class ViewerConfigurator extends React.Component {
 
       const layout = this.state.dbModel.layout
 
-      this.viewerFlex = 1.0 -
-        (layout.leftFlex || layout.rightFlex || 0.3)
+      this.viewerFlex = !layout
+        ? 1.0
+        : 1.0 - (layout.leftFlex || layout.rightFlex || 0.3)
 
       const done = (start, end) => {
         return start <= end
