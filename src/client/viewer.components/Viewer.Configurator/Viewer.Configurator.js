@@ -35,8 +35,14 @@ class ViewerConfigurator extends React.Component {
     this.pushRenderExtension =
       this.pushRenderExtension.bind(this)
 
+    this.pushViewerPanel =
+      this.pushViewerPanel.bind(this)
+
     this.popRenderExtension =
       this.popRenderExtension.bind(this)
+
+    this.popViewerPanel =
+      this.popViewerPanel.bind(this)
 
     this.state = {
       dataExtension: null,
@@ -235,9 +241,9 @@ class ViewerConfigurator extends React.Component {
 
       const layout = this.state.dbModel.layout
 
-      this.viewerFlex = !layout
-        ? 1.0
-        : 1.0 - (layout.leftFlex || layout.rightFlex || 0.3)
+      this.viewerFlex = layout
+        ? 1.0 - (layout.leftFlex || layout.rightFlex || 0.3)
+        : 1.0
 
       const done = (start, end) => {
         return start <= end
@@ -324,6 +330,82 @@ class ViewerConfigurator extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  pushViewerPanel (extension) {
+
+    const panelId = 'panel-' + extension.id
+
+    const props = {
+      renderable: extension,
+      id: panelId,
+      react: {
+        setState: (state) => {
+
+          return new Promise((resolve) => {
+
+            const panelState = this.state[panelId] || {}
+
+            var newPanelState = {}
+
+            newPanelState[id] = Object.assign({},
+              panelState, state)
+
+            this.setReactState(newPanelState).then(() => {
+
+              resolve (newPanelState)
+            })
+          })
+        },
+        getState: () => {
+
+          return this.state[panelId] || {}
+        }
+      }
+    }
+
+    return new Promise ((resolve) => {
+
+      const panel = new Panel(props)
+
+      this.setReactState({
+        viewerPanels: [
+          ...this.state.viewerPanels,
+          panel
+        ]}).then(() => {
+
+        resolve ()
+      })
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  popViewerPanel (extensionId) {
+
+    const targetPanelId = 'panel-' + extensionId
+
+    return new Promise ((resolve) => {
+
+      this.setReactState({
+        viewerPanels:
+          this.state.viewerPanels.filter((panel) => {
+            if (panel.id === targetPanelId) {
+              panel.destroy()
+              return false
+            }
+            return true
+          })
+      }).then(() => {
+        resolve ()
+      })
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   setupDynamicExtensions (viewer, extensions, defaultOptions) {
 
     const createDefaultOptions = (id) => {
@@ -335,8 +417,14 @@ class ViewerConfigurator extends React.Component {
             pushRenderExtension:
               this.pushRenderExtension,
 
+            pushViewerPanel:
+              this.pushViewerPanel,
+
             popRenderExtension:
               this.popRenderExtension,
+
+            popViewerPanel:
+              this.popViewerPanel,
 
             forceUpdate: () => {
 
@@ -369,36 +457,6 @@ class ViewerConfigurator extends React.Component {
                 this.setReactState(newExtState).then(() => {
 
                   resolve (newExtState)
-                })
-              })
-            },
-            pushViewerPanel: (extension) => {
-
-              return new Promise ((resolve) => {
-
-                const panel = new Panel(extension)
-
-                this.setReactState({
-                  viewerPanels: [
-                    ...this.state.viewerPanels,
-                    panel
-                  ]}).then(() => {
-
-                  resolve ()
-                })
-              })
-            },
-            popViewerPanel: (extensionId) => {
-
-              return new Promise ((resolve) => {
-
-                this.setReactState({
-                  viewerPanels:
-                    this.state.viewerPanels.filter((panel) => {
-                      return panel.id !==  extensionId
-                    })
-                }).then(() => {
-                  resolve ()
                 })
               })
             }

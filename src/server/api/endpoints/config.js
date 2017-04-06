@@ -147,7 +147,8 @@ module.exports = function() {
   })
 
   /////////////////////////////////////////////////////////
-  // add state to specific sequence
+  // add state to specific sequence.
+  // body.state can be a single state or an array of states
   //
   /////////////////////////////////////////////////////////
   router.post('/:db/:modelId/sequences/:sequenceId/states',

@@ -85,27 +85,19 @@ class ConfigManagerExtension extends ExtensionBase {
       newStateName: '',
       sequence: null,
       sequences: [],
+      play: false,
+      loop: true,
       items: []
 
     }).then (() => {
 
       this.react.pushRenderExtension(this).then(async() => {
 
-        const component = this.react.getComponent()
-
-        const domItems = ReactDOM.findDOMNode(
-          component.refs.items)
-
-        this.drake = Dragula([domItems])
-
-        this.drake.on('drop', () => {
-
-          this.onUpdateSequence()
-        })
-
         if (this.api) {
 
-          const sequences = await this.api.getSequences()
+          const sequences = await this.api.getSequences({
+            sortByName: true
+          })
 
           const sequence = sequences.length ?
             sequences[0] : null
@@ -181,6 +173,75 @@ class ConfigManagerExtension extends ExtensionBase {
     this.dialogSvc.setState({
       className: 'config-manager-dlg',
       title: 'Add Sequence ...',
+      content:
+        <div>
+          <ContentEditable
+            onChange={(e) => this.onInputChanged(e, 'newSequenceName')}
+            onKeyDown={(e) => this.onKeyDown(e)}
+            data-placeholder="Sequence name ..."
+            className="sequence-name-input"
+            html={''}/>
+        </div>,
+      open: true
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  copySequence () {
+
+    this.react.setState({
+      newSequenceName: ''
+    })
+
+    const onClose = (result) => {
+
+      if (result === 'OK') {
+
+        const state = this.react.getState()
+
+        const sequence = Object.assign({},
+          state.sequence, {
+          name: state.newSequenceName,
+          id: this.guid()
+        })
+
+        const items = state.items.map((item) => {
+
+          return Object.assign({},
+            item, {
+              id: this.guid(),
+              active: false
+            })
+        })
+
+        this.react.setState({
+          sequences: [
+            ...state.sequences, sequence
+          ],
+          sequence: sequence,
+          items
+        })
+
+        if (this.api) {
+
+          this.api.addSequence (sequence).then(() => {
+
+            this.api.addState (sequence.id, items)
+          })
+        }
+      }
+
+      this.dialogSvc.off('dialog.close', onClose)
+    }
+
+    this.dialogSvc.on('dialog.close', onClose)
+
+    this.dialogSvc.setState({
+      className: 'config-manager-dlg',
+      title: 'Copy Sequence ...',
       content:
         <div>
           <ContentEditable
@@ -318,8 +379,6 @@ class ConfigManagerExtension extends ExtensionBase {
 
       this.on(`restoreState.${viewerState.id}`, () => {
 
-        console.log(viewerState)
-
         this.onRestoreState(viewerState)
       })
 
@@ -412,7 +471,7 @@ class ConfigManagerExtension extends ExtensionBase {
 
     sets.forEach((setName)=>{
 
-      if(state[setName]){
+      if (state[setName]) {
 
         elements.forEach((elementName)=>{
 
@@ -463,7 +522,13 @@ class ConfigManagerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  setActiveSequence (sequence) {
+  async setActiveSequence (sequence) {
+
+    clearTimeout(this.playTimeout)
+
+    this.playTimeout = null
+
+    this.sequenceIdx = 0
 
     this.off ()
 
@@ -475,20 +540,35 @@ class ConfigManagerExtension extends ExtensionBase {
 
       if (sequence) {
 
-        this.api.getStates(sequence.id).then((states) => {
+        const states = await this.api.getStates(
+          sequence.id)
 
-          states.map((state) => {
+        states.map((state) => {
 
-            this.on(`restoreState.${state.id}`, () => {
+          this.on(`restoreState.${state.id}`, () => {
 
-              this.onRestoreState(state)
-            })
-          })
-
-          this.react.setState({
-            items: states
+            this.onRestoreState(state)
           })
         })
+
+        await this.react.setState({
+          items: states
+        })
+
+        if (!sequence.readonly) {
+
+          const component = this.react.getComponent()
+
+          const domItems = ReactDOM.findDOMNode(
+            component.refs.items)
+
+          this.drake = Dragula([domItems])
+
+          this.drake.on('drop', () => {
+
+            this.onUpdateSequence()
+          })
+        }
 
       } else {
 
@@ -505,45 +585,75 @@ class ConfigManagerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////////
   playSequence (period) {
 
-    const { loop } = this.react.getState()
+    // sequence is playing -> stopping it
+    if (this.playTimeout) {
+
+      clearTimeout(this.playTimeout)
+
+      this.playTimeout = null
+
+      this.react.setState({
+        play: false
+      })
+
+      return
+    }
 
     const stateIds = this.getStateIds()
 
-    var sequenceIdx = 0
-
     const step = (stateId) => {
+
+      const state = this.react.getState()
 
       this.emit(`restoreState.${stateId}`)
 
-      //$(`#${id}`).addClass('active')
+      this.react.setState({
+        play: true,
+        items: state.items.map((item) => {
+          return Object.assign({}, item, {
+            active: item.id === stateId
+          })
+        })
+      })
 
       setTimeout(() => {
-        //$(`#${id}`).removeClass('active')
+        this.react.setState({
+          items: state.items.map((item) => {
+            return Object.assign({}, item, {
+              active: false
+            })
+          })
+        })
       }, period * 0.9)
 
-      ++sequenceIdx
+      if ((++this.sequenceIdx) == stateIds.length) {
 
-      if (sequenceIdx == stateIds.length) {
+        const { loop } = this.react.getState()
 
         if (!loop) {
 
-          //this.playToggleBtn.setState(0)
+          this.react.setState({
+            play: false
+          })
+
+          this.playTimeout = null
+
           return
         }
 
-        sequenceIdx = 0
+        this.sequenceIdx = 0
       }
 
-      setTimeout(() => {
+      return setTimeout(() => {
 
-        step(stateIds[sequenceIdx])
+        this.playTimeout = step(stateIds[this.sequenceIdx])
 
       }, period)
     }
 
     if (stateIds.length > 0) {
 
-      step(stateIds[sequenceIdx])
+      this.playTimeout = step (stateIds[this.sequenceIdx])
     }
   }
 
@@ -589,8 +699,7 @@ class ConfigManagerExtension extends ExtensionBase {
         <div className="config-manager-controls">
           <button onClick={() => this.setDocking(docked)}
             title="Toggle docking mode">
-            <span className={spanClass}>
-            </span>
+            <span className={spanClass}/>
           </button>
         </div>
       </div>
@@ -616,8 +725,12 @@ class ConfigManagerExtension extends ExtensionBase {
       )
     })
 
-    const sequenceName = state.sequence
-      ? state.sequence.name : ''
+    const sequence = state.sequence
+
+    const sequenceName = sequence
+      ? sequence.name +
+        (!sequence.readonly ? '' : ' (readonly)')
+      : ''
 
     return (
       <div className="controls">
@@ -627,7 +740,7 @@ class ConfigManagerExtension extends ExtensionBase {
           <DropdownButton
             title={"Sequence: " +  sequenceName}
             className="sequence-dropdown"
-            disabled={!state.sequence}
+            disabled={!sequence}
             key="sequence-dropdown"
             id="sequence-dropdown">
            { sequences }
@@ -635,15 +748,19 @@ class ConfigManagerExtension extends ExtensionBase {
 
           <button onClick={() => this.addSequence()}
             title="Add sequence">
-            <span className="fa fa-plus">
-            </span>
+            <span className="fa fa-plus"/>
+          </button>
+
+          <button onClick={() => this.copySequence()}
+            disabled={!sequence}
+            title="Copy sequence">
+            <span className="fa fa-copy"/>
           </button>
 
           <button onClick={() => this.deleteSequence()}
-            disabled={!state.sequence}
+            disabled={!sequence || sequence.readonly}
             title="Delete sequence">
-            <span className="fa fa-times">
-            </span>
+            <span className="fa fa-times"/>
           </button>
 
         </div>
@@ -652,27 +769,31 @@ class ConfigManagerExtension extends ExtensionBase {
 
           <ContentEditable
             onChange={(e) => this.onInputChanged(e, 'newStateName')}
+            disabled={!sequence || sequence.readonly}
             onKeyDown={(e) => this.onKeyDown(e)}
             data-placeholder="State name ..."
             className="state-name-input"
-            disabled={!state.sequence}
-            html={''}/>
+            html={state.newStateName}/>
 
-          <button onClick={() => this.addItem()}
-            disabled={!state.sequence}
+          <button disabled={!sequence || sequence.readonly}
+            onClick={() => this.addItem()}
             title="Save state">
-            <span className="fa fa-database">
-            </span>
+            <span className="fa fa-database"/>
           </button>
 
-          <button onClick={() => this.playSequence(2000)}
-            disabled={!state.sequence}
-            title="Play sequence">
-            <span className="fa fa-play">
-            </span>
+          <button
+            title={state.play ? "Pause sequence" : "Play sequence"}
+            onClick={() => this.playSequence(1800)}
+            disabled={!sequence}>
+            <span className={"fa fa-" + (state.play ? "pause" : "play")}/>
           </button>
 
-          <Switch isChecked={true} className="loop"/>
+          <Switch isChecked={true} className="loop"
+            onChange={(loop) => {
+              this.react.setState({
+                loop
+              })
+            }}/>
 
         </div>
 
@@ -694,24 +815,26 @@ class ConfigManagerExtension extends ExtensionBase {
 
       return (
         <div data-id={item.id} key={item.id}
-          className="item"
+          className={"item" + (item.active ? ' active' :'')}
           onClick={
             () => this.onRestoreState (item)
           }>
 
-          <Label truncateText=" …"
-            text={text}
-          />
+          <Label text={text}/>
 
-          <button onClick={(e) => {
-            this.deleteItem(item.id)
-            e.stopPropagation()
-            e.preventDefault()
+          {
+            !state.sequence.readonly &&
+
+            <button onClick={(e) => {
+              this.deleteItem(item.id)
+              e.stopPropagation()
+              e.preventDefault()
             }}
-            title="Delete state">
-            <span className="fa fa-times">
-            </span>
-          </button>
+              title="Delete state">
+              <span className="fa fa-times"/>
+            </button>
+          }
+
         </div>
       )
     })

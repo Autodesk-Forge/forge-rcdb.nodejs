@@ -348,6 +348,41 @@ export default class ModelSvc extends BaseSvc {
   }
 
   /////////////////////////////////////////////////////////
+  // returns config sequence by Id
+  //
+  /////////////////////////////////////////////////////////
+  getConfigSequence (modelId, sequenceId) {
+
+    return new Promise(async(resolve, reject)=> {
+
+      try {
+
+        var dbSvc = ServiceManager.getService(
+          this._config.dbName)
+
+        var query = {
+          fieldQuery:{
+            _id: new mongo.ObjectId(modelId)
+          },
+          pageQuery:{
+            sequences: 1
+          }
+        }
+
+        var model = await dbSvc.findOne(
+          this._config.collections.models,
+          query)
+
+        return resolve (model.sequences || [])
+
+      } catch(ex) {
+
+        return reject(ex)
+      }
+    })
+  }
+
+  /////////////////////////////////////////////////////////
   // returns config sequences
   //
   /////////////////////////////////////////////////////////
@@ -593,7 +628,7 @@ export default class ModelSvc extends BaseSvc {
   }
 
   /////////////////////////////////////////////////////////
-  // add states to specific sequence
+  // add state or array of states to specific sequence
   //
   /////////////////////////////////////////////////////////
   addConfigSequenceState (modelId, sequenceId, state) {

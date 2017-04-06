@@ -30,10 +30,6 @@ class WidgetContainer extends React.Component {
   constructor () {
 
     super()
-
-    this.state = {
-      style: {}
-    }
   }
 
   /////////////////////////////////////////////////////////

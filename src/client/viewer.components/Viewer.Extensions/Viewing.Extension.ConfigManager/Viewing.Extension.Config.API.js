@@ -19,11 +19,22 @@ export default class ConfigAPI extends ClientAPI {
   //
   //
   ///////////////////////////////////////////////////////////////
-  getSequences () {
+  getSequences (opts) {
 
-    const url = this.apiUrl + `/sequences`
+    return new Promise ((resolve, reject) => {
 
-    return this.ajax(url)
+      const url = this.apiUrl + `/sequences`
+
+      this.ajax(url).then ((sequences) => {
+
+        const result = opts.sortByName
+          ? _.sortBy(sequences, (seq) => { return seq.name })
+          : sequences
+
+        resolve (result)
+
+      }, (error) => reject(error))
+    })
   }
 
   ///////////////////////////////////////////////////////////////

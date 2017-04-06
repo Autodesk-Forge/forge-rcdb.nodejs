@@ -7,6 +7,7 @@ coverage
 .vscode
 resources/models/210 King
 resources/models/loader
+resources/models/fader
 resources/models/office
 resources/models/seat
 resources/models/V8

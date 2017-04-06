@@ -34,16 +34,27 @@ class Gradient extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  componentDidUpdate (prevProps, prevState) {
+  shouldComponentUpdate (nextProps) {
 
-    if (prevProps.guid !== this.props.guid) {
+    if (nextProps.guid !== this.props.guid) {
 
-      const {data} = this.props
-
-      $(this.container).empty()
-
-      this.draw(data)
+      return true
     }
+
+    return false
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  componentDidUpdate () {
+
+    const {data} = this.props
+
+    $(this.container).empty()
+
+    this.draw(data)
   }
 
   /////////////////////////////////////////////////////////
@@ -68,17 +79,17 @@ class Gradient extends React.Component {
       .attr("width", width)
       .append("g")
 
+    const min = d3.min(data, (d) => {return d.value })
+    const max = d3.max(data, (d) => {return d.value })
+
     const colorScale = d3.scale.linear()
-      .domain([
-        0, d3.max(data, (d) => {return d.count })/2,
-        d3.max(data, (d) => {return d.count })
-      ])
-      .range(["#FFFFDD", "#3E9583", "#1F2D86"])
+      .domain([min, max])
+      .range(this.props.colorScale)
     //.interpolate(d3.interpolateHcl);
 
     //Extra scale since the color scale is interpolated
     const countScale = d3.scale.linear()
-      .domain([0, d3.max(data, (d) => {return d.count})])
+      .domain([min, max])
       .range([0, width])
 
     //Calculate the variables for the temp gradient
@@ -121,7 +132,7 @@ class Gradient extends React.Component {
       .attr("y", 0)
 
     const xScale = d3.scale.linear()
-      .domain([ 0, d3.max(data, (d) => { return d.count })])
+      .domain([ min, max])
       .range([-width/2, width/2])
 
     const ticks = width > 240 ? 11 : 5

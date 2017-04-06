@@ -34,16 +34,27 @@ class BarChart extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  componentDidUpdate (prevProps, prevState) {
+  shouldComponentUpdate (nextProps) {
 
-    if (prevProps.guid !== this.props.guid) {
+    if (nextProps.guid !== this.props.guid) {
 
-      const {data} = this.props
-
-      $(this.container).empty()
-
-      this.draw(data)
+      return true
     }
+
+    return false
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  componentDidUpdate () {
+
+    const {data} = this.props
+
+    $(this.container).empty()
+
+    this.draw(data)
   }
 
   /////////////////////////////////////////////////////////

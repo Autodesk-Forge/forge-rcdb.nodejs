@@ -8,6 +8,8 @@ export default class EventTool extends EventsEmitter {
 
     this.viewer = viewer
 
+    this.toolName = this.guid()
+
     viewer.toolController.registerTool(this)
   }
 
@@ -17,7 +19,7 @@ export default class EventTool extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   getNames () {
 
-    return ['Viewer.Selection.Tool']
+    return [this.getName()]
   }
 
   /////////////////////////////////////////////////////////////////
@@ -26,7 +28,7 @@ export default class EventTool extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   getName () {
 
-    return 'Viewer.Selection.Tool'
+    return this.toolName
   }
 
   /////////////////////////////////////////////////////////////////
@@ -40,7 +42,7 @@ export default class EventTool extends EventsEmitter {
       this.active = true
 
       this.viewer.toolController.activateTool(
-        this.getName())
+        this.toolName)
 
       this.emit('activate', this)
     }
@@ -57,7 +59,7 @@ export default class EventTool extends EventsEmitter {
       this.active = false
 
       this.viewer.toolController.deactivateTool(
-        this.getName())
+        this.toolName)
 
       this.emit('deactivate', this)
     }

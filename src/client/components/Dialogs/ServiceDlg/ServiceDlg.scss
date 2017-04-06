@@ -1,8 +1,8 @@
 
 .dialog.service {
+  height: auto !important;
   left: calc(50% - 140px);
   top: calc(40% - 100px);
-  height: 164px;
   width: 280px;
 }
 
@@ -11,7 +11,7 @@
   top: calc(100% - 114px);
   padding: 6px 6px 0 0;
   position: relative;
-  height: 29px;
+  height: 40px;
   width: 100%;
 }
 

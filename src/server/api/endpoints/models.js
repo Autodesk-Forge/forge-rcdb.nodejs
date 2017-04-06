@@ -23,9 +23,12 @@ module.exports = function() {
 
       var opts = {
         fieldQuery:{
-          private: null
+          $or: [
+            { private: false },
+            { private: null }
+          ]
         },
-        pageQuery:{
+        pageQuery: {
           name: 1,
           urn: 1,
           env: 1

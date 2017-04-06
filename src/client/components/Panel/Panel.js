@@ -26,13 +26,103 @@ class Panel extends EventsEmitter {
   //
   //
   /////////////////////////////////////////////////////////
-  constructor (renderable) {
+  static defaultProps = {
+    className: '',
+    style: {},
+    document
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  constructor (props) {
 
     super ()
 
-    this.id = renderable.id || this.guid()
+    this.props = Object.assign({},
+      props, Panel.defaultProps)
 
-    this.renderable = renderable
+    this.onMouseMove = this.onMouseMove.bind(this)
+    this.onMouseDown = this.onMouseDown.bind(this)
+    this.onMouseUp   = this.onMouseUp.bind(this)
+
+    this.renderable = this.props.renderable
+
+    this.document = this.props.document
+
+    this.document.addEventListener(
+      'touchend', this.onMouseUp)
+
+    this.document.addEventListener(
+      'mouseup', this.onMouseUp)
+
+    this.document.addEventListener(
+      'mousemove', this.onMouseMove)
+
+    this.document.addEventListener(
+      'touchmove', this.onMouseMove)
+
+    this.react = this.props.react
+
+    this.id = this.props.id
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  destroy () {
+
+    this.document.removeEventListener(
+      'touchend', this.onMouseUp)
+
+    this.document.removeEventListener(
+      'mouseup', this.onMouseUp)
+
+    this.document.removeEventListener(
+      'mousemove', this.onMouseMove)
+
+    this.document.removeEventListener(
+      'touchmove', this.onMouseMove)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onMouseMove (event) {
+
+    if (this.dragging) {
+
+      event.stopPropagation()
+      event.preventDefault()
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onMouseDown (event) {
+
+    this.pointer = event.changedTouches
+      ? event.changedTouches[0]
+      : event
+
+    this.dragging = true
+
+    event.stopPropagation()
+    event.preventDefault()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onMouseUp (event) {
+
+    this.dragging = false
   }
 
   /////////////////////////////////////////////////////////
@@ -41,20 +131,15 @@ class Panel extends EventsEmitter {
   /////////////////////////////////////////////////////////
   renderTitle () {
 
-    if (this.renderable.renderTitle) {
-
-      return(
-        <div className="title">
-          { this.renderable.renderTitle() }
-        </div>
-      )
-    }
-
-    return (
-      <div className="title">
-        <label>
-          { this.renderable.title }
-        </label>
+    return(
+      <div className="title"
+        onTouchStart={this.onMouseDown}
+        onMouseDown={this.onMouseDown}>
+        {
+          this.renderable.renderTitle
+            ? this.renderable.renderTitle()
+            : this.renderable.title
+        }
       </div>
     )
   }
@@ -83,8 +168,16 @@ class Panel extends EventsEmitter {
   /////////////////////////////////////////////////////////
   render () {
 
+    const classNames = [
+      'react-panel',
+      ...this.props.className.split(' ')
+    ]
+
+    const style = Object.assign({}, this.props.style)
+
     return (
-      <div key={this.id} className="react-panel">
+      <div key={this.id} className={classNames.join(' ')}
+        style={style}>
         { this.renderTitle() }
         { this.renderContent() }
       </div>

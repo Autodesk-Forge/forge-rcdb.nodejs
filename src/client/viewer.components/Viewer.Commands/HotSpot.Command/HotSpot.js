@@ -66,15 +66,17 @@ export default class HotSpot extends GraphicMarker {
 
     this.setVisible(show)
 
-    $(`#${this.svgId}`).tooltip({
-      openOn: 'hover click',
-      container: 'body',
-      animated: 'fade',
-      html: true
-    })
-    .data('bs.tooltip').tip().addClass(data.tooltip.class)
+    if (data.tooltip) {
 
-    const htmlTooltipContent = `
+      $(`#${this.svgId}`).tooltip({
+        openOn: 'hover click',
+        container: 'body',
+        animated: 'fade',
+        html: true
+      })
+        .data('bs.tooltip').tip().addClass(data.tooltip.class)
+
+      const htmlTooltipContent = `
         <div class="hotspot-item">
           <div class="hotspot-item-img"
             style="background-image:url(${data.tooltip.imgUrl})">
@@ -85,10 +87,11 @@ export default class HotSpot extends GraphicMarker {
         </div>
       `
 
-    $(`#${this.svgId}`)
-      .attr('title', htmlTooltipContent)
-      .tooltip('fixTitle')
-      .tooltip('setContent')
+      $(`#${this.svgId}`)
+        .attr('title', htmlTooltipContent)
+        .tooltip('fixTitle')
+        .tooltip('setContent')
+    }
   }
 
   /////////////////////////////////////////////////////////////////

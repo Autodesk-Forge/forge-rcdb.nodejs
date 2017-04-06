@@ -35,22 +35,33 @@ class PieChart extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  componentDidUpdate (prevProps, prevState) {
+  shouldComponentUpdate (nextProps) {
 
-    if (prevProps.guid !== this.props.guid) {
+    if (nextProps.guid !== this.props.guid) {
 
-      const {data} = this.props
-
-      $(this.container).empty()
-
-      this.draw(data, {
-        effects: {
-          load: {
-            effect: 'none'
-          }
-        }
-      })
+      return true
     }
+
+    return false
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  componentDidUpdate () {
+
+    const {data} = this.props
+
+    $(this.container).empty()
+
+    this.draw(data, {
+      effects: {
+        load: {
+          effect: 'none'
+        }
+      }
+    })
   }
 
   /////////////////////////////////////////////////////////

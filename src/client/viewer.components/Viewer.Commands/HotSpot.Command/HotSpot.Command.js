@@ -13,71 +13,97 @@ export default class HotSpotCommand extends ViewerCommand {
       commandId: 'HotSpot'
     })
 
-    this.control = this.createButtonControl({
-      parentControl: options.parentControl,
-      caption: 'Toggle hotspots',
-      icon: 'fa fa-podcast',
-      id: 'toolbar-hotspot',
-      handler: () => {
-        this.commandTool.active
-          ? this.commandTool.deactivate()
-          : this.commandTool.activate()
-      }
-    })
+    if (options.parentControl) {
+
+      this.control = this.createButtonControl({
+        parentControl: options.parentControl,
+        caption: 'Toggle hotspots',
+        icon: 'fa fa-podcast',
+        id: 'toolbar-hotspot',
+        handler: () => {
+          this.commandTool.active
+            ? this.commandTool.deactivate()
+            : this.commandTool.activate()
+        }
+      })
+    }
 
     this.commandTool.on('activate', () => {
 
       this.control.container.classList.add('active')
 
-      options.hotspots.forEach((data) => {
+      if (options.hotspots) {
 
-        const hotSpot = new HotSpot(
-          this.viewer, data)
+        options.hotspots.forEach((data) => {
 
-        hotSpot.on('singleclick', (event) => {
-
-          setTimeout(() => {
-            $('.tooltip').css({display:'none'})
-          }, 850)
-
-          this.emit('hotspot.clicked', hotSpot)
+          this.createHotSpot (data)
         })
-
-        hotSpot.on('tracker.modified', (event) => {
-
-          $('.tooltip').css({display:'none'})
-
-          this.emit('hotspot.updated', hotSpot, event)
-        })
-
-        hotSpot.on('visible', () => {
-
-          this.emit('hotspot.visible', hotSpot)
-        })
-
-        this.emit('hotspot.created', hotSpot)
-
-        this.hotspots.push(hotSpot)
-      })
+      }
     })
 
     this.commandTool.on('deactivate', () => {
 
       this.control.container.classList.remove('active')
 
-      this.hotspots.forEach((hotSpot) => {
-
-        hotSpot.remove()
-      })
+      this.removeHotSpots()
     })
 
     this.hotspots = []
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
+  createHotSpot (data) {
+
+    const hotSpot = new HotSpot(
+      this.viewer, data)
+
+    hotSpot.on('singleclick', (event) => {
+
+      setTimeout(() => {
+        $('.tooltip').css({display:'none'})
+      }, 850)
+
+      this.emit('hotspot.clicked', hotSpot)
+    })
+
+    hotSpot.on('tracker.modified', (event) => {
+
+      $('.tooltip').css({display:'none'})
+
+      this.emit('hotspot.updated', hotSpot, event)
+    })
+
+    hotSpot.on('visible', () => {
+
+      this.emit('hotspot.visible', hotSpot)
+    })
+
+    this.emit('hotspot.created', hotSpot)
+
+    this.hotspots.push(hotSpot)
+
+    return hotSpot
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  removeHotSpots () {
+
+    this.hotspots.forEach((hotSpot) => {
+
+      hotSpot.remove()
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   toArray (obj) {
 
     return obj ? (Array.isArray(obj) ? obj : [obj]) : []
