@@ -41,7 +41,7 @@ const attenuationVertexShader = `
       vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
       worldCoord = modelMatrix * vec4(position, 1.0) ;
 
-      gl_PointSize =8.0;
+      //gl_PointSize =8.0;
       gl_Position = projectionMatrix * mvPosition;
   }
 `
@@ -105,16 +105,40 @@ class FaderExtension extends ExtensionBase {
     this._attenuation_per_wall = 8
     this._attenuation_max = 0.0
     this._attenuation_min = 0.0
+    this._lastFragId = null
+    // THREE.LinearFilter takes the four closest texels and bilinearly interpolates among them
+    // THREE.NearestFilter uses the value of the closest texel.
+    this._texFilter = THREE.LinearFilter // THREE.LinearFilter / THREE.NearestFilter
 
     this._materials = {}
-    this._floorMesh = null
+    this._floorMeshes ={}
+    this._wallMeshes = []
     this._overlayName = 'fader-material-shader'
     this.viewer.impl.createOverlayScene( this._overlayName )
+
+    this.onModelLoaded(null)
   }
 
   /////////////////////////////////////////////////////////////////
   // Accessors - es6 getters and setters
   /////////////////////////////////////////////////////////////////
+  get texFilter () {
+    return this._texFilter === THREE.NearestFilter
+  }
+
+  set texFilter (a) {
+    console.log('texFilter: ' + a)
+    this._texFilter = a ? THREE.NearestFilter : THREE.LinearFilter
+    if ( this._lastFragId !== null ) {
+      let mesh =this._floorMeshes [this._lastFragId] ;
+      let tex =mesh.material.uniforms.checkerboard.value.clone ()
+      tex.magFilter =this._texFilter
+      tex.needsUpdate = true
+      mesh.material.uniforms.checkerboard.value = tex
+      this.viewer.impl.invalidate (true)
+    }
+  }
+
   get attenuationPerMeterInAir () {
     return this._attenuation_per_m_in_air
   }
@@ -228,12 +252,15 @@ class FaderExtension extends ExtensionBase {
       Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
       this.onSelection)
 
-    if (this._floorMesh) {
-      this.viewer.impl.scene.remove (this._floorMesh)
-
-    }
+    Object.keys(this._floorMeshes).forEach((obj) => {
+      this.viewer.impl.scene.remove(obj)
+    })
 
     this._raycastRays.forEach((obj) => {
+      this.viewer.impl.scene.remove(obj)
+    })
+
+    this._floorTopEdges.forEach((obj) => {
       this.viewer.impl.scene.remove(obj)
     })
 
@@ -265,6 +292,10 @@ class FaderExtension extends ExtensionBase {
   // onModelLoaded - retrieve all wall meshes
   /////////////////////////////////////////////////////////////////
   onModelLoaded( event ) {
+    if (   this.viewer.model === undefined || this.viewer.model === null
+        || this.viewer.model.getData() === undefined || this.viewer.model.getData() === null
+    )
+      return
     const instanceTree = this.viewer.model.getData().instanceTree
     let rootId = instanceTree.getRootId()
     instanceTree.enumNodeChildren( rootId, async (childId ) => {
@@ -272,7 +303,7 @@ class FaderExtension extends ExtensionBase {
       if( nodeName === 'Walls' ) {
         const fragIds = await Toolkit.getFragIds (
           this.viewer.model, childId )
-        this.wallMeshes = fragIds.map( (fragId) => {
+        this._wallMeshes = fragIds.map( (fragId) => {
           return this.getMeshFromRenderProxy(
             childId,
             this.viewer.impl.getRenderProxy( this.viewer.model, fragId ),
@@ -319,7 +350,7 @@ class FaderExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////////////
   // calculateUVsGeo
   /////////////////////////////////////////////////////////////////
-  calculateUVsGeo( geometry ) {
+  calculateUVsGeo1( geometry ) {
     geometry.computeBoundingBox ()
 
     let bbox = geometry.boundingBox
@@ -343,6 +374,43 @@ class FaderExtension extends ExtensionBase {
           (v2.y + offset.y) / range.y ),
         new THREE.Vector2( (v3.x + offset.x) / range.x,
           (v3.y + offset.y) / range.y )
+      ])
+    }
+    geometry.uvsNeedUpdate = true
+  }
+
+  calculateUVsGeo( geometry ) {
+    geometry.computeBoundingBox ()
+
+    let bbox = geometry.boundingBox
+      , max = bbox.max
+      , min = bbox.min
+      , offset = new THREE.Vector2( 0 - min.x, 0 - min.y )
+      , range = new THREE.Vector2( max.x - min.x, max.y - min.y )
+      , faces = geometry.faces
+      , uvs = geometry.faceVertexUvs[0]
+      , vertices = geometry.vertices
+      , offx =range.x / ( 2 * this._rayTraceGrid )
+      , offy =range.y / ( 2 * this._rayTraceGrid )
+      , incx =range.x / this._rayTraceGrid
+      , incy =range.y / this._rayTraceGrid
+
+    uvs.splice( 0, uvs.length )
+    for ( let i = 0 ; i < faces.length ; ++i ) {
+      let v1 = vertices [faces [i].a]
+      let v2 = vertices [faces [i].b]
+      let v3 = vertices [faces [i].c]
+
+      uvs.push ([
+        new THREE.Vector2(
+          Math.abs((offx + v1.x + offset.x - incx) / range.x),
+          Math.abs((offy + v1.y + offset.y - incy) / range.y) ),
+        new THREE.Vector2(
+          Math.abs((offx + v2.x + offset.x - incx) / range.x),
+          Math.abs((offy + v2.y + offset.y - incy) / range.y) ),
+        new THREE.Vector2(
+          Math.abs((offx + v3.x + offset.x - incx) / range.x),
+          Math.abs((offy + v3.y + offset.y - incy) / range.y) )
       ])
     }
     geometry.uvsNeedUpdate = true
@@ -436,6 +504,9 @@ class FaderExtension extends ExtensionBase {
     mesh.matrixAutoUpdate = false
     mesh.frustumCulled = false
 
+    mesh.dbId = render_proxy.dbId
+    mesh.fragId = render_proxy.fragId
+
     return mesh
   }
 
@@ -479,22 +550,27 @@ class FaderExtension extends ExtensionBase {
 
     const fragIds = await Toolkit.getFragIds(
       this.viewer.model, data.dbId )
+    this._lastFragId = fragIds[0]
 
+    // Do not remake the mesh each time, reuse it and just
+    // update its texture - the shader will handle it for you
+    let mesh ;
+    if ( !this._floorMeshes [this._lastFragId] ) {
     let floor_mesh_render = this.viewer.impl.getRenderProxy(
       this.viewer.model, fragIds[0] )
-
-    if (this._floorMesh) {
-      this.viewer.impl.scene.remove (this._floorMesh)
-    }
-
-    this._floorMesh = this.getMeshFromRenderProxy(data.dbId,
+      mesh =this.getMeshFromRenderProxy(data.dbId,
       floor_mesh_render, floor_normal, top_face_z )
-
-    this.viewer.impl.scene.add (this._floorMesh)
+      mesh.name =data.dbId + '-' + this._lastFragId + '-FloorMesh' ;
+      this._floorMeshes [this._lastFragId] =mesh ;
+      this.viewer.impl.scene.add (mesh) ;
+    } else {
+      mesh =this._floorMeshes [this._lastFragId] ;
+      this.calculateUVsGeo( mesh.geometry )
+    }
 
     // ray trace to determine wall locations on mesh
     let map_uv_to_color = this.rayTraceToFindWalls(
-      this._floorMesh, psource )
+      mesh, psource )
 
     this._attenuation_max = this.array2dMaxW( map_uv_to_color )
     this._attenuation_min = this.array2dMinW( map_uv_to_color )
@@ -508,7 +584,7 @@ class FaderExtension extends ExtensionBase {
       map_uv_to_color,
       this._attenuation_max)
 
-    this._floorMesh.material.uniforms.checkerboard.value = tex
+    mesh.material.uniforms.checkerboard.value = tex
 
     this.viewer.impl.invalidate (true)
   }
@@ -527,7 +603,7 @@ class FaderExtension extends ExtensionBase {
     vray.normalize ()
     let ray = new THREE.Raycaster( psource, vray, 0, max_dist )
     let intersectResults = ray.intersectObjects (
-      this.wallMeshes, true )
+      this._wallMeshes, true )
     let nWalls = intersectResults.length
     return nWalls
   }
@@ -564,7 +640,7 @@ class FaderExtension extends ExtensionBase {
 
         // determine number of walls between psource and ptarget
         // to generate a colour for each u,v coordinate pair
-        nWalls = this.getWallCountBetween( psource, ptarget, vsize.length )
+        nWalls = this.getWallCountBetween( psource, ptarget, d ) // vsize.length )
 
         let signal_attenuation =
           d * this._attenuation_per_m_in_air
@@ -597,8 +673,8 @@ class FaderExtension extends ExtensionBase {
       THREE.UnsignedByteType,
       THREE.UVMapping
     )
-    dataTexture.minFilter = THREE.LinearFilter
-    dataTexture.magFilter = THREE.LinearFilter
+    dataTexture.minFilter = THREE.LinearMipMapLinearFilter // THREE.LinearMipMapLinearFilter
+    dataTexture.magFilter = this._texFilter // THREE.LinearFilter // THREE.NearestFilter
     dataTexture.needsUpdate = true
     dataTexture.flipY = false
 
@@ -638,8 +714,8 @@ class FaderExtension extends ExtensionBase {
       THREE.UnsignedByteType,
       THREE.UVMapping
     )
-    dataTexture.minFilter = THREE.LinearFilter
-    dataTexture.magFilter = THREE.LinearFilter
+    dataTexture.minFilter = THREE.LinearMipMapLinearFilter
+    dataTexture.magFilter = this._texFilter
     dataTexture.needsUpdate = true
 
     uniforms.checkerboard ={

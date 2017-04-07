@@ -161,8 +161,6 @@ class FaderExtension extends ExtensionBase
 
       this.faderCore.on('attenuation.bounds', (bounds) => {
 
-        console.log(bounds)
-
         this.react.setState({
           data: [
             {value: bounds.min},
@@ -198,6 +196,11 @@ class FaderExtension extends ExtensionBase
   onShowRaycasting (checked) {
 
     this.faderCore.debugRaycastRays = checked
+  }
+
+  onUseRawValues(checked) {
+
+    this.faderCore.texFilter = checked
   }
 
   /////////////////////////////////////////////////////////
@@ -346,6 +349,18 @@ class FaderExtension extends ExtensionBase
             <div className="row" style={{marginBottom: '18px'}}>
               <Switch className="control-element"
                 onChange={(checked) => this.onShowRaycasting(checked)}
+                checked={false}/>
+            </div>
+
+            <div className="row">
+              <div className="control-element">
+                Raw values / Smooth values
+              </div>
+            </div>
+
+            <div className="row" style={{marginBottom: '18px'}}>
+              <Switch className="control-element"
+                onChange={(checked) => this.onUseRawValues(checked)}
                 checked={false}/>
             </div>
 
