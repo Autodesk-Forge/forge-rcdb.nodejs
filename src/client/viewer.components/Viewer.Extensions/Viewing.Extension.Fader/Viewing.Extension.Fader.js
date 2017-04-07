@@ -354,14 +354,14 @@ class FaderExtension extends ExtensionBase
 
             <div className="row">
               <div className="control-element">
-                Raw values / Smooth values
+                 Raw values / Smooth values
               </div>
             </div>
 
             <div className="row" style={{marginBottom: '18px'}}>
               <Switch className="control-element"
                 onChange={(checked) => this.onUseRawValues(checked)}
-                checked={false}/>
+                checked={true}/>
             </div>
 
             <div className="row">

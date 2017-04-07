@@ -127,8 +127,7 @@ class FaderExtension extends ExtensionBase {
   }
 
   set texFilter (a) {
-    console.log('texFilter: ' + a)
-    this._texFilter = a ? THREE.NearestFilter : THREE.LinearFilter
+    this._texFilter = a ? THREE.LinearFilter : THREE.NearestFilter
     if ( this._lastFragId !== null ) {
       let mesh =this._floorMeshes [this._lastFragId] ;
       let tex =mesh.material.uniforms.checkerboard.value.clone ()
@@ -144,7 +143,6 @@ class FaderExtension extends ExtensionBase {
   }
 
   set attenuationPerMeterInAir (a) {
-    console.log('attenuationPerMeterInAir: ' + a)
     this._attenuation_per_m_in_air = a
   }
 
@@ -153,7 +151,6 @@ class FaderExtension extends ExtensionBase {
   }
 
   set attenuationPerWall (a) {
-    console.log('attenuationPerWall: ' + a)
     this._attenuation_per_wall = a
   }
 
