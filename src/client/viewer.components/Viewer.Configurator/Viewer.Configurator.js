@@ -372,7 +372,7 @@ class ViewerConfigurator extends React.Component {
           panel
         ]}).then(() => {
 
-        resolve ()
+        resolve (panel)
       })
     })
   }

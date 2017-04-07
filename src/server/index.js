@@ -129,7 +129,7 @@ app.use(require('connect-history-api-fallback')())
 if (process.env.NODE_ENV === 'development') {
 
   // dynamically require webpack dependencies
-  // to them in devDependencies (package.json)
+  // to keep them in devDependencies (package.json)
   const webpackConfig = require('../../webpack/development.webpack.config')
   const webpackDevMiddleware = require('webpack-dev-middleware')
   const webpackHotMiddleware = require('webpack-hot-middleware')

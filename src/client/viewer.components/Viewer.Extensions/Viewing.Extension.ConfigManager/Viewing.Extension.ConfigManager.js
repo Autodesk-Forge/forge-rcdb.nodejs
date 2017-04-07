@@ -37,7 +37,11 @@ class ConfigManagerExtension extends ExtensionBase {
     this.dialogSvc =
       ServiceManager.getService('DialogSvc')
 
+    this.itemsClass = this.guid()
+
     this.react = options.react
+
+    this.drake = null
 
     if (this.options.apiUrl) {
 
@@ -312,10 +316,8 @@ class ConfigManagerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   getStateIds () {
 
-    const component = this.react.getComponent()
-
-    const domItems = ReactDOM.findDOMNode(
-      component.refs.items)
+    const domItems = document.getElementsByClassName(
+      this.itemsClass)[0]
 
     const stateIds =
       Array.from(domItems.childNodes).map(
@@ -331,19 +333,22 @@ class ConfigManagerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onUpdateSequence () {
+  async onUpdateSequence () {
 
     const { sequence } = this.react.getState()
 
+    const newSequence = Object.assign({},
+      sequence, {
+        stateIds: this.getStateIds()
+      })
+
     this.react.setState({
-      sequence: Object.assign({}, sequence, {
-          stateIds: this.getStateIds()
-        })
+      sequence: newSequence
     })
 
     if (this.api) {
 
-      this.api.updateSequence(sequence)
+      this.api.updateSequence(newSequence)
     }
   }
 
@@ -522,6 +527,28 @@ class ConfigManagerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  activateDrag () {
+
+    const domItems = document.getElementsByClassName(
+      this.itemsClass)[0]
+
+    if (this.drake) {
+
+      this.drake.destroy()
+    }
+
+    this.drake = Dragula([domItems])
+
+    this.drake.on('drop', () => {
+
+      this.onUpdateSequence()
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   async setActiveSequence (sequence) {
 
     clearTimeout(this.playTimeout)
@@ -533,12 +560,24 @@ class ConfigManagerExtension extends ExtensionBase {
     this.off ()
 
     this.react.setState({
+      items: [],
       sequence
     })
 
-    if (this.api) {
+    if (this.drake) {
 
-      if (sequence) {
+      this.drake.destroy()
+      this.drake = null
+    }
+
+    if (sequence) {
+
+      if (!sequence.readonly) {
+
+        this.activateDrag()
+      }
+
+      if (this.api) {
 
         const states = await this.api.getStates(
           sequence.id)
@@ -553,27 +592,6 @@ class ConfigManagerExtension extends ExtensionBase {
 
         await this.react.setState({
           items: states
-        })
-
-        if (!sequence.readonly) {
-
-          const component = this.react.getComponent()
-
-          const domItems = ReactDOM.findDOMNode(
-            component.refs.items)
-
-          this.drake = Dragula([domItems])
-
-          this.drake.on('drop', () => {
-
-            this.onUpdateSequence()
-          })
-        }
-
-      } else {
-
-        this.react.setState({
-          items: []
         })
       }
     }
@@ -661,23 +679,32 @@ class ConfigManagerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  setDocking (docked) {
+  async setDocking (docked) {
 
     const id = ConfigManagerExtension.ExtensionId
 
+    const {sequence} = this.react.getState()
+
     if (docked) {
 
-      this.react.popRenderExtension(id).then(() => {
+      await this.react.popRenderExtension(id)
 
-        this.react.pushViewerPanel(this)
+      const panel = await this.react.pushViewerPanel(this)
+
+      panel.on('update', () => {
+
+        this.activateDrag ()
+
+        panel.off()
       })
 
     } else {
 
-      this.react.popViewerPanel(id).then(() => {
+      await this.react.popViewerPanel(id)
 
-        this.react.pushRenderExtension(this)
-      })
+      await this.react.pushRenderExtension(this)
+
+      this.setActiveSequence (sequence)
     }
   }
 
@@ -813,9 +840,13 @@ class ConfigManagerExtension extends ExtensionBase {
 
       const text = item.name
 
+      const className =
+        "item" + (item.active ? ' active' :'')
+
       return (
-        <div data-id={item.id} key={item.id}
-          className={"item" + (item.active ? ' active' :'')}
+        <div data-id={item.id} data-name={text}
+          className={className}
+          key={item.id}
           onClick={
             () => this.onRestoreState (item)
           }>
@@ -840,7 +871,7 @@ class ConfigManagerExtension extends ExtensionBase {
     })
 
     return (
-      <div className="items" ref="items">
+      <div className={`items ${this.itemsClass}`}>
         { items }
       </div>
     )

@@ -85,6 +85,8 @@ class Panel extends EventsEmitter {
 
     this.document.removeEventListener(
       'touchmove', this.onMouseMove)
+
+    this.off()
   }
 
   /////////////////////////////////////////////////////////

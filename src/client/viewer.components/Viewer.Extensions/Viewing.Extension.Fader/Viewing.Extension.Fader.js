@@ -374,7 +374,7 @@ class FaderExtension extends ExtensionBase
                 defaultValue={this.faderCore.attenuationPerWall}
                 step={0.01}
                 min={0.01}
-                max={10.0}/>
+                max={20.0}/>
             </div>
 
             <div className="row">

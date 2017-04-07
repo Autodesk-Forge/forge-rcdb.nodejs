@@ -63,6 +63,11 @@ class Viewer extends React.Component {
         this.viewer.resize()
       }
     }
+
+    this.props.panels.map((panel) => {
+
+      panel.emit('update')
+    })
   }
 
   ///////////////////////////////////////////////////////////////////
