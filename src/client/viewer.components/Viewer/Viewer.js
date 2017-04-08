@@ -21,6 +21,26 @@ import './Viewer.scss'
 
 class Viewer extends React.Component {
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  static propTypes = {
+    panels: React.PropTypes.array
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  static defaultProps = {
+    panels: []
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   constructor () {
 
     super()
@@ -94,11 +114,9 @@ class Viewer extends React.Component {
   ///////////////////////////////////////////////////////////////////
   render() {
 
-    const panels = this.props.panels
-      ? this.props.panels.map((panel) => {
-          return panel.render()
-        })
-      : []
+    const panels = this.props.panels.map((panel) => {
+        return panel.render()
+      })
 
     return (
       <div className="viewer-container">
