@@ -201,6 +201,14 @@ class FaderExtension extends ExtensionBase {
     this.eventTool.on ('singleclick', (event) => {
       this.pointer = event
     })
+    this.eventTool.on ('mousemove', (event) => {
+      let click = new THREE.Vector3(event.normalizedX, event.normalizedY, 1.0)
+      let result = this.viewer.utilities.viewerImpl.hitTestViewport(click, false);
+      if ( result !== null && result.fragId === this._lastFragId ) {
+        this.pointer = event
+        this.processAttenuationAt( event )
+      }
+	})
 
     const loadEvents = [
      Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT, // Revit
@@ -250,7 +258,7 @@ class FaderExtension extends ExtensionBase {
       this.onSelection)
 
     Object.keys(this._floorMeshes).forEach((obj) => {
-      this.viewer.impl.scene.remove(obj)
+      this.viewer.impl.scene.remove(this._floorMeshes [obj])
     })
 
     this._raycastRays.forEach((obj) => {
@@ -315,31 +323,28 @@ class FaderExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////////////
   onSelection( event ) {
     if( event.selections && event.selections.length ) {
+	  let selection = event.selections[0]
+        , dbIds = selection.dbIdArray
+        , id = dbIds[0]
+      const instanceTree = this.viewer.model.getData().instanceTree
+      const nodeName = instanceTree.getNodeName( id )
+      if ( !(/^.*(floor).*$/gi).test (nodeName) )
+        return
+      this.processAttenuationAt( event )
+    }
+  }
 
-      let debug_debug_marker_setter = true
+  processAttenuationAt( event ) {
+    const data = this.viewer.clientToWorld (
+    this.pointer.canvasX, this.pointer.canvasY, true)
 
-      if( debug_debug_marker_setter ) {
-        let selection = event.selections[0]
-          , dbIds = selection.dbIdArray
-          , id = dbIds[0]
-
-        // debug test clicking on specific door
-        if( 2850 === id || 2851 === id ) {
-          this.debugFloorTopEdges = !this._debug_floor_top_edges
-          this.debugRaycastRays = !this._debug_raycast_rays
-        }
-      }
-
-      const data = this.viewer.clientToWorld (
-        this.pointer.canvasX, this.pointer.canvasY, true)
-
-      if ( data.face ) {
-        var n = data.face.normal
-        if( this.isEqualWithPrecision( n.x, 0 )
-          && this.isEqualWithPrecision( n.y, 0 )) {
-            this.emit('attenuation.source', data)
-            this.attenuationCalculator(data)
-        }
+    if ( data.face ) {
+      var n = data.face.normal
+      if(   this.isEqualWithPrecision( n.x, 0 )
+         && this.isEqualWithPrecision( n.y, 0 )
+      ) {
+        this.emit('attenuation.source', data)
+        this.attenuationCalculator(data)
       }
     }
   }
