@@ -20,7 +20,7 @@ class StateManagerExtension extends ExtensionBase {
     if(this._options.apiUrl) {
 
       this._api = new StatesAPI(
-        options.apiUrl);
+        options.apiUrl + `/models/${options.database}`)
     }
   }
 

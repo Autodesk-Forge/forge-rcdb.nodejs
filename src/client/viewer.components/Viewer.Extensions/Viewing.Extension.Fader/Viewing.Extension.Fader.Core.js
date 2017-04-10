@@ -4,7 +4,6 @@
 /////////////////////////////////////////////////////////////////
 import ExtensionBase from 'Viewer.ExtensionBase'
 import EventTool from 'Viewer.EventTool'
-import ServiceManager from 'SvcManager'
 import Toolkit from 'Viewer.Toolkit'
 
 const attenuationVertexShader = `
@@ -87,7 +86,6 @@ class FaderExtension extends ExtensionBase {
     super( viewer, options )
 
     this.onModelLoaded = this.onModelLoaded.bind(this)
-    this.onSelection = this.onSelection.bind(this)
 
     this._lineMaterial = this.createLineMaterial ()
     this._vertexMaterial = this.createVertexMaterial ()
@@ -197,33 +195,37 @@ class FaderExtension extends ExtensionBase {
   load () {
 
     this.eventTool = new EventTool (this.viewer)
+
     this.eventTool.activate ()
+
     this.eventTool.on ('singleclick', (event) => {
-      this.pointer = event
-    })
-    this.eventTool.on ('mousemove', (event) => {
-      let click = new THREE.Vector3(event.normalizedX, event.normalizedY, 1.0)
-      let result = this.viewer.utilities.viewerImpl.hitTestViewport(click, false);
-      if ( result !== null && result.fragId === this._lastFragId ) {
-        this.pointer = event
-        this.processAttenuationAt( event )
+
+      const hitTest = this.viewer.clientToWorld(
+        event.canvasX, event.canvasY, true)
+
+      if (hitTest) {
+
+        const it = this.viewer.model.getData().instanceTree
+
+        const nodeName = it.getNodeName(hitTest.dbId)
+
+        if (!(/^.*(floor).*$/gi).test(nodeName))
+          return
+
+        this.computeAttenuationAt(hitTest)
       }
-	})
+    })
 
     const loadEvents = [
-     Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT, // Revit
-     Autodesk.Viewing.GEOMETRY_LOADED_EVENT // non-Revit
-   ]
+      Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT, // Revit
+      Autodesk.Viewing.GEOMETRY_LOADED_EVENT // non-Revit
+    ]
 
-   const eventResults = loadEvents.map((event) => {
-     return this.viewerEvent(event)
-   })
+    const eventResults = loadEvents.map((event) => {
+      return this.viewerEvent(event)
+    })
 
-   Promise.all(eventResults).then( this.onModelLoaded )
-
-    this.viewer.addEventListener (
-      Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
-      this.onSelection )
+    Promise.all(eventResults).then(this.onModelLoaded)
 
     this.viewer.setGroundReflection (false)
     this.viewer.setGroundShadow (false)
@@ -252,10 +254,6 @@ class FaderExtension extends ExtensionBase {
   // Unload callback
   /////////////////////////////////////////////////////////////////
   unload () {
-
-    this.viewer.removeEventListener (
-      Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
-      this.onSelection)
 
     Object.keys(this._floorMeshes).forEach((obj) => {
       this.viewer.impl.scene.remove(this._floorMeshes [obj])
@@ -298,7 +296,7 @@ class FaderExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////////////
   onModelLoaded( event ) {
     if (   this.viewer.model === undefined || this.viewer.model === null
-        || this.viewer.model.getData() === undefined || this.viewer.model.getData() === null
+      || this.viewer.model.getData() === undefined || this.viewer.model.getData() === null
     )
       return
     const instanceTree = this.viewer.model.getData().instanceTree
@@ -319,32 +317,26 @@ class FaderExtension extends ExtensionBase {
   }
 
   /////////////////////////////////////////////////////////////////
-  // onSelection
+  // computeAttenuationAt position
   /////////////////////////////////////////////////////////////////
-  onSelection( event ) {
-    if( event.selections && event.selections.length ) {
-	  let selection = event.selections[0]
-        , dbIds = selection.dbIdArray
-        , id = dbIds[0]
-      const instanceTree = this.viewer.model.getData().instanceTree
-      const nodeName = instanceTree.getNodeName( id )
-      if ( !(/^.*(floor).*$/gi).test (nodeName) )
+  computeAttenuationAt(hitTest, dynamic) {
+
+    if (dynamic) {
+
+      if (hitTest.fragId !== this._lastFragId) {
         return
-      this.processAttenuationAt( event )
+      }
     }
-  }
 
-  processAttenuationAt( event ) {
-    const data = this.viewer.clientToWorld (
-    this.pointer.canvasX, this.pointer.canvasY, true)
+    if (hitTest.face) {
 
-    if ( data.face ) {
-      var n = data.face.normal
-      if(   this.isEqualWithPrecision( n.x, 0 )
-         && this.isEqualWithPrecision( n.y, 0 )
-      ) {
-        this.emit('attenuation.source', data)
-        this.attenuationCalculator(data)
+      const normal = hitTest.face.normal
+
+      if(this.isEqualWithPrecision(normal.x, 0) &&
+        this.isEqualWithPrecision(normal.y, 0)) {
+
+        this.emit('attenuation.source', hitTest)
+        this.attenuationCalculator(hitTest)
       }
     }
   }
@@ -522,74 +514,75 @@ class FaderExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////////////
   async attenuationCalculator( data ) {
 
-    // remove debug markers
+  // remove debug markers
 
-    this._floorTopEdges.forEach( (obj) => {
-      this.viewer.impl.scene.remove( obj )
-    })
+  this._floorTopEdges.forEach( (obj) => {
+    this.viewer.impl.scene.remove( obj )
+  })
 
-    this._raycastRays.forEach( (obj) => {
-      this.viewer.impl.scene.remove( obj )
-    })
+  this._raycastRays.forEach( (obj) => {
+    this.viewer.impl.scene.remove( obj )
+  })
 
-    this._floorTopEdges = []
-    this._raycastRays = []
+  this._floorTopEdges = []
+  this._raycastRays = []
 
-    this.drawVertex( data.point, this._floorTopEdges,
-      this._debug_floor_top_edges )
+  this.drawVertex( data.point, this._floorTopEdges,
+    this._debug_floor_top_edges )
 
-    let psource = new THREE.Vector3 (
-      data.point.x, data.point.y,
-      data.point.z + this._rayTraceOffset
-    )
+  let psource = new THREE.Vector3 (
+    data.point.x, data.point.y,
+    data.point.z + this._rayTraceOffset
+  )
 
-    let top_face_z = data.point.z + this._topFaceOffset
+  let top_face_z = data.point.z + this._topFaceOffset
 
-    // from the selected THREE.Face, extract the normal
-    let floor_normal = data.face.normal
+  // from the selected THREE.Face, extract the normal
+  let floor_normal = data.face.normal
 
-    // retrieve floor render proxies matching normal
+  // retrieve floor render proxies matching normal
 
-    const fragIds = await Toolkit.getFragIds(
-      this.viewer.model, data.dbId )
-    this._lastFragId = fragIds[0]
+  const fragIds = await Toolkit.getFragIds(
+    this.viewer.model, data.dbId)
 
-    // Do not remake the mesh each time, reuse it and just
-    // update its texture - the shader will handle it for you
-    let mesh ;
-    if ( !this._floorMeshes [this._lastFragId] ) {
+  this._lastFragId = fragIds[0]
+
+  // Do not remake the mesh each time, reuse it and just
+  // update its texture - the shader will handle it for you
+  let mesh ;
+  if ( !this._floorMeshes [this._lastFragId] ) {
     let floor_mesh_render = this.viewer.impl.getRenderProxy(
       this.viewer.model, fragIds[0] )
-      mesh =this.getMeshFromRenderProxy(data.dbId,
+    mesh =this.getMeshFromRenderProxy(data.dbId,
       floor_mesh_render, floor_normal, top_face_z )
-      mesh.name =data.dbId + '-' + this._lastFragId + '-FloorMesh' ;
-      this._floorMeshes [this._lastFragId] =mesh ;
-      this.viewer.impl.scene.add (mesh) ;
-    } else {
-      mesh =this._floorMeshes [this._lastFragId] ;
-      this.calculateUVsGeo( mesh.geometry )
-    }
-
-    // ray trace to determine wall locations on mesh
-    let map_uv_to_color = this.rayTraceToFindWalls(
-      mesh, psource )
-
-    this._attenuation_max = this.array2dMaxW( map_uv_to_color )
-    this._attenuation_min = this.array2dMinW( map_uv_to_color )
-
-    this.emit('attenuation.bounds', {
-      min: this._attenuation_min,
-      max: this._attenuation_max
-    })
-
-    let tex = this.createTexture(
-      map_uv_to_color,
-      this._attenuation_max)
-
-    mesh.material.uniforms.checkerboard.value = tex
-
-    this.viewer.impl.invalidate (true)
+    mesh.name =data.dbId + '-' + this._lastFragId + '-FloorMesh' ;
+    this._floorMeshes [this._lastFragId] =mesh ;
+    this.viewer.impl.scene.add (mesh) ;
+  } else {
+    mesh =this._floorMeshes [this._lastFragId] ;
+    this.calculateUVsGeo( mesh.geometry )
   }
+
+  // ray trace to determine wall locations on mesh
+  let map_uv_to_color = this.rayTraceToFindWalls(
+    mesh, psource )
+
+  this._attenuation_max = this.array2dMaxW( map_uv_to_color )
+  this._attenuation_min = this.array2dMinW( map_uv_to_color )
+
+  this.emit('attenuation.bounds', {
+    min: this._attenuation_min,
+    max: this._attenuation_max
+  })
+
+  let tex = this.createTexture(
+    map_uv_to_color,
+    this._attenuation_max)
+
+  mesh.material.uniforms.checkerboard.value = tex
+
+  this.viewer.impl.invalidate (true)
+}
 
   /////////////////////////////////////////////////////////////////
   // ray trace to count walls between source and target points
@@ -625,10 +618,10 @@ class FaderExtension extends ExtensionBase {
     let ptarget, d, nWalls
       , bb =mesh.geometry.boundingBox
       , vsize = new THREE.Vector3(
-          bb.max.x - bb.min.x,
-          bb.max.y - bb.min.y,
-          bb.max.z - bb.min.z
-        )
+        bb.max.x - bb.min.x,
+        bb.max.y - bb.min.y,
+        bb.max.z - bb.min.z
+      )
 
     let step = 1.0 / (n - 1)
     for ( let u = 0.0, i = 0 ; u < 1.0 + this._eps ; u += step, ++i ) {
@@ -646,7 +639,7 @@ class FaderExtension extends ExtensionBase {
 
         let signal_attenuation =
           d * this._attenuation_per_m_in_air
-            + nWalls * this._attenuation_per_wall
+          + nWalls * this._attenuation_per_wall
 
         map_uv_to_color[i][j] = new THREE.Vector4(
           ptarget.x, ptarget.y, ptarget.z, signal_attenuation)

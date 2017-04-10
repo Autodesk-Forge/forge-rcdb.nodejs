@@ -1,5 +1,7 @@
 .forge-fader .content > .controls {
   margin: 10px 0 0 0;
+  overflow: scroll;
+  height: 100%;
 }
 
 .forge-fader .content > .controls .row {

@@ -443,9 +443,10 @@ class ViewerView extends React.Component {
       }, 600)
 
       viewer.loadExtension(StateManagerExtension, {
-        apiUrl: `/api/models/${'forge-rcdb'}`,
         parentControl: ctrlGroup,
-        dbModel: this.dbModel
+        database: 'forge-rcdb',
+        dbModel: this.dbModel,
+        apiUrl: `/api`
       })
 
       viewer.loadExtension(TransformExtension,

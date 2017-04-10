@@ -195,7 +195,9 @@ module.exports = function() {
   // remove state
   //
   ///////////////////////////////////////////////////////////////////////////////
-  router.post('/:db/:modelId/states/:stateId/remove', async(req, res)=> {
+  router.delete('/:db/:modelId/states/:stateId', async(req, res)=> {
+
+    console.log('REMOVE')
 
     try {
 
@@ -211,6 +213,8 @@ module.exports = function() {
       res.json(response)
 
     } catch (error) {
+
+      console.log(error)
 
       res.status(error.statusCode || 404)
       res.json(error)

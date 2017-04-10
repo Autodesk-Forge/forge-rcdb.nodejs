@@ -23,6 +23,8 @@ export default class StatesAPI extends ClientAPI {
 
   var url = this.apiUrl + `/${modelId}/states/sequence`
 
+  console.log(url)
+
   return this.ajax(url)
 }
 
@@ -89,7 +91,7 @@ export default class StatesAPI extends ClientAPI {
   ///////////////////////////////////////////////////////////////
   removeState(modelId, stateId) {
 
-    var url = this.apiUrl + `/${modelId}/states/${stateId}/remove`
+    var url = this.apiUrl + `/${modelId}/states/${stateId}`
 
     return this.ajax({
       url: url,

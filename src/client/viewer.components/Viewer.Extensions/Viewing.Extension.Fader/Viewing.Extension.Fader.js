@@ -66,9 +66,20 @@ class FaderExtension extends ExtensionBase
       const hitTest = this.viewer.clientToWorld(
         event.canvasX, event.canvasY, true)
 
-      !hitTest
-        ? this.tooltip.deactivate()
-        : this.tooltip.activate()
+      if (hitTest) {
+
+        if (this.dynamic) {
+
+          this.faderCore.computeAttenuationAt(
+            hitTest, true)
+        }
+
+        this.tooltip.activate()
+
+      } else {
+
+        this.tooltip.deactivate()
+      }
     })
 
     this.onEnableFader(true)
@@ -201,6 +212,11 @@ class FaderExtension extends ExtensionBase
   onUseRawValues(checked) {
 
     this.faderCore.texFilter = checked
+  }
+
+  onDynamicMode (checked) {
+
+    this.dynamic = checked
   }
 
   /////////////////////////////////////////////////////////
@@ -362,6 +378,18 @@ class FaderExtension extends ExtensionBase
               <Switch className="control-element"
                 onChange={(checked) => this.onUseRawValues(checked)}
                 checked={true}/>
+            </div>
+
+            <div className="row">
+              <div className="control-element">
+                Enable Dynamic Mode
+              </div>
+            </div>
+
+            <div className="row" style={{marginBottom: '18px'}}>
+              <Switch className="control-element"
+                onChange={(checked) => this.onDynamicMode(checked)}
+                checked={false}/>
             </div>
 
             <div className="row">

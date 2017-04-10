@@ -33,8 +33,6 @@ class PredixConfiguratorExtension extends ExtensionBase {
 
     super (viewer, options)
 
-    this.onGeometryLoaded = this.onGeometryLoaded.bind(this)
-
     this.onSelection = this.onSelection.bind(this)
 
     this.react = this._options.react
@@ -63,7 +61,7 @@ class PredixConfiguratorExtension extends ExtensionBase {
 
     this.hotSpotCommand.on('hotspot.clicked', (hotspot) => {
 
-      const state =  this.react.getState()
+      const state = this.react.getState()
 
       //console.log(JSON.stringify(this.viewer.getState({viewport:true})))
 
@@ -97,7 +95,26 @@ class PredixConfiguratorExtension extends ExtensionBase {
 
     this.socketSvc = ServiceManager.getService('SocketSvc')
 
-    this.socketSvc.on('sensor.temperature', (data) => {
+    const sensorEvents = [
+      'sensor.acceleration',
+      'sensor.temperature',
+      'sensor.lux'
+    ]
+
+    const passThreshold = (data) => {
+
+      for(const key of Object.keys(data) ) {
+
+        if (data[key].value > data[key].threshold) {
+
+          return true
+        }
+      }
+
+      return false
+    }
+
+    this.socketSvc.on(sensorEvents.join(' '), (data) => {
 
       if (!controlledHotspot) {
 
@@ -115,7 +132,7 @@ class PredixConfiguratorExtension extends ExtensionBase {
         })
       }
 
-      if (data.objectTemperature > data.threshold) {
+      if (passThreshold(data)) {
 
         clearTimeout(this.timeout)
 
@@ -124,8 +141,9 @@ class PredixConfiguratorExtension extends ExtensionBase {
         controlledHotspot.data.strokeColor = '#FF0000'
         controlledHotspot.data.fillColor = '#FF8888'
 
-        if (controlledHotspot)
-        controlledHotspot.show()
+        if (controlledHotspot) {
+          controlledHotspot.show()
+        }
 
         const stateHostSpots = state.hotspots.filter((hotspot) => {
           return !hotspot.controlled
@@ -235,10 +253,6 @@ class PredixConfiguratorExtension extends ExtensionBase {
         this.hotSpotCommand.activate()
       })
 
-    this.viewer.addEventListener(
-      Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
-      this.onGeometryLoaded)
-
     this.viewer.setProgressiveRendering(true)
     this.viewer.setQualityLevel(false, true)
     this.viewer.setGroundReflection(false)
@@ -251,6 +265,7 @@ class PredixConfiguratorExtension extends ExtensionBase {
       hotspots: hotspots.filter((hotspot) => {
         return !hotspot.controlled
       })
+
     })
 
     return true
@@ -271,21 +286,9 @@ class PredixConfiguratorExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////////////
   unload () {
 
-    this.viewer.removeEventListener(
-      Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
-      this.onGeometryLoaded)
-
     this.hotSpotCommand.deactivate()
 
     return true
-  }
-
-  /////////////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////////////
-  onGeometryLoaded (event) {
-
   }
 
   /////////////////////////////////////////////////////////////////
@@ -399,20 +402,86 @@ class PredixConfiguratorExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////////////
+  renderGraphs () {
+
+    const state = this.react.getState()
+
+    if (!state.activeItem) {
+      return (<div></div>)
+    }
+
+    //TEMP
+    const threshold1 = state.graphData
+      ? state.graphData.temperature.threshold
+      : 20 + (0.5 - Math.random()) * 2
+
+    //Accel
+    const threshold2 = state.graphData
+      ? state.graphData.acceleration.threshold
+      : 0.5 + (0.5 - Math.random()) * 0.1
+
+    //Accel
+    const threshold3 = state.graphData
+      ? state.graphData.lux.threshold
+      : 150 + (0.5 - Math.random()) * 50
+
+    const value1 = state.graphData
+      ? state.graphData.temperature.value
+      : null
+
+    const value2 = state.graphData
+      ? state.graphData.acceleration.value
+      : null
+
+    const value3 = state.graphData
+      ? state.graphData.lux.value
+      : null
+
+    return (
+
+      <div>
+    <IoTGraph
+      tag={state.activeItem.tags[0]}
+      threshold={threshold1}
+      name={"Temperature"}
+      randomBase={22}
+      randomRange={5}
+      value={value1}
+      tagIdx={0}/>
+
+<IoTGraph
+tag={state.activeItem.tags[0]}
+threshold={threshold2}
+name={"Acceleration"}
+randomBase={22}
+randomRange={5}
+value={value2}
+tagIdx={1}/>
+
+  <IoTGraph
+    tag={state.activeItem.tags[0]}
+    threshold={threshold3}
+    randomBase={22}
+    randomRange={5}
+    value={value3}
+    name={"Lux"}
+    tagIdx={2}/>
+
+        </div>
+    )
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
   render () {
 
     const state = this.react.getState()
 
-    var renderGraph = false
-
     const items = state.hotspots.map((hotspot) => {
 
       const active = hotspot.active ? ' active' : ''
-
-      if (active.length) {
-
-        renderGraph = true
-      }
 
       const style = {
         backgroundColor: this.hexToRgbA(hotspot.fillColor, 0.3),
@@ -434,14 +503,6 @@ class PredixConfiguratorExtension extends ExtensionBase {
       )
     })
 
-    const threshold = state.graphData
-      ? state.graphData.threshold
-      : 20 + (0.5 - Math.random()) * 10
-
-    const value = state.graphData
-      ? state.graphData.objectTemperature
-      : null
-
     return (
       <WidgetContainer title="Incidents">
         <ReflexContainer key="incidents" orientation='horizontal'>
@@ -454,19 +515,93 @@ class PredixConfiguratorExtension extends ExtensionBase {
           <ReflexElement className="graph-list-container"
             renderOnResize={true}
             propagateDimensions={true}>
-
-              <IoTGraph
-                activeItem={state.activeItem}
-                threshold={threshold}
-                value={value}
-                tagIdx={0} />
-
-              <IoTGraph activeItem={state.activeItem} tagIdx={1}/>
-              <IoTGraph activeItem={state.activeItem} tagIdx={2}/>
-
+            {
+              state.activeItem &&
+              <IoTGraphContainer
+                tags={state.activeItem.tags}
+                graphData={state.graphData}
+                guid={state.activeItem.id}
+              />
+            }
           </ReflexElement>
         </ReflexContainer>
       </WidgetContainer>
+    )
+  }
+}
+
+class IoTGraphContainer extends React.Component {
+
+  render () {
+
+    const { guid, graphData, dimensions, tags} = this.props
+
+    //TEMP
+    const threshold1 = graphData
+      ? graphData.temperature.threshold
+      : 20 + (0.5 - Math.random()) * 2
+
+    //Accel
+    const threshold2 = graphData
+      ? graphData.acceleration.threshold
+      : 0.5 + (0.5 - Math.random()) * 0.2
+
+    //LUX
+    const threshold3 = graphData
+      ? graphData.lux.threshold
+      : 150 + (0.5 - Math.random()) * 50
+
+    const value1 = graphData
+      ? graphData.temperature.value
+      : null
+
+    const value2 = graphData
+      ? graphData.acceleration.value
+      : null
+
+    const value3 = graphData
+      ? graphData.lux.value
+      : null
+
+    return (
+      <div>
+        <IoTGraph
+          dimensions={dimensions}
+          threshold={threshold1}
+          name={"Temperature"}
+          randomRange={10.0}
+          randomBase={23.0}
+          tagId={tags[0]}
+          value={value1}
+          guid={guid}
+          max={50.0}
+          min={0.0}
+        />
+        <IoTGraph
+          dimensions={dimensions}
+          threshold={threshold2}
+          name={"Acceleration"}
+          randomRange={0.3}
+          randomBase={0.7}
+          tagId={tags[1]}
+          value={value2}
+          guid={guid}
+          max={2.0}
+          min={0.0}
+        />
+        <IoTGraph
+          dimensions={dimensions}
+          threshold={threshold3}
+          randomRange={50.0}
+          randomBase={145.0}
+          tagId={tags[2]}
+          value={value3}
+          name={"Lux"}
+          guid={guid}
+          max={200.0}
+          min={0.0}
+        />
+      </div>
     )
   }
 }
