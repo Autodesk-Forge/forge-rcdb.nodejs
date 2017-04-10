@@ -93,10 +93,12 @@ export default class IoTGraph extends React.Component {
     this.intervalId = setInterval(() => {
 
       const t = new Date().getTime()
-      this.thresholdSeries.append(t, props.threshold)
+      this.thresholdSeries.append(t, this.props.threshold)
 
       const value = this.props.value ||
         props.randomBase + (0.5 - Math.random()) * props.randomRange
+
+      console.log(this.props.threshold)
 
       this.setState({
         value

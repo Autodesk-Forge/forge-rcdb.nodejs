@@ -117,7 +117,17 @@ export default class HotSpot extends GraphicMarker {
 
     this.hidden = false
 
-    super.setVisible(this.visible)
+    if (this.occlusion) {
+
+      if (!this.checkOcclusion()) {
+
+        super.setVisible(true)
+      }
+
+    } else {
+
+      super.setVisible(true)
+    }
   }
 
   /////////////////////////////////////////////////////////////////

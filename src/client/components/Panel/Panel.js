@@ -66,6 +66,12 @@ class Panel extends EventsEmitter {
     this.react = this.props.react
 
     this.id = this.props.id
+
+    //CSS properties
+    this.height = props.height || 300
+    this.width = props.width || 300
+    this.left = props.left || 10
+    this.top = props.top || 10
   }
 
   /////////////////////////////////////////////////////////
@@ -175,7 +181,12 @@ class Panel extends EventsEmitter {
       ...this.props.className.split(' ')
     ]
 
-    const style = Object.assign({}, this.props.style)
+    const style = Object.assign({
+      //this.height = props.height || 300
+      //this.width = props.width || 300
+      //this.left = props.left || 10
+      //this.top = props.top || 10
+    }, this.props.style)
 
     return (
       <div key={this.id} className={classNames.join(' ')}

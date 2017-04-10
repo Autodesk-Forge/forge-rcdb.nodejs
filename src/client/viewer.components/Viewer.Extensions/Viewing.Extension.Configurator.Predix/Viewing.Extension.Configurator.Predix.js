@@ -105,7 +105,7 @@ class PredixConfiguratorExtension extends ExtensionBase {
 
       for(const key of Object.keys(data) ) {
 
-        if (data[key].value > data[key].threshold) {
+        if (data[key].value >= data[key].threshold) {
 
           return true
         }
@@ -438,36 +438,35 @@ class PredixConfiguratorExtension extends ExtensionBase {
       : null
 
     return (
-
       <div>
-    <IoTGraph
-      tag={state.activeItem.tags[0]}
-      threshold={threshold1}
-      name={"Temperature"}
-      randomBase={22}
-      randomRange={5}
-      value={value1}
-      tagIdx={0}/>
-
-<IoTGraph
-tag={state.activeItem.tags[0]}
-threshold={threshold2}
-name={"Acceleration"}
-randomBase={22}
-randomRange={5}
-value={value2}
-tagIdx={1}/>
-
-  <IoTGraph
-    tag={state.activeItem.tags[0]}
-    threshold={threshold3}
-    randomBase={22}
-    randomRange={5}
-    value={value3}
-    name={"Lux"}
-    tagIdx={2}/>
-
-        </div>
+        <IoTGraph
+          tag={state.activeItem.tags[0]}
+          threshold={threshold1}
+          name={"Temperature"}
+          randomBase={22}
+          randomRange={5}
+          value={value1}
+          tagIdx={0}
+        />
+        <IoTGraph
+          tag={state.activeItem.tags[0]}
+          threshold={threshold2}
+          name={"Acceleration"}
+          randomBase={22}
+          randomRange={5}
+          value={value2}
+          tagIdx={1}
+        />
+        <IoTGraph
+          tag={state.activeItem.tags[0]}
+          threshold={threshold3}
+          randomBase={22}
+          randomRange={5}
+          value={value3}
+          name={"Lux"}
+          tagIdx={2}
+        />
+      </div>
     )
   }
 
@@ -562,6 +561,8 @@ class IoTGraphContainer extends React.Component {
     const value3 = graphData
       ? graphData.lux.value
       : null
+
+    console.log('threshold1: ' + threshold1)
 
     return (
       <div>

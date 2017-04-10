@@ -1,4 +1,4 @@
-
+import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 import './WidgetContainer.scss'
 import React from 'react'
