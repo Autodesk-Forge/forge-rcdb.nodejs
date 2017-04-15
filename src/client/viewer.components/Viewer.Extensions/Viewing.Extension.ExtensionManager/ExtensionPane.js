@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 
 class ExtensionPane extends React.Component {
@@ -7,7 +8,7 @@ class ExtensionPane extends React.Component {
   //
   /////////////////////////////////////////////////////////
   static propTypes = {
-    className: React.PropTypes.string
+    className: PropTypes.string
   }
 
   /////////////////////////////////////////////////////////

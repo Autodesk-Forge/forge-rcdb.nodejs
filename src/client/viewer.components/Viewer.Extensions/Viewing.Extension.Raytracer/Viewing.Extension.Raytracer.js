@@ -7,6 +7,8 @@ import ExtensionBase from 'Viewer.ExtensionBase'
 import WidgetContainer from 'WidgetContainer'
 import EventTool from 'Viewer.EventTool'
 import Toolkit from 'Viewer.Toolkit'
+import { ReactLoader } from 'Loader'
+import TreeView from './TreeView'
 import ReactDOM from 'react-dom'
 import Switch from 'Switch'
 import Label from 'Label'
@@ -47,6 +49,7 @@ class RaytracerExtension extends ExtensionBase {
 
     this.react.setState({
 
+      model: null
 
     }).then (() => {
 
@@ -117,11 +120,9 @@ class RaytracerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   onModelLoaded (args) {
 
-    const instanceTree = args[0].model.getData().instanceTree
-
-    const rootId = instanceTree.getRootId()
-
-    console.log(rootId)
+    this.react.setState({
+      model: args[0].model
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -180,9 +181,16 @@ class RaytracerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   renderContent () {
 
+    const { model } = this.react.getState()
+
+    const treeView = model
+      ? <TreeView model={model}/>
+      : <div/>
+
     return (
       <div className="content">
-
+        <ReactLoader show={!model}/>
+        { treeView }
       </div>
     )
   }

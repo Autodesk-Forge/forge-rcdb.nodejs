@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 import './Label.scss'
 
@@ -8,8 +9,8 @@ export default class Label extends React.Component {
   //
   /////////////////////////////////////////////////////////
   static propTypes = {
-    className: React.PropTypes.string,
-    text: React.PropTypes.string
+    className: PropTypes.string,
+    text: PropTypes.string
   }
 
   /////////////////////////////////////////////////////////

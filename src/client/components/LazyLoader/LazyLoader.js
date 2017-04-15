@@ -1,9 +1,10 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 
 class LazyLoader extends React.Component {
 
   static propTypes = {
-    children: React.PropTypes.func.isRequired
+    children: PropTypes.func.isRequired
   }
 
   constructor() {

@@ -1,4 +1,5 @@
 import ServiceManager from 'SvcManager'
+import PropTypes from 'prop-types'
 import 'Dialogs/dialogs.scss'
 import Header from 'Header'
 import React from 'react'
@@ -11,7 +12,7 @@ class CoreLayout extends React.Component {
   //
   /////////////////////////////////////////////////////////
   static propTypes = {
-    children : React.PropTypes.element.isRequired
+    children : PropTypes.element.isRequired
   }
 
   /////////////////////////////////////////////////////////

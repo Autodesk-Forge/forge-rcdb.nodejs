@@ -10,8 +10,8 @@ class WidgetContainer extends React.Component {
   //
   /////////////////////////////////////////////////////////
   static propTypes = {
-    className: React.PropTypes.string,
-    showTitle: React.PropTypes.bool
+    className: PropTypes.string,
+    showTitle: PropTypes.bool
   }
 
   /////////////////////////////////////////////////////////
@@ -27,20 +27,11 @@ class WidgetContainer extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  constructor () {
-
-    super()
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
   renderTitle () {
 
     if (!this.props.showTitle) {
 
-      return (<div></div>)
+      return <div/>
     }
 
     if (this.props.renderTitle) {

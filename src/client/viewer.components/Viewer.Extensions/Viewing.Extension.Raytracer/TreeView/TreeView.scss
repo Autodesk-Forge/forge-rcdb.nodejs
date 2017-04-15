@@ -1,0 +1,20 @@
+.model-tree-container {
+  overflow-y: scroll;
+  text-align: left;
+  height: 100%;
+}
+
+.model-tree-container .treeview header {
+  transition-property: background, border;
+  transition-timing-function: ease;
+  transition-duration: 1.5s;
+  transition-delay: 0.0s;
+  
+  background: rgba(245, 245, 245, 0.5);
+  border: none;
+  height: 30px;
+}
+
+.model-tree-container .treeview header:hover {
+  background: rgba(0, 105, 245, 0.35);
+}

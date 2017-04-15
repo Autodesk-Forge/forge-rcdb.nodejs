@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 
 export default class Switch extends React.Component {
@@ -7,8 +8,8 @@ export default class Switch extends React.Component {
   //
   /////////////////////////////////////////////////////////
   static propTypes = {
-    className: React.PropTypes.string,
-    checked: React.PropTypes.bool
+    className: PropTypes.string,
+    checked: PropTypes.bool
   }
 
   /////////////////////////////////////////////////////////

@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
 import Modal from 'react-modal'
 import './ServiceDlg.scss'
 
@@ -9,7 +10,7 @@ export default class ServiceDlg extends React.Component {
   //
   /////////////////////////////////////////////////////////
   static propTypes = {
-    className: React.PropTypes.string
+    className: PropTypes.string
   }
 
   /////////////////////////////////////////////////////////

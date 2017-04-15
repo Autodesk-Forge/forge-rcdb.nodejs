@@ -15,6 +15,7 @@
 // DOES NOT WARRANT THAT THE OPERATION OF THE PROGRAM WILL BE
 // UNINTERRUPTED OR ERROR FREE.
 /////////////////////////////////////////////////////////////////////
+import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 import React from 'react'
 import './Viewer.scss'
@@ -26,7 +27,7 @@ class Viewer extends React.Component {
   //
   /////////////////////////////////////////////////////////
   static propTypes = {
-    panels: React.PropTypes.array
+    panels: PropTypes.array
   }
 
   /////////////////////////////////////////////////////////
@@ -119,11 +120,10 @@ class Viewer extends React.Component {
       })
 
     return (
-      <div className="viewer-container">
-        <div className="viewer" ref={
+      <div className="viewer-app-container">
+        <div className="viewer-container" ref={
           (div) => this.viewerContainer = div
-        }>
-        </div>
+        }/>
         { panels }
       </div>
     )

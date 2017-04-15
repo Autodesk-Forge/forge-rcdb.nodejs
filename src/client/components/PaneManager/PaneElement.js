@@ -1,4 +1,5 @@
 import { ReflexElement } from 'react-reflex'
+import PropTypes from 'prop-types'
 import Stopwatch from 'Stopwatch'
 import ReactDOM from 'react-dom'
 import './PaneManager.scss'
@@ -11,7 +12,7 @@ class PaneElement extends React.Component {
   //
   /////////////////////////////////////////////////////////
   static propTypes = {
-    showTitle: React.PropTypes.bool
+    showTitle: PropTypes.bool
   }
 
   /////////////////////////////////////////////////////////

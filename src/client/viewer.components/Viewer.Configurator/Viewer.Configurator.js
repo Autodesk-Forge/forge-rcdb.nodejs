@@ -2,6 +2,7 @@ import {ReflexContainer, ReflexElement, ReflexSplitter} from 'react-reflex'
 import { ReactLoader, Loader } from 'Loader'
 import ServiceManager from 'SvcManager'
 import './Viewer.Configurator.scss'
+import PropTypes from 'prop-types'
 import Stopwatch from 'Stopwatch'
 import easing from 'easing-js'
 import Viewer from 'Viewer'
@@ -15,10 +16,10 @@ class ViewerConfigurator extends React.Component {
   //
   /////////////////////////////////////////////////////////
   static propTypes = {
-    setViewerEnv: React.PropTypes.func.isRequired,
-    database: React.PropTypes.string.isRequired,
-    modelId: React.PropTypes.string.isRequired,
-    viewerEnv: React.PropTypes.string
+    setViewerEnv: PropTypes.func.isRequired,
+    database: PropTypes.string.isRequired,
+    modelId: PropTypes.string.isRequired,
+    viewerEnv: PropTypes.string
   }
 
   /////////////////////////////////////////////////////////
@@ -661,7 +662,7 @@ class ViewerConfigurator extends React.Component {
 
     const content = renderExtension
       ? this.state.renderExtension.render(renderOptions)
-      : <div></div>
+      : <div/>
 
     return (
       <div className="data-pane">
