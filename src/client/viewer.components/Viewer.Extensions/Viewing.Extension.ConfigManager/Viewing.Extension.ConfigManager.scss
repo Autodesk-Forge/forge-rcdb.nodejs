@@ -13,7 +13,7 @@
   margin-left: 27px;
   margin-top: 10px;
   select: none;
-  width: 80px;
+  width: 144px;
   float: left;
 }
 
@@ -61,8 +61,16 @@
   top: -1px;
 }
 
+.config-manager .content > .controls button:disabled > span {
+  color: #d0d0d0;
+}
+
 .config-manager .content > .controls button:hover:not(:disabled) > span {
   color: #FF9800;
+}
+
+.config-manager .content > .controls button:disabled > span {
+  color: #d0d0d0;
 }
 
 .config-manager .content > .controls label {
@@ -203,7 +211,7 @@
 //
 /////////////////////////////////////////////////////////
 .config-manager-controls {
-  margin: auto 0 auto 65px;
+  margin: auto 0 auto calc(100% - 156px);
   position: relative;
   float: left;
 }

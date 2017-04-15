@@ -206,15 +206,17 @@ class ScreenShotManagerExtension extends ExtensionBase {
 
       this.react.popRenderExtension(id).then(() => {
 
-        this.react.pushViewerPanel(this)
+        this.react.pushViewerPanel(this, {
+          height: 250,
+          width: 350
+        })
       })
 
     } else {
 
-      this.react.popViewerPanel(id).then(() => {
+      this.react.popViewerPanel(id)
 
-        this.react.pushRenderExtension(this)
-      })
+      this.react.pushRenderExtension(this)
     }
   }
 

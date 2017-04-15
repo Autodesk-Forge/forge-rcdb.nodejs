@@ -156,6 +156,30 @@ class ExtensionManager extends ExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
+  // Async viewer event
+  //
+  /////////////////////////////////////////////////////////
+  viewerEvent (eventId) {
+
+    const eventIdArray = Array.isArray(eventId)
+      ? eventId : [eventId]
+
+    const eventTasks = eventIdArray.map((id) => {
+      return new Promise ((resolve) => {
+        const handler = (args) => {
+          this.viewer.removeEventListener (
+            id, handler )
+          resolve (args)
+        }
+        this.viewer.addEventListener (
+          id, handler)
+      })
+    })
+
+    return Promise.all(eventTasks)
+  }
+
+  /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
@@ -164,6 +188,13 @@ class ExtensionManager extends ExtensionBase {
     this.events = {}
 
     const events = [
+      {
+        id: [
+          Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
+          Autodesk.Viewing.GEOMETRY_LOADED_EVENT
+        ],
+        handler: 'onModelLoaded'
+      },
       {
         id: Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
         handler: 'onObjectTreeCreated'
@@ -183,12 +214,10 @@ class ExtensionManager extends ExtensionBase {
     ]
 
     events.forEach((event) => {
-
-      this.viewer.addEventListener(event.id, (e) => {
-
+      this.viewerEvent(event.id).then((args) => {
         this.events[event.id] = {
           handler: event.handler,
-          args: e
+          args
         }
       })
     })

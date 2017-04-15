@@ -3,6 +3,7 @@ import { ReactLoader, Loader } from 'Loader'
 import ServiceManager from 'SvcManager'
 import './Viewer.Configurator.scss'
 import Stopwatch from 'Stopwatch'
+import easing from 'easing-js'
 import Viewer from 'Viewer'
 import Panel from 'Panel'
 import React from 'react'
@@ -245,28 +246,12 @@ class ViewerConfigurator extends React.Component {
         ? 1.0 - (layout.leftFlex || layout.rightFlex || 0.3)
         : 1.0
 
-      const done = (start, end) => {
-        return start <= end
-      }
-
-      const update = (viewerFlex) => {
-
-        return new Promise((resolve) => {
-
-          this.setReactState({
-              viewerFlex
-            }).then(() => resolve())
-        })
-      }
-
-      await this.animate (
-        1.0, this.viewerFlex, -0.7,
-        done, update)
-
       await this.setReactState({
-          paneExtStyle: {display: 'block'},
-          viewerFlex: this.viewerFlex
-        })
+        paneExtStyle: { display: 'block' }
+      })
+
+      await this.runAnimation (
+        1.0, this.viewerFlex, 1.0)
 
       setTimeout(() => {
 
@@ -277,7 +262,7 @@ class ViewerConfigurator extends React.Component {
           resolve ()
         })
 
-      }, 300)
+      }, 250)
     })
   }
 
@@ -297,32 +282,16 @@ class ViewerConfigurator extends React.Component {
 
       setTimeout(async() => {
 
-        const done = (start, end) => {
-          return start >= end
-        }
-
-        const update = (viewerFlex) => {
-
-          return new Promise((resolve) => {
-
-            this.setReactState({
-              viewerFlex
-            }).then(() => resolve())
-          })
-        }
-
-        await this.animate (
-          this.viewerFlex, 1.0, 0.7,
-          done, update)
+        await this.runAnimation(
+          this.viewerFlex, 1.0, 1.0)
 
         await this.setReactState({
-          paneExtStyle: { display: 'none' },
-          viewerFlex: 1.0
+          paneExtStyle: { display: 'none' }
         })
 
         resolve ()
 
-      }, 300)
+      }, 250)
     })
   }
 
@@ -330,51 +299,56 @@ class ViewerConfigurator extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  pushViewerPanel (extension) {
+  pushViewerPanel (viewer) {
 
-    const panelId = 'panel-' + extension.id
+    return (extension, opts = {}) => {
 
-    const props = {
-      renderable: extension,
-      id: panelId,
-      react: {
-        setState: (state) => {
+      const panelId = 'panel-' + extension.id
 
-          return new Promise((resolve) => {
+      const props = Object.assign({}, opts, {
+        container: viewer.container,
+        renderable: extension,
+        id: panelId,
+        react: {
+          setState: (state) => {
 
-            const panelState = this.state[panelId] || {}
+            return new Promise((resolve) => {
 
-            var newPanelState = {}
+              const panelState = this.state[panelId] || {}
 
-            newPanelState[id] = Object.assign({},
-              panelState, state)
+              var newPanelState = {}
 
-            this.setReactState(newPanelState).then(() => {
+              newPanelState[panelId] = Object.assign({},
+                panelState, state)
 
-              resolve (newPanelState)
+              this.setReactState(newPanelState).then(() => {
+
+                resolve(newPanelState)
+              })
             })
-          })
-        },
-        getState: () => {
+          },
+          getState: () => {
 
-          return this.state[panelId] || {}
+            return this.state[panelId] || {}
+          }
         }
-      }
-    }
-
-    return new Promise ((resolve) => {
-
-      const panel = new Panel(props)
-
-      this.setReactState({
-        viewerPanels: [
-          ...this.state.viewerPanels,
-          panel
-        ]}).then(() => {
-
-        resolve (panel)
       })
-    })
+
+      return new Promise ((resolve) => {
+
+        const panel = new Panel (props)
+
+        this.setReactState({
+          viewerPanels: [
+            ...this.state.viewerPanels,
+            panel
+          ]
+        }).then(() => {
+
+          resolve (panel)
+        })
+      })
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -387,18 +361,28 @@ class ViewerConfigurator extends React.Component {
 
     return new Promise ((resolve) => {
 
-      this.setReactState({
-        viewerPanels:
-          this.state.viewerPanels.filter((panel) => {
-            if (panel.id === targetPanelId) {
-              panel.destroy()
-              return false
-            }
-            return true
-          })
-      }).then(() => {
-        resolve ()
+      var targetPanel = null
+
+      const viewerPanels =
+        this.state.viewerPanels.filter((panel) => {
+
+          if (panel.id === targetPanelId) {
+
+            targetPanel = panel
+            return false
+          }
+
+          return true
       })
+
+      targetPanel
+        ? targetPanel.destroy().then(() => {
+          this.setReactState({
+            viewerPanels
+          })
+          resolve ()
+        })
+       : resolve ()
     })
   }
 
@@ -418,7 +402,7 @@ class ViewerConfigurator extends React.Component {
               this.pushRenderExtension,
 
             pushViewerPanel:
-              this.pushViewerPanel,
+              this.pushViewerPanel(viewer),
 
             popRenderExtension:
               this.popRenderExtension,
@@ -493,24 +477,32 @@ class ViewerConfigurator extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  animate (start, end, speed, done, fn) {
+  animate (period, easing, update) {
 
     return new Promise((resolve) => {
 
       const stopwatch = new Stopwatch()
 
+      let elapsed = 0
+
       const stepFn = () => {
 
         const dt = stopwatch.getElapsedMs() * 0.001
 
-        if (!done(start, end)) {
+        elapsed += dt
 
-          fn (start += speed * dt).then(() => {
+        if (elapsed < period) {
+
+          const eased = easing(elapsed/period)
+
+          update (eased).then(() => {
 
             window.requestAnimationFrame(stepFn)
           })
 
         } else {
+
+          update(1.0)
 
           resolve()
         }
@@ -518,6 +510,34 @@ class ViewerConfigurator extends React.Component {
 
       stepFn ()
     })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  runAnimation (start, end, animPeriod) {
+
+    const easingFn = (t) => {
+      //b: begging value, c: change in value, d: duration
+      return easing.easeInOutExpo(t, 0, 1.0, animPeriod * 0.9)
+    }
+
+    const update = (eased) => {
+
+      const viewerFlex =
+        (1.0 - eased) * start + eased * end
+
+      return new Promise((resolve) => {
+
+        this.setReactState({
+          viewerFlex
+        }).then(() => resolve())
+      })
+    }
+
+    return this.animate (
+      animPeriod, easingFn, update)
   }
 
   /////////////////////////////////////////////////////////

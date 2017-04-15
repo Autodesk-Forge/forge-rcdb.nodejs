@@ -13,8 +13,8 @@
   margin-left: 27px;
   margin-top: 10px;
   select: none;
+  width: 139px;
   float: left;
-  width: 80px;
 }
 
 .screenshot-manager .content > .controls {
@@ -145,7 +145,8 @@
 //
 /////////////////////////////////////////////////////////
 .screenshot-manager-controls {
-  margin: auto 0 auto 65px;
+  left: calc(100% - 186px);
+  margin: auto 0 auto 0px;
   position: relative;
   float: left;
 }

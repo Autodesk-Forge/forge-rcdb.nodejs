@@ -689,7 +689,10 @@ class ConfigManagerExtension extends ExtensionBase {
 
       await this.react.popRenderExtension(id)
 
-      const panel = await this.react.pushViewerPanel(this)
+      const panel = await this.react.pushViewerPanel(this, {
+          height: 250,
+          width: 350
+        })
 
       panel.on('update', () => {
 
@@ -700,7 +703,7 @@ class ConfigManagerExtension extends ExtensionBase {
 
     } else {
 
-      await this.react.popViewerPanel(id)
+      this.react.popViewerPanel(id)
 
       await this.react.pushRenderExtension(this)
 

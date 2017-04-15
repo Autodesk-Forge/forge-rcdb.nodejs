@@ -238,7 +238,7 @@ class FaderExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   // Async viewer event
   /////////////////////////////////////////////////////////
-  viewerEvent( eventName ) {
+  viewerEvent(eventName) {
     return new Promise ((resolve) => {
       const handler = (args) => {
         this.viewer.removeEventListener (

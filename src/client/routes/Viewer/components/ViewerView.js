@@ -350,7 +350,7 @@ class ViewerView extends React.Component {
 
     try {
 
-      //this.listMaterials (true) //["Brick", "Concrete", "Steel", "Wood", "Aluminum", "Glass", "Copper"])
+      //this.listMaterials (false) //["Brick", "Concrete", "Steel", "Wood", "Aluminum", "Glass", "Copper"])
 
       const modelOptions = this.dbModel.options || {
           removedControls: [
@@ -503,13 +503,20 @@ class ViewerView extends React.Component {
     // it is added in 'Database' category
     let properties = _.filter(viewerProps, (prop)=> {
 
-      if (prop.displayName.indexOf('Material') > -1) {
+      const included =
+        this.dbModel.materialCategories.includes(
+          prop.displayName)
 
-        materialName = prop.displayValue
+      if (included) {
+
+        materialName = materialName || prop.displayValue
       }
 
-      return (prop.displayName.indexOf('Material') < 0)
+      return !included
     })
+
+    //console.log(viewerProps.map((p) => p.displayName))
+    //console.log(materialName)
 
     if (this.materialMap[materialName]) {
 

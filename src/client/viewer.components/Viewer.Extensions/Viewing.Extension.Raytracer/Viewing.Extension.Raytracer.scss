@@ -1,47 +1,57 @@
-.forge-fader .content > .controls {
-  margin: 10px 0 0 0;
+.ray-tracer .title {
+  display: inline-flex;
+  float: left;
 }
 
-.forge-fader .content > .controls > .row {
-  width: calc(100% - 20px);
-  margin: 5px 0 5px 10px;
+.ray-tracer .title > label {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  white-space: nowrap;
+  font-weight: normal;
+  user-select: none;
+  margin-left: 27px;
+  margin-top: 10px;
+  select: none;
+  width: 107px;
+  float: left;
 }
 
-.forge-fader .content > .controls .control-element {
-  float:left;
+/////////////////////////////////////////////////////////
+// title controls
+//
+/////////////////////////////////////////////////////////
+.ray-tracer-controls {
+  left: calc(100% - 122px);
+  margin: auto 0 auto 0px;
+  position: relative;
+  float: left;
 }
 
-.rc-slider.control-element {
-  width: calc(100% - 30px);
-  margin: 10px 0 0 6px;
+.ray-tracer-controls > button {
+  border: 1px solid #c6c6c6;
+  background-color: #e1e1e1;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+  outline: none;
+  height: 24px;
+  width: 26px;
 }
 
-.rc-slider-track {
-  background-color: #33bd08;
+.ray-tracer-controls > button:hover {
+  border: 1px solid #878787;
+  background-color: #f5f5f5;
 }
 
-.rc-slider-handle {
-  transition-timing-function: ease;
-  transition-property: border;
-  transition-duration: 1.5s;
-  transition-delay: 0.0s;
-
-  border: solid 2px #33bd08;
+.ray-tracer-controls > button > label {
+  position: relative;
+  font-size: 20px;
+  color: #f0fcff;
+  top: -8px;
 }
 
-.rc-slider-handle:hover {
-  border: solid 2px #44eb08;
-}
-
-.fader-tooltip {
-  transition-timing-function: ease;
-  transition-property: opacity;
-  transition-duration: 1.0s;
-  transition-delay: 0.0s;
-
-  position: absolute;
-  font-weight: bold;
-  color: #44eb08;
-  display: none;
-  opacity: 0;
+.ray-tracer-controls > button > span {
+  pointer-events: none;
+  color: #9b9b9b
 }

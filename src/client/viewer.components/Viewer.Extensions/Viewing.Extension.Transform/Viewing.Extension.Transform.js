@@ -243,7 +243,6 @@ class TransformExtension extends ExtensionBase {
       const period = 1.8
 
       const easingFunc = (t) => {
-
         //b: begging value, c: change in value, d: duration
         return easing.easeInOutExpo(t, 0, 1, period * 0.7)
       }

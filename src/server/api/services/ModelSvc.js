@@ -647,6 +647,9 @@ export default class ModelSvc extends BaseSvc {
         const collection = await dbSvc.getCollection(
           this._config.collections.models)
 
+        const states = Array.isArray(state)
+          ? state : [state]
+
         collection.update(
           {
             '_id': new mongo.ObjectID(modelId),
@@ -657,14 +660,20 @@ export default class ModelSvc extends BaseSvc {
               'sequences.$.stateIds': state.id,
               'states': state
             }
+
+            //$push: {
+            //  $each: states.map((item) => {
+            //    return {
+            //      'sequences.$.stateIds': item.id,
+            //      'states': item
+            //    }
+            //  })
+            //}
           }, (err) => {
 
-            if (err) {
-
-              return reject(err)
-            }
-
-            return resolve (state)
+            return err
+              ? reject(err)
+              : resolve (state)
           })
 
       } catch (ex) {
