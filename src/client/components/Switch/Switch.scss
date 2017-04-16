@@ -1,10 +1,13 @@
 
 .switch-container {
   position: relative;
+  cursor: pointer;
 }
 
-input[type="checkbox"].switch  {
+input[type="checkbox"].switch {
+  pointer-events: none;
   position: absolute;
+  cursor: pointer;
   opacity: 0;
 }
 

@@ -15,12 +15,13 @@
 // DOES NOT WARRANT THAT THE OPERATION OF THE PROGRAM WILL BE
 // UNINTERRUPTED OR ERROR FREE.
 /////////////////////////////////////////////////////////////////////
-import TreeDelegate from './TreeDelegate'
+import RayTreeDelegate from './RayTreeDelegate'
+import { TreeView } from 'TreeView'
 import ReactDOM from 'react-dom'
+import './RayTreeView.scss'
 import React from 'react'
-import './TreeView.scss'
 
-export default class TreeView extends React.Component {
+export default class RayTreeView extends React.Component {
 
   /////////////////////////////////////////////////////////
   //
@@ -30,7 +31,7 @@ export default class TreeView extends React.Component {
 
     super (props)
 
-    this.delegate = new TreeDelegate(props.model)
+    this.delegate = new RayTreeDelegate(props.model)
   }
 
   /////////////////////////////////////////////////////////
@@ -43,16 +44,13 @@ export default class TreeView extends React.Component {
 
     const instanceTree = model.getData().instanceTree
 
-    const rootId = instanceTree.getRootId()
+    const rootNode = this.delegate.buildNode({
+      id: instanceTree.getRootId(),
+      type: 'root',
+      parent: null
+    })
 
-    const rootNode = {
-      name: instanceTree.getNodeName(rootId),
-      type: 'model.root',
-      group: true,
-      id: rootId
-    }
-
-    this.tree = new Autodesk.Viewing.UI.Tree(
+    this.tree = new TreeView (
       this.delegate, rootNode, this.treeContainer, {
         excludeRoot: false
       })
@@ -65,7 +63,7 @@ export default class TreeView extends React.Component {
   render() {
 
     return (
-      <div className="model-tree-container" ref={
+      <div className="raytree-container" ref={
         (div) => this.treeContainer = div
         }
       />

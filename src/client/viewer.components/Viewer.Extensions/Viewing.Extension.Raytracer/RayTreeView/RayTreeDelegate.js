@@ -1,11 +1,11 @@
-import { BaseTreeDelegate } from 'TreeView'
-import TreeNode from './TreeNode'
+import { TreeDelegate } from 'TreeView'
+import RayTreeNode from './RayTreeNode'
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 //
 ///////////////////////////////////////////////////////////////////////////////
-export default class TreeDelegate extends BaseTreeDelegate {
+export default class RayTreeDelegate extends TreeDelegate {
 
   /////////////////////////////////////////////////////////////
   //
@@ -22,25 +22,28 @@ export default class TreeDelegate extends BaseTreeDelegate {
   //
   //
   /////////////////////////////////////////////////////////////
-  createTreeNode (node, parentDOMElement, options = {}) {
+  buildNode (data) {
+
+    return new RayTreeNode({
+      name: this.instanceTree.getNodeName(data.id),
+      group: this.getNodeChildIds(data.id).length,
+      parent: data.parent,
+      type: data.type,
+      id: data.id
+    })
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  createTreeNode (node, parentDomElement, options = {}) {
 
     const container = document.createElement('div')
 
-    parentDOMElement.appendChild(container)
+    parentDomElement.appendChild(container)
 
-    const nodeLabel = this.getTreeNodeLabel(node)
-
-
-
-    node.expand = () => {
-      $(parentDOMElement).parent().removeClass('collapsed')
-      $(parentDOMElement).parent().addClass('expanded')
-    }
-
-    node.collapse = () => {
-      $(parentDOMElement).parent().removeClass('expanded')
-      $(parentDOMElement).parent().addClass('collapsed')
-    }
+    node.connect(container)
   }
 
   /////////////////////////////////////////////////////////////
@@ -53,9 +56,7 @@ export default class TreeDelegate extends BaseTreeDelegate {
 
     childIds.forEach((id) => {
 
-      const childNode = new TreeNode({
-        name: this.instanceTree.getNodeName(id),
-        group: this.getNodeChildIds(id).length,
+      const childNode = this.buildNode({
         parent: node,
         type: '',
         id

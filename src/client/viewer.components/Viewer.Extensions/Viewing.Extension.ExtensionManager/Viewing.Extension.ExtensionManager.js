@@ -136,7 +136,7 @@ class ExtensionManager extends ExtensionBase {
         return this.loadDynamicExtension(extension)
       })
 
-      this.loadedExtensions = await Promise.all(loadTasks)
+      Promise.all(loadTasks)
     })
 
     console.log('Viewing.Extension.ExtensionManager loaded')
@@ -167,6 +167,7 @@ class ExtensionManager extends ExtensionBase {
     const eventTasks = eventIdArray.map((id) => {
       return new Promise ((resolve) => {
         const handler = (args) => {
+
           this.viewer.removeEventListener (
             id, handler )
           resolve (args)
@@ -214,8 +215,9 @@ class ExtensionManager extends ExtensionBase {
     ]
 
     events.forEach((event) => {
+      const eventId = event.id.toString()
       this.viewerEvent(event.id).then((args) => {
-        this.events[event.id] = {
+        this.events[eventId] = {
           handler: event.handler,
           args
         }
@@ -253,6 +255,16 @@ class ExtensionManager extends ExtensionBase {
           this.react.setState({
             extensions
           })
+
+          for (const eventId in this.events) {
+
+            const event = this.events[eventId]
+
+            if (extInstance[event.handler]) {
+
+              extInstance[event.handler](event.args)
+            }
+          }
 
           resolve(extInstance)
 
@@ -321,16 +333,6 @@ class ExtensionManager extends ExtensionBase {
             return ext.id
           })
         })
-
-      for (const eventId in this.events) {
-
-        const event = this.events[eventId]
-
-        if (extInstance[event.handler]) {
-
-          extInstance[event.handler](event.args)
-        }
-      }
     }
   }
 

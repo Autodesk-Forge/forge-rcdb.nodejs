@@ -1,9 +1,9 @@
-import { BaseTreeDelegate, TreeNode } from './TreeView'
+import TreeDelegate from './TreeDelegate'
+import TreeNode from './TreeNode'
 import TreeView from './TreeView'
 
-export default TreeView
-
 module.exports = {
-    BaseTreeDelegate,
-    TreeNode
+    TreeDelegate,
+    TreeNode,
+    TreeView
 }

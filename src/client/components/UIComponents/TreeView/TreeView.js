@@ -4,143 +4,151 @@ import EventsEmitter from 'EventsEmitter'
 //
 //
 /////////////////////////////////////////////////////////////////////
-export class BaseTreeDelegate extends
-  EventsEmitter.Composer (Autodesk.Viewing.UI.TreeDelegate) {
+export default class TreeView extends
+  EventsEmitter.Composer (Autodesk.Viewing.UI.Tree) {
 
-  ///////////////////////////////////////////////////////////////////
-  //
-  //
-  ///////////////////////////////////////////////////////////////////
-  constructor (container, contextMenu) {
+  setInputHandlers_ () {
 
-    super()
+    var tree = this
+    var rootElem = this.myRootContainer
 
-    this.contextMenu = contextMenu
+    var NODE_NOT_FOUND = null
 
-    this.container = container
+    var getNodeFromElement = function(eventTarget) {
 
-    this.clickTimeout = 0
-  }
+      var ret = null
+      var found = false
 
-  ///////////////////////////////////////////////////////////////////
-  //
-  //
-  ///////////////////////////////////////////////////////////////////
-  getTreeNodeId (node) {
+      do {
+        if (!eventTarget || eventTarget === rootElem) {
+          ret = null
+          found = true  // not found
+        } else if (eventTarget.hasAttribute("lmv-nodeId")) {
+          ret = eventTarget
+          found = true
+        } else {
+          eventTarget = eventTarget.parentElement
+        }
+      } while(!found)
 
-    return node.id
-  }
-
-  ///////////////////////////////////////////////////////////////////
-  //
-  //
-  ///////////////////////////////////////////////////////////////////
-  isTreeNodeGroup (node) {
-
-    return node.group
-  }
-
-  ///////////////////////////////////////////////////////////////////
-  //
-  //
-  ///////////////////////////////////////////////////////////////////
-  onTreeNodeIconClick (tree, node, event) {
-
-    clearTimeout(this.clickTimeout)
-
-    this.clickTimeout = setTimeout(() => {
-
-      tree.setCollapsed(node, !tree.isCollapsed(node))
-
-      this.emit('node.iconClick', node)
-
-    }, 200)
-  }
-
-  ///////////////////////////////////////////////////////////////////
-  //
-  //
-  ///////////////////////////////////////////////////////////////////
-  nodeClickSelector (event) {
-
-    const selector = ['HEADER', 'LABEL']
-
-    return (selector.indexOf(event.target.nodeName) > -1)
-  }
-
-  ///////////////////////////////////////////////////////////////////
-  //
-  //
-  ///////////////////////////////////////////////////////////////////
-  onTreeNodeClick (tree, node, event) {
-
-    if (this.nodeClickSelector(event)) {
-
-      clearTimeout(this.clickTimeout)
-
-      this.clickTimeout = setTimeout(() => {
-
-        this.emit('node.click', node)
-
-        tree.setCollapsed(node, !tree.isCollapsed(node))
-
-      }, 200)
+      if (ret) {
+        var nodeId = ret.getAttribute("lmv-nodeId");
+        return tree.nodeIdToNode[nodeId] || NODE_NOT_FOUND;
+      }
+      return NODE_NOT_FOUND
     }
-  }
 
-  ///////////////////////////////////////////////////////////////////
-  //
-  //
-  ///////////////////////////////////////////////////////////////////
-  onTreeNodeDoubleClick (tree, node, event) {
+    if (av.isTouchDevice()) {
 
-    if (this.nodeClickSelector(event)) {
+      this.hammer = new Hammer.Manager(rootElem, {
+        recognizers: [
+          [
+            Hammer.Tap, {
+            event: 'doubletap',
+            taps: 2,
+            interval: 400,
+            threshold: 6,
+            posThreshold: 30
+          }],
+          [
+            Hammer.Press, {
+            event: 'press',
+            time: 500
+          }]
+        ],
+        inputClass: Hammer.TouchInput
+      })
 
-      clearTimeout(this.clickTimeout)
+      this.hammer.on("doubletap", function (event) {
 
-      this.emit('node.dblClick', node)
+        var node = getNodeFromElement(event.target)
+        if (node === NODE_NOT_FOUND)
+          return
+        tree.myDelegate.onTreeNodeDoubleClick(
+          tree, node, event)
+      })
+
+      this.hammer.on('press', function (event) {
+
+        var node = getNodeFromElement(event.target)
+        if (node === NODE_NOT_FOUND)
+          return
+        tree.myDelegate.onTreeNodeRightClick(
+          tree, node, event)
+      })
     }
-  }
 
-  ///////////////////////////////////////////////////////////////////
-  //
-  //
-  ///////////////////////////////////////////////////////////////////
-  onTreeNodeRightClick (tree, node, event) {
+    rootElem.addEventListener('click', function (event) {
 
-    event.stopPropagation()
-    event.preventDefault()
+      var node = getNodeFromElement(event.target)
 
-    if (this.nodeClickSelector(event)) {
+      if (node === NODE_NOT_FOUND)
+        return
 
-      this.contextMenu.show(event, node)
-    }
-  }
+      tree.myDelegate.onTreeNodeClick(
+        tree, node, event)
 
-  ///////////////////////////////////////////////////////////////////
-  //
-  //
-  ///////////////////////////////////////////////////////////////////
-  getTreeNodeLabel (node) {
+      if(!event.target.classList.contains('propertyLink')) {
+        event.preventDefault()
+      }
+    }, false)
 
-    return node.name
-  }
-}
+    rootElem.addEventListener('dblclick', function (event) {
 
-/////////////////////////////////////////////////////////////////////
-//
-//
-/////////////////////////////////////////////////////////////////////
-export class TreeNode extends EventsEmitter {
+      var node = getNodeFromElement(event.target);
 
-  /////////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////////
-  constructor (properties) {
+      if (node === NODE_NOT_FOUND)
+        return
 
-    super()
+      tree.myDelegate.onTreeNodeDoubleClick(
+        tree, node, event)
 
-    Object.assign(this, properties)
+      event.stopPropagation()
+      event.preventDefault()
+
+    }, false)
+
+    rootElem.addEventListener('contextmenu', function (event) {
+
+      var node = getNodeFromElement(event.target)
+
+      if (node === NODE_NOT_FOUND)
+        return
+
+      tree.myDelegate.onTreeNodeRightClick(
+        tree, node, event)
+
+      event.stopPropagation()
+      event.preventDefault()
+
+    }, false)
+
+    rootElem.addEventListener('mouseover', function (event) {
+
+      var node = getNodeFromElement(event.target)
+
+      if (node === NODE_NOT_FOUND)
+        return
+
+      tree.myDelegate.onTreeNodeHover(
+        tree, node, event)
+
+      event.stopPropagation()
+      event.preventDefault()
+
+    }, false)
+
+    rootElem.addEventListener('mouseout', function (event) {
+      // When the mouse leaves the element,
+      // set node to -1 (background), no highlight,
+      var node = -1
+
+      tree.myDelegate.onTreeNodeHover(
+        tree, node, event)
+
+      event.stopPropagation()
+      event.preventDefault()
+
+    }, false)
   }
 }

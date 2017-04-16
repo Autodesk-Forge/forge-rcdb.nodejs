@@ -6,9 +6,9 @@
 import ExtensionBase from 'Viewer.ExtensionBase'
 import WidgetContainer from 'WidgetContainer'
 import EventTool from 'Viewer.EventTool'
+import RayTreeView from './RayTreeView'
 import Toolkit from 'Viewer.Toolkit'
 import { ReactLoader } from 'Loader'
-import TreeView from './TreeView'
 import ReactDOM from 'react-dom'
 import Switch from 'Switch'
 import Label from 'Label'
@@ -46,6 +46,10 @@ class RaytracerExtension extends ExtensionBase {
       Autodesk.Viewing.GEOMETRY_LOADED_EVENT
 
     ]).then((args) => this.onModelLoaded(args))
+
+    this.viewerEvent(
+      Autodesk.Viewing.GEOMETRY_LOADED_EVENT
+    ).then((args) => this.onGeometryLoaded(args))
 
     this.react.setState({
 
@@ -103,7 +107,7 @@ class RaytracerExtension extends ExtensionBase {
       return new Promise ((resolve) => {
         const handler = (args) => {
           this.viewer.removeEventListener (
-            id, handler )
+            id, handler)
           resolve (args)
         }
         this.viewer.addEventListener (
@@ -119,6 +123,13 @@ class RaytracerExtension extends ExtensionBase {
   //
   /////////////////////////////////////////////////////////
   onModelLoaded (args) {
+
+    this.react.setState({
+      model: args[0].model
+    })
+  }
+
+  onGeometryLoaded (args) {
 
     this.react.setState({
       model: args[0].model
@@ -184,7 +195,7 @@ class RaytracerExtension extends ExtensionBase {
     const { model } = this.react.getState()
 
     const treeView = model
-      ? <TreeView model={model}/>
+      ? <RayTreeView model={model}/>
       : <div/>
 
     return (

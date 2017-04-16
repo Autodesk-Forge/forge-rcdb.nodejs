@@ -29,11 +29,11 @@ export default class Switch extends React.Component {
 
     super ()
 
+    this.toggle = this.toggle.bind(this)
+
     this.state = {
       checked: true
     }
-
-    this.handleChange = this.handleChange.bind(this)
   }
 
   /////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ export default class Switch extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  handleChange () {
+  toggle () {
 
     const checked = !this.state.checked
 
@@ -77,26 +77,22 @@ export default class Switch extends React.Component {
     ]
 
     return(
-      <div className={classNames.join(' ')}>
-        <label>
-          <input ref="switch" className="switch"
-            onChange={this.handleChange}
-            checked={this.state.checked}
-            value={this.state.checked}
-            type="checkbox"
-          />
-          <div>
-            <span>
-              <g className="icon icon-toolbar grid-view">
-              </g>
-            </span>
-            <span>
-              <g className="icon icon-toolbar ticket-view">
-              </g>
-            </span>
-            <div></div>
-          </div>
-        </label>
+      <div className={classNames.join(' ')}
+        onClick={this.toggle}>
+        <input ref="switch" className="switch"
+          checked={this.state.checked}
+          value={this.state.checked}
+          type="checkbox"
+        />
+        <div>
+          <span>
+            <g className="icon icon-toolbar grid-view"/>
+          </span>
+          <span>
+            <g className="icon icon-toolbar ticket-view"/>
+          </span>
+          <div/>
+        </div>
       </div>
     )
   }
