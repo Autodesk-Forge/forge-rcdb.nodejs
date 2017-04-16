@@ -703,7 +703,7 @@ class ConfigManagerExtension extends ExtensionBase {
 
     } else {
 
-      this.react.popViewerPanel(id)
+      await this.react.popViewerPanel(id)
 
       await this.react.pushRenderExtension(this)
 

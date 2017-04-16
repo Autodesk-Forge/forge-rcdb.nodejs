@@ -198,7 +198,7 @@ class ScreenShotManagerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  setDocking (docked) {
+  async setDocking (docked) {
 
     const id = ScreenShotManagerExtension.ExtensionId
 
@@ -214,7 +214,7 @@ class ScreenShotManagerExtension extends ExtensionBase {
 
     } else {
 
-      this.react.popViewerPanel(id)
+      await this.react.popViewerPanel(id)
 
       this.react.pushRenderExtension(this)
     }

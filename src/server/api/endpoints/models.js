@@ -47,7 +47,7 @@ module.exports = function() {
     }
     catch (error) {
 
-      res.status(error.statusCode || 404)
+      res.status(error.statusCode || 500)
       res.json(error)
     }
   })
@@ -74,7 +74,7 @@ module.exports = function() {
 
     } catch (error) {
 
-      res.status(error.statusCode || 404)
+      res.status(error.statusCode || 500)
       res.json(error)
     }
   })
@@ -106,7 +106,7 @@ module.exports = function() {
 
       debug(error)
 
-      res.status(error.statusCode || 404)
+      res.status(error.statusCode || 500)
       res.json(error)
     }
   })
@@ -133,7 +133,7 @@ module.exports = function() {
 
       debug(error)
 
-      res.status(error.statusCode || 404)
+      res.status(error.statusCode || 500)
       res.json(error)
     }
   })
@@ -161,7 +161,7 @@ module.exports = function() {
 
     } catch (error) {
 
-      res.status(error.statusCode || 404)
+      res.status(error.statusCode || 500)
       res.json(error)
     }
   })
@@ -186,7 +186,7 @@ module.exports = function() {
 
     } catch (error) {
 
-      res.status(error.statusCode || 404)
+      res.status(error.statusCode || 500)
       res.json(error)
     }
   })
@@ -196,8 +196,6 @@ module.exports = function() {
   //
   ///////////////////////////////////////////////////////////////////////////////
   router.delete('/:db/:modelId/states/:stateId', async(req, res)=> {
-
-    console.log('REMOVE')
 
     try {
 
@@ -214,9 +212,7 @@ module.exports = function() {
 
     } catch (error) {
 
-      console.log(error)
-
-      res.status(error.statusCode || 404)
+      res.status(error.statusCode || 500)
       res.json(error)
     }
   })
@@ -244,7 +240,7 @@ module.exports = function() {
 
     } catch (error) {
 
-      res.status(error.statusCode || 404)
+      res.status(error.statusCode || 500)
       res.json(error)
     }
   })

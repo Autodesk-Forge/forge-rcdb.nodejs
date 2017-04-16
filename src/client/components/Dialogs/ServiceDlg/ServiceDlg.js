@@ -1,7 +1,7 @@
-import React, { PropTypes } from 'react'
 import PropTypes from 'prop-types'
 import Modal from 'react-modal'
 import './ServiceDlg.scss'
+import React from 'react'
 
 export default class ServiceDlg extends React.Component {
 

@@ -273,34 +273,33 @@ export default class ModelSvc extends BaseSvc {
   ///////////////////////////////////////////////////////////////////
   addState (modelId, state) {
 
-    var _thisSvc = this
-
     return new Promise(async(resolve, reject)=> {
 
       try {
 
-        var dbSvc = ServiceManager.getService(
+        const dbSvc = ServiceManager.getService(
           this._config.dbName)
 
-        var query = {
-          _id: new mongo.ObjectId(modelId)
-        }
+        const collection = await dbSvc.getCollection(
+          this._config.collections.models)
 
-        var opts = {
-          $push: {
-            states: state,
-            sequence: state.guid
-          }
-        }
+        collection.update(
+          {
+            '_id': new mongo.ObjectID(modelId),
+          },
+          {
+            $push: {
+              'sequence': state.guid,
+              'states': state
+            }
+          }, (err) => {
 
-        await dbSvc.updateItem(
-          _thisSvc._config.collections.models,
-          query,
-          opts)
+            return err
+              ? reject(err)
+              : resolve (state)
+          })
 
-        return resolve(state)
-
-      } catch(ex){
+      } catch(ex) {
 
         return reject(ex)
       }

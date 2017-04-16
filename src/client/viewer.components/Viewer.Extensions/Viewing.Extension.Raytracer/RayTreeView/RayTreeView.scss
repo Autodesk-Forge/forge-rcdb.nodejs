@@ -1,5 +1,6 @@
 .raytree-container {
 
+  overflow-x: hidden;
   overflow-y: scroll;
   text-align: left;
   height: 100%;
@@ -52,5 +53,9 @@
     height: 18px;
     width: 18px;
     margin: 0;
+  }
+
+  .label-container {
+    top: 2px;
   }
 }

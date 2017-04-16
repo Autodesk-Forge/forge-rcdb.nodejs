@@ -82,6 +82,7 @@ export default class Switch extends React.Component {
         <input ref="switch" className="switch"
           checked={this.state.checked}
           value={this.state.checked}
+          onChange={()=> {}}
           type="checkbox"
         />
         <div>
