@@ -29,6 +29,7 @@ class RaytracerExtension extends ExtensionBase {
 
 		super (viewer, options)
 
+    this.onNodeChecked = this.onNodeChecked.bind(this)
     this.renderTitle = this.renderTitle.bind(this)
 
     this.react = options.react
@@ -140,6 +141,15 @@ class RaytracerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  onNodeChecked (node) {
+
+    console.log(node.name + ': ' + node.checked)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   async setDocking (docked) {
 
     const id = RaytracerExtension.ExtensionId
@@ -155,7 +165,7 @@ class RaytracerExtension extends ExtensionBase {
 
     } else {
 
-      this.react.popViewerPanel(id)
+      await this.react.popViewerPanel(id)
 
       this.react.pushRenderExtension(this)
     }
@@ -195,7 +205,8 @@ class RaytracerExtension extends ExtensionBase {
     const { model } = this.react.getState()
 
     const treeView = model
-      ? <RayTreeView model={model}/>
+      ? <RayTreeView onNodeChecked={this.onNodeChecked}
+          model={model}/>
       : <div/>
 
     return (

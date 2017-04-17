@@ -28,7 +28,7 @@
   .treenode .switch-container {
     border: 1px solid #9c9c9c;
     border-radius: 12px;
-    margin: 0 4px 0 2px;
+    margin: 0 8px 0 2px;
     float: left;
   }
 
@@ -37,12 +37,12 @@
   }
 
   input[type="checkbox"].switch + div {
-    width: 36px;
-    height: 18px;
+    width: 34px;
+    height: 16px;
   }
 
   input[type="checkbox"].switch:checked + div {
-    width: 36px;
+    width: 34px;
   }
 
   input[type="checkbox"].switch:checked + div > div {
@@ -50,12 +50,8 @@
   }
 
   input[type="checkbox"].switch + div > div {
-    height: 18px;
-    width: 18px;
+    height: 16px;
+    width: 16px;
     margin: 0;
-  }
-
-  .label-container {
-    top: 2px;
   }
 }

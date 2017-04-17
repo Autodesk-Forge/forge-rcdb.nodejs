@@ -50,9 +50,11 @@ export default class TreeDelegate extends
 
     this.clickTimeout = setTimeout(() => {
 
-      tree.setCollapsed(node, !tree.isCollapsed(node))
-
       this.emit('node.iconClick', node)
+
+      !tree.isCollapsed(node)
+        ? node.collapse()
+        : node.expand()
 
     }, 200)
   }
@@ -82,7 +84,11 @@ export default class TreeDelegate extends
 
         this.emit('node.click', node)
 
-        tree.setCollapsed(node, !tree.isCollapsed(node))
+        //tree.setCollapsed(node, !tree.isCollapsed(node))
+
+        !tree.isCollapsed(node)
+          ? node.collapse()
+          : node.expand()
 
       }, 200)
     }

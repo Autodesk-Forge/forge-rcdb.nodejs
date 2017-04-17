@@ -1,7 +1,14 @@
 
 .switch-container {
   position: relative;
+}
+
+.switch-container *:hover {
   cursor: pointer;
+}
+
+.switch-container.disabled *:hover {
+  cursor: not-allowed;
 }
 
 input[type="checkbox"].switch {
@@ -43,6 +50,10 @@ input[type="checkbox"].switch:checked + div {
   width: 60px;
   background-position: 0 0;
   background-color: #57BB00;
+}
+
+.switch-container.disabled input[type="checkbox"].switch + div {
+  background-color: rgba(157, 157, 157, 0.50);
 }
 
 input[type="checkbox"].switch + div {

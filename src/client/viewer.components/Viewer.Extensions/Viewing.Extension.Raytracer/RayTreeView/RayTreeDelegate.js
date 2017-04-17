@@ -24,13 +24,21 @@ export default class RayTreeDelegate extends TreeDelegate {
   /////////////////////////////////////////////////////////////
   buildNode (data) {
 
-    return new RayTreeNode({
+    const node = new RayTreeNode({
       name: this.instanceTree.getNodeName(data.id),
-      group: this.getNodeChildIds(data.id).length,
+      group: this.getChildIds(data.id).length,
+      instanceTree: this.instanceTree,
       parent: data.parent,
       type: data.type,
       id: data.id
     })
+
+    node.on('checked', (node) => {
+
+      this.emit('node.checked', node)
+    })
+
+    return node
   }
 
   /////////////////////////////////////////////////////////////
@@ -43,36 +51,23 @@ export default class RayTreeDelegate extends TreeDelegate {
 
     parentDomElement.appendChild(container)
 
-    node.connect(container)
+    node.mount(container)
   }
 
   /////////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////////
-  forEachChild (node, addChildCallback) {
+  forEachChild (node, addChild) {
 
-    const childIds = this.getNodeChildIds(node.id)
-
-    childIds.forEach((id) => {
-
-      const childNode = this.buildNode({
-        parent: node,
-        type: '',
-        id
-      })
-
-      addChildCallback(childNode)
-
-      childNode.collapse()
-    })
+    node.addChild = addChild
   }
 
   /////////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////////
-  getNodeChildIds (nodeId) {
+  getChildIds (nodeId) {
 
     const childIds = []
 

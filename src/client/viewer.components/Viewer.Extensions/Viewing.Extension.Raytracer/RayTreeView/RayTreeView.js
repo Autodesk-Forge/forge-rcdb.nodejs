@@ -32,6 +32,11 @@ export default class RayTreeView extends React.Component {
     super (props)
 
     this.delegate = new RayTreeDelegate(props.model)
+
+    this.delegate.on('node.checked', (node) => {
+
+      this.props.onNodeChecked(node)
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -54,6 +59,9 @@ export default class RayTreeView extends React.Component {
       this.delegate, rootNode, this.treeContainer, {
         excludeRoot: false
       })
+
+    rootNode.expand ()
+    rootNode.onChecked (false)
   }
 
   /////////////////////////////////////////////////////////

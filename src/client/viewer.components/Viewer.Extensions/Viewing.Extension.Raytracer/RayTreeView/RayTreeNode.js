@@ -9,7 +9,7 @@ import React from 'react'
 //
 //
 ///////////////////////////////////////////////////////////////////////////////
-export default class TreeNode extends EventsEmitter {
+export default class RayTreeNode extends EventsEmitter {
 
   /////////////////////////////////////////////////////////////
   //
@@ -21,11 +21,54 @@ export default class TreeNode extends EventsEmitter {
 
     this.onChecked = this.onChecked.bind(this)
 
-    this.parent = props.parent
-    this.group  = props.group
-    this.name   = props.name
-    this.type   = props.type
-    this.id     = props.id
+    this.onExpand = this.onExpand.bind(this)
+
+    this.on('expand', this.onExpand)
+
+    this.checked = false
+    this.children = []
+
+    this.instanceTree = props.instanceTree
+    this.disabled     = props.disabled
+    this.parent       = props.parent
+    this.group        = props.group
+    this.name         = props.name
+    this.type         = props.type
+    this.id           = props.id
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  onExpand () {
+
+    this.off('expand', this.onExpand)
+
+    this.loadChildren()
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  setDisabled (disabled) {
+
+    this.disabled = disabled
+
+    this.reactNode = ReactDOM.render(
+      <ReactTreeNode onChecked={this.onChecked}
+        disabled={this.disabled}
+        name={this.name}/>,
+      this.domContainer)
+
+    if (disabled || this.checked) {
+
+      this.children.forEach((child) => {
+
+        child.setDisabled (disabled, true)
+      })
+    }
   }
 
   /////////////////////////////////////////////////////////////
@@ -34,22 +77,49 @@ export default class TreeNode extends EventsEmitter {
   /////////////////////////////////////////////////////////////
   onChecked (checked) {
 
-    this.emit('checked', checked)
+    this.checked = checked
+
+    this.emit('checked', this)
+
+    this.children.forEach((child) => {
+
+      child.setDisabled (!checked)
+    })
   }
 
   /////////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////////
-  connect (domContainer) {
+  mount (domContainer) {
+
+    domContainer.className = 'treenode-container'
 
     this.domContainer = domContainer
 
-    this.domContainer.className = 'treenode-container'
+    this.collapse()
 
-    ReactDOM.render(
-      <ReactTreeNode onChecked={this.onChecked}/>,
+    this.reactNode = ReactDOM.render(
+      <ReactTreeNode onChecked={this.onChecked}
+        disabled={this.disabled}
+        name={this.name}/>,
       this.domContainer)
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  unmount () {
+
+    this.children.forEach((child) => {
+
+      child.unmount()
+    })
+
+    ReactDOM.unmountComponentAtNode(this.domContainer)
+
+    this.off()
   }
 
   /////////////////////////////////////////////////////////////
@@ -63,6 +133,8 @@ export default class TreeNode extends EventsEmitter {
 
     target.classList.remove('collapsed')
     target.classList.add('expanded')
+
+    this.emit('expand')
   }
 
   /////////////////////////////////////////////////////////////
@@ -77,6 +149,54 @@ export default class TreeNode extends EventsEmitter {
     target.classList.remove('expanded')
     target.classList.add('collapsed')
   }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  loadChildren () {
+
+    const childIds = this.getChildIds(this.id)
+
+    this.children = childIds.map((id) => {
+
+      const childNode = new RayTreeNode({
+        name: this.instanceTree.getNodeName(id),
+        group: this.getChildIds(id).length,
+        instanceTree: this.instanceTree,
+        disabled: true,
+        parent: this,
+        type: '',
+        id
+      })
+
+      childNode.on('checked', (node) => {
+
+        this.emit('checked', node)
+      })
+
+      this.addChild(childNode)
+
+      return childNode
+    })
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  getChildIds (nodeId) {
+
+    const childIds = []
+
+    this.instanceTree.enumNodeChildren(nodeId,
+      (childId) => {
+
+        childIds.push(childId)
+      })
+
+    return childIds
+  }
 }
 
 
@@ -87,8 +207,7 @@ class ReactTreeNode extends React.Component {
   //
   /////////////////////////////////////////////////////////
   static propTypes = {
-    className: PropTypes.string,
-    showTitle: PropTypes.bool
+    className: PropTypes.string
   }
 
   /////////////////////////////////////////////////////////
@@ -96,7 +215,6 @@ class ReactTreeNode extends React.Component {
   //
   /////////////////////////////////////////////////////////
   static defaultProps = {
-    showTitle: true,
     className: ''
   }
 
@@ -114,8 +232,9 @@ class ReactTreeNode extends React.Component {
     return (
       <div className={classNames.join(' ')}>
         <Switch onChange={(checked) => this.props.onChecked(checked)}
-          checked={true}/>
-        <Label text={'Node'}/>
+          disabled={this.props.disabled}
+          checked={false}/>
+        <Label text={this.props.name}/>
       </div>
     )
   }

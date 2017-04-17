@@ -53,6 +53,10 @@ export default class Switch extends React.Component {
   /////////////////////////////////////////////////////////
   toggle () {
 
+    if (this.props.disabled) {
+      return
+    }
+
     const checked = !this.state.checked
 
     this.setState({
@@ -73,6 +77,7 @@ export default class Switch extends React.Component {
 
     const classNames = [
       'switch-container',
+      this.props.disabled ? 'disabled' : '',
       ...this.props.className.split(' ')
     ]
 
