@@ -37,6 +37,11 @@ export default class RayTreeView extends React.Component {
 
       this.props.onNodeChecked(node)
     })
+
+    this.delegate.on('node.dblClick', (node) => {
+
+      this.props.viewer.isolate(node.id)
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -51,7 +56,7 @@ export default class RayTreeView extends React.Component {
 
     const rootNode = this.delegate.buildNode({
       id: instanceTree.getRootId(),
-      checked: false,
+      checked: true,
       type: 'root',
       parent: null
     })
@@ -62,7 +67,7 @@ export default class RayTreeView extends React.Component {
       })
 
     rootNode.expand ()
-    rootNode.onChecked (false)
+    rootNode.setChecked (true)
   }
 
   /////////////////////////////////////////////////////////

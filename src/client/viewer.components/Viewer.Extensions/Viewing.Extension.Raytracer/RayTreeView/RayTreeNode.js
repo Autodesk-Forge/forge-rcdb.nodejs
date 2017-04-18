@@ -19,7 +19,7 @@ export default class RayTreeNode extends EventsEmitter {
 
     super ()
 
-    this.onChecked = this.onChecked.bind(this)
+    this.setChecked = this.setChecked.bind(this)
 
     this.onExpand = this.onExpand.bind(this)
 
@@ -57,7 +57,7 @@ export default class RayTreeNode extends EventsEmitter {
     this.disabled = disabled
 
     this.reactNode = ReactDOM.render(
-      <ReactTreeNode onChecked={this.onChecked}
+      <ReactTreeNode onChecked={this.setChecked}
         disabled={this.disabled}
         checked={this.checked}
         name={this.name}/>,
@@ -76,7 +76,7 @@ export default class RayTreeNode extends EventsEmitter {
   //
   //
   /////////////////////////////////////////////////////////////
-  onChecked (checked) {
+  setChecked (checked) {
 
     this.checked = checked
 
@@ -101,7 +101,7 @@ export default class RayTreeNode extends EventsEmitter {
     this.collapse()
 
     this.reactNode = ReactDOM.render(
-      <ReactTreeNode onChecked={this.onChecked}
+      <ReactTreeNode onChecked={this.setChecked}
         disabled={this.disabled}
         checked={this.checked}
         name={this.name}/>,

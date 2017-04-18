@@ -32,7 +32,11 @@ class RaytracerExtension extends ExtensionBase {
     this.onNodeChecked = this.onNodeChecked.bind(this)
     this.renderTitle = this.renderTitle.bind(this)
 
+    this.eventTool = new EventTool(this.viewer)
+
     this.react = options.react
+
+    this.leafNodesMap = {}
 	}
 
 	/////////////////////////////////////////////////////////
@@ -40,6 +44,8 @@ class RaytracerExtension extends ExtensionBase {
   //
   /////////////////////////////////////////////////////////
 	load () {
+
+    this.on('loaded', (args) => this.onLoaded(args))
 
     this.viewerEvent([
 
@@ -125,16 +131,101 @@ class RaytracerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   onModelLoaded (args) {
 
-    this.react.setState({
-      model: args[0].model
-    })
+    this.emit('loaded', args)
   }
 
   onGeometryLoaded (args) {
 
+    this.emit('loaded', args)
+  }
+
+  async onLoaded (args) {
+
+    const model = args[0].model
+
+    this.off('loaded')
+
     this.react.setState({
-      model: args[0].model
+      model
     })
+
+    Toolkit.getLeafNodes (model).then((dbIds) => {
+
+      dbIds.forEach((dbId) => {
+        this.leafNodesMap[dbId] = true
+      })
+    })
+
+    this.eventTool.activate()
+
+    const events = [
+      'singleclick',
+      'doubleclick'
+      //'mousemove'
+    ]
+
+    this.eventTool.on (events.join(' '), (event) => {
+
+      const hitTest = this.viewer.clientToWorld(
+        event.canvasX, event.canvasY, true)
+
+      if (hitTest) {
+
+        return !this.leafNodesMap[hitTest.dbId]
+      }
+
+      //const raycaster = this.pointerToRaycaster(event)
+      //
+      //const hitTest = this.viewer.model.rayIntersect(
+      //  raycaster, true, [1607])
+      //
+      //console.log(hitTest)
+
+      return false
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // Creates Raycatser object from the pointer
+  //
+  /////////////////////////////////////////////////////////
+  pointerToRaycaster (pointer) {
+
+    const camera = this.viewer.navigation.getCamera()
+    const domContainer = this.viewer.container
+    const pointerVector = new THREE.Vector3()
+    const pointerDir = new THREE.Vector3()
+    const ray = new THREE.Raycaster()
+
+    const rect = domContainer.getBoundingClientRect()
+
+    const x =  ((pointer.clientX - rect.left) / rect.width)  * 2 - 1
+    const y = -((pointer.clientY - rect.top)  / rect.height) * 2 + 1
+
+    if (camera.isPerspective) {
+
+      pointerVector.set(x, y, 0.5)
+
+      pointerVector.unproject(camera)
+
+      ray.set(camera.position,
+        pointerVector.sub(
+          camera.position).normalize())
+
+    } else {
+
+      pointerVector.set(x, y, -1)
+
+      pointerVector.unproject(camera)
+
+      pointerDir.set(0, 0, -1)
+
+      ray.set(pointerVector,
+        pointerDir.transformDirection(
+          camera.matrixWorld))
+    }
+
+    return ray
   }
 
   /////////////////////////////////////////////////////////
@@ -143,7 +234,17 @@ class RaytracerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   onNodeChecked (node) {
 
-    console.log(node.name + ': ' + node.checked)
+    const {model} = this.react.getState()
+
+    //console.log(node.id + ': ' + node.checked)
+
+    Toolkit.getLeafNodes (model, node.id).then((dbIds) => {
+
+      dbIds.forEach((dbId) => {
+
+        this.leafNodesMap[dbId] = node.checked
+      })
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -206,6 +307,7 @@ class RaytracerExtension extends ExtensionBase {
 
     const treeView = model
       ? <RayTreeView onNodeChecked={this.onNodeChecked}
+          viewer={this.viewer}
           model={model}/>
       : <div/>
 
