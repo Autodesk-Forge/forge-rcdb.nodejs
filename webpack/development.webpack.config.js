@@ -140,8 +140,6 @@ module.exports = {
 
   module: {
 
-    noParse: [/falcor/, /systemjs/],
-
     rules: [
 
       {

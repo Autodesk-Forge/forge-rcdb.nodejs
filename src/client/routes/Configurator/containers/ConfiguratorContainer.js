@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 
-import ConfiguratorView from '../components/ConfiguratorView'
+import ConfiguratorView from '../ConfiguratorView'
 
 import {
   setNavbarState,

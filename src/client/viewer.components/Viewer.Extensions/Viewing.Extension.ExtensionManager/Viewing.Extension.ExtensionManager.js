@@ -125,8 +125,10 @@ class ExtensionManager extends ExtensionBase {
 
       const loadExts = extensions.filter ((extension) => {
 
+        const storageExtensions = storage.extensions || []
+
         extension.enabled = extension.enabled ||
-          storage.extensions.includes(extension.id)
+          storageExtensions.includes(extension.id)
 
         return extension.enabled
       })

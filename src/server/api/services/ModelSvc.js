@@ -20,7 +20,7 @@ export default class ModelSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   name() {
 
-    return (this._config.dbName + '-ModelSvc') || 'ModelSvc'
+    return (this._config.name + '-ModelSvc') || 'ModelSvc'
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -29,30 +29,27 @@ export default class ModelSvc extends BaseSvc {
   ///////////////////////////////////////////////////////////////////////////////
   getById (modelId, opts = {}) {
 
-    var _thisSvc = this
-
     return new Promise(async(resolve, reject) => {
 
       try {
 
-        var dbSvc = ServiceManager.getService(
+        const dbSvc = ServiceManager.getService(
           this._config.dbName)
 
         const query = Object.assign({}, opts, {
           fieldQuery: {
-            _id: new mongo.ObjectId(modelId)
+            _id: new mongo.ObjectId (modelId)
           }
         })
 
-        var model = await dbSvc.findOne(
-          _thisSvc._config.collections.models,
-         query)
+        const model = await dbSvc.findOne(
+          this._config.models, query)
 
-        return resolve(model)
+        return resolve (model)
 
-      } catch(ex){
+      } catch (ex) {
 
-        return reject(ex)
+        return reject (ex)
       }
     })
   }
@@ -63,8 +60,6 @@ export default class ModelSvc extends BaseSvc {
   ///////////////////////////////////////////////////////////////////////////////
   getModels (opts = {}) {
 
-    var _thisSvc = this
-
     return new Promise(async(resolve, reject) => {
 
       try {
@@ -73,14 +68,14 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         const models = await dbSvc.getItems(
-          _thisSvc._config.collections.models,
+          this._config.models,
           opts)
 
-        return resolve(models)
+        return resolve (models)
 
-      } catch(ex){
+      } catch (ex) {
 
-        return reject(ex)
+        return reject (ex)
       }
     })
   }
@@ -91,16 +86,14 @@ export default class ModelSvc extends BaseSvc {
   ///////////////////////////////////////////////////////////////////////////////
   getThumbnails (modelIds, opts = {}) {
 
-    var _thisSvc = this
-
     return new Promise(async(resolve, reject) => {
 
       try {
 
-        var dbSvc = ServiceManager.getService(
+        const dbSvc = ServiceManager.getService(
           this._config.dbName)
 
-        let query = {
+        const query = {
           fieldQuery:{
            $or: modelIds.map((id) => {
              return { _id: new mongo.ObjectId(id) }
@@ -112,7 +105,7 @@ export default class ModelSvc extends BaseSvc {
         }
 
         const models = await dbSvc.getItems(
-          _thisSvc._config.collections.models,
+          this._config.models,
           Object.assign({}, opts, query))
 
         const thumbnails = modelIds.map((id) => {
@@ -122,11 +115,11 @@ export default class ModelSvc extends BaseSvc {
           return _.find(models, { _id: mongoId }).thumbnail
         })
 
-        return resolve(thumbnails)
+        return resolve (thumbnails)
 
-      } catch(ex){
+      } catch (ex) {
 
-        return reject(ex)
+        return reject (ex)
       }
     })
   }
@@ -137,8 +130,6 @@ export default class ModelSvc extends BaseSvc {
   ///////////////////////////////////////////////////////////////////////////////
   download (modelId, path) {
 
-    var _thisSvc = this
-
     return new Promise(async(resolve, reject) => {
 
       try {
@@ -147,9 +138,9 @@ export default class ModelSvc extends BaseSvc {
 
         return resolve()
 
-      } catch(ex){
+      } catch (ex) {
 
-        return reject(ex)
+        return reject (ex)
       }
     })
   }
@@ -160,16 +151,14 @@ export default class ModelSvc extends BaseSvc {
   ///////////////////////////////////////////////////////////////////
   getSequence (modelId) {
 
-    var _thisSvc = this
-
     return new Promise(async(resolve, reject)=> {
 
       try {
 
-        var dbSvc = ServiceManager.getService(
+        const dbSvc = ServiceManager.getService(
           this._config.dbName)
 
-        var query = {
+        const query = {
           fieldQuery:{
             _id: new mongo.ObjectId(modelId)
           },
@@ -178,15 +167,15 @@ export default class ModelSvc extends BaseSvc {
           }
         }
 
-        var model = await dbSvc.findOne(
-          _thisSvc._config.collections.models,
+        const model = await dbSvc.findOne(
+          this._config.models,
           query)
 
-        return resolve(model.sequence)
+        return resolve (model.sequence)
 
-      } catch(ex){
+      } catch (ex) {
 
-        return reject(ex)
+        return reject (ex)
       }
     })
   }
@@ -197,35 +186,32 @@ export default class ModelSvc extends BaseSvc {
   ///////////////////////////////////////////////////////////////////
   setSequence (modelId, sequence) {
 
-    var _thisSvc = this
-
     return new Promise(async(resolve, reject)=> {
 
       try {
 
-        var dbSvc = ServiceManager.getService(
+        const dbSvc = ServiceManager.getService(
           this._config.dbName)
 
-        var query = {
+        const query = {
           _id: new mongo.ObjectId(modelId)
         }
 
-        var opts = {
+        const opts = {
           $set: {
             sequence: sequence
           }
         }
 
         await dbSvc.updateItem(
-          _thisSvc._config.collections.models,
-          query,
-          opts)
+          this._config.models,
+          query, opts)
 
-        return resolve(sequence)
+        return resolve (sequence)
 
-      } catch(ex){
+      } catch (ex) {
 
-        return reject(ex)
+        return reject (ex)
       }
     })
   }
@@ -234,18 +220,16 @@ export default class ModelSvc extends BaseSvc {
   // returns states
   //
   ///////////////////////////////////////////////////////////////////
-  getStates(modelId) {
-
-    var _thisSvc = this
+  getStates (modelId) {
 
     return new Promise(async(resolve, reject)=> {
 
       try {
 
-        var dbSvc = ServiceManager.getService(
+        const dbSvc = ServiceManager.getService(
           this._config.dbName)
 
-        var query = {
+        const query = {
           fieldQuery:{
             _id: new mongo.ObjectId(modelId)
           },
@@ -254,15 +238,15 @@ export default class ModelSvc extends BaseSvc {
           }
         }
 
-        var model = await dbSvc.findOne(
-          _thisSvc._config.collections.models,
+        const model = await dbSvc.findOne(
+          this._config.models,
           query)
 
-        return resolve(model.states)
+        return resolve (model.states)
 
-      } catch(ex){
+      } catch (ex) {
 
-        return reject(ex)
+        return reject (ex)
       }
     })
   }
@@ -281,7 +265,7 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         const collection = await dbSvc.getCollection(
-          this._config.collections.models)
+          this._config.models)
 
         collection.update(
           {
@@ -320,7 +304,7 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         const collection = await dbSvc.getCollection(
-          this._config.collections.models)
+          this._config.models)
 
         collection.update(
           {
@@ -360,10 +344,10 @@ export default class ModelSvc extends BaseSvc {
 
       try {
 
-        var dbSvc = ServiceManager.getService(
+        const dbSvc = ServiceManager.getService(
           this._config.dbName)
 
-        var query = {
+        const query = {
           fieldQuery:{
             _id: new mongo.ObjectId(modelId)
           },
@@ -372,8 +356,8 @@ export default class ModelSvc extends BaseSvc {
           }
         }
 
-        var model = await dbSvc.findOne(
-          this._config.collections.models,
+        const model = await dbSvc.findOne(
+          this._config.models,
           query)
 
         return resolve (model.sequences || [])
@@ -395,10 +379,10 @@ export default class ModelSvc extends BaseSvc {
 
       try {
 
-        var dbSvc = ServiceManager.getService(
+        const dbSvc = ServiceManager.getService(
           this._config.dbName)
 
-        var query = {
+        const query = {
           fieldQuery:{
             _id: new mongo.ObjectId(modelId)
           },
@@ -407,8 +391,8 @@ export default class ModelSvc extends BaseSvc {
           }
         }
 
-        var model = await dbSvc.findOne(
-          this._config.collections.models,
+        const model = await dbSvc.findOne(
+          this._config.models,
           query)
 
         return resolve (model.sequences || [])
@@ -434,7 +418,7 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         const collection = await dbSvc.getCollection(
-          this._config.collections.models)
+          this._config.models)
 
         collection.update(
           {
@@ -476,7 +460,7 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         const collection = await dbSvc.getCollection(
-          this._config.collections.models)
+          this._config.models)
 
         collection.update(
           {
@@ -519,7 +503,7 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         const collection = await dbSvc.getCollection(
-          this._config.collections.models)
+          this._config.models)
 
         const states =
           await this.getConfigSequenceStates (
@@ -547,8 +531,6 @@ export default class ModelSvc extends BaseSvc {
 
       } catch (ex) {
 
-        console.log(ex)
-
         return reject(ex)
       }
     })
@@ -568,7 +550,7 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         const collection = await dbSvc.getCollection(
-          this._config.collections.models)
+          this._config.models)
 
         collection.aggregate([
 
@@ -644,7 +626,7 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         const collection = await dbSvc.getCollection(
-          this._config.collections.models)
+          this._config.models)
 
         const states = Array.isArray(state)
           ? state : [state]
@@ -696,7 +678,7 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         const collection = await dbSvc.getCollection(
-          this._config.collections.models)
+          this._config.models)
 
         collection.update(
           {

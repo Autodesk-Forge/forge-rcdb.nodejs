@@ -1,9 +1,9 @@
 import ServiceManager from 'SvcManager'
+import './ConfiguratorHomeView.scss'
 import { Link } from 'react-router'
-import './ConfiguratorHome.scss'
 import React from 'react'
 
-class ConfiguratorHome extends React.Component {
+class ConfiguratorHomeView extends React.Component {
 
   /////////////////////////////////////////////////////////
   //
@@ -28,7 +28,7 @@ class ConfiguratorHome extends React.Component {
       'ModelSvc')
 
     const models = await this.modelSvc.getModels(
-      'forge-configurator')
+      'configurator')
 
     const modelsbyName = _.sortBy(models,
       (model) => {
@@ -65,7 +65,7 @@ class ConfiguratorHome extends React.Component {
   }
 }
 
-export default ConfiguratorHome
+export default ConfiguratorHomeView
 
 
 

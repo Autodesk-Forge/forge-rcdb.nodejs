@@ -45,19 +45,13 @@ const config = {
       dbhost: 'localhost',
       port: 27017,
       collections: {
-        materials: 'rcdb.materials',
-        models: 'rcdb.models'
-      }
-    },
-    {
-      type: 'mongo',
-      dbName: 'forge-configurator',
-      user: '',
-      pass: '',
-      dbhost: 'localhost',
-      port: 27017,
-      collections: {
-        models: 'configurator.models'
+        rcdb:{
+          materials: 'rcdb.materials',
+          models: 'rcdb.models'
+        },
+        configurator: {
+          models: 'configurator.models'
+        }
       }
     }
   ]

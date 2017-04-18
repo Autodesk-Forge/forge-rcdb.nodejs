@@ -28,6 +28,7 @@ export default class RayTreeDelegate extends TreeDelegate {
       name: this.instanceTree.getNodeName(data.id),
       group: this.getChildIds(data.id).length,
       instanceTree: this.instanceTree,
+      checked: data.checked,
       parent: data.parent,
       type: data.type,
       id: data.id
@@ -52,6 +53,17 @@ export default class RayTreeDelegate extends TreeDelegate {
     parentDomElement.appendChild(container)
 
     node.mount(container)
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  nodeClickSelector (event) {
+
+    const selector = ['HEADER', 'LABEL']
+
+    return (selector.indexOf(event.target.nodeName) > -1)
   }
 
   /////////////////////////////////////////////////////////////

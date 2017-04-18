@@ -25,11 +25,11 @@ export default class RayTreeNode extends EventsEmitter {
 
     this.on('expand', this.onExpand)
 
-    this.checked = false
     this.children = []
 
     this.instanceTree = props.instanceTree
     this.disabled     = props.disabled
+    this.checked      = props.checked
     this.parent       = props.parent
     this.group        = props.group
     this.name         = props.name
@@ -59,6 +59,7 @@ export default class RayTreeNode extends EventsEmitter {
     this.reactNode = ReactDOM.render(
       <ReactTreeNode onChecked={this.onChecked}
         disabled={this.disabled}
+        checked={this.checked}
         name={this.name}/>,
       this.domContainer)
 
@@ -102,6 +103,7 @@ export default class RayTreeNode extends EventsEmitter {
     this.reactNode = ReactDOM.render(
       <ReactTreeNode onChecked={this.onChecked}
         disabled={this.disabled}
+        checked={this.checked}
         name={this.name}/>,
       this.domContainer)
   }
@@ -161,10 +163,11 @@ export default class RayTreeNode extends EventsEmitter {
     this.children = childIds.map((id) => {
 
       const childNode = new RayTreeNode({
+        disabled: this.disabled || !this.checked,
         name: this.instanceTree.getNodeName(id),
         group: this.getChildIds(id).length,
         instanceTree: this.instanceTree,
-        disabled: true,
+        checked: true,
         parent: this,
         type: '',
         id
@@ -233,7 +236,7 @@ class ReactTreeNode extends React.Component {
       <div className={classNames.join(' ')}>
         <Switch onChange={(checked) => this.props.onChecked(checked)}
           disabled={this.props.disabled}
-          checked={false}/>
+          checked={this.props.checked}/>
         <Label text={this.props.name}/>
       </div>
     )

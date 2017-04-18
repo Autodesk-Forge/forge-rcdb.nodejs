@@ -1,5 +1,5 @@
+import ConfiguratorHomeView from './ConfiguratorHomeView'
 import ViewerConfigurator from 'Viewer.Configurator'
-import ConfiguratorHome from './ConfiguratorHome'
 import './ConfiguratorView.scss'
 import React from 'react'
 
@@ -41,9 +41,9 @@ class ConfiguratorView extends React.Component {
             viewerEnv={this.props.appState.viewerEnv}
             setViewerEnv={this.props.setViewerEnv}
             modelId={this.props.location.query.id}
-            database='forge-configurator'/>
+            database='configurator'/>
         </div>
-      : <ConfiguratorHome/>
+      : <ConfiguratorHomeView/>
     )
   }
 }

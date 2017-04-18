@@ -22,9 +22,6 @@ import ConfigAPI from './api/endpoints/config'
 import ModelAPI from './api/endpoints/models'
 import ForgeAPI from './api/endpoints/forge'
 
-//Falcor API
-import FalcorAPI from './api/falcor'
-
 //Services
 import DerivativesSvc from './api/services/DerivativesSvc'
 import ServiceManager from './api/services/SvcManager'
@@ -109,12 +106,6 @@ app.use('/api/forge', ForgeAPI())
 app.get('/lmv-proxy/*', LMVProxy.get)
 
 /////////////////////////////////////////////////////////////////////
-// Falcor Routes
-//
-/////////////////////////////////////////////////////////////////////
-app.use('/api/falcor/models.json', FalcorAPI.Model)
-
-/////////////////////////////////////////////////////////////////////
 // This rewrites all routes requests to the root /index.html file
 // (ignoring file requests). If you want to implement universal
 // rendering, you'll want to remove this middleware
@@ -184,12 +175,12 @@ const runServer = (app) => {
         ' reason: ', reason)
     })
 
-    var derivativesSvc = new DerivativesSvc()
+    const derivativesSvc = new DerivativesSvc()
 
-    var forgeSvc = new ForgeSvc(
+    const forgeSvc = new ForgeSvc(
       config.forge)
 
-    var ossSvc = new OssSvc()
+    const ossSvc = new OssSvc()
 
     ServiceManager.registerService(derivativesSvc)
     ServiceManager.registerService(forgeSvc)
@@ -201,13 +192,23 @@ const runServer = (app) => {
 
         case 'mongo':
 
-          let dbSvc = new MongoDbSvc(dbConfig)
+          const dbSvc = new MongoDbSvc(dbConfig)
 
           dbSvc.connect().then( () => {
 
-            let modelSvc = new ModelSvc(dbConfig)
+            for (const key in dbConfig.collections) {
 
-            ServiceManager.registerService(modelSvc)
+              const collectionCfg = Object.assign(
+                dbConfig.collections[key], {
+                  dbName: dbConfig.dbName,
+                  name: key
+                })
+
+              const modelSvc = new ModelSvc (collectionCfg)
+
+              ServiceManager.registerService(modelSvc)
+            }
+
             ServiceManager.registerService(dbSvc)
           })
 

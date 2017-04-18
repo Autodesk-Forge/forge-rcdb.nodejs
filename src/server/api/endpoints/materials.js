@@ -27,28 +27,32 @@ module.exports = function () {
     //
     //
     ///////////////////////////////////////////////////////////////////////////////
-    router.get('/:db', async(req, res) => {
+    router.get('/:config', async(req, res) => {
 
       try {
 
-        var db = req.params.db
+        const config = req.params.config
 
-        let dbSvc = ServiceManager.getService(db)
+        const dbSvc = ServiceManager.getService('forge-rcdb')
 
-        if(!dbSvc) {
+        if (!dbSvc) {
 
           res.status(404)
           res.json('Invalid database')
           return
         }
 
-        let items = await dbSvc.getItems(
-          dbSvc.config().collections.materials)
+        const collectionCfg = dbSvc.config.collections[config]
+
+        const items = await dbSvc.getItems(
+          collectionCfg.materials)
 
         res.json(items)
 
       } catch (ex) {
 
+        console.log(ex)
+
         res.status(ex.statusCode || 500)
         res.json(ex)
       }
@@ -58,29 +62,31 @@ module.exports = function () {
     //
     //
     ///////////////////////////////////////////////////////////////////////////////
-    router.get('/:db/:id', async (req, res) => {
+    router.get('/:config/:id', async (req, res) => {
 
       try {
 
-        var db = req.params.db
+        const config = req.params.config
 
-        let dbSvc = ServiceManager.getService(db)
+        const dbSvc = ServiceManager.getService('forge-rcdb')
 
-        if(!dbSvc) {
+        if (!dbSvc) {
 
           res.status(404)
           res.json('Invalid database')
           return
         }
 
-        var id = req.params.id
+        const id = req.params.id
 
-        let item = await dbSvc.findOne(
-          dbSvc.config().collections.materials, {
+        const collectionCfg = dbSvc.config.collections[config]
+
+        const item = await dbSvc.findOne(
+          collectionCfg.materials, {
             _id: id
           })
 
-        res.json(item)
+        res.json (item)
 
       } catch (ex) {
 
@@ -93,29 +99,30 @@ module.exports = function () {
     //
     //
     ///////////////////////////////////////////////////////////////////////////////
-    router.post('/:db', async (req, res) => {
+    router.post('/:config', async (req, res) => {
 
       try {
 
-        var db = req.params.db
+        const config = req.params.config
 
-        let dbSvc = ServiceManager.getService(db)
+        const dbSvc = ServiceManager.getService('forge-rcdb')
 
-        if(!dbSvc) {
+        if (!dbSvc) {
 
           res.status(404)
           res.json('Invalid database')
           return
         }
 
-        var material = req.body;
+        const material = req.body;
 
         const query = { name: material.name }
 
-        const result = await dbSvc.upsertItem(
-          dbSvc.config().collections.materials,
-          material,
-          query)
+        const collectionCfg = dbSvc.config.collections[config]
+
+        await dbSvc.upsertItem(
+          collectionCfg.materials,
+          material, query)
 
         res.json(material)
 
@@ -125,50 +132,6 @@ module.exports = function () {
         res.json(ex)
       }
     })
-
-    ///////////////////////////////////////////////////////////////////////////////
-    //
-    //
-    ///////////////////////////////////////////////////////////////////////////////
-    router.post('/reset', function (req, res) {
-
-      var pageQuery = {};
-
-      var fieldQuery = {};
-
-      db.collection(config.materials, function (err, collection) {
-        collection.find(fieldQuery, pageQuery)
-          .sort({name: 1}).toArray(
-          function (err, items) {
-
-            if (err) {
-              res.status(204); //HTTP 204: NO CONTENT
-              res.err = err;
-            }
-
-            async.each(items,
-
-              function (item, callback) {
-
-                item.price = 1.0;
-                item.currency = 'USD';
-
-                collection.update(
-                  {'_id': item._id},
-                  item,
-                  {safe: true},
-                  function (err2, result) {
-
-                    callback();
-                  });
-              },
-              function (err) {
-
-                res.send('ok')
-              });
-          });
-      });
-    });
 
     return router;
 }

@@ -43,19 +43,13 @@ const config = {
       pass: process.env.RCDB_PASS,
       port: process.env.RCDB_PORT,
       collections: {
-        materials: 'rcdb.materials',
-        models: 'rcdb.models'
-      }
-    },
-    {
-      type: 'mongo',
-      dbhost: process.env.CONFIGURATOR_DBHOST,
-      dbName: process.env.CONFIGURATOR_DBNAME,
-      user: process.env.CONFIGURATOR_USER,
-      pass: process.env.CONFIGURATOR_PASS,
-      port: process.env.CONFIGURATOR_PORT,
-      collections: {
-        models: 'configurator.models'
+        rcdb:{
+          materials: 'rcdb.materials',
+          models: 'rcdb.models'
+        },
+        configurator: {
+          models: 'configurator.models'
+        }
       }
     }
   ]

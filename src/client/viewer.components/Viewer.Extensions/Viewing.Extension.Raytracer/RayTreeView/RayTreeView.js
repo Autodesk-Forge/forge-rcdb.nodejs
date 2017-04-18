@@ -51,6 +51,7 @@ export default class RayTreeView extends React.Component {
 
     const rootNode = this.delegate.buildNode({
       id: instanceTree.getRootId(),
+      checked: false,
       type: 'root',
       parent: null
     })

@@ -8,7 +8,7 @@ export default class ModelSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////////////
-  constructor(opts) {
+  constructor (opts) {
 
     super (opts)
 

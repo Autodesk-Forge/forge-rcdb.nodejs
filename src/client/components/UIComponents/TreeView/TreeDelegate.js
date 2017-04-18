@@ -84,8 +84,6 @@ export default class TreeDelegate extends
 
         this.emit('node.click', node)
 
-        //tree.setCollapsed(node, !tree.isCollapsed(node))
-
         !tree.isCollapsed(node)
           ? node.collapse()
           : node.expand()

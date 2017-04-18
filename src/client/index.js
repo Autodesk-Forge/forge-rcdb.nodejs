@@ -12,19 +12,12 @@ import MaterialSvc from 'MaterialSvc'
 import StorageSvc from 'StorageSvc'
 import DialogSvc from 'DialogSvc'
 import SocketSvc from 'SocketSvc'
-import FalcorSvc from 'FalcorSvc'
 import ModelSvc from 'ModelSvc'
 import EventSvc from 'EventSvc'
 
 // ========================================================
 // Services Initialization
 // ========================================================
-
-const falcorSvc = new FalcorSvc({
-  dataSources:[
-    {name: 'Models', apiUrl: '/api/falcor/models.json'}
-  ]
-})
 
 const storageSvc = new StorageSvc({
   storageKey: 'Autodesk.Forge-RCDB.Storage'
@@ -65,7 +58,6 @@ const eventSvc = new EventSvc({
 ServiceManager.registerService(materialSvc)
 ServiceManager.registerService(storageSvc)
 ServiceManager.registerService(socketSvc)
-ServiceManager.registerService(falcorSvc)
 ServiceManager.registerService(dialogSvc)
 ServiceManager.registerService(modelSvc)
 ServiceManager.registerService(eventSvc)

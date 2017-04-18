@@ -21,27 +21,9 @@ class HomeView extends React.Component {
 
     try {
 
-      const falcorSvc = ServiceManager.getService(
-        'FalcorSvc')
+      this.modelSvc = ServiceManager.getService('ModelSvc')
 
-      falcorSvc.Models.get('length').then((response) =>  {
-        //console.log(response.json)
-      })
-
-      falcorSvc.Models.get('[0..2]').then((response) =>  {
-        //console.log(response.json)
-        //console.log(response.json['0']['1'])
-      })
-
-      falcorSvc.Models.get(["byId", "57efaead77c8eb0a560ef465"]).then((response) =>  {
-        //console.log(response ? response.json : 'null')
-      })
-
-      this.modelSvc = ServiceManager.getService(
-        'ModelSvc')
-
-      const models = await this.modelSvc.getModels(
-        'forge-rcdb')
+      const models = await this.modelSvc.getModels('rcdb')
 
       const modelsbyName = _.sortBy(models,
         (model) => {
@@ -81,8 +63,8 @@ class HomeView extends React.Component {
         return model._id
       })
 
-      this.modelSvc.getThumbnails(
-        'forge-rcdb', modelIds).then((thumbnails) => {
+      this.modelSvc.getThumbnails('rcdb', modelIds).then(
+        (thumbnails) => {
 
           const models = this.state.models.map((model) => {
 

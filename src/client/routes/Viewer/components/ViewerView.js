@@ -57,7 +57,7 @@ class ViewerView extends React.Component {
         })
 
       this.materialSvc.getMaterials(
-        'forge-rcdb').then((materials) => {
+        'rcdb').then((materials) => {
 
           this.props.loadDbItems(materials)
         })
@@ -126,7 +126,7 @@ class ViewerView extends React.Component {
   onUpdateDbItem (updatedDbItem) {
 
     this.materialSvc.postMaterial(
-      'forge-rcdb',
+      'rcdb',
       updatedDbItem)
 
     this.socketSvc.broadcast(
@@ -283,7 +283,7 @@ class ViewerView extends React.Component {
       const modelId = this.props.location.query.id
 
       this.dbModel = await this.modelSvc.getModel(
-        'forge-rcdb',
+        'rcdb',
         modelId)
 
       if(!this.props.appState.viewerEnv) {
@@ -444,8 +444,8 @@ class ViewerView extends React.Component {
 
       viewer.loadExtension(StateManagerExtension, {
         parentControl: ctrlGroup,
-        database: 'forge-rcdb',
         dbModel: this.dbModel,
+        database: 'rcdb',
         apiUrl: `/api`
       })
 
@@ -874,7 +874,7 @@ class ViewerView extends React.Component {
 
         if(!materials || materials.indexOf(key) > -1) {
 
-          materialSvc.postMaterial('forge-rcdb', {
+          materialSvc.postMaterial('rcdb', {
             name: key,
             supplier: 'Autodesk',
             currency: 'USD',
