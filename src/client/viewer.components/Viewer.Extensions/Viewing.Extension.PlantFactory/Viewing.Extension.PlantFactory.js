@@ -61,7 +61,9 @@ class PlantFactoryExtension extends ExtensionBase {
     this.viewer.addEventListener(
       Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT, (e) => {
 
-        this.options.loader.hide()
+        if(this.options.loader){
+          this.options.loader.hide()
+        }
       })
 
     window.addEventListener(

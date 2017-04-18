@@ -1,5 +1,5 @@
-import './Viewing.Extension.Raytracer.scss'
-import './Viewing.Extension.Raytracer'
+import './Viewing.Extension.RayTracer.scss'
+import './Viewing.Extension.RayTracer'
 
-export default 'Viewing.Extension.Raytracer'
+export default 'Viewing.Extension.RayTracer'
 

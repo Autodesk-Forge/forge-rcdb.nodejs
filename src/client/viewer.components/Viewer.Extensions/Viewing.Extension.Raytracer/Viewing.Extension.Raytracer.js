@@ -14,11 +14,6 @@ import Switch from 'Switch'
 import Label from 'Label'
 import React from 'react'
 
-// you can intersect the whole scene using viewer.impl.rayIntersect,
-// or you can do it per model via model.rayIntersect,
-// or per mesh via VBIntersector.rayCast.
-// The first two approaches take advantage of the spatial index acceleration structure.
-
 class RaytracerExtension extends ExtensionBase {
 
 	/////////////////////////////////////////////////////////////////
@@ -30,6 +25,7 @@ class RaytracerExtension extends ExtensionBase {
 		super (viewer, options)
 
     this.onNodeChecked = this.onNodeChecked.bind(this)
+    this.onSelection = this.onSelection.bind(this)
     this.renderTitle = this.renderTitle.bind(this)
 
     this.eventTool = new EventTool(this.viewer)
@@ -44,6 +40,14 @@ class RaytracerExtension extends ExtensionBase {
   //
   /////////////////////////////////////////////////////////
 	load () {
+
+    this.viewer.addEventListener(
+      Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT, (e) => {
+
+        if(this.options.loader){
+          this.options.loader.hide()
+        }
+      })
 
     this.on('loaded', (args) => this.onLoaded(args))
 
@@ -67,7 +71,7 @@ class RaytracerExtension extends ExtensionBase {
       this.react.pushRenderExtension(this)
     })
 
-    console.log('Viewing.Extension.Raytracer loaded')
+    console.log('Viewing.Extension.RayTracer loaded')
 
 		return true
 	}
@@ -87,7 +91,7 @@ class RaytracerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
 	static get ExtensionId () {
 
-		return 'Viewing.Extension.Raytracer'
+		return 'Viewing.Extension.RayTracer'
 	}
 
   /////////////////////////////////////////////////////////
@@ -96,7 +100,13 @@ class RaytracerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
 	unload () {
 
-    console.log('Viewing.Extension.Raytracer loaded')
+    this.viewer.removeEventListener(
+      Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
+      this.onSelection)
+
+    this.eventTool.deactivate()
+
+    console.log('Viewing.Extension.RayTracer loaded')
 
 		return true
 	}
@@ -159,15 +169,18 @@ class RaytracerExtension extends ExtensionBase {
     this.eventTool.activate()
 
     const events = [
-      'singleclick',
-      'doubleclick'
-      //'mousemove'
+      //'buttondown',
+      //'singleclick',
+      //'doubleclick',
+      'mousemove'
     ]
 
     this.eventTool.on (events.join(' '), (event) => {
 
       const hitTest = this.viewer.clientToWorld(
-        event.canvasX, event.canvasY, true)
+        event.canvasX,
+        event.canvasY,
+        true)
 
       if (hitTest) {
 
@@ -183,6 +196,40 @@ class RaytracerExtension extends ExtensionBase {
 
       return false
     })
+
+    this.viewer.loadDynamicExtension(
+      'Viewing.Extension.ContextMenu', {
+        buildMenu: (menu, dbId) => {
+
+          if (!dbId || this.leafNodesMap[dbId]) {
+
+            return menu
+          }
+
+          return []
+        }
+      })
+
+    this.viewer.addEventListener(
+      Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
+      this.onSelection)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onSelection (e) {
+
+    if (e.selections.length) {
+
+      const dbId = e.selections[0].dbIdArray[0]
+
+      if (!this.leafNodesMap[dbId]) {
+
+        this.viewer.clearSelection()
+      }
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -341,4 +388,4 @@ Autodesk.Viewing.theExtensionManager.registerExtension (
   RaytracerExtension.ExtensionId,
   RaytracerExtension)
 
-export default 'Viewing.Extension.Raytracer'
+export default 'Viewing.Extension.RayTracer'
