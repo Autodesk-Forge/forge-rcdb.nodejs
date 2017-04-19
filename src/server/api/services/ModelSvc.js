@@ -653,7 +653,7 @@ export default class ModelSvc extends BaseSvc {
 
             return err
               ? reject(err)
-              : resolve (state)
+              : resolve (states)
           })
 
       } catch (ex) {
