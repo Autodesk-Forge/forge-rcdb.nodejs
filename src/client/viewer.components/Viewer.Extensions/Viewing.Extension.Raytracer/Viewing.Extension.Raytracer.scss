@@ -13,7 +13,7 @@
   margin-left: 27px;
   margin-top: 10px;
   select: none;
-  width: 107px;
+  width: 143px;
   float: left;
 }
 
@@ -26,8 +26,7 @@
 //
 /////////////////////////////////////////////////////////
 .ray-tracer-controls {
-  left: calc(100% - 122px);
-  margin: auto 0 auto 0px;
+  margin: auto 0 auto calc(100% - 120px);
   position: relative;
   float: left;
 }

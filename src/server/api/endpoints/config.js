@@ -48,7 +48,7 @@ module.exports = function() {
         db + '-ModelSvc')
 
       const response =
-        await modelSvc.addConfigSequence(
+        await modelSvc.addConfigSequence (
           req.params.modelId,
           sequence)
 
@@ -73,11 +73,11 @@ module.exports = function() {
 
       const sequence = req.body.sequence
 
-      const modelSvc = ServiceManager.getService(
+      const modelSvc = ServiceManager.getService (
         db + '-ModelSvc')
 
       const response =
-        await modelSvc.updateConfigSequence(
+        await modelSvc.updateConfigSequence (
         req.params.modelId,
         sequence)
 
@@ -101,11 +101,11 @@ module.exports = function() {
 
       const db = req.params.db
 
-      const modelSvc = ServiceManager.getService(
+      const modelSvc = ServiceManager.getService (
         db + '-ModelSvc')
 
       const response =
-        await modelSvc.deleteConfigSequence(
+        await modelSvc.deleteConfigSequence (
           req.params.modelId,
           req.params.sequenceId)
 
@@ -129,11 +129,11 @@ module.exports = function() {
 
       const db = req.params.db
 
-      const modelSvc = ServiceManager.getService(
+      const modelSvc = ServiceManager.getService (
         db + '-ModelSvc')
 
       const response =
-        await modelSvc.getConfigSequenceStates(
+        await modelSvc.getConfigSequenceStates (
           req.params.modelId,
           req.params.sequenceId)
 
@@ -160,11 +160,11 @@ module.exports = function() {
 
       const state = req.body.state
 
-      const modelSvc = ServiceManager.getService(
+      const modelSvc = ServiceManager.getService (
         db + '-ModelSvc')
 
       const response =
-        await modelSvc.addConfigSequenceState(
+        await modelSvc.addConfigSequenceStates (
           req.params.modelId,
           req.params.sequenceId,
           state)

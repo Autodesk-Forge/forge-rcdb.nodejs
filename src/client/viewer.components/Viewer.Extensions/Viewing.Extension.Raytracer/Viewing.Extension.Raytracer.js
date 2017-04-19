@@ -177,6 +177,14 @@ class RaytracerExtension extends ExtensionBase {
 
     this.eventTool.on (events.join(' '), (event) => {
 
+      // model.rayIntersect cannot be used in this scenario
+      // because needs to check for every component
+      // for intersection
+
+      //const raycaster = this.pointerToRaycaster(event)
+      //const hitTest = this.viewer.model.rayIntersect(
+      //  raycaster, true, dbIds)
+
       const hitTest = this.viewer.clientToWorld(
         event.canvasX,
         event.canvasY,
@@ -186,13 +194,6 @@ class RaytracerExtension extends ExtensionBase {
 
         return !this.leafNodesMap[hitTest.dbId]
       }
-
-      //const raycaster = this.pointerToRaycaster(event)
-      //
-      //const hitTest = this.viewer.model.rayIntersect(
-      //  raycaster, true, [1607])
-      //
-      //console.log(hitTest)
 
       return false
     })
@@ -242,12 +243,12 @@ class RaytracerExtension extends ExtensionBase {
     const domContainer = this.viewer.container
     const pointerVector = new THREE.Vector3()
     const pointerDir = new THREE.Vector3()
-    const ray = new THREE.Raycaster()
+    const raycaster = new THREE.Raycaster()
 
-    const rect = domContainer.getBoundingClientRect()
+    const r = domContainer.getBoundingClientRect()
 
-    const x =  ((pointer.clientX - rect.left) / rect.width)  * 2 - 1
-    const y = -((pointer.clientY - rect.top)  / rect.height) * 2 + 1
+    const x =  ((pointer.clientX - r.left) / r.width)  * 2 - 1
+    const y = -((pointer.clientY - r.top)  / r.height) * 2 + 1
 
     if (camera.isPerspective) {
 
@@ -255,7 +256,7 @@ class RaytracerExtension extends ExtensionBase {
 
       pointerVector.unproject(camera)
 
-      ray.set(camera.position,
+      raycaster.set(camera.position,
         pointerVector.sub(
           camera.position).normalize())
 
@@ -267,12 +268,12 @@ class RaytracerExtension extends ExtensionBase {
 
       pointerDir.set(0, 0, -1)
 
-      ray.set(pointerVector,
+      raycaster.set(pointerVector,
         pointerDir.transformDirection(
           camera.matrixWorld))
     }
 
-    return ray
+    return raycaster
   }
 
   /////////////////////////////////////////////////////////
@@ -370,10 +371,11 @@ class RaytracerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  render (opts = {showTitle: true}) {
+  render (opts) {
 
     return (
-      <WidgetContainer renderTitle={this.renderTitle}
+      <WidgetContainer
+        renderTitle={() => this.renderTitle(opts.docked)}
         showTitle={opts.showTitle}
         className={this.className}>
 

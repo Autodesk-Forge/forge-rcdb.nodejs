@@ -24,6 +24,8 @@ class FaderExtension extends ExtensionBase
   constructor (viewer, options) {
 
     super (viewer, options)
+
+    this.onSelection = this.onSelection.bind(this)
   }
 
   /////////////////////////////////////////////////////////////////
@@ -95,7 +97,7 @@ class FaderExtension extends ExtensionBase
   /////////////////////////////////////////////////////////
   get className() {
 
-    return 'forge-fader'
+    return 'fader'
   }
 
   /////////////////////////////////////////////////////////
@@ -110,6 +112,8 @@ class FaderExtension extends ExtensionBase
   // Unload callback
   /////////////////////////////////////////////////////////
   unload () {
+
+    this.onEnableFader (false)
 
     console.log('Viewing.Extension.Fader unloaded')
 
@@ -146,6 +150,10 @@ class FaderExtension extends ExtensionBase
 
     if (checked) {
 
+      this.viewer.addEventListener(
+        Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
+        this.onSelection)
+
       this.eventTool.activate()
 
       this.viewer.loadExtension(
@@ -154,31 +162,36 @@ class FaderExtension extends ExtensionBase
       this.faderCore = this.viewer.getExtension(
         FaderCoreExtension)
 
-      this.faderCore.on('attenuation.source', (data) => {
+      this.faderCore.on('attenuation.source',
+        (data) => {
 
-        this.hotSpotCommand.removeHotSpots ()
+          this.hotSpotCommand.removeHotSpots()
 
-        const hotSpot = this.hotSpotCommand.createHotSpot({
-          worldPoint: data.point,
-          strokeColor: "#88FF88",
-          fillColor: "#228a01",
-          dbId: data.dbId,
-          occlusion: true,
-          id: 1
-        })
+          const hotSpot =
+            this.hotSpotCommand.createHotSpot({
+              worldPoint: data.point,
+              strokeColor: "#88FF88",
+              fillColor: "#228a01",
+              dbId: data.dbId,
+              occlusion: true,
+              id: 1
+            })
 
-        hotSpot.setSelectable(false)
+          hotSpot.setSelectable(false)
+
+          this.selectedDbId = data.dbId
       })
 
-      this.faderCore.on('attenuation.bounds', (bounds) => {
+      this.faderCore.on('attenuation.bounds',
+        (bounds) => {
 
-        this.react.setState({
-          data: [
-            {value: bounds.min},
-            {value: bounds.max}
-          ],
-          guid: this.guid()
-        })
+          this.react.setState({
+            data: [
+              {value: bounds.min},
+              {value: bounds.max}
+            ],
+            guid: this.guid()
+          })
       })
 
       this.react.setState({
@@ -186,6 +199,10 @@ class FaderExtension extends ExtensionBase
       })
 
     } else {
+
+      this.viewer.removeEventListener(
+        Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
+        this.onSelection)
 
       this.hotSpotCommand.removeHotSpots ()
 
@@ -197,6 +214,23 @@ class FaderExtension extends ExtensionBase
       this.react.setState({
         fader: false
       })
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onSelection (event) {
+
+    if (event.selections.length) {
+
+      const selection = event.selections[0]
+
+      if (selection.dbIdArray[0] === this.selectedDbId) {
+
+        this.viewer.clearSelection()
+      }
     }
   }
 
@@ -223,13 +257,48 @@ class FaderExtension extends ExtensionBase
   //
   //
   /////////////////////////////////////////////////////////
-  renderTitle () {
+  async setDocking (docked) {
+
+    const id = FaderExtension.ExtensionId
+
+    if (docked) {
+
+    await this.react.popRenderExtension(id)
+
+      this.react.pushViewerPanel(this, {
+        height: 615,
+        width: 350
+      })
+
+    } else {
+
+    await this.react.popViewerPanel(id)
+
+      this.react.pushRenderExtension(this)
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  renderTitle (docked) {
+
+    const spanClass = docked
+      ? 'fa fa-chain-broken'
+      : 'fa fa-chain'
 
     return (
       <div className="title">
         <label>
           Forge Fader
         </label>
+        <div className="fader-controls">
+          <button onClick={() => this.setDocking(docked)}
+            title="Toggle docking mode">
+            <span className={spanClass}/>
+          </button>
+        </div>
       </div>
     )
   }
@@ -334,12 +403,12 @@ class FaderExtension extends ExtensionBase
   //
   //
   /////////////////////////////////////////////////////////
-  renderControls () {
+  renderContent () {
 
     const { fader, guid } = this.react.getState()
 
     return (
-      <div className="controls">
+      <div className="settings">
 
         <div className="row">
           <div className="control-element">
@@ -455,7 +524,7 @@ class FaderExtension extends ExtensionBase
         showTitle={opts.showTitle}
         className={this.className}>
 
-        { this.renderControls() }
+        { this.renderContent () }
 
       </WidgetContainer>
     )

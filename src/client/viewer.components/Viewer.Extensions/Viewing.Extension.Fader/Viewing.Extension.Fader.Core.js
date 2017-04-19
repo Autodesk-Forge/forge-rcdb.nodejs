@@ -336,6 +336,7 @@ class FaderExtension extends ExtensionBase {
         this.isEqualWithPrecision(normal.y, 0)) {
 
         this.emit('attenuation.source', hitTest)
+
         this.attenuationCalculator(hitTest)
       }
     }
@@ -345,6 +346,7 @@ class FaderExtension extends ExtensionBase {
   // calculateUVsGeo
   /////////////////////////////////////////////////////////////////
   calculateUVsGeo1( geometry ) {
+
     geometry.computeBoundingBox ()
 
     let bbox = geometry.boundingBox

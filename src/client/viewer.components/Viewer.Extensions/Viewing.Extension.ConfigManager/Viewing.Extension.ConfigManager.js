@@ -95,23 +95,25 @@ class ConfigManagerExtension extends ExtensionBase {
 
     }).then (() => {
 
-      this.react.pushRenderExtension(this).then(async() => {
+      this.react.pushRenderExtension(this).then(
+        async() => {
 
-        if (this.api) {
+          if (this.api) {
 
-          const sequences = await this.api.getSequences({
-            sortByName: true
-          })
+            const sequences =
+              await this.api.getSequences({
+                sortByName: true
+              })
 
-          const sequence = sequences.length ?
-            sequences[0] : null
+            const sequence = sequences.length ?
+              sequences[0] : null
 
-          this.react.setState({
-            sequences
-          })
+            this.react.setState({
+              sequences
+            })
 
-          this.setActiveSequence (sequence)
-        }
+            this.setActiveSequence (sequence)
+          }
       })
     })
 
@@ -155,11 +157,13 @@ class ConfigManagerExtension extends ExtensionBase {
           stateIds: []
         }
 
+        const sequences = _.sortBy([
+          ...state.sequences, sequence
+        ], (s) => { return s.name })
+
         this.react.setState({
-          sequences: [
-            ...state.sequences, sequence
-          ],
           sequence: sequence,
+          sequences,
           items: []
         })
 
@@ -221,11 +225,13 @@ class ConfigManagerExtension extends ExtensionBase {
             })
         })
 
+        const sequences = _.sortBy([
+          ...state.sequences, sequence
+        ], (s) => { return s.name })
+
         this.react.setState({
-          sequences: [
-            ...state.sequences, sequence
-          ],
           sequence: sequence,
+          sequences,
           items
         })
 

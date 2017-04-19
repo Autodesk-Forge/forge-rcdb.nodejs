@@ -616,7 +616,7 @@ export default class ModelSvc extends BaseSvc {
   // add state or array of states to specific sequence
   //
   /////////////////////////////////////////////////////////
-  addConfigSequenceState (modelId, sequenceId, state) {
+  addConfigSequenceStates (modelId, sequenceId, states) {
 
     return new Promise(async(resolve, reject) => {
 
@@ -628,8 +628,12 @@ export default class ModelSvc extends BaseSvc {
         const collection = await dbSvc.getCollection(
           this._config.models)
 
-        const states = Array.isArray(state)
-          ? state : [state]
+        const statesArray = Array.isArray(states)
+          ? states : [states]
+
+        const stateIds = statesArray.map((item) => {
+          return item.id
+        })
 
         collection.update(
           {
@@ -638,18 +642,13 @@ export default class ModelSvc extends BaseSvc {
           },
           {
             $push: {
-              'sequences.$.stateIds': state.id,
-              'states': state
+              'sequences.$.stateIds': {
+                $each: stateIds
+              },
+              'states': {
+                $each: statesArray
+              }
             }
-
-            //$push: {
-            //  $each: states.map((item) => {
-            //    return {
-            //      'sequences.$.stateIds': item.id,
-            //      'states': item
-            //    }
-            //  })
-            //}
           }, (err) => {
 
             return err

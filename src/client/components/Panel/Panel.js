@@ -164,7 +164,7 @@ class Panel extends EventsEmitter {
 
       event.preventDefault()
 
-      return this.react.setState({
+      this.react.setState({
 
         left: Math.min(
           Math.max(1, left),
@@ -196,7 +196,7 @@ class Panel extends EventsEmitter {
 
       event.preventDefault()
 
-      return this.react.setState({
+      this.react.setState({
 
         width: Math.min(
           Math.max(350, width),
@@ -205,6 +205,13 @@ class Panel extends EventsEmitter {
         height: Math.min(
           Math.max(35, height),
           bounds.height - state.top - 1)
+
+      }).then(() => {
+
+        if (this.renderable.onResize) {
+
+          this.renderable.onResize()
+        }
       })
     }
   }
@@ -243,9 +250,17 @@ class Panel extends EventsEmitter {
   /////////////////////////////////////////////////////////
   onMouseUp () {
 
-    this.dragging = false
+    if (this.resizing) {
 
-    this.resizing = false
+      if (this.renderable.onStopResize) {
+
+        this.renderable.onStopResize()
+      }
+
+      this.resizing = false
+    }
+
+    this.dragging = false
   }
 
   /////////////////////////////////////////////////////////
