@@ -212,8 +212,9 @@ class ConfigManagerExtension extends ExtensionBase {
 
         const sequence = Object.assign({},
           state.sequence, {
-          name: state.newSequenceName,
-          id: this.guid()
+            name: state.newSequenceName,
+            readonly: false,
+            id: this.guid()
         })
 
         const items = state.items.map((item) => {
@@ -362,43 +363,34 @@ class ConfigManagerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  addItem (item) {
+  addItem () {
 
     const state = this.react.getState()
 
-    if (!item) {
+    var viewerState = this.viewer.getState()
 
-      var viewerState = this.viewer.getState()
+    viewerState.name = state.newStateName.length
+      ? state.newStateName
+      : new Date().toString('d/M/yyyy H:mm:ss')
 
-      viewerState.name = state.newStateName.length
-        ? state.newStateName
-        : new Date().toString('d/M/yyyy H:mm:ss')
+    viewerState.id = this.guid()
 
-      viewerState.id = this.guid()
+    if (this.api) {
 
-      if (this.api) {
-
-        this.api.addState(
-          state.sequence.id,
-          viewerState)
-      }
-
-      this.react.setState({
-        items: [...state.items, viewerState],
-        newStateName: ''
-      })
-
-      this.on(`restoreState.${viewerState.id}`, () => {
-
-        this.onRestoreState(viewerState)
-      })
-
-    } else {
-
-      this.react.setState({
-        items: [...state.items, item]
-      })
+      this.api.addState(
+        state.sequence.id,
+        viewerState)
     }
+
+    this.react.setState({
+      items: [...state.items, viewerState],
+      newStateName: ''
+    })
+
+    this.on(`restoreState.${viewerState.id}`, () => {
+
+      this.onRestoreState(viewerState)
+    })
   }
 
   /////////////////////////////////////////////////////////////////
@@ -845,7 +837,7 @@ class ConfigManagerExtension extends ExtensionBase {
 
     const state = this.react.getState()
 
-    const items = state.items.map((item) => {
+    const items = state.items.map((item, idx) => {
 
       const text = item.name
 
