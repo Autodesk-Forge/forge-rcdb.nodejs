@@ -10,17 +10,17 @@ export default class Markup3D extends EventsEmitter {
   //
   //
   /////////////////////////////////////////////////////////////////
-  constructor (viewer, screenPoint, dbId, fragId,
-               worldPoint = null,
-               properties = null) {
+  constructor (viewer, screenPoint, dbId, fragId, worldPoint, opts = {}) {
 
     super()
 
-    this.id = this.guid()
+    this.occlusionDist = opts.occlusionDist || 25
 
     this.bindToState = true
 
     this.occlusion = true
+
+    this.id = this.guid()
 
     this.viewer = viewer
 
@@ -96,7 +96,7 @@ export default class Markup3D extends EventsEmitter {
       this.viewer,
       this.dbId,
       this.startPoint,
-      properties)
+      opts.properties)
 
     this.labelMarker.on('created', () => {
 
@@ -300,7 +300,7 @@ export default class Markup3D extends EventsEmitter {
         dist.y * dist.y +
         dist.z * dist.z
 
-     if(d > 25){
+     if(d > this.occlusionDist){
 
        return true
      }
@@ -495,7 +495,7 @@ export default class Markup3D extends EventsEmitter {
       state.dbId,
       state.fragId,
       state.worldPoint,
-      options.properties)
+      options)
 
     markup.bindToState =
       state.bindToState

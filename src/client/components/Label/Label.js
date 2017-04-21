@@ -9,6 +9,7 @@ export default class Label extends React.Component {
   //
   /////////////////////////////////////////////////////////
   static propTypes = {
+    textAlign: PropTypes.string,
     className: PropTypes.string,
     text: PropTypes.string
   }
@@ -18,6 +19,7 @@ export default class Label extends React.Component {
   //
   /////////////////////////////////////////////////////////
   static defaultProps = {
+    textAlign: 'left',
     className: '',
     text: ''
   }
@@ -42,11 +44,18 @@ export default class Label extends React.Component {
       ...this.props.className.split(' ')
     ]
 
+    const style = {
+      width: this.props.textAlign === 'center'
+        ? '100%' : '',
+      textAlign: this.props.textAlign
+    }
+
     return(
-      <div className={classNames.join(' ')}>
-        <div>
-         { this.props.text }
-        </div>
+      <div className={classNames.join(' ')}
+        style={style}>
+        <p>
+          { this.props.text }
+        </p>
       </div>
     )
   }

@@ -54,7 +54,7 @@ export default class RayTreeView extends React.Component {
 
     const instanceTree = model.getData().instanceTree
 
-    const rootNode = this.delegate.buildNode({
+    const rootNode = this.delegate.createRootNode({
       id: instanceTree.getRootId(),
       checked: true,
       type: 'root',
@@ -68,6 +68,15 @@ export default class RayTreeView extends React.Component {
 
     rootNode.expand ()
     rootNode.setChecked (true)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  componentWillUnmount () {
+
+    this.delegate.unmount()
   }
 
   /////////////////////////////////////////////////////////

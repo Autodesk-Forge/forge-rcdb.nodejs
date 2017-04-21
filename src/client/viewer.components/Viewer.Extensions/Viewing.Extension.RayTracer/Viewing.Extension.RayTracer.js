@@ -284,8 +284,6 @@ class RaytracerExtension extends ExtensionBase {
 
     const {model} = this.react.getState()
 
-    //console.log(node.id + ': ' + node.checked)
-
     Toolkit.getLeafNodes (model, node.id).then((dbIds) => {
 
       dbIds.forEach((dbId) => {

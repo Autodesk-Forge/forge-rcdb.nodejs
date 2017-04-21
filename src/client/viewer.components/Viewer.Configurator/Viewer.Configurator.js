@@ -46,6 +46,9 @@ class ViewerConfigurator extends React.Component {
     this.popViewerPanel =
       this.popViewerPanel.bind(this)
 
+    this.onResize =
+      this.onResize.bind(this)
+
     this.state = {
       dataExtension: null,
       viewerPanels: [],
@@ -108,6 +111,19 @@ class ViewerConfigurator extends React.Component {
     this.setReactState({
       dbModel
     })
+
+    window.addEventListener(
+      'resize', this.onResize)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  componentWillUnmount () {
+
+    window.addEventListener(
+      'resize', this.onResize)
   }
 
   /////////////////////////////////////////////////////////

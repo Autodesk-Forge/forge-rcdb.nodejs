@@ -22,9 +22,9 @@ export default class RayTreeDelegate extends TreeDelegate {
   //
   //
   /////////////////////////////////////////////////////////////
-  buildNode (data) {
+  createRootNode (data) {
 
-    const node = new RayTreeNode({
+    this.rootNode = new RayTreeNode({
       name: this.instanceTree.getNodeName(data.id),
       group: this.getChildIds(data.id).length,
       instanceTree: this.instanceTree,
@@ -34,12 +34,21 @@ export default class RayTreeDelegate extends TreeDelegate {
       id: data.id
     })
 
-    node.on('checked', (node) => {
+    this.rootNode.on('checked', (node) => {
 
       this.emit('node.checked', node)
     })
 
-    return node
+    return this.rootNode
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  unmount () {
+
+    this.rootNode.unmount()
   }
 
   /////////////////////////////////////////////////////////////

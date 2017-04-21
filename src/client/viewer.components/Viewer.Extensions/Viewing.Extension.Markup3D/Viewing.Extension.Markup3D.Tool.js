@@ -223,8 +223,7 @@ export default class Markup3DTool extends EventsEmitter {
           this.screenPoint,
           sel.dbIdArray[0],
           sel.fragIdsArray[0],
-          null,
-          this.options.properties)
+          null, this.options)
 
         markup.labelMarker.on('mouseover', () => {
 
@@ -336,9 +335,7 @@ export default class Markup3DTool extends EventsEmitter {
       viewerState.Markup3D.MarkupCollection.forEach((state) => {
 
         var markup = Markup3D.load(
-          this.viewer,
-          state,
-          this.options)
+          this.viewer, state, this.options)
 
         markup.on('drag.start', (markup) => {
           this.onStartDragHandler (markup)

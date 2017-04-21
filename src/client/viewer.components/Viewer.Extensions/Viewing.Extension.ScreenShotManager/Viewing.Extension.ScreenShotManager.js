@@ -25,8 +25,6 @@ class ScreenShotManagerExtension extends ExtensionBase {
 
     this.deleteItem = this.deleteItem.bind(this)
 
-    this.onResize = this.onResize.bind(this)
-
     this.addItem = this.addItem.bind(this)
 
     this.react = options.react
@@ -56,8 +54,13 @@ class ScreenShotManagerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   load () {
 
-    window.addEventListener(
-      'resize', this.onResize)
+    this.viewer.addEventListener(
+      Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT, (e) => {
+
+        if(this.options.loader){
+          this.options.loader.hide()
+        }
+      })
 
     this.react.setState({
 
@@ -188,10 +191,13 @@ class ScreenShotManagerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   onResize () {
 
-    this.react.setState({
-      height: this.viewer.container.clientHeight,
-      width: this.viewer.container.clientWidth
-    })
+    if (this.viewer.container) {
+
+      this.react.setState({
+        height: this.viewer.container.clientHeight,
+        width: this.viewer.container.clientWidth
+      })
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -208,7 +214,7 @@ class ScreenShotManagerExtension extends ExtensionBase {
 
         this.react.pushViewerPanel(this, {
           height: 250,
-          width: 350
+          width: 375
         })
       })
 
@@ -309,7 +315,9 @@ class ScreenShotManagerExtension extends ExtensionBase {
           }}>
           </div>
 
-          <Label text={text}/>
+          <div>
+            <Label text={text}/>
+          </div>
 
           <button onClick={(e) => {
             this.deleteItem(item.id)
@@ -338,13 +346,12 @@ class ScreenShotManagerExtension extends ExtensionBase {
   render (opts = {showTitle: true}) {
 
     return (
-      <WidgetContainer renderTitle={this.renderTitle}
+      <WidgetContainer
+        renderTitle={() => this.renderTitle(opts.docked)}
         showTitle={opts.showTitle}
         className={this.className}>
-
         { this.renderControls() }
         { this.renderItems() }
-
       </WidgetContainer>
     )
   }

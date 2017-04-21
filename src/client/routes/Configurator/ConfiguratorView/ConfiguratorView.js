@@ -35,15 +35,18 @@ class ConfiguratorView extends React.Component {
   /////////////////////////////////////////////////////////
   render () {
 
-    return (this.props.location.query.id
-      ? <div className="configurator-view">
-          <ViewerConfigurator
-            viewerEnv={this.props.appState.viewerEnv}
-            setViewerEnv={this.props.setViewerEnv}
-            modelId={this.props.location.query.id}
-            database='configurator'/>
-        </div>
+    const view = this.props.location.query.id
+      ? <ViewerConfigurator
+          viewerEnv={this.props.appState.viewerEnv}
+          setViewerEnv={this.props.setViewerEnv}
+          modelId={this.props.location.query.id}
+          database='configurator'/>
       : <ConfiguratorHomeView/>
+
+    return (
+      <div className="configurator-view">
+        { view }
+      </div>
     )
   }
 }

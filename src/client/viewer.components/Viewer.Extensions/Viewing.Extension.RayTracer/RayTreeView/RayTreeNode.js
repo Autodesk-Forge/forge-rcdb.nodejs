@@ -25,8 +25,6 @@ export default class RayTreeNode extends EventsEmitter {
 
     this.on('expand', this.onExpand)
 
-    this.children = []
-
     this.instanceTree = props.instanceTree
     this.disabled     = props.disabled
     this.checked      = props.checked
@@ -35,6 +33,8 @@ export default class RayTreeNode extends EventsEmitter {
     this.name         = props.name
     this.type         = props.type
     this.id           = props.id
+
+    this.children = []
   }
 
   /////////////////////////////////////////////////////////////

@@ -439,7 +439,6 @@ class ConfigManagerExtension extends ExtensionBase {
 
       e.stopPropagation()
       e.preventDefault()
-      return
     }
   }
 
