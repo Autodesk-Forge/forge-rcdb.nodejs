@@ -9,6 +9,7 @@ import ServiceManager from 'SvcManager'
 import FlexLayout from './FlexLayout'
 import GridLayout from './GridLayout'
 import Toolkit from 'Viewer.Toolkit'
+import { Loader } from 'Loader'
 import './ViewerView.scss'
 import React from 'react'
 import d3 from 'd3'
@@ -236,23 +237,17 @@ class ViewerView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  onSelectionChanged (e) {
-
-    if (e.selections && e.selections.length) {
-
-      const selection = e.selections[0]
-
-      //console.log(selection.dbIdArray[0])
-    }
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
   async onViewerCreated (viewer) {
 
     try {
+
+      this.loader = new Loader(viewer.container)
+
+      viewer.addEventListener(
+        Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT, (e) => {
+
+          this.loader.hide()
+        })
 
       const events = [
 
@@ -274,17 +269,10 @@ class ViewerView extends React.Component {
           this.onFullScreenMode(e)
       })
 
-      viewer.addEventListener(
-        Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT, (e) => {
-
-          this.onSelectionChanged(e)
-        })
-
       const modelId = this.props.location.query.id
 
       this.dbModel = await this.modelSvc.getModel(
-        'rcdb',
-        modelId)
+        'rcdb', modelId)
 
       if(!this.props.appState.viewerEnv) {
 
@@ -301,7 +289,8 @@ class ViewerView extends React.Component {
 
         //2.14
         //Autodesk.Viewing.setEndpointAndApi(
-        //  window.location.origin + '/lmv-proxy', 'modelDerivativeV2')
+        //  window.location.origin + '/lmv-proxy',
+        // 'modelDerivativeV2')
 
         Autodesk.Viewing.Private.memoryOptimizedSvfLoading = true
       }
@@ -427,20 +416,15 @@ class ViewerView extends React.Component {
           parentControl: ctrlGroup
         }, modelOptions.visualReport))
 
-      viewer.setLightPreset(0)
+      viewer.setLightPreset(1)
 
-      setTimeout(()=> {
+      const appState = this.props.appState
 
-        viewer.setLightPreset(1)
+      const bgClr = appState.storage.theme.viewer.backgroundColor
 
-        const appState = this.props.appState
-
-        const bgClr = appState.storage.theme.viewer.backgroundColor
-
-        viewer.setBackgroundColor(
-          bgClr[0], bgClr[1], bgClr[2],
-          bgClr[3], bgClr[4], bgClr[5])
-      }, 600)
+      viewer.setBackgroundColor(
+        bgClr[0], bgClr[1], bgClr[2],
+        bgClr[3], bgClr[4], bgClr[5])
 
       viewer.loadExtension(StateManagerExtension, {
         parentControl: ctrlGroup,

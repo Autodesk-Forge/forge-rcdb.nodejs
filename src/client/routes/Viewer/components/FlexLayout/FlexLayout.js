@@ -2,6 +2,7 @@
 import {ReflexContainer, ReflexElement, ReflexSplitter} from 'react-reflex'
 import WidgetContainer from 'WidgetContainer'
 import ResponsiveView from 'ResponsiveView'
+import { ReactLoader } from 'Loader'
 import DBDropdown from 'DBDropdown'
 import DBTable from 'DBTable'
 import DBChart from 'DBChart'
@@ -25,6 +26,8 @@ class FlexLayout extends React.Component {
   /////////////////////////////////////////////////////////
   render() {
 
+    const showLoader = !this.props.filteredDbItems.length
+
     switch (this.props.layoutType) {
 
       case 'flexLayoutLeft':
@@ -35,6 +38,7 @@ class FlexLayout extends React.Component {
               <ReflexContainer orientation='horizontal'>
                 <ReflexElement minSize={210} propagateDimensions={true}>
                   <WidgetContainer title="Database">
+                    <ReactLoader show={showLoader}/>
                     <ResponsiveView breakPoint={185}
                       onSelectDbItem={this.props.onSelectDbItem}
                       onUpdateDbItem={this.props.onUpdateDbItem}
@@ -48,6 +52,7 @@ class FlexLayout extends React.Component {
                 <ReflexSplitter onStopResize={() => this.forceUpdate()}/>
                 <ReflexElement>
                   <WidgetContainer title="Cost Breakdown">
+                    <ReactLoader show={showLoader}/>
                     <DBChart
                       onClick={this.props.onChartClicked}
                       legendData={this.props.legendData}
@@ -78,6 +83,7 @@ class FlexLayout extends React.Component {
               <ReflexContainer orientation='horizontal'>
                 <ReflexElement minSize={210} propagateDimensions={true}>
                   <WidgetContainer title="Database">
+                    <ReactLoader show={showLoader}/>
                     <ResponsiveView breakPoint={185}
                       onSelectDbItem={this.props.onSelectDbItem}
                       onUpdateDbItem={this.props.onUpdateDbItem}
@@ -91,6 +97,7 @@ class FlexLayout extends React.Component {
                 <ReflexSplitter onStopResize={() => this.forceUpdate()}/>
                 <ReflexElement>
                   <WidgetContainer title="Cost Breakdown">
+                    <ReactLoader show={showLoader}/>
                     <DBChart
                       onClick={this.props.onSelectDbItem}
                       legendData={this.props.legendData}

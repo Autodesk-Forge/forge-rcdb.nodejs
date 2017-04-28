@@ -25,6 +25,54 @@ class TransformExtension extends ExtensionBase {
     this.rotateTool = new RotateTool(viewer)
 
     this.transformedFragIdMap = {}
+
+    this.translateTool.on('translate', (data) => {
+
+      data.fragIds.forEach((fragId) => {
+
+        this.transformedFragIdMap[fragId] = true
+      })
+
+      this.emit('transform', {
+        transform: {
+          translation: data.translation
+        },
+        fragIds: data.fragIds,
+        model: data.model
+      })
+    })
+
+    this.translateTool.on('deactivate', () => {
+
+      this._txControl.container.classList.remove('active')
+      this._comboCtrl.container.classList.remove('active')
+
+      this.emit('deactivate')
+    })
+
+    this.rotateTool.on('rotate', (data) => {
+
+      data.fragIds.forEach((fragId) => {
+
+        this.transformedFragIdMap[fragId] = true
+      })
+
+      this.emit('transform', {
+        transform: {
+          rotation: data.rotation
+        },
+        fragIds: data.fragIds,
+        model: data.model
+      })
+    })
+
+    this.rotateTool.on('deactivate', () => {
+
+      this._rxControl.container.classList.remove('active')
+      this._comboCtrl.container.classList.remove('active')
+
+      this.emit('deactivate')
+    })
   }
 
   /////////////////////////////////////////////////////////////////
@@ -55,29 +103,9 @@ class TransformExtension extends ExtensionBase {
 
         } else {
 
-          this.translateTool.activate()
-          this._txControl.container.classList.add('active')
-
-          this.rotateTool.deactivate()
-          this._rxControl.container.classList.remove('active')
-
-          this._comboCtrl.container.classList.add('active')
+          this.translate()
         }
       })
-
-    this.translateTool.on('deactivate', () => {
-
-      this._txControl.container.classList.remove('active')
-      this._comboCtrl.container.classList.remove('active')
-    })
-
-    this.translateTool.on('transform.translate', (data) => {
-
-      data.fragIds.forEach((fragId) => {
-
-        this.transformedFragIdMap[fragId] = true
-      })
-    })
 
     this._rxControl = ViewerToolkit.createButton(
       'toolbar-rotate',
@@ -92,33 +120,13 @@ class TransformExtension extends ExtensionBase {
 
         } else {
 
-          this.rotateTool.activate()
-          this._rxControl.container.classList.add('active')
-
-          this.translateTool.deactivate()
-          this._txControl.container.classList.remove('active')
-
-          this._comboCtrl.container.classList.add('active')
+          this.rotate()
         }
       })
 
-    this.rotateTool.on('deactivate', () => {
-
-      this._rxControl.container.classList.remove('active')
-      this._comboCtrl.container.classList.remove('active')
-    })
-
-    this.rotateTool.on('transform.rotate', (data) => {
-
-      data.fragIds.forEach((fragId) => {
-
-        this.transformedFragIdMap[fragId] = true
-      })
-    })
-
     this.parentControl = this._options.parentControl
 
-    if (!this.parentControl) {
+    if (!this.parentControl && !this._options.hideControls) {
 
       var viewerToolbar = this._viewer.getToolbar(true)
 
@@ -162,7 +170,10 @@ class TransformExtension extends ExtensionBase {
       }
     }
 
-    this.parentControl.addControl(this._comboCtrl)
+    if(!this._options.hideControls) {
+
+      this.parentControl.addControl(this._comboCtrl)
+    }
 
     console.log('Viewing.Extension.Transform loaded')
 
@@ -183,6 +194,67 @@ class TransformExtension extends ExtensionBase {
     this.rotateTool.deactivate()
 
     console.log('Viewing.Extension.Transform unloaded')
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  translate () {
+
+    this.translateTool.activate()
+    this._txControl.container.classList.add('active')
+
+    this.rotateTool.deactivate()
+    this._rxControl.container.classList.remove('active')
+
+    this._comboCtrl.container.classList.add('active')
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  rotate () {
+
+    this.rotateTool.activate()
+    this._rxControl.container.classList.add('active')
+
+    this.translateTool.deactivate()
+    this._txControl.container.classList.remove('active')
+
+    this._comboCtrl.container.classList.add('active')
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  setFullTransform (fullTransform) {
+
+    this.translateTool.fullTransform = fullTransform
+
+    this.rotateTool.fullTransform = fullTransform
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  pickPosition () {
+
+    this.translateTool.onPick()
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  clearSelection () {
+
+    this.translateTool.clearSelection()
+
+    this.rotateTool.clearSelection()
   }
 
   /////////////////////////////////////////////////////////////////

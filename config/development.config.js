@@ -26,14 +26,14 @@ const config = {
     },
 
     viewer: {
-      //viewer3D: 'https://developer.api.autodesk.com/viewingservice/v1/viewers/viewer3D.js?v=2.13',
-      //threeJS:  'https://developer.api.autodesk.com/viewingservice/v1/viewers/three.js?v=2.13',
-      //style:    'https://developer.api.autodesk.com/viewingservice/v1/viewers/style.css?v=2.13'
+      //viewer3D: 'https://developer.api.autodesk.com/viewingservice/v1/viewers/viewer3D.js?v=2.1',
+      //threeJS:  'https://developer.api.autodesk.com/viewingservice/v1/viewers/three.js?v=2.14',
+      //style:    'https://developer.api.autodesk.com/viewingservice/v1/viewers/style.css?v=2.14'
 
       // requires local copy of viewer lib - not provided in this sample
-      viewer3D: '/resources/libs/viewer-2.13/viewer3D.js',
-      threeJS:  '/resources/libs/viewer-2.13/three.js',
-      style:    '/resources/libs/viewer-2.13/style.css'
+      viewer3D: '/resources/libs/viewer-2.14/viewer3D.js',
+      threeJS:  '/resources/libs/viewer-2.14/three.js',
+      style:    '/resources/libs/viewer-2.14/style.css'
     }
   },
   databases: [
@@ -45,12 +45,15 @@ const config = {
       dbhost: 'localhost',
       port: 27017,
       collections: {
+        configurator: {
+          models: 'configurator.models'
+        },
+        gallery: {
+          models: 'gallery.models'
+        },
         rcdb:{
           materials: 'rcdb.materials',
           models: 'rcdb.models'
-        },
-        configurator: {
-          models: 'configurator.models'
         }
       }
     }

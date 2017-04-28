@@ -55,6 +55,9 @@
 }
 
 .dialog .content {
+  position: relative;
   overflow: auto;
   padding: 10px;
+  height: 100%;
+  width: 100%;
 }

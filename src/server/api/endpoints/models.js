@@ -29,6 +29,7 @@ module.exports = function() {
           ]
         },
         pageQuery: {
+          path: 1,
           name: 1,
           urn: 1,
           env: 1

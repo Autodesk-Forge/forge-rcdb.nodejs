@@ -8,9 +8,9 @@ import EventTool from 'Viewer.EventTool'
 import Toolkit from 'Viewer.Toolkit'
 
 // Commands
-import BobCATConfiguratorCommand from './BobCAT.Configurator.Command'
 import OperatorCommand from 'Operator.Command'
 import HotSpotCommand from 'HotSpot.Command'
+import CATCommand from './CAT.Command'
 
 const initialState = {
   "viewport":{
@@ -88,7 +88,7 @@ const hotspots = [
       z: -1378.0939062706148
     },
     tooltip: {
-      class: 'bob-cat',
+      class: 'cat',
       imgUrl: 'http://s7d2.scene7.com/is/image/Caterpillar/C10554883?$cc-g$',
       caption: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque molestie, lorem vel dictum luctus, tortor purus maximus nulla, sit amet porta nulla metus a mauris. In hac habitasse platea dictumst. Vestibulum vestibulum dictum risus, vitae blandit lacus aliquam vitae. Vivamus et purus facilisis, fringilla orci ac, rhoncus turpis. '
     }
@@ -105,7 +105,7 @@ const hotspots = [
       z: -599.8206504356555
     },
     tooltip: {
-      class: 'bob-cat',
+      class: 'cat',
       imgUrl: 'http://s7d2.scene7.com/is/image/Caterpillar/CM20150522-38474-33039?$cc-g$',
       caption: 'Proin fringilla elit ligula, et vestibulum leo lacinia vitae. Praesent vehicula nisl dapibus, dictum elit sit amet, interdum neque. Nunc porttitor, sem ut tincidunt dignissim, purus lacus condimentum nisl, feugiat sollicitudin velit turpis eu justo.'
     }
@@ -122,7 +122,7 @@ const hotspots = [
       z: -566.0477120013625
     },
     tooltip: {
-      class: 'bob-cat',
+      class: 'cat',
       imgUrl: 'http://s7d2.scene7.com/is/image/Caterpillar/CM20150522-36325-08992?$cc-g$',
       caption: 'Fusce quis diam pharetra, blandit diam vitae, pellentesque nunc. Duis ac sapien sapien. Nullam arcu massa, egestas id magna nec, euismod semper quam. Suspendisse eget arcu ac urna semper vehicula vitae non magna. Nam pharetra ex dolor.'
     }
@@ -139,7 +139,7 @@ const hotspots = [
       z: -1795.4018981411405
     },
     tooltip: {
-      class: 'bob-cat',
+      class: 'cat',
       imgUrl: 'http://s7d2.scene7.com/is/image/Caterpillar/CM20150219-35676-40902?$cc-g$',
       caption: 'In viverra tellus eget dapibus sollicitudin. Suspendisse metus ex, tempus ac ex ac, ultrices pulvinar dolor. Integer porta, dui quis mattis placerat, lorem mauris viverra lacus, nec placerat nisl nisi vel nunc. Aliquam erat volutpat.'
     }
@@ -156,14 +156,14 @@ const hotspots = [
       z: -1685.2904496822068
     },
     tooltip: {
-      class: 'bob-cat',
+      class: 'cat',
       imgUrl: 'http://s7d2.scene7.com/is/image/Caterpillar/CM20150522-38474-33039?$cc-g$',
       caption: 'Pellentesque iaculis posuere felis eu blandit. Mauris lacinia, erat a fermentum lobortis, nunc ipsum volutpat mauris, in tincidunt risus augue in dolor. Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
     }
   }
 ]
 
-class BobCATConfiguratorExtension extends ExtensionBase {
+class CATExtension extends ExtensionBase {
 
   /////////////////////////////////////////////////////////////////
   // Class constructor
@@ -187,7 +187,7 @@ class BobCATConfiguratorExtension extends ExtensionBase {
     })
 
     this.configuratorCommand =
-      new BobCATConfiguratorCommand(viewer, {
+      new CATCommand(viewer, {
         configurations
       })
 
@@ -375,5 +375,5 @@ class BobCATConfiguratorExtension extends ExtensionBase {
 }
 
 Autodesk.Viewing.theExtensionManager.registerExtension(
-  BobCATConfiguratorExtension.ExtensionId,
-  BobCATConfiguratorExtension)
+  CATExtension.ExtensionId,
+  CATExtension)

@@ -79,8 +79,9 @@ class ConfigManagerExtension extends ExtensionBase {
 
     this.viewer.addEventListener(
       Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT, (e) => {
-
-        this.options.loader.hide()
+        if (this.options.loader) {
+          this.options.loader.hide()
+        }
       })
 
     this.react.setState({
@@ -162,10 +163,12 @@ class ConfigManagerExtension extends ExtensionBase {
         ], (s) => { return s.name })
 
         this.react.setState({
-          sequence: sequence,
           sequences,
           items: []
         })
+
+        this.setActiveSequence (
+          sequence, false)
 
         if (this.api) {
 
@@ -210,13 +213,6 @@ class ConfigManagerExtension extends ExtensionBase {
 
         const state = this.react.getState()
 
-        const sequence = Object.assign({},
-          state.sequence, {
-            name: state.newSequenceName,
-            readonly: false,
-            id: this.guid()
-        })
-
         const items = state.items.map((item) => {
 
           return Object.assign({},
@@ -226,13 +222,26 @@ class ConfigManagerExtension extends ExtensionBase {
             })
         })
 
+        const stateIds = items.map((item) => {
+
+          return item.id
+        })
+
+        const sequence = Object.assign({},
+          state.sequence, {
+            name: state.newSequenceName,
+            readonly: false,
+            id: this.guid(),
+            stateIds
+        })
+
         const sequences = _.sortBy([
           ...state.sequences, sequence
         ], (s) => { return s.name })
 
         this.react.setState({
-          sequence: sequence,
           sequences,
+          sequence,
           items
         })
 
@@ -342,15 +351,29 @@ class ConfigManagerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   async onUpdateSequence () {
 
-    const { sequence } = this.react.getState()
+    const { sequence, items } = this.react.getState()
+
+    const stateIds = this.getStateIds()
 
     const newSequence = Object.assign({},
       sequence, {
-        stateIds: this.getStateIds()
+        stateIds
       })
 
+    const newItems = stateIds.map((id) => {
+
+      for (const item of items) {
+
+        if (item.id === id) {
+
+          return item
+        }
+      }
+    })
+
     this.react.setState({
-      sequence: newSequence
+      sequence: newSequence,
+      items: newItems
     })
 
     if (this.api) {
@@ -546,7 +569,7 @@ class ConfigManagerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  async setActiveSequence (sequence) {
+  async setActiveSequence (sequence, fetchStates = true) {
 
     clearTimeout(this.playTimeout)
 
@@ -574,10 +597,11 @@ class ConfigManagerExtension extends ExtensionBase {
         this.activateDrag()
       }
 
-      if (this.api) {
+      if (this.api && fetchStates) {
 
-        const states = await this.api.getStates(
-          sequence.id)
+        const states =
+          await this.api.getStates(
+            sequence.id)
 
         states.map((state) => {
 
@@ -688,7 +712,7 @@ class ConfigManagerExtension extends ExtensionBase {
 
       const panel = await this.react.pushViewerPanel(this, {
           height: 250,
-          width: 350
+          width: 300
         })
 
       panel.on('update', () => {

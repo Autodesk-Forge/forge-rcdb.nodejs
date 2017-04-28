@@ -18,6 +18,8 @@ export default class ServiceDlg extends React.Component {
   //
   /////////////////////////////////////////////////////////
   static defaultProps = {
+    showCancel: true,
+    showOK: true,
     className: ''
   }
 
@@ -89,7 +91,7 @@ export default class ServiceDlg extends React.Component {
 
     return (
       <div className="content">
-        <b>{this.props.content}</b>
+        {this.props.content}
       </div>
     )
   }
@@ -107,16 +109,22 @@ export default class ServiceDlg extends React.Component {
 
     return (
       <div className="controls">
-        <button onClick={() => this.onOk()}>
-          <span className="fa fa-check">
-          </span>
-          <label>OK</label>
-        </button>
-        <button onClick={() => this.onCancel()}>
-          <span className="fa fa-times">
-          </span>
-          <label>Cancel</label>
-        </button>
+        {
+          this.props.showOK &&
+          <button onClick={() => this.onOk()}>
+            <span className="fa fa-check">
+            </span>
+            <label>OK</label>
+          </button>
+        }
+        {
+          this.props.showCancel &&
+          <button onClick={() => this.onCancel()}>
+            <span className="fa fa-times">
+            </span>
+            <label>Cancel</label>
+          </button>
+        }
       </div>
     )
   }

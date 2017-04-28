@@ -29,9 +29,9 @@ const config = {
     },
 
     viewer: {
-      viewer3D: 'https://developer.api.autodesk.com/viewingservice/v1/viewers/viewer3D.min.js?v=v2.13',
-      threeJS:  'https://developer.api.autodesk.com/viewingservice/v1/viewers/three.min.js?v=v2.13',
-      style:    'https://developer.api.autodesk.com/viewingservice/v1/viewers/style.min.css?v=v2.13'
+      viewer3D: 'https://developer.api.autodesk.com/viewingservice/v1/viewers/viewer3D.min.js?v=v2.14',
+      threeJS:  'https://developer.api.autodesk.com/viewingservice/v1/viewers/three.min.js?v=v2.14',
+      style:    'https://developer.api.autodesk.com/viewingservice/v1/viewers/style.min.css?v=v2.14'
     }
   },
   databases: [
@@ -43,12 +43,15 @@ const config = {
       pass: process.env.RCDB_PASS,
       port: process.env.RCDB_PORT,
       collections: {
+        configurator: {
+          models: 'configurator.models'
+        },
+        gallery: {
+          models: 'gallery.models'
+        },
         rcdb:{
           materials: 'rcdb.materials',
           models: 'rcdb.models'
-        },
-        configurator: {
-          models: 'configurator.models'
         }
       }
     }

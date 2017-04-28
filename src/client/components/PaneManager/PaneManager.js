@@ -1,6 +1,7 @@
 import {ReflexContainer, ReflexSplitter} from 'react-reflex'
 import PaneElement from './PaneElement'
 import classNames from 'classnames'
+import PropTypes from 'prop-types'
 import './PaneManager.scss'
 import React from 'react'
 
@@ -11,7 +12,7 @@ class PaneManager extends React.Component {
   //
   /////////////////////////////////////////////////////////
   static propTypes = {
-    orientation: React.PropTypes.string.isRequired
+    orientation: PropTypes.string.isRequired
   }
 
   /////////////////////////////////////////////////////////
@@ -139,7 +140,7 @@ class PaneManager extends React.Component {
           maxSize: child.props.maxSize || Number.MAX_VALUE,
           sizeLocked: child.props.sizeLocked || false,
           direction: this.getDirection(children, idx),
-          minSize: child.props.minSize || 40,
+          minSize: child.props.minSize || 39,
           onLockSize: this.onLockSize,
           id: childId || this.guid(),
           title: child.props.title

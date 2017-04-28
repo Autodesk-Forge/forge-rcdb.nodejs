@@ -35,6 +35,12 @@ class ExtensionManager extends ExtensionBase {
 
           const state = this.react.getState()
 
+          if (!state.renderExtensions.length &&
+              !state.visible) {
+
+            this.react.pushRenderExtension(this)
+          }
+
           this.react.setState({
             renderExtensions: [
               ...state.renderExtensions, extension
@@ -52,18 +58,26 @@ class ExtensionManager extends ExtensionBase {
       },
       popRenderExtension: (extensionId) => {
 
+        const state = this.react.getState()
+
+        const renderExtensions =
+          state.renderExtensions.filter((ext) => {
+            return ext.id !== extensionId
+          })
+
         return new Promise((resolve) => {
 
-          const state = this.react.getState()
-
           this.react.setState({
-            renderExtensions:
-              state.renderExtensions.filter((ext) => {
-                return ext.id !== extensionId
-              })
+            renderExtensions
           }).then(async() => {
 
             resolve()
+
+            if (!renderExtensions.length &&
+                !state.visible) {
+
+              await this.react.popRenderExtension()
+            }
 
             await this.react.forceUpdate()
 
@@ -100,23 +114,31 @@ class ExtensionManager extends ExtensionBase {
   /////////////////////////////////////////////////////////
   load () {
 
+    this.loadEvents ()
+
     this.viewer.addEventListener(
       Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT, (e) => {
 
         this.options.loader.hide()
       })
 
-    this.loadEvents ()
+    const extensionsByName = _.sortBy(
+      this.options.extensions || [], (ext) => {
+        return ext.name
+      })
 
     this.react.setState({
 
-      extensions: this.options.extensions || [],
       visible: this.options.visible,
+      extensions: extensionsByName,
       renderExtensions: []
 
     }).then (async() => {
 
-      await this.react.pushRenderExtension(this)
+      if (this.options.visible) {
+
+        await this.react.pushRenderExtension(this)
+      }
 
       const extensions = this.options.extensions || []
 
@@ -133,12 +155,10 @@ class ExtensionManager extends ExtensionBase {
         return extension.enabled
       })
 
-      const loadTasks = loadExts.map ((extension) => {
+      for (const extension of loadExts) {
 
-        return this.loadDynamicExtension(extension)
-      })
-
-      Promise.all(loadTasks)
+        await this.loadDynamicExtension(extension)
+      }
     })
 
     console.log('Viewing.Extension.ExtensionManager loaded')
@@ -155,31 +175,6 @@ class ExtensionManager extends ExtensionBase {
     console.log('Viewing.Extension.ExtensionManager unloaded')
 
     return true
-  }
-
-  /////////////////////////////////////////////////////////
-  // Async viewer event
-  //
-  /////////////////////////////////////////////////////////
-  viewerEvent (eventId) {
-
-    const eventIdArray = Array.isArray(eventId)
-      ? eventId : [eventId]
-
-    const eventTasks = eventIdArray.map((id) => {
-      return new Promise ((resolve) => {
-        const handler = (args) => {
-
-          this.viewer.removeEventListener (
-            id, handler )
-          resolve (args)
-        }
-        this.viewer.addEventListener (
-          id, handler)
-      })
-    })
-
-    return Promise.all(eventTasks)
   }
 
   /////////////////////////////////////////////////////////

@@ -112,30 +112,6 @@ class RaytracerExtension extends ExtensionBase {
 	}
 
   /////////////////////////////////////////////////////////
-  // Async viewer event
-  //
-  /////////////////////////////////////////////////////////
-  viewerEvent (eventId) {
-
-    const eventIdArray = Array.isArray(eventId)
-      ? eventId : [eventId]
-
-    const eventTasks = eventIdArray.map((id) => {
-      return new Promise ((resolve) => {
-        const handler = (args) => {
-          this.viewer.removeEventListener (
-            id, handler)
-          resolve (args)
-        }
-        this.viewer.addEventListener (
-          id, handler)
-      })
-    })
-
-    return Promise.all(eventTasks)
-  }
-
-  /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////

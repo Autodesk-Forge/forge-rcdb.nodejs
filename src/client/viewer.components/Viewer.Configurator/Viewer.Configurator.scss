@@ -30,3 +30,17 @@
 .configurator-toolbar #toolbar-rotate .adsk-control-tooltip {
   transform: translate(-115px, -15px);
 }
+
+.configurator .spinner {
+  display: none;
+}
+
+.configurator .adsk-viewing-viewer.empty {
+  pointer-events: none;
+}
+
+.configurator .empty .adsk-control,
+.configurator .empty .viewcubeUI,
+.configurator .empty .progressbg {
+  display: none;
+}

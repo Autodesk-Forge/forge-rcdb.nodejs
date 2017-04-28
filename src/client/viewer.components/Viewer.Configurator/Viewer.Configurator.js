@@ -320,9 +320,14 @@ class ViewerConfigurator extends React.Component {
 
     return (extension, opts = {}) => {
 
+      const nbPanels = this.state.viewerPanels.length
+
       const panelId = 'panel-' + extension.id
 
-      const props = Object.assign({}, opts, {
+      const props = Object.assign({
+          left: 10 + 50 * nbPanels,
+          top: 10 + 55 * nbPanels
+        }, opts, {
         container: viewer.container,
         renderable: extension,
         id: panelId,
@@ -378,22 +383,18 @@ class ViewerConfigurator extends React.Component {
 
     return new Promise ((resolve) => {
 
-      var targetPanel = null
-
-      const viewerPanels =
-        this.state.viewerPanels.filter((panel) => {
-
-          if (panel.id === targetPanelId) {
-
-            targetPanel = panel
-            return false
-          }
-
-          return true
+      const targetPanel = _.find(this.state.viewerPanels, {
+        id: targetPanelId
       })
 
       targetPanel
         ? targetPanel.destroy().then(() => {
+
+        const viewerPanels =
+          this.state.viewerPanels.filter((panel) => {
+            return (panel.id !== targetPanelId)
+          })
+
           this.setReactState({
             viewerPanels
           })
@@ -609,38 +610,40 @@ class ViewerConfigurator extends React.Component {
       }
 
       const extensions =
-        model.dynamicExtensions ||
         this.state.dbModel.dynamicExtensions || []
 
       await this.setupDynamicExtensions (
         viewer, extensions, defaultOptions)
 
-      switch (this.state.dbModel.env) {
+      if (model) {
 
-        case 'Local':
+        switch (this.state.dbModel.env) {
 
-          viewer.loadModel(model.path)
+          case 'Local':
 
-          break
+            viewer.loadModel(model.path)
 
-        case 'AutodeskProduction':
+            break
 
-          this.viewerDocument =
-            await this.loadDocument(model.urn)
+          case 'AutodeskProduction':
 
-          const path = this.getViewablePath(
-            this.viewerDocument,
-            model.pathIdx || 0,
-            model.role || ['3d', '2d'])
+            this.viewerDocument =
+              await
+            this.loadDocument(model.urn)
 
-          const options = {
-            sharedPropertyDbPath:
-              this.viewerDocument.getPropertyDbPath()
-          }
+            const path = this.getViewablePath(
+              this.viewerDocument,
+              model.pathIdx || 0,
+              model.role || ['3d', '2d'])
 
-          viewer.loadModel (path, options)
+            const options = {
+              sharedPropertyDbPath: this.viewerDocument.getPropertyDbPath()
+            }
 
-          break
+            viewer.loadModel(path, options)
+
+            break
+        }
       }
 
     } catch(ex) {

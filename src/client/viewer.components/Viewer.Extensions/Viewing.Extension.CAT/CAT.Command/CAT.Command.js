@@ -3,8 +3,7 @@ import ToolSelectorPanel from './ToolSelector.Panel'
 import Toolkit from 'Viewer.Toolkit'
 import Stopwatch from 'Stopwatch'
 
-export default class BobCATConfiguratorCommand
-  extends ConfiguratorCommand {
+export default class CATCommand extends ConfiguratorCommand {
 
   /////////////////////////////////////////////////////////////////
   //
@@ -13,7 +12,7 @@ export default class BobCATConfiguratorCommand
   constructor(viewer, options) {
 
     super (viewer, {
-      commandId: 'BobCATConfiguratorCommand',
+      commandId: 'CATCommand',
       configurations: options.configurations
     })
 

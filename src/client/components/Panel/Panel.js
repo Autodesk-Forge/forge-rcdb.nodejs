@@ -108,7 +108,8 @@ class Panel extends EventsEmitter {
     const state = this.react.getState()
 
     return this.runAnimation(
-      state.height, 35, 0.8)
+      state.height, 35,
+      state.height / this.props.height)
   }
 
   /////////////////////////////////////////////////////////
@@ -199,7 +200,7 @@ class Panel extends EventsEmitter {
       this.react.setState({
 
         width: Math.min(
-          Math.max(350, width),
+          Math.max(300, width),
           bounds.width - state.left - 1),
 
         height: Math.min(

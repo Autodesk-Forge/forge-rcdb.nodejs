@@ -34,7 +34,7 @@ class HomeView extends React.Component {
         models: modelsbyName
       }))
 
-      this.batchRequestThumbnails(3)
+      this.batchRequestThumbnails(5)
 
     } catch(ex) {
 
@@ -57,7 +57,9 @@ class HomeView extends React.Component {
   /////////////////////////////////////////////////////////////////
   batchRequestThumbnails (size) {
 
-    _.chunk(this.state.models, size).forEach((modelChunk) => {
+    const chunks = _.chunk(this.state.models, size)
+
+    chunks.forEach((modelChunk) => {
 
       const modelIds = modelChunk.map((model) => {
         return model._id
@@ -70,14 +72,17 @@ class HomeView extends React.Component {
 
             const idx = modelIds.indexOf(model._id)
 
-            return (idx < 0 ?
-              model :
-              Object.assign({}, model, {thumbnail: thumbnails[idx]}))
+            return (idx < 0
+              ? model
+              : Object.assign({}, model, {
+              thumbnail: thumbnails[idx]
+            }))
           })
 
-          this.setState(Object.assign({}, this.state, {
-            models
-          }))
+          this.setState(
+            Object.assign({}, this.state, {
+              models
+            }))
         })
     })
   }

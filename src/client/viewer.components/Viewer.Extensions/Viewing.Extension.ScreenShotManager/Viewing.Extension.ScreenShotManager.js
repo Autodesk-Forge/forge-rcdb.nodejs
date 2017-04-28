@@ -165,7 +165,7 @@ class ScreenShotManagerExtension extends ExtensionBase {
     if (allowed.indexOf(e.keyCode) > -1 ||
       (e.keyCode > 47 && e.keyCode < 58)) {
 
-      return this.onKeyDown(e)
+      return
     }
 
     e.stopPropagation()
@@ -180,7 +180,9 @@ class ScreenShotManagerExtension extends ExtensionBase {
 
     const state = this.react.getState()
 
-    state[key] = Math.floor(parseFloat(e.target.value))
+    const value = parseFloat(e.target.value)
+
+    state[key] = Math.floor(isNaN(value) ? 0 : value)
 
     this.react.setState(state)
   }
@@ -214,7 +216,7 @@ class ScreenShotManagerExtension extends ExtensionBase {
 
         this.react.pushViewerPanel(this, {
           height: 250,
-          width: 375
+          width: 350
         })
       })
 

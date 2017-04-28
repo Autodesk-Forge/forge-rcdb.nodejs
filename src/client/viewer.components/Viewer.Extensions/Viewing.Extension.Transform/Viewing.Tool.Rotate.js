@@ -111,12 +111,9 @@ export default class RotateTool extends EventsEmitter {
 
     if (event.selections && event.selections.length) {
 
-      var selection = event.selections[ 0 ]
+      var selection = event.selections[0]
 
       this.selection = selection
-
-      this.emit('transform.modelSelected',
-        this.selection)
 
       if (this.fullTransform) {
 
@@ -195,7 +192,7 @@ export default class RotateTool extends EventsEmitter {
     this.rotateControl = new RotateControl(
       this.viewer, this.center, size)
 
-    this.rotateControl.on('transform.rotate', (data) => {
+    this.rotateControl.on('rotate', (data) => {
 
       this.rotateFragments(
         this.selection.model,
@@ -392,7 +389,7 @@ export default class RotateTool extends EventsEmitter {
         euler.setFromQuaternion(
           fragProxy.quaternion, 0)
 
-        this.emit('transform.rotate', {
+        this.emit('rotate', {
           fragIds: fragIdsArray,
           rotation: euler,
           model
@@ -865,7 +862,7 @@ class RotateControl extends EventsEmitter {
         var sign = Math.sign(
           cross.dot(this.selectedGizmo.axis))
 
-        this.emit('transform.rotate', {
+        this.emit('rotate', {
           angle: sign * dir.angleTo(this.lastDir),
           axis: this.selectedGizmo.axis
         })

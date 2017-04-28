@@ -11,11 +11,11 @@ export default class TranslateTool extends EventsEmitter {
 
     super()
 
+    this._dbIds = []
+
     this.active = false
 
-    this.viewer = viewer
-
-    this._hitPoint = null
+    this._viewer = viewer
 
     this._isDragging = false
 
@@ -23,9 +23,11 @@ export default class TranslateTool extends EventsEmitter {
 
     this._transformMesh = null
 
+    this._selectedFragProxyMap = {}
+
     this._transformControlTx = null
 
-    this._selectedFragProxyMap = {}
+    this._hitPoint = new THREE.Vector3()
 
     this.onTxChange =
       this.onTxChange.bind(this)
@@ -36,6 +38,8 @@ export default class TranslateTool extends EventsEmitter {
     this.onCameraChanged =
       this.onCameraChanged.bind(this)
 
+    this._selectionMode = 'SELECTION_MODE_TRANSFORM'
+
     viewer.toolController.registerTool(this)
   }
 
@@ -45,7 +49,7 @@ export default class TranslateTool extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   getNames () {
 
-    return ["Viewing.Tool.Translate"]
+    return ['Viewing.Tool.Translate']
   }
 
   /////////////////////////////////////////////////////////////////
@@ -54,7 +58,7 @@ export default class TranslateTool extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   getName () {
 
-    return "Viewing.Tool.Translate"
+    return 'Viewing.Tool.Translate'
   }
 
   ///////////////////////////////////////////////////////////////////////////
@@ -66,7 +70,7 @@ export default class TranslateTool extends EventsEmitter {
     var material = new THREE.MeshPhongMaterial(
       { color: 0xff0000 })
 
-    this.viewer.impl.matman().addMaterial(
+    this._viewer.impl.matman().addMaterial(
       'transform-tool-material',
       material,
       true)
@@ -107,14 +111,14 @@ export default class TranslateTool extends EventsEmitter {
         fragProxy.updateAnimTransform()
       }
 
-      this.emit('transform.translate', {
+      this.emit('translate', {
         fragIds: Object.keys(this._selectedFragProxyMap),
         model: this._selection.model,
         translation: translation
       })
     }
 
-    this.viewer.impl.sceneUpdated(true)
+    this._viewer.impl.sceneUpdated(true)
   }
 
   ///////////////////////////////////////////////////////////////////////////
@@ -135,44 +139,87 @@ export default class TranslateTool extends EventsEmitter {
   ///////////////////////////////////////////////////////////////////////////
   onAggregateSelectionChanged (event) {
 
-    if (this._hitPoint && event.selections && event.selections.length) {
+    switch (this._selectionMode) {
 
-      this._selection = event.selections[0]
+      case 'SELECTION_MODE_TRANSFORM':
 
-      if (this.fullTransform) {
+        if(event.selections && event.selections.length) {
 
-        this._selection.fragIdsArray = []
+          var selection = event.selections[0]
 
-        var fragCount = this._selection.model.getFragmentList().
-          fragments.fragId2dbId.length
+          this.setSelection(selection)
 
-        for (var fragId = 0; fragId < fragCount; ++fragId) {
+        } else {
 
-          this._selection.fragIdsArray.push(fragId)
+          this.clearSelection()
         }
 
-        this._selection.dbIdArray = []
+        break;
 
-        var instanceTree =
-          this._selection.model.getData().instanceTree
+      case 'SELECTION_MODE_PICK':
 
-        var rootId = instanceTree.getRootId()
+        if(event.selections && event.selections.length) {
 
-        this._selection.dbIdArray.push(rootId)
-      }
+          this._selectionMode = 'SELECTION_MODE_RESUME_TRANSFORM'
 
-      this.emit('transform.modelSelected',
-        this._selection)
+          this._viewer.clearSelection()
 
-      this.initializeSelection(
-        this._hitPoint)
+          this._viewer.select(this._dbIds)
 
-    } else {
+          this.setPosition(this._hitPoint)
+        }
 
-      this.clearSelection()
+      case 'SELECTION_MODE_RESUME_TRANSFORM':
+
+        setTimeout(() => {
+
+          this._selectionMode = 'SELECTION_MODE_TRANSFORM'
+        }, 300)
+
+        break;
     }
   }
 
+  ///////////////////////////////////////////////////////////////////////////
+  //
+  //
+  ///////////////////////////////////////////////////////////////////////////
+  setSelection (selection) {
+
+    this._selection = selection
+
+    this._dbIds = this._selection.dbIdArray
+
+    if (this.fullTransform) {
+
+      this._selection.fragIdsArray = []
+
+      var fragCount = this._selection.model.getFragmentList().
+        fragments.fragId2dbId.length
+
+      for (var fragId = 0; fragId < fragCount; ++fragId) {
+
+        this._selection.fragIdsArray.push(fragId)
+      }
+
+      this._selection.dbIdArray = []
+
+      var instanceTree =
+        this._selection.model.getData().instanceTree
+
+      var rootId = instanceTree.getRootId()
+
+      this._selection.dbIdArray.push(rootId)
+    }
+
+    this.initializeSelection(
+      this._hitPoint)
+  }
+
+  ///////////////////////////////////////////////////////////////////////////
+  //
+  //
+  ///////////////////////////////////////////////////////////////////////////
   initializeSelection (hitPoint) {
 
     this._selectedFragProxyMap = {}
@@ -194,13 +241,13 @@ export default class TranslateTool extends EventsEmitter {
     this._transformControlTx.addEventListener(
       'change', this.onTxChange)
 
-    this.viewer.addEventListener(
+    this._viewer.addEventListener(
       Autodesk.Viewing.CAMERA_CHANGE_EVENT,
       this.onCameraChanged)
 
-    this._selection.fragIdsArray.forEach((fragId)=> {
+    this._selection.fragIdsArray.forEach((fragId) => {
 
-      var fragProxy = this.viewer.impl.getFragmentProxy(
+      var fragProxy = this._viewer.impl.getFragmentProxy(
         this._selection.model,
         fragId)
 
@@ -217,9 +264,13 @@ export default class TranslateTool extends EventsEmitter {
     })
   }
 
+  ///////////////////////////////////////////////////////////////////////////
+  //
+  //
+  ///////////////////////////////////////////////////////////////////////////
   clearSelection () {
 
-    if(this.active) {
+    if (this.active) {
 
       this._selection = null
 
@@ -230,21 +281,46 @@ export default class TranslateTool extends EventsEmitter {
       this._transformControlTx.removeEventListener(
         'change', this.onTxChange)
 
-      this.viewer.removeEventListener(
+      this._viewer.removeEventListener(
         Autodesk.Viewing.CAMERA_CHANGE_EVENT,
         this.onCameraChanged)
 
-      this.viewer.impl.sceneUpdated(true)
+      this._viewer.impl.sceneUpdated(true)
     }
+  }
+
+  //////////////////////////////////////////////////////////////////////////
+  //
+  //
+  ///////////////////////////////////////////////////////////////////////////
+  setPosition (position) {
+
+    this._transformControlTx.setPosition(position)
+
+    for(var fragId in this._selectedFragProxyMap) {
+
+      var fragProxy = this._selectedFragProxyMap[fragId]
+
+      var fragPosition = new THREE.Vector3(
+        position.x - fragProxy.offset.x,
+        position.y - fragProxy.offset.y,
+        position.z - fragProxy.offset.z)
+
+      fragProxy.position = fragPosition
+
+      fragProxy.updateAnimTransform()
+    }
+
+    this._viewer.impl.sceneUpdated(true)
   }
 
   ///////////////////////////////////////////////////////////////////////////
   // normalize screen coordinates
   //
   ///////////////////////////////////////////////////////////////////////////
-  normalize(screenPoint) {
+  normalize (screenPoint) {
 
-    var viewport = this.viewer.navigation.getScreenViewport()
+    var viewport = this._viewer.navigation.getScreenViewport()
 
     var n = {
       x: (screenPoint.x - viewport.left) / viewport.width,
@@ -258,7 +334,7 @@ export default class TranslateTool extends EventsEmitter {
   // get 3d hit point on mesh
   //
   ///////////////////////////////////////////////////////////////////////////
-  getHitPoint(event) {
+  getHitPoint (event) {
 
     var screenPoint = {
       x: event.clientX,
@@ -267,34 +343,51 @@ export default class TranslateTool extends EventsEmitter {
 
     var n = this.normalize(screenPoint)
 
-    var hitPoint = this.viewer.utilities.getHitPoint(n.x, n.y)
+    var hitPoint = this._viewer.utilities.getHitPoint(n.x, n.y)
 
     return hitPoint
+  }
+
+  ///////////////////////////////////////////////////////////////////////////
+  //
+  //
+  ///////////////////////////////////////////////////////////////////////////
+  hitPoint () {
+
+    return this._transformControlTx.position
+  }
+
+  ///////////////////////////////////////////////////////////////////////////
+  //
+  //
+  ///////////////////////////////////////////////////////////////////////////
+  setHitPoint (hitPoint) {
+
+    this._hitPoint.x = hitPoint.x
+    this._hitPoint.y = hitPoint.y
+    this._hitPoint.z = hitPoint.z
   }
 
   ///////////////////////////////////////////////////////////////////
   //
   //
   ///////////////////////////////////////////////////////////////////
-  activate() {
+  activate () {
 
-    if (!this.active) {
+    if(!this.active) {
 
       this.active = true
 
-      this.viewer.toolController.activateTool(
-        this.getName())
+      this._viewer.toolController.activateTool(this.getName())
 
-      this.viewer.select([])
+      var bbox = this._viewer.model.getBoundingBox()
 
-      var bbox = this.viewer.model.getBoundingBox()
-
-      this.viewer.impl.createOverlayScene(
-        'TransformToolOverlay')
+      this._viewer.impl.createOverlayScene(
+        'TranslateToolOverlay')
 
       this._transformControlTx = new THREE.TransformControls(
-        this.viewer.impl.camera,
-        this.viewer.impl.canvas,
+        this._viewer.impl.camera,
+        this._viewer.impl.canvas,
         "translate")
 
       this._transformControlTx.setSize(
@@ -302,8 +395,8 @@ export default class TranslateTool extends EventsEmitter {
 
       this._transformControlTx.visible = false
 
-      this.viewer.impl.addOverlay(
-        'TransformToolOverlay',
+      this._viewer.impl.addOverlay(
+        'TranslateToolOverlay',
         this._transformControlTx)
 
       this._transformMesh = this.createTransformMesh()
@@ -311,7 +404,7 @@ export default class TranslateTool extends EventsEmitter {
       this._transformControlTx.attach(
         this._transformMesh)
 
-      this.viewer.addEventListener(
+      this._viewer.addEventListener(
         Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
         this.onAggregateSelectionChanged)
 
@@ -323,31 +416,29 @@ export default class TranslateTool extends EventsEmitter {
   // deactivate tool
   //
   ///////////////////////////////////////////////////////////////////////////
-  deactivate() {
+  deactivate () {
 
-    if(this.active) {
+    if (this.active) {
 
       this.active = false
 
-      this.viewer.toolController.deactivateTool(
-        this.getName())
+      this._viewer.toolController.deactivateTool(this.getName())
 
-      this.viewer.impl.removeOverlay(
-        'TransformToolOverlay',
+      this._viewer.impl.removeOverlay(
+        'TranslateToolOverlay',
         this._transformControlTx)
 
       this._transformControlTx.removeEventListener(
-        'change',
-        this.onTxChange)
+        'change', this.onTxChange)
 
-      this.viewer.impl.removeOverlayScene(
-        'TransformToolOverlay')
+      this._viewer.impl.removeOverlayScene(
+        'TranslateToolOverlay')
 
-      this.viewer.removeEventListener(
+      this._viewer.removeEventListener(
         Autodesk.Viewing.CAMERA_CHANGE_EVENT,
         this.onCameraChanged)
 
-      this.viewer.removeEventListener(
+      this._viewer.removeEventListener(
         Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
         this.onAggregateSelectionChanged)
 
@@ -355,18 +446,35 @@ export default class TranslateTool extends EventsEmitter {
     }
   }
 
-  ///////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////
   //
   //
-  ///////////////////////////////////////////////////////////////////////////
-  handleButtonDown (event, button) {
+  /////////////////////////////////////////////////////////////////
+  onPick () {
 
-    this._hitPoint = this.getHitPoint(event)
+    if(this.active) {
+
+      this._selectionMode = 'SELECTION_MODE_PICK'
+    }
+  }
+
+  ///////////////////////////////////////////////////////////////////////////
+  //
+  //
+  ///////////////////////////////////////////////////////////////////////////
+  handleButtonDown(event, button) {
 
     this._isDragging = true
 
     if (this._transformControlTx.onPointerDown(event))
       return true
+
+    var hitPoint = this.getHitPoint(event)
+
+    if (hitPoint) {
+
+      this._hitPoint.copy(hitPoint)
+    }
 
     return false
   }
@@ -375,7 +483,7 @@ export default class TranslateTool extends EventsEmitter {
   //
   //
   ///////////////////////////////////////////////////////////////////////////
-  handleButtonUp(event, button) {
+  handleButtonUp(event) {
 
     this._isDragging = false
 
@@ -415,6 +523,7 @@ export default class TranslateTool extends EventsEmitter {
 
     if (keyCode === 27) { //ESC
 
+      this._viewer.clearSelection()
       this.deactivate()
     }
 

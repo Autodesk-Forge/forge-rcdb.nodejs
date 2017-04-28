@@ -36,6 +36,7 @@
   background: whitesmoke;
   border-radius: 4px;
   outline: none;
+  height: 26px;
   width: 38px;
   float: left;
  }
@@ -44,7 +45,6 @@
   position: relative;
   font-size: 20px;
   color: #9b9b9b;
-  top: 1px;
 }
 
 .screenshot-manager .content > .controls button:hover > span {

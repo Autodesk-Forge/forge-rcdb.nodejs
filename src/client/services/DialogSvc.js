@@ -34,12 +34,15 @@ export default class DialogSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////////////
-  setState (state) {
+  setState (state, assign = false) {
 
     return new Promise ((resolve) => {
 
-      const dialogSvcState = Object.assign({},
-        this.getState(), state)
+      const dialogSvcState = assign
+        ? Object.assign({}, this.getState(), state)
+        : Object.assign({}, state, {
+          close: this.close
+        })
 
       const componentState = Object.assign({},
         this.component.state, {
@@ -81,7 +84,7 @@ export default class DialogSvc extends BaseSvc {
 
       open: false
 
-    }).then(() => {
+    }, false).then(() => {
 
       this.emit('dialog.close', result)
     })

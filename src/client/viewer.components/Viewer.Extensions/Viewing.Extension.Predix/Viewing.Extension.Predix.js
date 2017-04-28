@@ -23,7 +23,7 @@ import HotSpotCommand from 'HotSpot.Command'
 import hotspots from './hotspots'
 
 
-class PredixConfiguratorExtension extends ExtensionBase {
+class PredixExtension extends ExtensionBase {
 
   /////////////////////////////////////////////////////////////////
   // Class constructor
@@ -608,7 +608,7 @@ class IoTGraphContainer extends React.Component {
 }
 
 Autodesk.Viewing.theExtensionManager.registerExtension(
-  PredixConfiguratorExtension.ExtensionId,
-  PredixConfiguratorExtension)
+  PredixExtension.ExtensionId,
+  PredixExtension)
 
 module.exports = 'Viewing.Extension.Configurator.Predix'

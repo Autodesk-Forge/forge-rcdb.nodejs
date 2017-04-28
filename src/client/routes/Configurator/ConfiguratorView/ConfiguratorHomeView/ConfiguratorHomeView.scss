@@ -17,7 +17,17 @@
   background: rgba(255, 234, 0, 0.85);
 }
 
-@media screen and (min-width: 800px) {
+.configurator-view .home .model-item img {
+  height: 70px;
+  width: 70px;
+  float: left;
+}
+
+.configurator-view .home .model-item .label-container {
+  margin: 4px 0px 0px 8px;
+}
+
+@media screen and (min-width: 1000px) {
 
   .configurator-view .home .search {
     background: rgb(234, 234, 234);
@@ -41,12 +51,12 @@
     font-size: large;
     cursor: pointer;
     color: #000000;
-    height: 50px;
+    height: 80px;
     width: 33%;
   }
 }
 
-@media screen and (max-width: 799px) {
+@media screen and (max-width: 999px) {
 
   .configurator-view .home .search {
     background: rgb(234, 234, 234);
@@ -70,7 +80,7 @@
     font-size: large;
     cursor: pointer;
     color: #000000;
-    height: 50px;
+    height: 80px;
     width: 68%;
   }
 }

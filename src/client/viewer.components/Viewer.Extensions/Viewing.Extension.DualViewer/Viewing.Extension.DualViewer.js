@@ -178,7 +178,7 @@ class DualViewerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   onSelectionChanged (e) {
 
-    if (!this.selection1Locked) {
+    if (!this.selection1Locked && this.dualViewer) {
       this.selection2Locked = true
       this.dualViewer.select(e.dbIdArray)
       this.selection2Locked = false

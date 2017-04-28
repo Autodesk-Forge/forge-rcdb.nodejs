@@ -381,7 +381,7 @@ class FaderExtension extends ExtensionBase
       <div>
         <div className="row">
           <div className="control-element">
-            Signal Strength - Legend
+            Signal Attenuation - Legend
           </div>
         </div>
 

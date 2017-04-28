@@ -40,7 +40,10 @@ class ConfiguratorHomeView extends React.Component {
 
     this.setState(Object.assign({}, this.state, {
       models: modelsbyName
-    }))
+    }), () => {
+
+      this.batchRequestThumbnails(5)
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -72,10 +75,46 @@ class ConfiguratorHomeView extends React.Component {
   onSearchChanged (e) {
 
     const state = Object.assign(this.state, {
-      search: e.target.value
+      search: e.target.value.toLowerCase()
     })
 
     this.setState(state)
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  batchRequestThumbnails (size) {
+
+    const chunks = _.chunk(this.state.models, size)
+
+    chunks.forEach((modelChunk) => {
+
+      const modelIds = modelChunk.map((model) => {
+        return model._id
+      })
+
+      this.modelSvc.getThumbnails('configurator', modelIds).then(
+        (thumbnails) => {
+
+          const models = this.state.models.map((model) => {
+
+            const idx = modelIds.indexOf(model._id)
+
+            return (idx < 0
+              ? model
+              : Object.assign({}, model, {
+              thumbnail: thumbnails[idx]
+            }))
+          })
+
+          this.setState(
+            Object.assign({}, this.state, {
+              models
+            }))
+        })
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -84,10 +123,9 @@ class ConfiguratorHomeView extends React.Component {
   /////////////////////////////////////////////////////////
   renderModels () {
 
-    const search = this.state.search.toLowerCase()
+    const {search, models} = this.state
 
-    const filteredModels =
-      this.state.models.filter((model) => {
+    const filteredModels = models.filter((model) => {
         return search.length
           ? model.name.toLowerCase().indexOf(search) > -1
           : true
@@ -100,6 +138,8 @@ class ConfiguratorHomeView extends React.Component {
       return (
         <div key={model._id} className="model-item"
           onClick={()=>this.gotToLink(href)}>
+          <img className={model.thumbnail ? "":"default-thumbnail"}
+            src={model.thumbnail ? model.thumbnail : ""}/>
           <Label text={model.name}/>
         </div>
       )
