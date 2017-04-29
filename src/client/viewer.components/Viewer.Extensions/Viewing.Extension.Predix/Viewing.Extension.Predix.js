@@ -277,7 +277,7 @@ class PredixExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////////////
   static get ExtensionId () {
 
-    return 'Viewing.Extension.Configurator.Predix'
+    return 'Viewing.Extension.Predix'
   }
 
   /////////////////////////////////////////////////////////////////
@@ -611,4 +611,4 @@ Autodesk.Viewing.theExtensionManager.registerExtension(
   PredixExtension.ExtensionId,
   PredixExtension)
 
-module.exports = 'Viewing.Extension.Configurator.Predix'
+module.exports = 'Viewing.Extension.Predix'

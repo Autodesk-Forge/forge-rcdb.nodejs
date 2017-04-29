@@ -251,7 +251,7 @@ class CATExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////////////
   static get ExtensionId () {
 
-    return 'Viewing.Extension.Configurator.BobCAT'
+    return 'Viewing.Extension.CAT'
   }
 
   /////////////////////////////////////////////////////////////////
