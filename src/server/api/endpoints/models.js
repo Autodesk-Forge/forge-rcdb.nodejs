@@ -1,5 +1,6 @@
 import ServiceManager from '../services/SvcManager'
 import express from 'express'
+import config from'c0nfig'
 import Debug from 'debug'
 
 module.exports = function() {
@@ -22,17 +23,22 @@ module.exports = function() {
         db + '-ModelSvc')
 
       var opts = {
-        fieldQuery:{
-          $or: [
-            { private: false },
-            { private: null }
-          ]
-        },
         pageQuery: {
           path: 1,
           name: 1,
           urn: 1,
           env: 1
+        }
+      }
+
+      // Hide private models if not in DEV
+      if (config.env !== 'development') {
+
+        opts.fieldQuery = {
+          $or: [
+            { private: false },
+            { private: null }
+          ]
         }
       }
 

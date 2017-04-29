@@ -21,6 +21,53 @@
   height: 100%;
 }
 
+.meta-properties .content > .controls {
+  margin: 10px 10px 0px 10px;
+  display: inline-block;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.meta-properties .content > .controls > .row {
+  width: 100%;
+  margin: 0;
+}
+
+.meta-properties .content > .controls button {
+  background: whitesmoke;
+  border-radius: 4px;
+  margin-left: 4px;
+  outline: none;
+  height: 26px;
+  width: 30px;
+  float: left;
+}
+
+.meta-properties .content > .controls button > span {
+  position: relative;
+  font-size: 16px;
+  color: #9b9b9b;
+  top: -1px;
+}
+
+.meta-properties .content > .controls button:disabled > span {
+  color: #d0d0d0;
+}
+
+.meta-properties .content > .controls button:hover:not(:disabled) > span {
+  color: #FF9800;
+}
+
+.meta-properties .content > .controls button:disabled > span {
+  color: #d0d0d0;
+}
+
+.meta-properties .content > .controls label {
+  margin: 4px 10px 0 10px;
+  font-weight: normal;
+  float: left;
+}
+
 /////////////////////////////////////////////////////////
 // title controls
 //

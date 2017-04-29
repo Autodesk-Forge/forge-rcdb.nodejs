@@ -24,7 +24,7 @@ export default class ContextMenuHandler extends
   /////////////////////////////////////////////////////////////////
   buildMenu (event, status) {
 
-    var menu = super.buildMenu(event, status)
+    const menu = super.buildMenu(event, status)
 
     return this.options.buildMenu ?
       this.options.buildMenu(menu) :

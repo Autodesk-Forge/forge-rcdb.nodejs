@@ -5,6 +5,8 @@
 /////////////////////////////////////////////////////////////////////
 const config = {
 
+  env: 'development',
+
   client: {
     host: 'http://localhost',
     env: 'development',

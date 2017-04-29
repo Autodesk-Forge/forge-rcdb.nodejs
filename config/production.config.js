@@ -5,6 +5,8 @@
 /////////////////////////////////////////////////////////////////////
 const config = {
 
+  env: 'production',
+
   client: {
     // this the public host name of your server for the
     // client socket to connect.

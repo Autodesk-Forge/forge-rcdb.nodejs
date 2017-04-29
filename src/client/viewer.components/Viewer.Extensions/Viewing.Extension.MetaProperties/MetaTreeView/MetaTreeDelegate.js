@@ -11,11 +11,9 @@ export default class MetaTreeDelegate extends TreeDelegate {
   //
   //
   /////////////////////////////////////////////////////////////
-  constructor (model) {
+  constructor (nodeId) {
 
     super ()
-
-    this.instanceTree = model.getData().instanceTree
   }
 
   /////////////////////////////////////////////////////////////

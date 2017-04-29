@@ -21,6 +21,7 @@ import UploadAPI from './api/endpoints/upload'
 import ConfigAPI from './api/endpoints/config'
 import ModelAPI from './api/endpoints/models'
 import ForgeAPI from './api/endpoints/forge'
+import MetaAPI from './api/endpoints/meta'
 
 //Services
 import DerivativesSvc from './api/services/DerivativesSvc'
@@ -93,11 +94,12 @@ app.use(helmet())
 //
 /////////////////////////////////////////////////////////////////////
 app.use('/api/materials', MaterialAPI())
-app.use('/api/socket', SocketAPI())
-app.use('/api/upload', UploadAPI())
-app.use('/api/config', ConfigAPI())
-app.use('/api/models', ModelAPI())
-app.use('/api/forge', ForgeAPI())
+app.use('/api/socket',    SocketAPI())
+app.use('/api/upload',    UploadAPI())
+app.use('/api/config',    ConfigAPI())
+app.use('/api/models',    ModelAPI())
+app.use('/api/forge',     ForgeAPI())
+app.use('/api/meta',      MetaAPI())
 
 /////////////////////////////////////////////////////////////////////
 // Viewer GET Proxy

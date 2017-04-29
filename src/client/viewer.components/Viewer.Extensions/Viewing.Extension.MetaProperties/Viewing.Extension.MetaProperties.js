@@ -3,9 +3,11 @@
 // By Philippe Leefsma, Autodesk Inc, April 2017
 //
 /////////////////////////////////////////////////////////////////
+import MetaAPI from './Viewing.Extension.MetaProperties.API'
 import ExtensionBase from 'Viewer.ExtensionBase'
 import WidgetContainer from 'WidgetContainer'
 import MetaTreeView from './MetaTreeView'
+import ServiceManager from 'SvcManager'
 import Toolkit from 'Viewer.Toolkit'
 import { ReactLoader } from 'Loader'
 import ReactDOM from 'react-dom'
@@ -22,10 +24,20 @@ class MetaPropertiesExtension extends ExtensionBase {
 
 		super (viewer, options)
 
+    this.onContextMenu = this.onContextMenu.bind(this)
     this.onSelection = this.onSelection.bind(this)
     this.renderTitle = this.renderTitle.bind(this)
 
+    this.dialogSvc =
+      ServiceManager.getService('DialogSvc')
+
     this.react = options.react
+
+    const modelId = this.options.dbModel._id
+
+    this.api = new MetaAPI(
+      options.apiUrl +
+      `/meta/${options.database}/${modelId}`)
 	}
 
 	/////////////////////////////////////////////////////////
@@ -37,10 +49,17 @@ class MetaPropertiesExtension extends ExtensionBase {
     this.viewer.addEventListener(
       Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT, (e) => {
 
-        if(this.options.loader){
+        if (this.options.loader) {
           this.options.loader.hide()
         }
       })
+
+    this.viewerEvent([
+
+      Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
+      Autodesk.Viewing.GEOMETRY_LOADED_EVENT
+
+    ]).then((args) => this.onModelLoaded(args))
 
     this.viewer.addEventListener(
       Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
@@ -54,6 +73,12 @@ class MetaPropertiesExtension extends ExtensionBase {
 
       this.react.pushRenderExtension(this)
     })
+
+    this.viewer.loadDynamicExtension(
+      'Viewing.Extension.ContextMenu').then((contextMenu) => {
+
+        contextMenu.on('buildMenu', this.onContextMenu)
+      })
 
     console.log('Viewing.Extension.MetaProperties loaded')
 
@@ -88,12 +113,26 @@ class MetaPropertiesExtension extends ExtensionBase {
       Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
       this.onSelection)
 
-    this.eventTool.deactivate()
-
     console.log('Viewing.Extension.MetaProperties loaded')
 
 		return true
 	}
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onModelLoaded () {
+
+    const instanceTree =
+      this.viewer.model.getData().instanceTree
+
+    const nodeId = instanceTree.getRootId()
+
+    this.react.setState({
+      nodeId
+    })
+  }
 
   /////////////////////////////////////////////////////////
   //
@@ -106,6 +145,24 @@ class MetaPropertiesExtension extends ExtensionBase {
       const dbId = e.selections[0].dbIdArray[0]
 
     }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onContextMenu (event) {
+
+    console.log(event)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  showMetaDlg () {
+
+
   }
 
   /////////////////////////////////////////////////////////
@@ -162,12 +219,34 @@ class MetaPropertiesExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  renderControls () {
+
+    return (
+      <div className="controls">
+
+        <div className="row">
+
+          <button onClick={() => this.showMetaDlg()}
+            title="Add met property">
+            <span className="fa fa-plus"/>
+          </button>
+
+        </div>
+
+      </div>
+    )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   renderContent () {
 
     const {nodeId} = this.react.getState()
 
     const content = nodeId
-      ? <MetaTreeView nodeId={nodeId}/>
+      ? <div/> //<MetaTreeView nodeId={nodeId}/>
       : <div/>
 
     return (
@@ -190,6 +269,7 @@ class MetaPropertiesExtension extends ExtensionBase {
         showTitle={opts.showTitle}
         className={this.className}>
 
+        { this.renderControls() }
         { this.renderContent () }
 
       </WidgetContainer>

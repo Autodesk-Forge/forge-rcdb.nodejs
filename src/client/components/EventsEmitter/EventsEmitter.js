@@ -62,20 +62,33 @@ export default class EventsEmitter {
   emit (event /* , args... */) {
 
     if(this._events[event] === undefined)
-      return;
+      return null;
 
-    var tmpArray = this._events[event].slice();
+    var tmpArray = this._events[event].slice()
 
-    for(var i = 0; i < tmpArray.length; ++i) {
+    var results = []
 
-      var result	= tmpArray[i].apply(this,
+    for (var i = 0; i < tmpArray.length; ++i) {
+
+      var result = tmpArray[i].apply(this,
         Array.prototype.slice.call(arguments, 1));
 
-      if(result !== undefined )
-        return result;
+      if(result !== undefined)
+        results.push(result)
     }
 
-    return undefined;
+    if (!results.length) {
+
+      return null
+
+    } else if (results.length === 1) {
+
+      return results[0]
+
+    } else {
+
+      return results
+    }
   }
 
   ///////////////////////////////////////////////////////////////////
@@ -169,27 +182,40 @@ export const EventsEmitterComposer =
   emit (event /* , args... */) {
 
     if(this._events[event] === undefined)
-      return;
+      return null;
 
-    var tmpArray = this._events[event].slice();
+    var tmpArray = this._events[event].slice()
 
-    for(var i = 0; i < tmpArray.length; ++i) {
+    var results = []
 
-      var result	= tmpArray[i].apply(this,
+    for (var i = 0; i < tmpArray.length; ++i) {
+
+      var result = tmpArray[i].apply(this,
         Array.prototype.slice.call(arguments, 1));
 
       if(result !== undefined )
-        return result;
+        results.push(result)
     }
 
-    return undefined;
+    if (!results.length) {
+
+      return null
+
+    } else if (results.length === 1) {
+
+      return results[0]
+
+    } else {
+
+      return results
+    }
   }
 
   ///////////////////////////////////////////////////////////////////
   //
   //
   ///////////////////////////////////////////////////////////////////
-  guid(format='xxxxxxxxxxxx') {
+  guid (format='xxxxxxxxxxxx') {
 
     var d = new Date().getTime();
 

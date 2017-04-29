@@ -375,7 +375,7 @@ export default class ModelSvc extends BaseSvc {
   /////////////////////////////////////////////////////////
   getConfigSequences (modelId) {
 
-    return new Promise(async(resolve, reject)=> {
+    return new Promise(async(resolve, reject) => {
 
       try {
 
@@ -397,7 +397,7 @@ export default class ModelSvc extends BaseSvc {
 
         return resolve (model.sequences || [])
 
-      } catch(ex){
+      } catch (ex) {
 
         return reject(ex)
       }
@@ -692,12 +692,9 @@ export default class ModelSvc extends BaseSvc {
           },
           { multi: true }, (err) => {
 
-            if (err) {
-
-              return reject(err)
-            }
-
-            return resolve (sequenceId)
+            return err
+              ? reject(err)
+              : resolve (sequenceId)
           })
 
       } catch (ex) {
@@ -706,4 +703,170 @@ export default class ModelSvc extends BaseSvc {
       }
     })
   }
+
+  /////////////////////////////////////////////////////////
+  // Get all meta properties for model (debug only)
+  //
+  /////////////////////////////////////////////////////////
+  getModelMetaProperties (modelId) {
+
+    return new Promise(async(resolve, reject)=> {
+
+      try {
+
+        const query = {
+          fieldQuery:{
+            _id: new mongo.ObjectId(modelId)
+          },
+          pageQuery:{
+            metaProperties: 1
+          }
+        }
+
+        const model = await dbSvc.findOne(
+          this._config.models,
+          query)
+
+        return resolve (model.metaProperties || [])
+
+      } catch (ex) {
+
+        return reject(ex)
+      }
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // Get meta properties for specific nodeId
+  //
+  /////////////////////////////////////////////////////////
+  getNodeMetaProperties (modelId, nodeId) {
+
+    return new Promise(async(resolve, reject) => {
+
+      try {
+
+        const dbSvc = ServiceManager.getService(
+          this._config.dbName)
+
+        const collection = await dbSvc.getCollection(
+          this._config.models)
+
+        collection.aggregate([
+
+          {
+            $match: {
+              '_id': new mongo.ObjectId(modelId)
+            }
+          },
+          {
+            $project: {
+              metaProperties: 1
+            }
+          },
+          {
+            $match: {
+              'metaProperties.nodeId': nodeId
+            }
+          },
+
+        ], function (err, result) {
+
+          if (err) {
+
+            return reject(err)
+          }
+
+          if(!result || !result.length){
+
+            return reject({error: 'Not Found'})
+          }
+
+          return resolve(result)
+        })
+
+      } catch (ex) {
+
+        return reject(ex)
+      }
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // add meta property
+  //
+  /////////////////////////////////////////////////////////
+  addNodeMetaProperty (modelId, metaProperty) {
+
+    return new Promise(async(resolve, reject) => {
+
+      try {
+
+        const dbSvc = ServiceManager.getService(
+          this._config.dbName)
+
+        const collection = await dbSvc.getCollection(
+          this._config.models)
+
+        collection.update(
+          {
+            '_id': new mongo.ObjectID(modelId)
+          },
+          {
+            $push: {
+              'metaProperties': metaProperty
+            }
+          }, (err) => {
+
+            return err
+              ? reject(err)
+              : resolve (states)
+          })
+
+      } catch (ex) {
+
+        return reject(ex)
+      }
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // delete node meta property
+  //
+  /////////////////////////////////////////////////////////
+  deleteNodeMetaProperty (modelId, metaId) {
+
+    return new Promise(async(resolve, reject) => {
+
+      try {
+
+        const dbSvc = ServiceManager.getService(
+          this._config.dbName)
+
+        const collection = await dbSvc.getCollection(
+          this._config.models)
+
+        collection.update(
+          {
+            '_id': new mongo.ObjectID(modelId)
+          },
+          {
+            '$pull': {
+              'metaProperties': {id: metaId}
+            }
+          },
+          { multi: true }, (err) => {
+
+            return err
+              ? reject(err)
+              : resolve (metaId)
+          })
+
+      } catch (ex) {
+
+        return reject(ex)
+      }
+    })
+  }
+
 }
