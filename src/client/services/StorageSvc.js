@@ -37,6 +37,6 @@ export default class StorageSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   load (key) {
 
-    return Lockr.get(this._config.storageKey + '.' + key)
+    return Lockr.get(this._config.storageKey + '.' + key) || {}
   }
 }
