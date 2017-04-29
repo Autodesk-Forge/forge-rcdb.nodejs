@@ -31,12 +31,7 @@ export default class MetaTreeView extends React.Component {
 
     super (props)
 
-    this.delegate = new MetaTreeDelegate(props.nodeId)
-
-    this.delegate.on('node.checked', (node) => {
-
-      this.props.onNodeChecked(node)
-    })
+    this.delegate = new MetaTreeDelegate(props.properties)
   }
 
   /////////////////////////////////////////////////////////
@@ -45,12 +40,7 @@ export default class MetaTreeView extends React.Component {
   /////////////////////////////////////////////////////////
   componentDidMount () {
 
-    const rootNode = this.delegate.createRootNode({
-      id: instanceTree.getRootId(),
-      checked: true,
-      type: 'root',
-      parent: null
-    })
+    const rootNode = this.delegate.createRootNode()
 
     this.tree = new TreeView (
       this.delegate, rootNode, this.treeContainer, {
@@ -58,7 +48,6 @@ export default class MetaTreeView extends React.Component {
       })
 
     rootNode.expand ()
-    rootNode.setChecked (true)
   }
 
   /////////////////////////////////////////////////////////

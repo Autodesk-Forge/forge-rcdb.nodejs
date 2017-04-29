@@ -32,12 +32,6 @@ class MetaPropertiesExtension extends ExtensionBase {
       ServiceManager.getService('DialogSvc')
 
     this.react = options.react
-
-    const modelId = this.options.dbModel._id
-
-    this.api = new MetaAPI(
-      options.apiUrl +
-      `/meta/${options.database}/${modelId}`)
 	}
 
 	/////////////////////////////////////////////////////////
@@ -67,7 +61,9 @@ class MetaPropertiesExtension extends ExtensionBase {
 
     this.react.setState({
 
-      nodeId: null
+      properties: [],
+      nodeId: null,
+      model: null
 
     }).then (() => {
 
@@ -122,29 +118,77 @@ class MetaPropertiesExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onModelLoaded () {
+  onModelLoaded (args) {
 
-    const instanceTree =
-      this.viewer.model.getData().instanceTree
+    const model = args[0].model
 
-    const nodeId = instanceTree.getRootId()
-
-    this.react.setState({
-      nodeId
-    })
+    this.setModel(model)
   }
 
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  onSelection (e) {
+  setModel (model) {
 
-    if (e.selections.length) {
+    this.react.setState({
+      model
+    })
 
-      const dbId = e.selections[0].dbIdArray[0]
+    const modelId = model.dbModelId ||
+      this.options.dbModel._id
 
+    const {apiUrl, database} = this.options.apiUrl
+
+    this.api = new MetaAPI(
+      `${apiUrl}/meta/${database}/${modelId}`)
+
+    const instanceTree = model.getData().instanceTree
+
+    this.loadNodeProperties(instanceTree.getRootId())
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onSelection (event) {
+
+    if (event.selections.length) {
+
+      const nodeId = event.selections[0].dbIdArray[0]
+
+      this.loadNodeProperties(nodeId)
     }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async loadNodeProperties (nodeId) {
+
+    const {model} = this.react.getState()
+
+    const modelProperties =
+      await Toolkit.getProperties(
+        model, nodeId)
+
+    await this.react.setState({
+      properties: modelProperties
+    })
+
+    const metaProperties =
+      await this.api.getNodeMetaProperties(nodeId)
+
+    const properties = [
+      ...modelProperties,
+      ...metaProperties
+    ]
+
+    this.react.setState({
+      properties
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -153,16 +197,33 @@ class MetaPropertiesExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   onContextMenu (event) {
 
-    console.log(event)
+    if (event.selectedDbId) {
+
+      event.menu.push({
+        title: 'Add Meta Property',
+        target: () => {
+          this.showMetaDlg(event.selectedDbId)
+        }
+      })
+
+      return event.menu
+    }
   }
 
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  showMetaDlg () {
+  showMetaDlg (nodeId) {
 
+    const metaProperty = {
+      category: 'Forge',
+      value: 'MetaProperty Demo',
+      id: this.guid(),
+      nodeId: nodeId.toString()
+    }
 
+    this.api.addNodeMetaProperty(metaProperty)
   }
 
   /////////////////////////////////////////////////////////
@@ -224,16 +285,25 @@ class MetaPropertiesExtension extends ExtensionBase {
     return (
       <div className="controls">
 
-        <div className="row">
-
-          <button onClick={() => this.showMetaDlg()}
-            title="Add met property">
-            <span className="fa fa-plus"/>
-          </button>
-
-        </div>
-
       </div>
+    )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  renderTreeView (properties) {
+
+    const {model, nodeId} = this.react.getState()
+
+    const instanceTree = model.getData().instanceTree
+
+    const name = instanceTree.getNodeName(nodeId)
+
+    return (
+      <MetaTreeView properties={properties}
+        name={name}/>
     )
   }
 
@@ -243,15 +313,15 @@ class MetaPropertiesExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   renderContent () {
 
-    const {nodeId} = this.react.getState()
+    const {properties} = this.react.getState()
 
-    const content = nodeId
-      ? <div/> //<MetaTreeView nodeId={nodeId}/>
+    const content = properties.length
+      ? this.renderTreeView(properties)
       : <div/>
 
     return (
       <div className="content">
-        <ReactLoader show={!nodeId}/>
+        <ReactLoader show={!properties.length}/>
         { content }
       </div>
     )

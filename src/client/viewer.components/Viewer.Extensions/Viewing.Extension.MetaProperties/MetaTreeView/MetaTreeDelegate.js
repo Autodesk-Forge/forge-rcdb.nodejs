@@ -11,7 +11,7 @@ export default class MetaTreeDelegate extends TreeDelegate {
   //
   //
   /////////////////////////////////////////////////////////////
-  constructor (nodeId) {
+  constructor (properties) {
 
     super ()
   }
@@ -20,16 +20,14 @@ export default class MetaTreeDelegate extends TreeDelegate {
   //
   //
   /////////////////////////////////////////////////////////////
-  createRootNode (data) {
+  createRootNode () {
 
     this.rootNode = new MetaTreeNode({
-      name: this.instanceTree.getNodeName(data.id),
-      group: this.getChildIds(data.id).length,
-      instanceTree: this.instanceTree,
-      checked: data.checked,
-      parent: data.parent,
-      type: data.type,
-      id: data.id
+      name: 'Root',
+      group: true,
+      parent: null,
+      type: 'root',
+      id: 'rootId'
     })
 
     this.rootNode.on('checked', (node) => {
@@ -80,22 +78,5 @@ export default class MetaTreeDelegate extends TreeDelegate {
   forEachChild (node, addChild) {
 
     node.addChild = addChild
-  }
-
-  /////////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////////
-  getChildIds (nodeId) {
-
-    const childIds = []
-
-    this.instanceTree.enumNodeChildren(nodeId,
-      (childId) => {
-
-        childIds.push(childId)
-      })
-
-    return childIds
   }
 }

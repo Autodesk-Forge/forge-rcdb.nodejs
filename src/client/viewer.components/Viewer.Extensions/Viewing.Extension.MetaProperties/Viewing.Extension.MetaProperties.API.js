@@ -41,13 +41,13 @@ export default class MetaAPI extends ClientAPI {
   //
   //
   ///////////////////////////////////////////////////////////////
-  addMetaProperty (metaProperty) {
+  addNodeMetaProperty (metaProperty) {
 
     const payload = {
       metaProperty
     }
 
-    const url = this.apiUrl + `/sequences`
+    const url = this.apiUrl
 
     return this.ajax({
       url: url,
@@ -64,7 +64,7 @@ export default class MetaAPI extends ClientAPI {
   //
   //
   ///////////////////////////////////////////////////////////////
-  deleteMetaProperty (metaId) {
+  deleteNodeMetaProperty (metaId) {
 
     const url = this.apiUrl + `/${metaId}`
 

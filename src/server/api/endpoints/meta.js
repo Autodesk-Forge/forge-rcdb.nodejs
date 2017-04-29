@@ -80,7 +80,7 @@ module.exports = function() {
       res.json(response)
 
     } catch (error) {
-
+      
       res.status(error.statusCode || 500)
       res.json(error)
     }

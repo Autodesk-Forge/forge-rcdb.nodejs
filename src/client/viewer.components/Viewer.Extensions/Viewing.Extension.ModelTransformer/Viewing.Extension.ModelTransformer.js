@@ -764,7 +764,7 @@ class ModelTransformerExtension extends ExtensionBase {
           <button onClick={() => this.pickPosition() }
             disabled={!(state.translate && selection)}
             title="Pick position">
-            <span className="fa fa-times"/>
+            <span className="fa fa-crosshairs"/>
           </button>
 
         </div>

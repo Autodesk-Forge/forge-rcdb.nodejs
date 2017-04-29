@@ -714,6 +714,9 @@ export default class ModelSvc extends BaseSvc {
 
       try {
 
+        const dbSvc = ServiceManager.getService(
+          this._config.dbName)
+
         const query = {
           fieldQuery:{
             _id: new mongo.ObjectId(modelId)
@@ -765,6 +768,9 @@ export default class ModelSvc extends BaseSvc {
             }
           },
           {
+            "$unwind": "$metaProperties"
+          },
+          {
             $match: {
               'metaProperties.nodeId': nodeId
             }
@@ -772,17 +778,13 @@ export default class ModelSvc extends BaseSvc {
 
         ], function (err, result) {
 
-          if (err) {
+          const properties = result
+            ? result.map((e) => { return e.metaProperties})
+            : []
 
-            return reject(err)
-          }
-
-          if(!result || !result.length){
-
-            return reject({error: 'Not Found'})
-          }
-
-          return resolve(result)
+          return err
+            ? reject(err)
+            : resolve(properties)
         })
 
       } catch (ex) {
@@ -820,7 +822,7 @@ export default class ModelSvc extends BaseSvc {
 
             return err
               ? reject(err)
-              : resolve (states)
+              : resolve (metaProperty)
           })
 
       } catch (ex) {
