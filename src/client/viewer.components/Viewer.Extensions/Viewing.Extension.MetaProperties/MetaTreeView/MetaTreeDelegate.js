@@ -11,7 +11,7 @@ export default class MetaTreeDelegate extends TreeDelegate {
   //
   //
   /////////////////////////////////////////////////////////////
-  constructor (properties) {
+  constructor () {
 
     super ()
   }
@@ -20,7 +20,7 @@ export default class MetaTreeDelegate extends TreeDelegate {
   //
   //
   /////////////////////////////////////////////////////////////
-  setProperties (data) {
+  setProperties (properties) {
 
     this.mapByCategory(properties)
   }
@@ -33,6 +33,7 @@ export default class MetaTreeDelegate extends TreeDelegate {
 
     this.rootNode = new MetaTreeNode({
 
+      propsMap: this.propsMap,
       name: data.name,
       delegate: this,
       group: true,
@@ -62,6 +63,11 @@ export default class MetaTreeDelegate extends TreeDelegate {
     const container = document.createElement('div')
 
     parentDomElement.appendChild(container)
+
+    node.type.split('.').forEach((cls) => {
+
+      parentDomElement.classList.add(cls)
+    })
 
     node.mount(container)
   }
@@ -100,9 +106,13 @@ export default class MetaTreeDelegate extends TreeDelegate {
         ? prop.displayCategory
         : 'Other'
 
-      this.propsMap[category] = this.propsMap[category] || []
+      if (category.indexOf('__') !== 0) {
 
-      this.propsMap[category].push(prop)
+        this.propsMap[category] =
+          this.propsMap[category] || []
+
+        this.propsMap[category].push(prop)
+      }
     })
   }
 }

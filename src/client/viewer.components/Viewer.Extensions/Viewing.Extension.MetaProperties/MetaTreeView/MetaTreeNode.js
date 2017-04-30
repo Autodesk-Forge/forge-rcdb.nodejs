@@ -30,6 +30,7 @@ export default class MetaTreeNode extends EventsEmitter {
     this.id           = props.id
 
     this.children = []
+    this.props = props
   }
 
   /////////////////////////////////////////////////////////////
@@ -66,10 +67,13 @@ export default class MetaTreeNode extends EventsEmitter {
   /////////////////////////////////////////////////////////////
   destroy () {
 
-    this.children.forEach((child) => {
+    if (this.children) {
 
-      child.destroy ()
-    })
+      this.children.forEach((child) => {
+
+        child.destroy ()
+      })
+    }
 
     ReactDOM.unmountComponentAtNode(
       this.domContainer)
@@ -116,20 +120,54 @@ export default class MetaTreeNode extends EventsEmitter {
   /////////////////////////////////////////////////////////////
   loadChildren () {
 
-    //this.children = childIds.map((id) => {
-    //
-    //  const childNode = new MetaTreeNode({
-    //    name: this.instanceTree.getNodeName(id),
-    //    group: true,
-    //    parent: this,
-    //    type: '',
-    //    id
-    //  })
-    //
-    //  this.addChild(childNode)
-    //
-    //  return childNode
-    //})
+    switch (this.type) {
+
+      case 'root':
+
+        const categories = _.sortBy(
+          Object.keys(this.props.propsMap), (item) => {
+            return item
+          })
+
+        this.children = categories.map((category) => {
+
+          const childNode = new MetaTreeNode({
+            properties: this.props.propsMap[category],
+            delegate: this.delegate,
+            type: 'category',
+            id: this.guid(),
+            name: category,
+            parent: this,
+            group: true
+          })
+
+          this.addChild(childNode)
+
+          return childNode
+        })
+
+        break
+
+      case 'category':
+
+        this.children =
+          this.props.properties.forEach((prop) => {
+
+            const childNode = new MetaTreeNode({
+              id: prop.id || this.guid(),
+              value: prop.displayValue,
+              delegate: this.delegate,
+              name: prop.displayName,
+              type: 'property',
+              parent: this,
+              group: false
+            })
+
+            this.addChild(childNode)
+
+            return childNode
+        })
+    }
   }
 }
 

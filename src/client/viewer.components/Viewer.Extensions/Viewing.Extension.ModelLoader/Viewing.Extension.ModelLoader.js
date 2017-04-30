@@ -362,7 +362,7 @@ class ModelLoaderExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  async setActiveModel (model, options = {}) {
+  async setActiveModel (model, params = {}) {
 
     if (options.fitToView) {
 
@@ -381,7 +381,7 @@ class ModelLoaderExtension extends ExtensionBase {
 
       if (extension.setModel) {
 
-        extension.setModel(model, options)
+        extension.setModel(model, params)
       }
     }
   }

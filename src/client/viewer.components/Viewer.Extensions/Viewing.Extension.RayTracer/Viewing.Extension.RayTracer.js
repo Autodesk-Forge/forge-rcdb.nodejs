@@ -212,36 +212,31 @@ class RaytracerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////////
-  setModel (model, options) {
+  setModel (model, params) {
 
-    const onSetModel = () => {
-
-      this.react.setState({
-        model
-      })
-
-      this.leafNodesMap = {}
-
-      Toolkit.getLeafNodes (model).then((dbIds) => {
-
-        dbIds.forEach((dbId) => {
-          this.leafNodesMap[dbId] = true
-        })
-      })
-    }
-
-    switch (options.source) {
+    switch (params.source) {
 
       case 'loaded':
 
         return this.viewerEvent([
           Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
           Autodesk.Viewing.GEOMETRY_LOADED_EVENT
-        ]).then(() => onSetModel())
+        ]).then(() => { })
 
       case 'dropdown':
 
-        return onSetModel()
+        this.react.setState({
+          model
+        })
+
+        this.leafNodesMap = {}
+
+        Toolkit.getLeafNodes (model).then((dbIds) => {
+
+          dbIds.forEach((dbId) => {
+            this.leafNodesMap[dbId] = true
+          })
+        })
 
       default:
         return

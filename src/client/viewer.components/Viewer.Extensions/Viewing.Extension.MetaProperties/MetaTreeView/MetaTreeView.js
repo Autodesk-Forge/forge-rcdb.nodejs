@@ -31,17 +31,19 @@ export default class MetaTreeView extends React.Component {
 
     super (props)
 
-    this.delegate = new MetaTreeDelegate(props.properties)
+    this.delegate = new MetaTreeDelegate()
   }
 
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  componentDidMount () {
+  loadTree (name, properties) {
+
+    this.delegate.setProperties(properties)
 
     const rootNode = this.delegate.createRootNode({
-      name: this.props.name
+      name
     })
 
     this.tree = new TreeView (
@@ -56,13 +58,18 @@ export default class MetaTreeView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  componentDidMount () {
+
+    this.loadTree (
+      this.props.name,
+      this.props.properties)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   shouldComponentUpdate (nextProps) {
-
-    if (nextProps.model  !== this.props.model ||
-        nextProps.nodeId !== this.props.nodeId) {
-
-      return true
-    }
 
     return false
   }
@@ -71,13 +78,30 @@ export default class MetaTreeView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  componentWillReceiveProps (props) {
+
+    if (props.model  !== this.props.model ||
+        props.nodeId !== this.props.nodeId) {
+
+      this.delegate.destroy()
+
+      this.tree.destroy()
+
+      this.loadTree (
+        props.name,
+        props.properties)
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   componentDidUpdate () {
 
-    console.log('UPDATE')
+    this.delegate.destroy()
 
-    this.delegate.unmount()
-
-    this.tree.clear()
+    this.tree.destroy()
   }
 
   /////////////////////////////////////////////////////////
@@ -86,9 +110,9 @@ export default class MetaTreeView extends React.Component {
   /////////////////////////////////////////////////////////
   componentWillUnmount () {
 
-    this.delegate.unmount()
+    this.delegate.destroy()
 
-    this.tree.clear()
+    this.tree.destroy()
   }
 
   /////////////////////////////////////////////////////////

@@ -138,7 +138,7 @@ class MetaPropertiesExtension extends ExtensionBase {
     const modelId = model.dbModelId ||
       this.options.dbModel._id
 
-    const {apiUrl, database} = this.options.apiUrl
+    const {apiUrl, database} = this.options
 
     this.api = new MetaAPI(
       `${apiUrl}/meta/${database}/${modelId}`)
@@ -159,6 +159,17 @@ class MetaPropertiesExtension extends ExtensionBase {
       const nodeId = event.selections[0].dbIdArray[0]
 
       this.loadNodeProperties(nodeId)
+
+    } else {
+
+      const {model} = this.react.getState()
+
+      if (model) {
+
+        const instanceTree = model.getData().instanceTree
+
+        this.loadNodeProperties(instanceTree.getRootId())
+      }
     }
   }
 
@@ -215,7 +226,8 @@ class MetaPropertiesExtension extends ExtensionBase {
 
     const metaProperty = {
       displayCategory: 'Forge',
-      displayValue: 'MetaProperty Demo',
+      displayValue: 'Demo',
+      displayName: 'Meta',
       id: this.guid(),
       nodeId: nodeId.toString()
     }
@@ -297,8 +309,6 @@ class MetaPropertiesExtension extends ExtensionBase {
     const instanceTree = model.getData().instanceTree
 
     const name = instanceTree.getNodeName(nodeId)
-
-    console.log('Name: ' + name)
 
     return (
       <MetaTreeView properties={properties}
