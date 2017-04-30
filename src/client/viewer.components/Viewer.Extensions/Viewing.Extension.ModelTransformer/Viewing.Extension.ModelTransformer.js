@@ -78,6 +78,7 @@ class ModelTransformerExtension extends ExtensionBase {
       selection: null,
       fullTransform,
       rotate: false,
+      pick: false,
       model: null
 
     }).then (() => {
@@ -244,9 +245,18 @@ class ModelTransformerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onTransform (data) {
+  async onTransform (data) {
 
-    const {fullTransform} = this.react.getState()
+    const {fullTransform, pick} = this.react.getState()
+
+    if (pick) {
+
+      this.tooltip.deactivate()
+
+      await this.react.setState({
+        pick: false
+      })
+    }
 
     if (fullTransform) {
 
@@ -271,9 +281,12 @@ class ModelTransformerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   onDeactivate () {
 
+    this.tooltip.deactivate()
+
     this.react.setState({
       translate: false,
-      rotate: false
+      rotate: false,
+      pick: false
     })
   }
 
@@ -545,12 +558,15 @@ class ModelTransformerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   translate () {
 
-    const {transformExtension} = this.react.getState()
+    const {transformExtension, translate} =
+      this.react.getState()
 
-    transformExtension.translate()
+    translate
+      ? transformExtension.deactivate()
+      : transformExtension.translate()
 
     this.react.setState({
-      translate: true,
+      translate: !translate,
       rotate: false
     })
   }
@@ -561,13 +577,16 @@ class ModelTransformerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   rotate () {
 
-    const {transformExtension} = this.react.getState()
+    const {transformExtension, rotate} =
+      this.react.getState()
 
-    transformExtension.rotate()
+    rotate
+      ? transformExtension.deactivate()
+      : transformExtension.rotate()
 
     this.react.setState({
       translate: false,
-      rotate: true
+      rotate: !rotate
     })
   }
 
@@ -582,6 +601,10 @@ class ModelTransformerExtension extends ExtensionBase {
     transformExtension.pickPosition()
 
     this.tooltip.activate()
+
+    this.react.setState({
+      pick: true
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -761,8 +784,9 @@ class ModelTransformerExtension extends ExtensionBase {
             disabled={disabled}
           />
 
-          <button onClick={() => this.pickPosition() }
+          <button className={state.pick ? 'active':''}
             disabled={!(state.translate && selection)}
+            onClick={() => this.pickPosition() }
             title="Pick position">
             <span className="fa fa-crosshairs"/>
           </button>

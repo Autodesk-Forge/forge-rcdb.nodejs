@@ -44,7 +44,8 @@ class RaytracerExtension extends ExtensionBase {
     this.viewer.addEventListener(
       Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT, (e) => {
 
-        if(this.options.loader){
+        if (this.options.loader) {
+
           this.options.loader.hide()
         }
       })
@@ -144,14 +145,21 @@ class RaytracerExtension extends ExtensionBase {
 
     this.eventTool.activate()
 
-    const events = [
-      //'buttondown',
-      //'singleclick',
-      //'doubleclick',
-      'mousemove'
-    ]
+    this.eventTool.on ('buttondown', () => {
 
-    this.eventTool.on (events.join(' '), (event) => {
+      this.mouseDown = true
+
+      return false
+    })
+
+    this.eventTool.on ('buttonup', (event) => {
+
+      this.mouseDown = false
+
+      return false
+    })
+
+    this.eventTool.on ('mousemove', (event) => {
 
       // model.rayIntersect cannot be used in this scenario
       // because needs to check for every component
@@ -161,14 +169,22 @@ class RaytracerExtension extends ExtensionBase {
       //const hitTest = this.viewer.model.rayIntersect(
       //  raycaster, true, dbIds)
 
-      const hitTest = this.viewer.clientToWorld(
-        event.canvasX,
-        event.canvasY,
-        true)
+      if (!this.mouseDown) {
 
-      if (hitTest) {
+        const hitTest = this.viewer.clientToWorld(
+          event.canvasX,
+          event.canvasY,
+          true)
 
-        return !this.leafNodesMap[hitTest.dbId]
+        if (hitTest) {
+
+          const {model} = this.react.getState()
+
+          if (model === hitTest.model) {
+
+            return !this.leafNodesMap[hitTest.dbId]
+          }
+        }
       }
 
       return false
@@ -192,6 +208,46 @@ class RaytracerExtension extends ExtensionBase {
       this.onSelection)
   }
 
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  setModel (model, options) {
+
+    const onSetModel = () => {
+
+      this.react.setState({
+        model
+      })
+
+      this.leafNodesMap = {}
+
+      Toolkit.getLeafNodes (model).then((dbIds) => {
+
+        dbIds.forEach((dbId) => {
+          this.leafNodesMap[dbId] = true
+        })
+      })
+    }
+
+    switch (options.source) {
+
+      case 'loaded':
+
+        return this.viewerEvent([
+          Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
+          Autodesk.Viewing.GEOMETRY_LOADED_EVENT
+        ]).then(() => onSetModel())
+
+      case 'dropdown':
+
+        return onSetModel()
+
+      default:
+        return
+    }
+  }
+
   /////////////////////////////////////////////////////////
   //
   //
@@ -210,7 +266,7 @@ class RaytracerExtension extends ExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  // Creates Raycatser object from the pointer
+  // Creates Raycastser object from the pointer
   //
   /////////////////////////////////////////////////////////
   pointerToRaycaster (pointer) {

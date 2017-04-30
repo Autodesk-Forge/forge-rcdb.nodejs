@@ -26,6 +26,7 @@ export default class RayTreeNode extends EventsEmitter {
     this.on('expand', this.onExpand)
 
     this.instanceTree = props.instanceTree
+    this.delegate     = props.delegate
     this.disabled     = props.disabled
     this.checked      = props.checked
     this.parent       = props.parent
@@ -80,7 +81,8 @@ export default class RayTreeNode extends EventsEmitter {
 
     this.checked = checked
 
-    this.emit('checked', this)
+    this.delegate.emit(
+      'node.checked', this)
 
     this.children.forEach((child) => {
 
@@ -106,22 +108,6 @@ export default class RayTreeNode extends EventsEmitter {
         checked={this.checked}
         name={this.name}/>,
       this.domContainer)
-  }
-
-  /////////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////////
-  unmount () {
-
-    this.children.forEach((child) => {
-
-      child.unmount()
-    })
-
-    ReactDOM.unmountComponentAtNode(this.domContainer)
-
-    this.off()
   }
 
   /////////////////////////////////////////////////////////////
@@ -167,21 +153,35 @@ export default class RayTreeNode extends EventsEmitter {
         name: this.instanceTree.getNodeName(id),
         group: this.getChildIds(id).length,
         instanceTree: this.instanceTree,
+        delegate: this.delegate,
         checked: true,
         parent: this,
         type: '',
         id
       })
 
-      childNode.on('checked', (node) => {
-
-        this.emit('checked', node)
-      })
-
       this.addChild(childNode)
 
       return childNode
     })
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  destroy () {
+
+    this.children.forEach((child) => {
+
+      child.destroy ()
+    })
+
+    ReactDOM.unmountComponentAtNode(
+      this.domContainer)
+
+    this.delegate.emit(
+      'node.destroy', this)
   }
 
   /////////////////////////////////////////////////////////////

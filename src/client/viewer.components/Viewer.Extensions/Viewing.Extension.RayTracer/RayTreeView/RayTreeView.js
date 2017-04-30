@@ -31,17 +31,41 @@ export default class RayTreeView extends React.Component {
 
     super (props)
 
-    this.delegate = new RayTreeDelegate(props.model)
+    this.delegate = new RayTreeDelegate()
+
+    this.delegate.on('node.dblClick', (node) => {
+
+      this.props.viewer.isolate(node.id)
+    })
 
     this.delegate.on('node.checked', (node) => {
 
       this.props.onNodeChecked(node)
     })
 
-    this.delegate.on('node.dblClick', (node) => {
+    this.delegate.on('node.destroy', (node) => {
 
-      this.props.viewer.isolate(node.id)
+      this.tree.destroyNode(node.id)
     })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  setModel (model) {
+
+    this.delegate.setModel(model)
+
+    this.rootNode = this.delegate.createRootNode()
+
+    this.tree = new TreeView (
+      this.delegate, this.rootNode, this.treeContainer, {
+        excludeRoot: false
+      })
+
+    this.rootNode.expand ()
+    this.rootNode.setChecked (true)
   }
 
   /////////////////////////////////////////////////////////
@@ -50,24 +74,7 @@ export default class RayTreeView extends React.Component {
   /////////////////////////////////////////////////////////
   componentDidMount () {
 
-    const model = this.props.model
-
-    const instanceTree = model.getData().instanceTree
-
-    const rootNode = this.delegate.createRootNode({
-      id: instanceTree.getRootId(),
-      checked: true,
-      type: 'root',
-      parent: null
-    })
-
-    this.tree = new TreeView (
-      this.delegate, rootNode, this.treeContainer, {
-        excludeRoot: false
-      })
-
-    rootNode.expand ()
-    rootNode.setChecked (true)
+    this.setModel(this.props.model)
   }
 
   /////////////////////////////////////////////////////////
@@ -76,7 +83,35 @@ export default class RayTreeView extends React.Component {
   /////////////////////////////////////////////////////////
   componentWillUnmount () {
 
-    this.delegate.unmount()
+    this.delegate.destroy()
+
+    this.tree.destroy()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  componentWillReceiveProps (props) {
+
+    if (props.model !== this.props.model) {
+
+      this.delegate.destroy()
+
+      this.tree.destroy ()
+
+      this.setModel (
+        props.model)
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  shouldComponentUpdate (nextProps) {
+
+    return false
   }
 
   /////////////////////////////////////////////////////////

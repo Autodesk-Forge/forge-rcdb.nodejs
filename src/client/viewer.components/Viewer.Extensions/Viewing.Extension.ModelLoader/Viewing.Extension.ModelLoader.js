@@ -228,8 +228,7 @@ class ModelLoaderExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   async unloadModel () {
 
-    const {activeModel, models, modelTransformer} =
-      this.react.getState()
+    const {activeModel, models} = this.react.getState()
 
     const onClose = async(result) => {
 
@@ -242,16 +241,29 @@ class ModelLoaderExtension extends ExtensionBase {
         if (!filteredModels.length) {
 
           this.viewer.container.classList.add('empty')
-
-          await modelTransformer.clearModel()
         }
 
-        this.react.setState({
-          activeModel: filteredModels.length
-            ? filteredModels[0]
-            : null,
+        await this.react.setState({
           models: filteredModels
         })
+
+        const nextActiveModel = filteredModels.length
+            ? filteredModels[0]
+            : null
+
+        await this.setActiveModel(nextActiveModel, {
+          source: 'unloaded'
+        })
+
+        for (const extId in this.viewer.loadedExtensions) {
+
+          const extension = this.viewer.getExtension(extId)
+
+          if (extension.removeModel) {
+
+            extension.removeModel(model)
+          }
+        }
 
         this.viewer.impl.unloadModel(activeModel)
       }
@@ -340,7 +352,9 @@ class ModelLoaderExtension extends ExtensionBase {
 
       const model = selection.model
 
-      this.setActiveModel (model)
+      this.setActiveModel (model, {
+        source: 'selection'
+      })
     }
   }
 
@@ -348,22 +362,28 @@ class ModelLoaderExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  setActiveModel (model, fitToView) {
+  async setActiveModel (model, options = {}) {
 
-    const {modelTransformer} = this.react.getState()
-
-    modelTransformer.setModel(model)
-
-    if (fitToView) {
+    if (options.fitToView) {
 
       this.fitModelToView (model)
     }
 
     this.setStructure(model)
 
-    this.react.setState({
-     activeModel: model
+    await this.react.setState({
+      activeModel: model
     })
+
+    for (const extId in this.viewer.loadedExtensions) {
+
+      const extension = this.viewer.getExtension(extId)
+
+      if (extension.setModel) {
+
+        extension.setModel(model, options)
+      }
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -408,11 +428,12 @@ class ModelLoaderExtension extends ExtensionBase {
 
     const state = this.dialogSvc.getState()
 
-    const filteredDbModels = state.dbModels.filter((dbModel) => {
-      return search.length
-        ? dbModel.name.toLowerCase().indexOf(search) > -1
-        : true
-    })
+    const filteredDbModels =
+      state.dbModels.filter((dbModel) => {
+        return search.length
+          ? dbModel.name.toLowerCase().indexOf(search) > -1
+          : true
+      })
 
     this.setDlgItems (filteredDbModels)
   }
@@ -441,7 +462,10 @@ class ModelLoaderExtension extends ExtensionBase {
               models: modelsByName
             })
 
-            this.setActiveModel (model, true)
+            this.setActiveModel (model, {
+              source: 'loaded',
+              fitToView: true
+            })
           })
 
           this.dialogSvc.setState({
@@ -577,7 +601,10 @@ class ModelLoaderExtension extends ExtensionBase {
       return (
         <MenuItem eventKey={idx} key={model.guid}
           onClick={() => {
-            this.setActiveModel(model, true)
+            this.setActiveModel(model, {
+              source: 'dropdown',
+              fitToView: true
+            })
           }}>
           { model.name }
         </MenuItem>

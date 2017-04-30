@@ -16,10 +16,10 @@ import React from 'react'
 
 class MetaPropertiesExtension extends ExtensionBase {
 
-	/////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
 	// Class constructor
   //
-	/////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
 	constructor (viewer, options) {
 
 		super (viewer, options)
@@ -174,10 +174,6 @@ class MetaPropertiesExtension extends ExtensionBase {
       await Toolkit.getProperties(
         model, nodeId)
 
-    await this.react.setState({
-      properties: modelProperties
-    })
-
     const metaProperties =
       await this.api.getNodeMetaProperties(nodeId)
 
@@ -187,7 +183,8 @@ class MetaPropertiesExtension extends ExtensionBase {
     ]
 
     this.react.setState({
-      properties
+      properties,
+      nodeId
     })
   }
 
@@ -217,8 +214,8 @@ class MetaPropertiesExtension extends ExtensionBase {
   showMetaDlg (nodeId) {
 
     const metaProperty = {
-      category: 'Forge',
-      value: 'MetaProperty Demo',
+      displayCategory: 'Forge',
+      displayValue: 'MetaProperty Demo',
       id: this.guid(),
       nodeId: nodeId.toString()
     }
@@ -301,9 +298,14 @@ class MetaPropertiesExtension extends ExtensionBase {
 
     const name = instanceTree.getNodeName(nodeId)
 
+    console.log('Name: ' + name)
+
     return (
       <MetaTreeView properties={properties}
-        name={name}/>
+        nodeId={nodeId}
+        model={model}
+        name={name}
+      />
     )
   }
 

@@ -40,7 +40,9 @@ export default class MetaTreeView extends React.Component {
   /////////////////////////////////////////////////////////
   componentDidMount () {
 
-    const rootNode = this.delegate.createRootNode()
+    const rootNode = this.delegate.createRootNode({
+      name: this.props.name
+    })
 
     this.tree = new TreeView (
       this.delegate, rootNode, this.treeContainer, {
@@ -54,9 +56,39 @@ export default class MetaTreeView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  shouldComponentUpdate (nextProps) {
+
+    if (nextProps.model  !== this.props.model ||
+        nextProps.nodeId !== this.props.nodeId) {
+
+      return true
+    }
+
+    return false
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  componentDidUpdate () {
+
+    console.log('UPDATE')
+
+    this.delegate.unmount()
+
+    this.tree.clear()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   componentWillUnmount () {
 
     this.delegate.unmount()
+
+    this.tree.clear()
   }
 
   /////////////////////////////////////////////////////////

@@ -11,9 +11,7 @@ export default class RayTreeDelegate extends TreeDelegate {
   //
   //
   /////////////////////////////////////////////////////////////
-  constructor (model) {
-
-    super ()
+  setModel (model) {
 
     this.instanceTree = model.getData().instanceTree
   }
@@ -22,21 +20,20 @@ export default class RayTreeDelegate extends TreeDelegate {
   //
   //
   /////////////////////////////////////////////////////////////
-  createRootNode (data) {
+  createRootNode () {
+
+    const rootId = this.instanceTree.getRootId()
 
     this.rootNode = new RayTreeNode({
-      name: this.instanceTree.getNodeName(data.id),
-      group: this.getChildIds(data.id).length,
+
+      name: this.instanceTree.getNodeName(rootId),
+      group: this.getChildIds(rootId).length,
       instanceTree: this.instanceTree,
-      checked: data.checked,
-      parent: data.parent,
-      type: data.type,
-      id: data.id
-    })
-
-    this.rootNode.on('checked', (node) => {
-
-      this.emit('node.checked', node)
+      delegate: this,
+      checked: true,
+      parent: null,
+      type: 'root',
+      id: rootId
     })
 
     return this.rootNode
@@ -46,9 +43,9 @@ export default class RayTreeDelegate extends TreeDelegate {
   //
   //
   /////////////////////////////////////////////////////////////
-  unmount () {
+  destroy () {
 
-    this.rootNode.unmount()
+    this.rootNode.destroy()
   }
 
   /////////////////////////////////////////////////////////////

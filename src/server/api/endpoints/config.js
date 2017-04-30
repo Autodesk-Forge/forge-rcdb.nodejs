@@ -10,7 +10,8 @@ module.exports = function() {
   // return sequences
   //
   /////////////////////////////////////////////////////////
-  router.get('/:db/:modelId/sequences', async(req, res)=> {
+  router.get('/:db/:modelId/sequences',
+    async(req, res) => {
 
     try {
 
@@ -36,7 +37,8 @@ module.exports = function() {
   // add sequence
   //
   /////////////////////////////////////////////////////////
-  router.post('/:db/:modelId/sequences', async(req, res)=> {
+  router.post('/:db/:modelId/sequences',
+    async(req, res) => {
 
     try {
 
@@ -65,7 +67,8 @@ module.exports = function() {
   // update sequence
   //
   /////////////////////////////////////////////////////////
-  router.put('/:db/:modelId/sequences', async(req, res)=> {
+  router.put('/:db/:modelId/sequences',
+    async(req, res) => {
 
     try {
 
@@ -95,7 +98,7 @@ module.exports = function() {
   //
   /////////////////////////////////////////////////////////
   router.delete('/:db/:modelId/sequences/:sequenceId',
-    async(req, res)=> {
+    async(req, res) => {
 
     try {
 
@@ -184,7 +187,7 @@ module.exports = function() {
   /////////////////////////////////////////////////////////
   router.delete(
     '/:db/:modelId/sequences/:sequenceId/states/:stateId',
-    async(req, res)=> {
+    async(req, res) => {
 
     try {
 

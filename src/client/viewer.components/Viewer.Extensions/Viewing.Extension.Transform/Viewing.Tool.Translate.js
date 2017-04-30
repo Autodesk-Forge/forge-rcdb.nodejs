@@ -297,7 +297,7 @@ export default class TranslateTool extends EventsEmitter {
 
     this._transformControlTx.setPosition(position)
 
-    for(var fragId in this._selectedFragProxyMap) {
+    for (var fragId in this._selectedFragProxyMap) {
 
       var fragProxy = this._selectedFragProxyMap[fragId]
 
@@ -310,6 +310,17 @@ export default class TranslateTool extends EventsEmitter {
 
       fragProxy.updateAnimTransform()
     }
+
+    var translation = new THREE.Vector3(
+      this._transformMesh.position.x - this._selection.model.offset.x,
+      this._transformMesh.position.y - this._selection.model.offset.y,
+      this._transformMesh.position.z - this._selection.model.offset.z)
+
+    this.emit('translate', {
+      fragIds: Object.keys(this._selectedFragProxyMap),
+      model: this._selection.model,
+      translation: translation
+    })
 
     this._viewer.impl.sceneUpdated(true)
   }
@@ -452,7 +463,7 @@ export default class TranslateTool extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   onPick () {
 
-    if(this.active) {
+    if (this.active) {
 
       this._selectionMode = 'SELECTION_MODE_PICK'
     }

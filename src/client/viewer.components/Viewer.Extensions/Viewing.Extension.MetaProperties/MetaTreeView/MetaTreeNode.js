@@ -22,6 +22,7 @@ export default class MetaTreeNode extends EventsEmitter {
 
     this.on('expand', this.onExpand)
 
+    this.delegate     = props.delegate
     this.parent       = props.parent
     this.group        = props.group
     this.name         = props.name
@@ -55,10 +56,7 @@ export default class MetaTreeNode extends EventsEmitter {
     this.collapse()
 
     this.reactNode = ReactDOM.render(
-      <ReactTreeNode onChecked={this.setChecked}
-        disabled={this.disabled}
-        checked={this.checked}
-        name={this.name}/>,
+      <ReactTreeNode name={this.name}/>,
       this.domContainer)
   }
 
@@ -66,16 +64,18 @@ export default class MetaTreeNode extends EventsEmitter {
   //
   //
   /////////////////////////////////////////////////////////////
-  unmount () {
+  destroy () {
 
     this.children.forEach((child) => {
 
-      child.unmount()
+      child.destroy ()
     })
 
-    ReactDOM.unmountComponentAtNode(this.domContainer)
+    ReactDOM.unmountComponentAtNode(
+      this.domContainer)
 
-    this.off()
+    this.delegate.emit(
+      'node.destroy', this)
   }
 
   /////////////////////////////////////////////////////////////
@@ -89,6 +89,8 @@ export default class MetaTreeNode extends EventsEmitter {
 
     target.classList.remove('collapsed')
     target.classList.add('expanded')
+
+    this.expanded = true
 
     this.emit('expand')
   }
@@ -104,6 +106,8 @@ export default class MetaTreeNode extends EventsEmitter {
 
     target.classList.remove('expanded')
     target.classList.add('collapsed')
+
+    this.expanded = false
   }
 
   /////////////////////////////////////////////////////////////

@@ -20,19 +20,25 @@ export default class MetaTreeDelegate extends TreeDelegate {
   //
   //
   /////////////////////////////////////////////////////////////
-  createRootNode () {
+  setProperties (data) {
+
+    this.mapByCategory(properties)
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  createRootNode (data) {
 
     this.rootNode = new MetaTreeNode({
-      name: 'Root',
+
+      name: data.name,
+      delegate: this,
       group: true,
       parent: null,
       type: 'root',
-      id: 'rootId'
-    })
-
-    this.rootNode.on('checked', (node) => {
-
-      this.emit('node.checked', node)
+      id: 'root'
     })
 
     return this.rootNode
@@ -42,16 +48,16 @@ export default class MetaTreeDelegate extends TreeDelegate {
   //
   //
   /////////////////////////////////////////////////////////////
-  unmount () {
+  destroy () {
 
-    this.rootNode.unmount()
+    this.rootNode.destroy()
   }
 
   /////////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////////
-  createTreeNode (node, parentDomElement, options = {}) {
+  createTreeNode (node, parentDomElement) {
 
     const container = document.createElement('div')
 
@@ -78,5 +84,25 @@ export default class MetaTreeDelegate extends TreeDelegate {
   forEachChild (node, addChild) {
 
     node.addChild = addChild
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  mapByCategory (properties) {
+
+    this.propsMap = {}
+
+    properties.forEach((prop) => {
+
+      const category = !!prop.displayCategory
+        ? prop.displayCategory
+        : 'Other'
+
+      this.propsMap[category] = this.propsMap[category] || []
+
+      this.propsMap[category].push(prop)
+    })
   }
 }

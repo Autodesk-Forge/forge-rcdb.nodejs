@@ -156,13 +156,7 @@ class TransformExtension extends ExtensionBase {
 
       if(this._comboCtrl.container.classList.contains('active')) {
 
-        this._txControl.container.classList.remove('active')
-        this._rxControl.container.classList.remove('active')
-
-        this._comboCtrl.container.classList.remove('active')
-
-        this.translateTool.deactivate()
-        this.rotateTool.deactivate()
+        this.deactivate ()
 
       } else {
 
@@ -224,6 +218,21 @@ class TransformExtension extends ExtensionBase {
     this._txControl.container.classList.remove('active')
 
     this._comboCtrl.container.classList.add('active')
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  deactivate () {
+
+    this._txControl.container.classList.remove('active')
+    this._rxControl.container.classList.remove('active')
+
+    this._comboCtrl.container.classList.remove('active')
+
+    this.translateTool.deactivate()
+    this.rotateTool.deactivate()
   }
 
   /////////////////////////////////////////////////////////////////

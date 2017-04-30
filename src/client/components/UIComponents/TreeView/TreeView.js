@@ -7,6 +7,10 @@ import EventsEmitter from 'EventsEmitter'
 export default class TreeView extends
   EventsEmitter.Composer (Autodesk.Viewing.UI.Tree) {
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   setInputHandlers_ () {
 
     var tree = this
@@ -150,5 +154,39 @@ export default class TreeView extends
       event.preventDefault()
 
     }, false)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  destroyNode (nodeId) {
+
+    if (this.nodeToElement[nodeId]) {
+
+      this.nodeToElement[nodeId].remove()
+
+      delete this.nodeToElement[nodeId]
+
+      this.nodeToElement[nodeId] = null
+    }
+
+    if (this.nodeIdToNode[nodeId]) {
+
+      delete this.nodeIdToNode[nodeId]
+
+      this.nodeIdToNode[nodeId] = null
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  destroy () {
+
+    this.clear ()
+
+    this.myRootContainer.remove()
   }
 }

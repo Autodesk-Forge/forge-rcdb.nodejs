@@ -9,7 +9,7 @@ module.exports = function() {
   // Get all meta properties for model (debug only)
   //
   /////////////////////////////////////////////////////////
-  router.get('/:db/:modelId', async(req, res)=> {
+  router.get('/:db/:modelId', async(req, res) => {
 
     try {
 
@@ -35,7 +35,7 @@ module.exports = function() {
   // Get meta properties for specific nodeId
   //
   /////////////////////////////////////////////////////////
-  router.get('/:db/:modelId/:nodeId', async(req, res)=> {
+  router.get('/:db/:modelId/:nodeId', async(req, res) => {
 
     try {
 
@@ -62,7 +62,7 @@ module.exports = function() {
   // add meta property
   //
   /////////////////////////////////////////////////////////
-  router.put('/:db/:modelId', async(req, res)=> {
+  router.put('/:db/:modelId', async(req, res) => {
 
     try {
 
@@ -80,7 +80,7 @@ module.exports = function() {
       res.json(response)
 
     } catch (error) {
-      
+
       res.status(error.statusCode || 500)
       res.json(error)
     }
@@ -90,7 +90,8 @@ module.exports = function() {
   // delete meta property
   //
   /////////////////////////////////////////////////////////
-  router.delete('/:db/:modelId/:metaId', async(req, res)=> {
+  router.delete('/:db/:modelId/:metaId',
+    async(req, res) => {
 
     try {
 

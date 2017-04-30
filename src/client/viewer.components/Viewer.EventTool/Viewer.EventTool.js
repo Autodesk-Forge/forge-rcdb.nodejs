@@ -109,4 +109,13 @@ export default class EventTool extends EventsEmitter {
 
     return this.emit('buttondown', event, button)
   }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  handleButtonUp (event, button) {
+
+    return this.emit('buttonup', event, button)
+  }
 }
