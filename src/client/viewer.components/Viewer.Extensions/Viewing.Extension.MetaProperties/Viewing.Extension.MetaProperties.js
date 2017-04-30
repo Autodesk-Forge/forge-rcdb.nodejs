@@ -179,6 +179,10 @@ class MetaPropertiesExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   async loadNodeProperties (nodeId) {
 
+    await this.react.setState({
+      properties: []
+    })
+
     const {model} = this.react.getState()
 
     const modelProperties =

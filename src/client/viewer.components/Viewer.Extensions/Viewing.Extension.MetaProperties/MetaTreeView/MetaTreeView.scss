@@ -20,6 +20,10 @@
     background: rgba(0, 105, 245, 0.35);
   }
 
+  .treeview group>header.root {
+    background-color: #d8d8d8 !important;
+  }
+
   .treeview group>header.category {
     background-color: #e6e6e6 !important;
   }

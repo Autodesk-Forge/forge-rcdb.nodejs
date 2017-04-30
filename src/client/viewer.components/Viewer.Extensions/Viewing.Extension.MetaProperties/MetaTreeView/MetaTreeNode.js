@@ -143,6 +143,8 @@ export default class MetaTreeNode extends EventsEmitter {
 
           this.addChild(childNode)
 
+          childNode.expand()
+
           return childNode
         })
 
