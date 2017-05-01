@@ -364,7 +364,7 @@ class ModelLoaderExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   async setActiveModel (model, params = {}) {
 
-    if (options.fitToView) {
+    if (params.fitToView) {
 
       this.fitModelToView (model)
     }

@@ -597,6 +597,8 @@ class ViewerConfigurator extends React.Component {
 
       viewer.start()
 
+      viewer.prefs.tag('ignore-producer')
+
       const ctrlGroup = this.createToolbar (viewer)
 
       const defaultOptions = {

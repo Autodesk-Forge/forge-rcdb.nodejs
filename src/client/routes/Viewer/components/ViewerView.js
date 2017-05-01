@@ -297,6 +297,8 @@ class ViewerView extends React.Component {
 
       viewer.start()
 
+      viewer.prefs.tag('ignore-producer')
+
       switch (this.dbModel.env) {
 
         case 'Local':
