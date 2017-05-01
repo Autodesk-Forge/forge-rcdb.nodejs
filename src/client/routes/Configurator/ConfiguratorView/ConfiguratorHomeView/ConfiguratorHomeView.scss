@@ -50,9 +50,9 @@
     width: 50%;
   }
 
-  .configurator-view .home .default-thumbnail {
-    height: 150px !important;
-    with: 150px !important;
+  .configurator-view .home .model-item img.default-thumbnail {
+    min-height: 150px;
+    min-width: 150px;
   }
 
   .configurator-view .home .model-item img {
@@ -110,9 +110,9 @@
     width: 68%;
   }
 
-  .configurator-view .home .default-thumbnail {
-    height: 70px !important;
-    with: 70px !important;
+  .configurator-view .home .model-item img.default-thumbnail {
+    min-height: 70px;
+    min-width: 70px;
   }
 
   .configurator-view .home .model-item img {
