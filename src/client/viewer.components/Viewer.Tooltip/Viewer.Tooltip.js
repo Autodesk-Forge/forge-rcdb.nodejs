@@ -17,6 +17,8 @@ export default class ViewerTooltip extends EventsEmitter {
 
     this.svgId = this.guid()
 
+    this.name = this.guid()
+
     this.viewer = viewer
 
     this.active = false
@@ -108,7 +110,7 @@ export default class ViewerTooltip extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   getNames () {
 
-    return ['Viewer.Tooltip.Tool']
+    return [this.name]
   }
 
   /////////////////////////////////////////////////////////////////
@@ -117,7 +119,7 @@ export default class ViewerTooltip extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   getName () {
 
-    return 'Viewer.Tooltip.Tool'
+    return this.name
   }
 
   /////////////////////////////////////////////////////////////////
@@ -153,7 +155,7 @@ export default class ViewerTooltip extends EventsEmitter {
   // Deactivate tool
   //
   /////////////////////////////////////////////////////////////////
-  deactivate () {
+  deactivate (delay = 0) {
 
     if (this.active && !this.timeout) {
 
@@ -169,7 +171,7 @@ export default class ViewerTooltip extends EventsEmitter {
 
         this.active = false
 
-      }, 1000)
+      }, delay)
 
       //$(this.tooltipSelector).velocity({
       //

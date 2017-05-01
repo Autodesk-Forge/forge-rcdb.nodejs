@@ -143,6 +143,17 @@ export default class TranslateTool extends EventsEmitter {
 
       case 'SELECTION_MODE_TRANSFORM':
 
+        if (this._selection && this.pointerDown) {
+
+          this._selectionMode = 'SELECTION_MODE_RESUME_TRANSFORM'
+
+          this._viewer.clearSelection()
+
+          this._viewer.select(this._dbIds)
+
+          return
+        }
+
         if(event.selections && event.selections.length) {
 
           var selection = event.selections[0]
@@ -221,7 +232,7 @@ export default class TranslateTool extends EventsEmitter {
   //
   ///////////////////////////////////////////////////////////////////////////
   initializeSelection (hitPoint) {
-
+    
     this._selectedFragProxyMap = {}
 
     var modelTransform = this._selection.model.transform ||
@@ -477,7 +488,9 @@ export default class TranslateTool extends EventsEmitter {
 
     this._isDragging = true
 
-    if (this._transformControlTx.onPointerDown(event))
+    this.pointerDown = this._transformControlTx.onPointerDown(event)
+
+    if (this.pointerDown && this._selection)
       return true
 
     var hitPoint = this.getHitPoint(event)
@@ -494,7 +507,7 @@ export default class TranslateTool extends EventsEmitter {
   //
   //
   ///////////////////////////////////////////////////////////////////////////
-  handleButtonUp(event) {
+  handleButtonUp (event) {
 
     this._isDragging = false
 

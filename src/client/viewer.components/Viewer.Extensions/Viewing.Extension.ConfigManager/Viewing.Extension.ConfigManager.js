@@ -152,10 +152,14 @@ class ConfigManagerExtension extends ExtensionBase {
 
         const state = this.react.getState()
 
+        const name = !!state.newSequenceName
+          ? state.newSequenceName
+          : new Date().toString('d/M/yyyy H:mm:ss')
+
         const sequence = {
-          name: state.newSequenceName,
           id: this.guid(),
-          stateIds: []
+          stateIds: [],
+          name
         }
 
         const sequences = _.sortBy([
