@@ -232,7 +232,7 @@ export default class TranslateTool extends EventsEmitter {
   //
   ///////////////////////////////////////////////////////////////////////////
   initializeSelection (hitPoint) {
-    
+
     this._selectedFragProxyMap = {}
 
     var modelTransform = this._selection.model.transform ||
