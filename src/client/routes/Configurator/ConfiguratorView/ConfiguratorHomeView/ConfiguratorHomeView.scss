@@ -50,6 +50,11 @@
     width: 50%;
   }
 
+  .configurator-view .home .default-thumbnail {
+    height: 150px;
+    with: 150px;
+  }
+
   .configurator-view .home .model-item img {
     height: 150px;
     width: 150px;
@@ -103,6 +108,11 @@
     color: #000000;
     height: auto;
     width: 68%;
+  }
+
+  .configurator-view .home .default-thumbnail {
+    height: 70px;
+    with: 70px;
   }
 
   .configurator-view .home .model-item img {
