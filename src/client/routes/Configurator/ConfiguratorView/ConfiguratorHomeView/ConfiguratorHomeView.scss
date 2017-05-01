@@ -51,8 +51,8 @@
   }
 
   .configurator-view .home .default-thumbnail {
-    height: 150px;
-    with: 150px;
+    height: 150px !important;
+    with: 150px !important;
   }
 
   .configurator-view .home .model-item img {
@@ -111,8 +111,8 @@
   }
 
   .configurator-view .home .default-thumbnail {
-    height: 70px;
-    with: 70px;
+    height: 70px !important;
+    with: 70px !important;
   }
 
   .configurator-view .home .model-item img {
