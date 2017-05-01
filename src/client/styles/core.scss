@@ -83,15 +83,15 @@ body {
 // Reflex Layout
 //
 /////////////////////////////////////////////////////////
-.reflex-layout.horizontal > .reflex-splitter.reflex-thin,
-.reflex-layout.horizontal > .reflex-splitter {
-  z-index: 0 !important;
-}
-
-.reflex-layout.vertical > .reflex-splitter.reflex-thin,
-.reflex-layout.vertical > .reflex-splitter {
-  z-index: 0 !important;
-}
+//.reflex-layout.horizontal > .reflex-splitter.reflex-thin,
+//.reflex-layout.horizontal > .reflex-splitter {
+//  z-index: 1 !important;
+//}
+//
+//.reflex-layout.vertical > .reflex-splitter.reflex-thin,
+//.reflex-layout.vertical > .reflex-splitter {
+//  z-index: 1 !important;
+//}
 
 .reflex-layout.horizontal > .reflex-splitter {
   height: 4px !important;
@@ -99,6 +99,14 @@ body {
 
 .reflex-layout.vertical > .reflex-splitter {
   width: 4px !important;
+}
+
+.reflex-layout.horizontal > .reflex-splitter.reflex-thin {
+  height: 11px !important;
+}
+
+.reflex-layout.vertical > .reflex-splitter.reflex-thin {
+  width: 11px !important;
 }
 
 /////////////////////////////////////////////////////////
