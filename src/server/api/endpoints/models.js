@@ -24,10 +24,11 @@ module.exports = function() {
 
       var opts = {
         pageQuery: {
+          desc: 1,
           path: 1,
           name: 1,
-          urn: 1,
-          env: 1
+          urn:  1,
+          env:  1
         }
       }
 

@@ -140,7 +140,14 @@ class ConfiguratorHomeView extends React.Component {
           onClick={()=>this.gotToLink(href)}>
           <img className={model.thumbnail ? "":"default-thumbnail"}
             src={model.thumbnail ? model.thumbnail : ""}/>
-          <Label text={model.name}/>
+          <div className="text-content">
+            <Label text={model.name}/>
+            <br/>
+            <br/>
+            <p className="description">
+              { model.desc || '' }
+            </p>
+          </div>
         </div>
       )
     })
