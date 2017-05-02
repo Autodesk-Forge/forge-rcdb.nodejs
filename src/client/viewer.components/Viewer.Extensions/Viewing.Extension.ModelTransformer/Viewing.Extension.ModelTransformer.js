@@ -388,7 +388,7 @@ class ModelTransformerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onInputChanged (e, key) {
+  async onInputChanged (e, key) {
 
     const state = this.react.getState()
 
@@ -436,7 +436,7 @@ class ModelTransformerExtension extends ExtensionBase {
         break
     }
 
-    this.react.setState(state)
+    await this.react.setState(state)
 
     this.applyTransform (transform)
 

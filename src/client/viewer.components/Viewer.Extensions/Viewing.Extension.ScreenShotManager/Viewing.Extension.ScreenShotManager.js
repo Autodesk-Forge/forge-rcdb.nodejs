@@ -89,24 +89,39 @@ class ScreenShotManagerExtension extends ExtensionBase {
     return true
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
+  floor (value) {
+
+    const floatValue = parseFloat(value)
+
+    return Math.floor(isNaN(floatValue) ? 0 : floatValue)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   addItem () {
 
     const state = this.react.getState()
 
+    const height = this.floor (state.height)
+
+    const width = this.floor (state.width)
+
     this.viewer.getScreenShot(
-      state.width, state.height, (blob) => {
+      width, height, (blob) => {
 
         const state = this.react.getState()
 
         const screenshot = {
           name:  new Date().toString('d/M/yyyy H:mm:ss'),
-          height: state.height,
-          width: state.width,
           id: this.guid(),
+          height,
+          width,
           blob
         }
 
@@ -176,13 +191,11 @@ class ScreenShotManagerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onInputChanged (e, key) {
+  async onInputChanged (e, key) {
 
     const state = this.react.getState()
 
-    const value = parseFloat(e.target.value)
-
-    state[key] = Math.floor(isNaN(value) ? 0 : value)
+    state[key] = e.target.value
 
     this.react.setState(state)
   }
