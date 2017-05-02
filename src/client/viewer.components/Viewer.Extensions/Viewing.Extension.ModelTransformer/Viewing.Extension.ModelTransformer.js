@@ -209,21 +209,30 @@ class ModelTransformerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  toFixedStr (float, digits = 2) {
+
+    return float.toFixed(digits).toString()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   setTransformState (transform) {
 
     this.react.setState({
 
-      Tx: transform.translation.x,
-      Ty: transform.translation.y,
-      Tz: transform.translation.z,
+      Tx: this.toFixedStr(transform.translation.x),
+      Ty: this.toFixedStr(transform.translation.y),
+      Tz: this.toFixedStr(transform.translation.z),
 
-      Rx: transform.rotation.x * 180/Math.PI,
-      Ry: transform.rotation.y * 180/Math.PI,
-      Rz: transform.rotation.z * 180/Math.PI,
+      Rx: this.toFixedStr(transform.rotation.x * 180/Math.PI),
+      Ry: this.toFixedStr(transform.rotation.y * 180/Math.PI),
+      Rz: this.toFixedStr(transform.rotation.z * 180/Math.PI),
 
-      Sx: transform.scale.x,
-      Sy: transform.scale.y,
-      Sz: transform.scale.z
+      Sx: this.toFixedStr(transform.scale.x),
+      Sy: this.toFixedStr(transform.scale.y),
+      Sz: this.toFixedStr(transform.scale.z)
     })
   }
 
@@ -388,51 +397,64 @@ class ModelTransformerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  toFloat (value) {
+
+    const floatValue = parseFloat(value)
+
+    return isNaN(floatValue) ? 0 : floatValue
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   async onInputChanged (e, key) {
 
     const state = this.react.getState()
 
-    const value = parseFloat(e.target.value)
-
-    state[key] = isNaN(value) ? 0 : value
+    state[key] = e.target.value
 
     const transform = this.getTransform()
+
+    const value = this.toFloat(e.target.value)
+
+    console.log(value)
 
     switch (key) {
 
       case 'Tx':
-        transform.translation.x = state[key]
+        transform.translation.x = value
         break
       case 'Ty':
-        transform.translation.y = state[key]
+        transform.translation.y = value
         break
       case 'Tz':
-        transform.translation.z = state[key]
+        transform.translation.z = value
         break
 
       case 'Rx':
-        transform.rotation.x = state[key] * Math.PI/180
+        transform.rotation.x = value * Math.PI/180
         break
       case 'Ry':
-        transform.rotation.y = state[key] * Math.PI/180
+        transform.rotation.y = value * Math.PI/180
         break
       case 'Rz':
-        transform.rotation.z = state[key] * Math.PI/180
+        transform.rotation.z = value * Math.PI/180
         break
 
       case 'Sx':
-        transform.scale.x = state[key]
-        transform.scale.y = state[key]
-        transform.scale.z = state[key]
-        state.Sx = state[key]
-        state.Sy = state[key]
-        state.Sz = state[key]
+        transform.scale.x = value
+        transform.scale.y = value
+        transform.scale.z = value
+        state.Sx = value
+        state.Sy = value
+        state.Sz = value
         break
       case 'Sy':
-        transform.scale.y = state[key]
+        transform.scale.y = value
         break
       case 'Sz':
-        transform.scale.z = state[key]
+        transform.scale.z = value
         break
     }
 
@@ -679,30 +701,30 @@ class ModelTransformerExtension extends ExtensionBase {
           <Label text={'Translation:'}/>
 
           <ContentEditable
-            html={state.Tx.toFixed ? state.Tx.toFixed(2) : ''}
             onChange={(e) => this.onInputChanged(e, 'Tx')}
             onKeyDown={(e) => this.onKeyDownNumeric(e)}
             className="input-trans"
             data-placeholder="x"
             disabled={disabled}
+            html={state.Tx}
           />
 
           <ContentEditable
-            html={state.Ty.toFixed ? state.Ty.toFixed(2) : ''}
             onChange={(e) => this.onInputChanged(e, 'Ty')}
             onKeyDown={(e) => this.onKeyDownNumeric(e)}
             className="input-trans"
             data-placeholder="y"
             disabled={disabled}
+            html={state.Ty}
           />
 
           <ContentEditable
-            html={state.Tz.toFixed ? state.Tz.toFixed(2) : ''}
             onChange={(e) => this.onInputChanged(e, 'Tz')}
             onKeyDown={(e) => this.onKeyDownNumeric(e)}
             className="input-trans"
             data-placeholder="z"
             disabled={disabled}
+            html={state.Tz}
           />
 
           <button className={state.translate ? 'active':''}
@@ -719,29 +741,29 @@ class ModelTransformerExtension extends ExtensionBase {
           <Label text={'Rotation:'}/>
 
           <ContentEditable
-            html={state.Rx.toFixed ? state.Rx.toFixed(2) : ''}
             onChange={(e) => this.onInputChanged(e, 'Rx')}
             onKeyDown={(e) => this.onKeyDownNumeric(e)}
             className="input-rot"
             data-placeholder="rx"
             disabled={disabled}
+            html={state.Rx}
           />
 
           <ContentEditable
-            html={state.Ry.toFixed ? state.Ry.toFixed(2) : ''}
             onChange={(e) => this.onInputChanged(e, 'Ry')}
             onKeyDown={(e) => this.onKeyDownNumeric(e)}
             className="input-rot"
             data-placeholder="ry"
             disabled={disabled}
+            html={state.Ry}
           />
 
           <ContentEditable
-            html={state.Rz.toFixed ? state.Rz.toFixed(2) : ''}
             onChange={(e) => this.onInputChanged(e, 'Rz')}
             onKeyDown={(e) => this.onKeyDownNumeric(e)}
             className="input-rot"
             data-placeholder="rz"
+            html={state.Rz}
           />
 
           <button className={state.rotate ? 'active':''}
@@ -758,30 +780,30 @@ class ModelTransformerExtension extends ExtensionBase {
           <Label text={'Scale:'}/>
 
           <ContentEditable
-            html={state.Sx.toFixed ? state.Sx.toFixed(2) : ''}
             onChange={(e) => this.onInputChanged(e, 'Sx')}
             onKeyDown={(e) => this.onKeyDownNumeric(e)}
             className="input-scale"
             data-placeholder="sx"
             disabled={disabled}
+            html={state.Sx}
           />
 
           <ContentEditable
-            html={state.Sy.toFixed ? state.Sy.toFixed(2) : ''}
             onChange={(e) => this.onInputChanged(e, 'Sy')}
             onKeyDown={(e) => this.onKeyDownNumeric(e)}
             className="input-scale"
             data-placeholder="sy"
             disabled={disabled}
+            html={state.Sy}
           />
 
           <ContentEditable
-            html={state.Sz.toFixed ? state.Sz.toFixed(2) : ''}
             onChange={(e) => this.onInputChanged(e, 'Sz')}
             onKeyDown={(e) => this.onKeyDownNumeric(e)}
             className="input-scale"
             data-placeholder="sz"
             disabled={disabled}
+            html={state.Sz}
           />
 
           <button className={state.pick ? 'active':''}
