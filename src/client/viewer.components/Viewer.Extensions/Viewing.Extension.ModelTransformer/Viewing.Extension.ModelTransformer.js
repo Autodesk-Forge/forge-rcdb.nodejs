@@ -23,6 +23,7 @@ class ModelTransformerExtension extends ExtensionBase {
 
     super (viewer, options)
 
+    this.onModelActivated = this.onModelActivated.bind(this)
     this.onDeactivate = this.onDeactivate.bind(this)
     this.onSelection = this.onSelection.bind(this)
     this.renderTitle = this.renderTitle.bind(this)
@@ -38,6 +39,8 @@ class ModelTransformerExtension extends ExtensionBase {
         <b>Pick position ...</b>
       </div>`,
       '#pickTooltipId')
+
+    this.eventSink = options.eventSink
 
     this.react = options.react
   }
@@ -115,6 +118,10 @@ class ModelTransformerExtension extends ExtensionBase {
       Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT
     ).then((args) => this.onModelRootLoaded(args))
 
+    this.eventSink.on(
+      'model.activated',
+      this.onModelActivated)
+
     console.log(
       'Viewing.Extension.ModelTransformer loaded')
 
@@ -136,6 +143,10 @@ class ModelTransformerExtension extends ExtensionBase {
 
     this.react.popViewerPanel(this)
 
+    this.eventSink.off(
+      'model.activated',
+      this.onModelActivated)
+
     console.log(
       'Viewing.Extension.ModelTransformer unloaded')
 
@@ -149,6 +160,15 @@ class ModelTransformerExtension extends ExtensionBase {
   onModelRootLoaded (args) {
 
     this.setModel(args[0].model)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onModelActivated (args) {
+
+    this.setModel(args.model)
   }
 
   /////////////////////////////////////////////////////////

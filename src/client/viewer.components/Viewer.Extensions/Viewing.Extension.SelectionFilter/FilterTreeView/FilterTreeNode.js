@@ -9,7 +9,7 @@ import React from 'react'
 //
 //
 ///////////////////////////////////////////////////////////////////////////////
-export default class RayTreeNode extends EventsEmitter {
+export default class FilterTreeNode extends EventsEmitter {
 
   /////////////////////////////////////////////////////////////
   //
@@ -148,7 +148,7 @@ export default class RayTreeNode extends EventsEmitter {
 
     this.children = childIds.map((id) => {
 
-      const childNode = new RayTreeNode({
+      const childNode = new FilterTreeNode({
         disabled: this.disabled || !this.checked,
         name: this.instanceTree.getNodeName(id),
         group: this.getChildIds(id).length,

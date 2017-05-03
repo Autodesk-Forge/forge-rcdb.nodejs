@@ -1,17 +1,19 @@
+import FilterTreeNode from './FilterTreeNode'
 import { TreeDelegate } from 'TreeView'
-import RayTreeNode from './RayTreeNode'
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 //
 ///////////////////////////////////////////////////////////////////////////////
-export default class RayTreeDelegate extends TreeDelegate {
+export default class FilterTreeDelegate extends TreeDelegate {
 
   /////////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////////
-  setModel (model) {
+  constructor (model) {
+
+    super ()
 
     this.instanceTree = model.getData().instanceTree
   }
@@ -24,7 +26,7 @@ export default class RayTreeDelegate extends TreeDelegate {
 
     const rootId = this.instanceTree.getRootId()
 
-    this.rootNode = new RayTreeNode({
+    this.rootNode = new FilterTreeNode({
 
       name: this.instanceTree.getNodeName(rootId),
       group: this.getChildIds(rootId).length,
@@ -46,6 +48,8 @@ export default class RayTreeDelegate extends TreeDelegate {
   destroy () {
 
     this.rootNode.destroy()
+
+    this.off()
   }
 
   /////////////////////////////////////////////////////////////

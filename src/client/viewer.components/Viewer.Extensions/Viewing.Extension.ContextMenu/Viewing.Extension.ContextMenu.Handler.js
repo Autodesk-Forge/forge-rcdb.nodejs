@@ -3,9 +3,11 @@
 // by Philippe Leefsma, September 2016
 //
 /////////////////////////////////////////////////////////////////////
+import EventsEmitter from 'EventsEmitter'
 
 export default class ContextMenuHandler extends
-  Autodesk.Viewing.Extensions.ViewerObjectContextMenu {
+  EventsEmitter.Composer (
+    Autodesk.Viewing.Extensions.ViewerObjectContextMenu) {
 
   /////////////////////////////////////////////////////////////////
   // Class constructor
@@ -14,8 +16,6 @@ export default class ContextMenuHandler extends
   constructor (viewer, options = {}) {
 
     super (viewer, options)
-
-    this.options = options
   }
 
   /////////////////////////////////////////////////////////////////
@@ -24,10 +24,12 @@ export default class ContextMenuHandler extends
   /////////////////////////////////////////////////////////////////
   buildMenu (event, status) {
 
-    const menu = super.buildMenu(event, status)
+    const defaultMenu = super.buildMenu(event, status)
 
-    return this.options.buildMenu ?
-      this.options.buildMenu(menu) :
-      menu
+    const newMenu = this.emit(
+      'buildMenu',
+      defaultMenu)
+
+    return newMenu || defaultMenu
   }
 }

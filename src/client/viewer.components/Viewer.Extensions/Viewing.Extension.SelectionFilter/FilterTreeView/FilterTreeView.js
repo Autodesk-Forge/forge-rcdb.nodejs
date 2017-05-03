@@ -15,13 +15,13 @@
 // DOES NOT WARRANT THAT THE OPERATION OF THE PROGRAM WILL BE
 // UNINTERRUPTED OR ERROR FREE.
 /////////////////////////////////////////////////////////////////////
-import RayTreeDelegate from './RayTreeDelegate'
+import FilterTreeDelegate from './FilterTreeDelegate'
 import { TreeView } from 'TreeView'
 import ReactDOM from 'react-dom'
-import './RayTreeView.scss'
+import './FilterTreeView.scss'
 import React from 'react'
 
-export default class RayTreeView extends React.Component {
+export default class FilterTreeView extends React.Component {
 
   /////////////////////////////////////////////////////////
   //
@@ -31,16 +31,16 @@ export default class RayTreeView extends React.Component {
 
     super (props)
 
-    this.delegate = new RayTreeDelegate()
+    this.delegate = new FilterTreeDelegate(props.model)
 
     this.delegate.on('node.dblClick', (node) => {
 
-      this.props.viewer.isolate(node.id)
+      this.props.viewer.isolate(node.id, props.model)
     })
 
     this.delegate.on('node.checked', (node) => {
 
-      this.props.onNodeChecked(node)
+      this.props.onNodeChecked(props.model, node)
     })
 
     this.delegate.on('node.destroy', (node) => {
@@ -53,9 +53,7 @@ export default class RayTreeView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  setModel (model) {
-
-    this.delegate.setModel(model)
+  componentDidMount () {
 
     this.rootNode = this.delegate.createRootNode()
 
@@ -66,15 +64,6 @@ export default class RayTreeView extends React.Component {
 
     this.rootNode.expand ()
     this.rootNode.setChecked (true)
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  componentDidMount () {
-
-    this.setModel(this.props.model)
   }
 
   /////////////////////////////////////////////////////////
@@ -92,27 +81,10 @@ export default class RayTreeView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  componentWillReceiveProps (props) {
-
-    if (props.model !== this.props.model) {
-
-      this.delegate.destroy()
-
-      this.tree.destroy ()
-
-      this.setModel (
-        props.model)
-    }
-  }
-
-  /////////////////////////////////////////////////////////
+  //shouldComponentUpdate () {
   //
-  //
-  /////////////////////////////////////////////////////////
-  shouldComponentUpdate (nextProps) {
-
-    return false
-  }
+  //  return false
+  //}
 
   /////////////////////////////////////////////////////////
   //
@@ -121,7 +93,7 @@ export default class RayTreeView extends React.Component {
   render() {
 
     return (
-      <div className="raytree-container" ref={
+      <div className="filter-tree-container" ref={
         (div) => this.treeContainer = div
         }
       />

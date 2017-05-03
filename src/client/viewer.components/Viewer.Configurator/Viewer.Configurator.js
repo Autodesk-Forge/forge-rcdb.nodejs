@@ -32,6 +32,8 @@ class ViewerConfigurator extends React.Component {
 
     this.getViewablePath = this.getViewablePath.bind(this)
 
+    this.eventSvc = ServiceManager.getService('EventSvc')
+
     this.modelSvc = ServiceManager.getService('ModelSvc')
 
     this.pushRenderExtension =
@@ -235,9 +237,14 @@ class ViewerConfigurator extends React.Component {
 
           if (viewer.loadExtension (extension.id, options)) {
 
-            const ext = viewer.getExtension (extension.id)
+            const extInstance = viewer.getExtension (
+              extension.id)
 
-            return resolve (ext)
+            this.eventSvc.emit('extension.loaded', {
+              extension: extInstance
+            })
+
+            return resolve (extInstance)
           }
 
           reject ('Failed to load extension: ' + extension.id)
@@ -473,7 +480,8 @@ class ViewerConfigurator extends React.Component {
 
       const fullOptions = _.merge ({},
         createDefaultOptions(id), {
-          viewerDocument: this.viewerDocument
+          viewerDocument: this.viewerDocument,
+          eventSink: this.eventSvc
         },
         options)
 
@@ -589,7 +597,7 @@ class ViewerConfigurator extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  async onViewerCreated (viewer, model) {
+  async onViewerCreated (viewer, modelInfo) {
 
     try {
 
@@ -608,8 +616,8 @@ class ViewerConfigurator extends React.Component {
         dbModel: this.state.dbModel,
         parentControl: ctrlGroup,
         loader: this.loader,
-        apiUrl: `/api`,
-        model: model
+        model: modelInfo,
+        apiUrl: `/api`
       }
 
       const extensions =
@@ -618,32 +626,46 @@ class ViewerConfigurator extends React.Component {
       await this.setupDynamicExtensions (
         viewer, extensions, defaultOptions)
 
-      if (model) {
+      if (modelInfo) {
 
         switch (this.state.dbModel.env) {
 
           case 'Local':
 
-            viewer.loadModel(model.path)
+            viewer.loadModel(modelInfo.path, {}, (model) => {
+
+              model.guid = this.guid()
+
+              this.eventSvc.emit('model.loaded', {
+                model
+              })
+            })
 
             break
 
           case 'AutodeskProduction':
 
             this.viewerDocument =
-              await
-            this.loadDocument(model.urn)
+              await this.loadDocument(modelInfo.urn)
 
             const path = this.getViewablePath(
               this.viewerDocument,
-              model.pathIdx || 0,
-              model.role || ['3d', '2d'])
+              modelInfo.pathIdx || 0,
+              modelInfo.role || ['3d', '2d'])
 
             const options = {
-              sharedPropertyDbPath: this.viewerDocument.getPropertyDbPath()
+              sharedPropertyDbPath:
+                this.viewerDocument.getPropertyDbPath()
             }
 
-            viewer.loadModel(path, options)
+            viewer.loadModel(path, options, (model) => {
+
+              model.guid = this.guid()
+
+              this.eventSvc.emit('model.loaded', {
+                model
+              })
+            })
 
             break
         }
@@ -654,6 +676,25 @@ class ViewerConfigurator extends React.Component {
       console.log('Viewer Initialization Error: ')
       console.log(ex)
     }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  guid (format = 'xxxxxxxxxxxx') {
+
+    var d = new Date().getTime()
+
+    var guid = format.replace(
+      /[xy]/g,
+      function (c) {
+        var r = (d + Math.random() * 16) % 16 | 0
+        d = Math.floor(d / 16)
+        return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16)
+      })
+
+    return guid
   }
 
   /////////////////////////////////////////////////////////
@@ -698,12 +739,12 @@ class ViewerConfigurator extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  renderModel (model) {
+  renderModel (modelInfo) {
 
     return (
       <Viewer panels= {this.state.viewerPanels}
         onViewerCreated={(viewer) => {
-          this.onViewerCreated(viewer, model)
+          this.onViewerCreated(viewer, modelInfo)
         }}
       />
     )
@@ -755,7 +796,9 @@ class ViewerConfigurator extends React.Component {
       return this.renderLoader ()
     }
 
-    const { layout, model } = dbModel
+    const modelInfo = dbModel.model
+
+    const layout = dbModel.layout
 
     switch (layout ? layout.type : 'default') {
 
@@ -773,7 +816,7 @@ class ViewerConfigurator extends React.Component {
               onResize={(e) => this.onResize(e)}
               propagateDimensions={true}
               flex={viewerFlex}>
-              {this.renderModel(model)}
+              {this.renderModel(modelInfo)}
             </ReflexElement>
           </ReflexContainer>
         )
@@ -786,7 +829,7 @@ class ViewerConfigurator extends React.Component {
               onResize={(e) => this.onResize(e)}
               propagateDimensions={true}
               flex={viewerFlex}>
-              {this.renderModel(model)}
+              {this.renderModel(modelInfo)}
             </ReflexElement>
             <ReflexSplitter onStopResize={() => this.forceUpdate()}
               style={paneExtStyle}
@@ -798,7 +841,7 @@ class ViewerConfigurator extends React.Component {
         )
 
       default:
-        return this.renderModel(model)
+        return this.renderModel(modelInfo)
     }
   }
 }

@@ -36,25 +36,36 @@ class ContextMenuExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////////////
   load() {
 
-    this.contextMenuHandler = new ContextMenuHandler(
-      this.viewer, {
-        buildMenu: (menu) => {
+    this.contextMenuHandler = new ContextMenuHandler(this.viewer)
 
-          const newMenu = this.emit('buildMenu', {
-            selectedDbId: this.selectedDbId,
-            menu
-          })
+    this.contextMenuHandler.on('buildMenu', (menu) => {
 
-          if (newMenu) {
+      const dbId = this.selection
+        ? this.selection.dbIdArray[0]
+        : null
 
-            return _.flatten(newMenu)
-          }
+      const model = this.selection
+        ? this.selection.model
+        : null
 
-          return this.options.buildMenu
-            ? this.options.buildMenu(menu, this.selectedDbId)
-            : menu
-        }
+      const selection = this.selection
+
+      const newMenu = this.emit('buildMenu', {
+        selection,
+        model,
+        dbId,
+        menu
       })
+
+      if (newMenu) {
+
+        return newMenu
+      }
+
+      return this.options.buildMenu
+        ? this.options.buildMenu(menu, dbId)
+        : menu
+    })
 
     this.viewer.setContextMenu(this.contextMenuHandler)
 
@@ -73,16 +84,9 @@ class ContextMenuExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   onSelection (event) {
 
-    if (event.selections && event.selections.length) {
-
-      const selection = event.selections[0]
-
-      this.selectedDbId = selection.dbIdArray[0]
-
-    } else {
-
-      this.selectedDbId = null
-    }
+    this.selection = event.selections.length
+      ? event.selections[0]
+      : null
   }
 
   /////////////////////////////////////////////////////////////////

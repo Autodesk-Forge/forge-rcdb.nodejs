@@ -1,12 +1,12 @@
 /////////////////////////////////////////////////////////////////
-// Raytracer Viewer Extension
+// SelectionFilter Viewer Extension
 // By Philippe Leefsma, Autodesk Inc, April 2017
 //
 /////////////////////////////////////////////////////////////////
 import ExtensionBase from 'Viewer.ExtensionBase'
 import WidgetContainer from 'WidgetContainer'
+import FilterTreeView from './FilterTreeView'
 import EventTool from 'Viewer.EventTool'
-import RayTreeView from './RayTreeView'
 import Toolkit from 'Viewer.Toolkit'
 import { ReactLoader } from 'Loader'
 import ReactDOM from 'react-dom'
@@ -14,7 +14,7 @@ import Switch from 'Switch'
 import Label from 'Label'
 import React from 'react'
 
-class RaytracerExtension extends ExtensionBase {
+class SelectionFilterExtension extends ExtensionBase {
 
 	/////////////////////////////////////////////////////////////////
 	// Class constructor
@@ -30,6 +30,8 @@ class RaytracerExtension extends ExtensionBase {
 
     this.eventTool = new EventTool(this.viewer)
 
+    this.eventSink = options.eventSink
+
     this.react = options.react
 
     this.leafNodesMap = {}
@@ -41,109 +43,24 @@ class RaytracerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
 	load () {
 
-    this.viewer.addEventListener(
-      Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT, (e) => {
+    this.eventSink.on('model.loaded', () => {
 
-        if (this.options.loader) {
+      if (this.options.loader) {
 
-          this.options.loader.hide()
-        }
-      })
+        this.options.loader.hide()
+      }
 
-    this.on('loaded', (args) => this.onLoaded(args))
-
-    this.viewerEvent([
-
-      Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
-      Autodesk.Viewing.GEOMETRY_LOADED_EVENT
-
-    ]).then((args) => this.onModelLoaded(args))
-
-    this.viewerEvent(
-      Autodesk.Viewing.GEOMETRY_LOADED_EVENT
-    ).then((args) => this.onGeometryLoaded(args))
+      this.initLoadEvents ()
+    })
 
     this.react.setState({
 
-      model: null
+      models: []
 
     }).then (() => {
 
       this.react.pushRenderExtension(this)
     })
-
-    console.log('Viewing.Extension.RayTracer loaded')
-
-		return true
-	}
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  get className() {
-
-    return 'ray-tracer'
-  }
-
-  /////////////////////////////////////////////////////////
-	// Extension Id
-  //
-  /////////////////////////////////////////////////////////
-	static get ExtensionId () {
-
-		return 'Viewing.Extension.RayTracer'
-	}
-
-  /////////////////////////////////////////////////////////
-	// Unload callback
-  //
-  /////////////////////////////////////////////////////////
-	unload () {
-
-    this.viewer.removeEventListener(
-      Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
-      this.onSelection)
-
-    this.eventTool.deactivate()
-
-    console.log('Viewing.Extension.RayTracer loaded')
-
-		return true
-	}
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  onModelLoaded (args) {
-
-    this.emit('loaded', args)
-  }
-
-  onGeometryLoaded (args) {
-
-    this.emit('loaded', args)
-  }
-
-  async onLoaded (args) {
-
-    const model = args[0].model
-
-    this.off('loaded')
-
-    this.react.setState({
-      model
-    })
-
-    Toolkit.getLeafNodes (model).then((dbIds) => {
-
-      dbIds.forEach((dbId) => {
-        this.leafNodesMap[dbId] = true
-      })
-    })
-
-    this.eventTool.activate()
 
     this.eventTool.on ('buttondown', () => {
 
@@ -178,12 +95,9 @@ class RaytracerExtension extends ExtensionBase {
 
         if (hitTest) {
 
-          const {model} = this.react.getState()
+          const {guid} = hitTest.model
 
-          if (model === hitTest.model) {
-
-            return !this.leafNodesMap[hitTest.dbId]
-          }
+          return !this.leafNodesMap[guid][hitTest.dbId]
         }
       }
 
@@ -191,56 +105,113 @@ class RaytracerExtension extends ExtensionBase {
     })
 
     this.viewer.loadDynamicExtension(
-      'Viewing.Extension.ContextMenu', {
-        buildMenu: (menu, dbId) => {
+      'Viewing.Extension.ContextMenu').then (
+        (ctxMenuExtension) => {
 
-          if (!dbId || this.leafNodesMap[dbId]) {
+          ctxMenuExtension.on('buildMenu', (params) => {
 
-            return menu
-          }
+            const guid = params.model
+              ? params.model.guid
+              : ''
 
-          return []
-        }
-      })
+            const dbId = params.dbId
+
+            return (!dbId || this.leafNodesMap[guid][dbId])
+              ? params.menu
+              : []
+          })
+        })
 
     this.viewer.addEventListener(
       Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
       this.onSelection)
+
+    console.log('Viewing.Extension.SelectionFilter loaded')
+
+		return true
+	}
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  get className() {
+
+    return 'selection-filter'
   }
 
-  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
+	// Extension Id
+  //
+  /////////////////////////////////////////////////////////
+	static get ExtensionId () {
+
+		return 'Viewing.Extension.SelectionFilter'
+	}
+
+  /////////////////////////////////////////////////////////
+	// Unload callback
+  //
+  /////////////////////////////////////////////////////////
+	unload () {
+
+    this.viewer.removeEventListener(
+      Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
+      this.onSelection)
+
+    this.eventTool.deactivate()
+
+    console.log('Viewing.Extension.SelectionFilter unloaded')
+
+		return true
+	}
+
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////
-  setModel (model, params) {
+  /////////////////////////////////////////////////////////
+  initLoadEvents () {
 
-    switch (params.source) {
+    this.on('model.ready', (args) => {
 
-      case 'loaded':
+      this.onModelReady(args)
+    })
 
-        return this.viewerEvent([
-          Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
-          Autodesk.Viewing.GEOMETRY_LOADED_EVENT
-        ]).then(() => { })
+    this.viewerEvent([
 
-      case 'dropdown':
+      Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
+      Autodesk.Viewing.GEOMETRY_LOADED_EVENT
 
-        this.react.setState({
-          model
-        })
+    ]).then((args) => {
 
-        this.leafNodesMap = {}
+      this.onModelFullyLoaded(args)
+    })
 
-        Toolkit.getLeafNodes (model).then((dbIds) => {
+    this.eventTool.deactivate()
+  }
 
-          dbIds.forEach((dbId) => {
-            this.leafNodesMap[dbId] = true
-          })
-        })
+  async onModelFullyLoaded (args) {
 
-      default:
-        return
-    }
+    const {models} = this.react.getState()
+
+    const model = args[0].model
+
+    this.react.setState({
+      models: [...models, model]
+    })
+
+    this.leafNodesMap[model.guid] = {}
+
+    Toolkit.getLeafNodes (model).then((dbIds) => {
+
+      dbIds.forEach((dbId) => {
+        this.leafNodesMap[model.guid][dbId] = true
+      })
+    })
+
+    this.eventTool.activate()
+
+    return true
   }
 
   /////////////////////////////////////////////////////////
@@ -251,9 +222,13 @@ class RaytracerExtension extends ExtensionBase {
 
     if (e.selections.length) {
 
-      const dbId = e.selections[0].dbIdArray[0]
+      const selection = e.selections[0]
 
-      if (!this.leafNodesMap[dbId]) {
+      const dbId = selection.dbIdArray[0]
+
+      const model = selection.model
+
+      if (!this.leafNodesMap[model.guid][dbId]) {
 
         this.viewer.clearSelection()
       }
@@ -307,15 +282,13 @@ class RaytracerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onNodeChecked (node) {
-
-    const {model} = this.react.getState()
+  onNodeChecked (model, node) {
 
     Toolkit.getLeafNodes (model, node.id).then((dbIds) => {
 
       dbIds.forEach((dbId) => {
 
-        this.leafNodesMap[dbId] = node.checked
+        this.leafNodesMap[model.guid][dbId] = node.checked
       })
     })
   }
@@ -326,7 +299,7 @@ class RaytracerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   async setDocking (docked) {
 
-    const id = RaytracerExtension.ExtensionId
+    const id = SelectionFilterExtension.ExtensionId
 
     if (docked) {
 
@@ -358,9 +331,9 @@ class RaytracerExtension extends ExtensionBase {
     return (
       <div className="title">
         <label>
-          Ray Tracer
+          Selection Filter
         </label>
-        <div className="ray-tracer-controls">
+        <div className="selection-filter-controls">
           <button onClick={() => this.setDocking(docked)}
             title="Toggle docking mode">
             <span className={spanClass}/>
@@ -376,18 +349,24 @@ class RaytracerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   renderContent () {
 
-    const { model } = this.react.getState()
+    const { models } = this.react.getState()
 
-    const treeView = model
-      ? <RayTreeView onNodeChecked={this.onNodeChecked}
+    //console.log(models)
+
+    const treeViews = models.map((model) => {
+
+      return (
+        <FilterTreeView onNodeChecked={this.onNodeChecked}
           viewer={this.viewer}
+          key={model.guid}
           model={model}/>
-      : <div/>
+      )
+    })
 
     return (
       <div className="content">
-        <ReactLoader show={!model}/>
-        { treeView }
+        <ReactLoader show={!models.length}/>
+        { treeViews }
       </div>
     )
   }
@@ -412,7 +391,7 @@ class RaytracerExtension extends ExtensionBase {
 }
 
 Autodesk.Viewing.theExtensionManager.registerExtension (
-  RaytracerExtension.ExtensionId,
-  RaytracerExtension)
+  SelectionFilterExtension.ExtensionId,
+  SelectionFilterExtension)
 
-export default 'Viewing.Extension.RayTracer'
+export default 'Viewing.Extension.SelectionFilter'

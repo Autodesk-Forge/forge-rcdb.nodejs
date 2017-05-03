@@ -66,28 +66,14 @@ export default class EventsEmitter {
 
     var tmpArray = this._events[event].slice()
 
-    var results = []
-
     for (var i = 0; i < tmpArray.length; ++i) {
 
       var result = tmpArray[i].apply(this,
         Array.prototype.slice.call(arguments, 1));
 
-      if(result !== undefined)
-        results.push(result)
-    }
-
-    if (!results.length) {
-
-      return null
-
-    } else if (results.length === 1) {
-
-      return results[0]
-
-    } else {
-
-      return results
+      if(result !== undefined) {
+        return result
+      }
     }
   }
 
@@ -127,7 +113,7 @@ export const EventsEmitterComposer =
 
     super (arg1, arg2, arg3, arg4, arg5)
 
-    this._events = {};
+    this._events = {}
   }
 
   ///////////////////////////////////////////////////////////////////
@@ -186,28 +172,14 @@ export const EventsEmitterComposer =
 
     var tmpArray = this._events[event].slice()
 
-    var results = []
-
     for (var i = 0; i < tmpArray.length; ++i) {
 
       var result = tmpArray[i].apply(this,
         Array.prototype.slice.call(arguments, 1));
 
-      if(result !== undefined )
-        results.push(result)
-    }
-
-    if (!results.length) {
-
-      return null
-
-    } else if (results.length === 1) {
-
-      return results[0]
-
-    } else {
-
-      return results
+      if(result !== undefined) {
+        return result
+      }
     }
   }
 

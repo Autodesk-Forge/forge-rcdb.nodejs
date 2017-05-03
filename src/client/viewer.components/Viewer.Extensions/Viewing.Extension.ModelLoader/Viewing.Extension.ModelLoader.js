@@ -38,6 +38,8 @@ class ModelLoaderExtension extends ExtensionBase {
     this.dialogSvc =
       ServiceManager.getService('DialogSvc')
 
+    this.eventSink = options.eventSink
+
     this.react = options.react
   }
 
@@ -252,18 +254,12 @@ class ModelLoaderExtension extends ExtensionBase {
             : null
 
         await this.setActiveModel(nextActiveModel, {
-          source: 'unloaded'
+          source: 'model.unloaded'
         })
 
-        for (const extId in this.viewer.loadedExtensions) {
-
-          const extension = this.viewer.getExtension(extId)
-
-          if (extension.removeModel) {
-
-            extension.removeModel(model)
-          }
-        }
+        this.eventSink.emit('model.unloaded', {
+          model: activeModel
+        })
 
         this.viewer.impl.unloadModel(activeModel)
       }
@@ -334,9 +330,7 @@ class ModelLoaderExtension extends ExtensionBase {
 
       const rootId = instanceTree.getRootId()
 
-      this.viewer.model = model
-
-      this.viewer.fitToView([rootId])
+      this.viewer.fitToView([rootId], model)
     }
   }
 
@@ -353,7 +347,11 @@ class ModelLoaderExtension extends ExtensionBase {
       const model = selection.model
 
       this.setActiveModel (model, {
-        source: 'selection'
+        source: 'model.selected'
+      })
+
+      this.eventSink.emit('model.selected', {
+        model
       })
     }
   }
@@ -372,18 +370,14 @@ class ModelLoaderExtension extends ExtensionBase {
     this.setStructure(model)
 
     await this.react.setState({
+      source: params.source,
       activeModel: model
     })
 
-    for (const extId in this.viewer.loadedExtensions) {
-
-      const extension = this.viewer.getExtension(extId)
-
-      if (extension.setModel) {
-
-        extension.setModel(model, params)
-      }
-    }
+    this.eventSink.emit('model.activated', {
+      source: params.source,
+      model
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -447,30 +441,35 @@ class ModelLoaderExtension extends ExtensionBase {
     const modelDlgItems = dbModels.map((dbModel) => {
 
       return (
-        <div key={dbModel._id} className="model-item" onClick={() => {
+        <div key={dbModel._id} className="model-item"
+          onClick={() => {
 
-          this.loadModel(dbModel).then((model) => {
+            this.loadModel(dbModel).then(async(model) => {
 
-            const {models} = this.react.getState()
+              const {models} = this.react.getState()
 
-            const modelsByName =
-              _.sortBy([...models, model], (m) => {
-                return m.name
+              const modelsByName =
+                _.sortBy([...models, model], (m) => {
+                  return m.name
+                })
+
+              this.react.setState({
+                models: modelsByName
               })
 
-            this.react.setState({
-              models: modelsByName
+              this.eventSink.emit('model.loaded', {
+                model
+              })
+
+              await this.setActiveModel (model, {
+                source: 'model.loaded',
+                fitToView: true
+              })
             })
 
-            this.setActiveModel (model, {
-              source: 'loaded',
-              fitToView: true
+            this.dialogSvc.setState({
+              open: false
             })
-          })
-
-          this.dialogSvc.setState({
-            open: false
-          })
         }}>
           <img className={dbModel.thumbnail ? "":"default-thumbnail"}
             src={dbModel.thumbnail ? dbModel.thumbnail : ""}/>
@@ -601,6 +600,7 @@ class ModelLoaderExtension extends ExtensionBase {
       return (
         <MenuItem eventKey={idx} key={model.guid}
           onClick={() => {
+
             this.setActiveModel(model, {
               source: 'dropdown',
               fitToView: true

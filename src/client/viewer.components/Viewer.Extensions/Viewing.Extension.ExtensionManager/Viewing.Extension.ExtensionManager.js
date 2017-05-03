@@ -87,6 +87,8 @@ class ExtensionManager extends ExtensionBase {
       }
     }
 
+    this.eventSink = options.eventSink
+
     this.react = options.react
   }
 
@@ -114,7 +116,7 @@ class ExtensionManager extends ExtensionBase {
   /////////////////////////////////////////////////////////
   load () {
 
-    this.loadEvents ()
+    this.initLoadEvents ()
 
     this.viewer.addEventListener(
       Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT, (e) => {
@@ -181,7 +183,7 @@ class ExtensionManager extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  loadEvents () {
+  initLoadEvents () {
 
     this.events = {}
 
@@ -191,7 +193,7 @@ class ExtensionManager extends ExtensionBase {
           Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
           Autodesk.Viewing.GEOMETRY_LOADED_EVENT
         ],
-        handler: 'onModelLoaded'
+        handler: 'onModelFullyLoaded'
       },
       {
         id: Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
@@ -261,6 +263,11 @@ class ExtensionManager extends ExtensionBase {
 
               extInstance[event.handler](event.args)
             }
+          }
+
+          if (extInstance.initLoadEvents) {
+
+            extInstance.initLoadEvents()
           }
 
           resolve(extInstance)
