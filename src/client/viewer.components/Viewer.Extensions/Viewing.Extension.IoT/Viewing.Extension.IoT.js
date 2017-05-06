@@ -4,16 +4,16 @@
 //
 /////////////////////////////////////////////////////////////////
 import {ReflexContainer, ReflexElement, ReflexSplitter} from 'react-reflex'
-import HotSpotPropertyPanel from './Predix.HotSpot.PropertyPanel'
+import HotSpotPropertyPanel from './IoT.HotSpot.PropertyPanel'
 import ExtensionBase from 'Viewer.ExtensionBase'
-import PredixPopover from './Predix.Popover'
 import EventTool from 'Viewer.EventTool'
 import ServiceManager from 'SvcManager'
+import IoTPopover from './IoT.Popover'
 import Toolkit from 'Viewer.Toolkit'
 
 // React Stuff
 import WidgetContainer from 'WidgetContainer'
-import IoTGraph from './IoTGraph'
+import IoTGraph from './IoT.Graph'
 import React from 'react'
 import './Data.scss'
 
@@ -23,7 +23,7 @@ import HotSpotCommand from 'HotSpot.Command'
 import hotspots from './hotspots'
 
 
-class PredixExtension extends ExtensionBase {
+class IoTExtension extends ExtensionBase {
 
   /////////////////////////////////////////////////////////////////
   // Class constructor
@@ -277,7 +277,7 @@ class PredixExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////////////
   static get ExtensionId () {
 
-    return 'Viewing.Extension.Predix'
+    return 'Viewing.Extension.IoT'
   }
 
   /////////////////////////////////////////////////////////////////
@@ -608,7 +608,7 @@ class IoTGraphContainer extends React.Component {
 }
 
 Autodesk.Viewing.theExtensionManager.registerExtension(
-  PredixExtension.ExtensionId,
-  PredixExtension)
+  IoTExtension.ExtensionId,
+  IoTExtension)
 
-module.exports = 'Viewing.Extension.Predix'
+module.exports = 'Viewing.Extension.IoT'

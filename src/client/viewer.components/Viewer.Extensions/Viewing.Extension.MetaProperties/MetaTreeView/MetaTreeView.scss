@@ -5,6 +5,10 @@
   text-align: left;
   height: 100%;
 
+  .treeview group {
+    width: 100%;
+  }
+
   .treeview header {
     transition-property: background, border;
     transition-timing-function: ease;
@@ -14,6 +18,11 @@
     background: rgba(245, 245, 245, 0.5);
     border: none;
     height: 30px;
+  }
+
+  .treeview header.property,
+  .treeview header.category {
+    width: calc(100% - 25px);
   }
 
   .treeview header:hover {
@@ -33,14 +42,52 @@
     float: left;
   }
 
-  .treenode .switch-container {
-    border: 1px solid #9c9c9c;
-    border-radius: 12px;
-    margin: 0 8px 0 2px;
+  .treeview header.category .treenode-container {
+    width: calc(100% - 46px);
+    overflow: hidden;
     float: left;
   }
 
   .treenode {
+    float: left;
+  }
+
+  .treeview header.property .treenode {
+    width: 100%;
+  }
+
+  .treeview header.property .treenode .label-container {
+    width: 50%;
+  }
+
+  .treeview header.property .treenode .label-container.meta-value {
+    width: calc(50% - 40px);
+  }
+
+  .treeview header.property .treenode span {
+    transition-property: color;
+    transition-timing-function: ease;
+    transition-duration: 1.0s;
+    transition-delay: 0.0s;
+
+    margin-right: 8px;
+    color: #fafafa;
+  }
+
+  .treeview header.property .treenode span.fa-edit {
+    position: relative;
+    top: 1px;
+  }
+
+  .treeview header:hover.property .treenode span {
+    display: inline;
+    color: #2f2f2f;
+  }
+
+  .treenode .switch-container {
+    border: 1px solid #9c9c9c;
+    border-radius: 12px;
+    margin: 0 8px 0 2px;
     float: left;
   }
 }

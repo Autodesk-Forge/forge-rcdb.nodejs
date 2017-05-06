@@ -18,7 +18,9 @@ class ContextMenuExtension extends ExtensionBase {
 
     this.onSelection = this.onSelection.bind(this)
 
-    this.selectedDbId = null
+    this.selection = null
+
+    this.handlers = []
   }
 
   /////////////////////////////////////////////////////////////////
@@ -50,17 +52,24 @@ class ContextMenuExtension extends ExtensionBase {
 
       const selection = this.selection
 
-      const newMenu = this.emit('buildMenu', {
+      const menuArgs = {
         selection,
         model,
         dbId,
         menu
-      })
+      }
+
+      const newMenu = this.emit('buildMenu', menuArgs)
 
       if (newMenu) {
 
         return newMenu
       }
+
+      this.handlers.forEach((handler) => {
+
+        menu = handler (menuArgs)
+      })
 
       return this.options.buildMenu
         ? this.options.buildMenu(menu, dbId)
@@ -76,6 +85,15 @@ class ContextMenuExtension extends ExtensionBase {
     console.log('Viewing.Extension.ContextMenu loaded')
 
     return true;
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  addHandler (handler) {
+
+    this.handlers.push (handler)
   }
 
   /////////////////////////////////////////////////////////

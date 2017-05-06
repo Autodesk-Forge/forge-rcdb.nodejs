@@ -4,6 +4,7 @@ import ServiceManager from 'SvcManager'
 import './Viewer.Configurator.scss'
 import PropTypes from 'prop-types'
 import Stopwatch from 'Stopwatch'
+import ReactDOM from 'react-dom'
 import easing from 'easing-js'
 import Viewer from 'Viewer'
 import Panel from 'Panel'
@@ -99,11 +100,6 @@ class ViewerConfigurator extends React.Component {
 
       this.props.setViewerEnv (viewerEnv)
 
-      //2.13
-      //Autodesk.Viewing.setApiEndpoint(
-      //  window.location.origin + '/lmv-proxy')
-
-      //2.14
       Autodesk.Viewing.setEndpointAndApi(
         window.location.origin + '/lmv-proxy',
         'modelDerivativeV2')
@@ -610,6 +606,7 @@ class ViewerConfigurator extends React.Component {
       const ctrlGroup = this.createToolbar (viewer)
 
       const defaultOptions = {
+        appContainer: ReactDOM.findDOMNode(this),
         getViewablePath: this.getViewablePath,
         loadDocument: this.loadDocument,
         database: this.props.database,
@@ -634,6 +631,9 @@ class ViewerConfigurator extends React.Component {
 
             viewer.loadModel(modelInfo.path, {}, (model) => {
 
+              model.dbModelId = this.state.dbModel._id
+              model.name = this.state.dbModel.name
+              model.urn = modelInfo.urn
               model.guid = this.guid()
 
               this.eventSvc.emit('model.loaded', {
@@ -660,6 +660,9 @@ class ViewerConfigurator extends React.Component {
 
             viewer.loadModel(path, options, (model) => {
 
+              model.dbModelId = this.state.dbModel._id
+              model.name = this.state.dbModel.name
+              model.urn = modelInfo.urn
               model.guid = this.guid()
 
               this.eventSvc.emit('model.loaded', {

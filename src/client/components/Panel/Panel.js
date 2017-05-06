@@ -109,7 +109,7 @@ class Panel extends EventsEmitter {
 
     return this.runAnimation(
       state.height, 35,
-      state.height / this.props.height)
+      Math.min(state.height / this.props.height, 1.0))
   }
 
   /////////////////////////////////////////////////////////

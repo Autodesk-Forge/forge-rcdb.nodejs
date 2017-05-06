@@ -436,45 +436,50 @@ class ModelTransformerExtension extends ExtensionBase {
 
     const transform = this.getTransform()
 
-    const value = this.toFloat(e.target.value)
-
-    console.log(value)
+    const value = e.target.value
 
     switch (key) {
 
       case 'Tx':
-        transform.translation.x = value
+        transform.translation.x =
+          this.toFloat(value)
         break
       case 'Ty':
-        transform.translation.y = value
+        transform.translation.y =
+          this.toFloat(value)
         break
       case 'Tz':
-        transform.translation.z = value
+        transform.translation.z =
+          this.toFloat(value)
         break
 
       case 'Rx':
-        transform.rotation.x = value * Math.PI/180
+        transform.rotation.x =
+          this.toFloat(value) * Math.PI/180
         break
       case 'Ry':
-        transform.rotation.y = value * Math.PI/180
+        transform.rotation.y =
+          this.toFloat(value) * Math.PI/180
         break
       case 'Rz':
-        transform.rotation.z = value * Math.PI/180
+        transform.rotation.z =
+          this.toFloat(value) * Math.PI/180
         break
 
       case 'Sx':
-        transform.scale.x = value
-        transform.scale.y = value
-        transform.scale.z = value
+        transform.scale.x = this.toFloat(value)
+        transform.scale.y = this.toFloat(value)
+        transform.scale.z = this.toFloat(value)
+
         state.Sx = value
         state.Sy = value
         state.Sz = value
         break
       case 'Sy':
-        transform.scale.y = value
+        transform.scale.y = this.toFloat(value)
         break
       case 'Sz':
-        transform.scale.z = value
+        transform.scale.z = this.toFloat(value)
         break
     }
 
@@ -496,10 +501,8 @@ class ModelTransformerExtension extends ExtensionBase {
     const {fullTransform, model, selection} =
       this.react.getState()
 
-    const fragId = selection.fragIdsArray[0]
-
     return !fullTransform
-      ? this.getFragmentTransform(fragId)
+      ? this.getFragmentTransform(selection.fragIdsArray[0])
       : model.transform
   }
 

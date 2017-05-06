@@ -1,5 +1,6 @@
-import { TreeDelegate } from 'TreeView'
+import ContextMenu from './MetaContextMenu'
 import MetaTreeNode from './MetaTreeNode'
+import { TreeDelegate } from 'TreeView'
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -11,9 +12,25 @@ export default class MetaTreeDelegate extends TreeDelegate {
   //
   //
   /////////////////////////////////////////////////////////////
-  constructor () {
+  constructor (menuContainer) {
 
     super ()
+
+    this.contextMenu = new ContextMenu({
+      container: menuContainer
+    })
+
+    this.contextMenu.on(
+      'context.property.edit', (metaProperty) => {
+
+        this.emit('property.edit', metaProperty)
+      })
+
+    this.contextMenu.on(
+      'context.property.delete', (metaProperty) => {
+
+        this.emit('property.delete', metaProperty)
+      })
   }
 
   /////////////////////////////////////////////////////////////
@@ -81,6 +98,21 @@ export default class MetaTreeDelegate extends TreeDelegate {
     const selector = ['HEADER', 'LABEL']
 
     return (selector.indexOf(event.target.nodeName) > -1)
+  }
+
+  ///////////////////////////////////////////////////////////////////
+  //
+  //
+  ///////////////////////////////////////////////////////////////////
+  onTreeNodeRightClick (tree, node, event) {
+
+    if (node.type === 'property') {
+
+      if (node.props.metaType !== undefined) {
+
+        this.contextMenu.show(event, node)
+      }
+    }
   }
 
   /////////////////////////////////////////////////////////////

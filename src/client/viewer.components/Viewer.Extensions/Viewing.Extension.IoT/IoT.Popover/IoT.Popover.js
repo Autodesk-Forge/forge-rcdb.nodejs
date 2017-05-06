@@ -1,7 +1,7 @@
 import { TimeSeries, SmoothieChart } from './smoothie'
 import Popover from 'Popover'
 
-export default class PredixPopover extends Popover {
+export default class IoTPopover extends Popover {
 
   /////////////////////////////////////////////////////////////////
   // Class constructor

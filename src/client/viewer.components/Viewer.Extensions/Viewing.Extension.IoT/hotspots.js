@@ -16,7 +16,7 @@ const hotspots = [
       z: -1008.0699462890627
     },
     tooltip: {
-      class: 'predix',
+      class: 'IoT',
       caption: 'Click to display data ...'
     },
     viewerState: {
@@ -297,7 +297,7 @@ const hotspots = [
       z: -757.0288349708471
     },
     tooltip: {
-      class: 'predix',
+      class: 'IoT',
       caption: 'Click to display data ...'
     },
     viewerState:{
@@ -578,7 +578,7 @@ const hotspots = [
       z: -295.0700913724161
     },
     tooltip: {
-      class: 'predix',
+      class: 'IoT',
       caption: 'Click to display data ...'
     },
     viewerState:{
@@ -859,7 +859,7 @@ const hotspots = [
       z: -1136.170585971076
     },
     tooltip: {
-      class: 'predix',
+      class: 'IoT',
       caption: 'Click to display data ...'
     },
     viewerState:{
@@ -1011,7 +1011,7 @@ const hotspots = [
       z: -981.9296621799231
     },
     tooltip: {
-      class: 'predix',
+      class: 'IoT',
       caption: 'Click to display data ...'
     },
     viewerState:{

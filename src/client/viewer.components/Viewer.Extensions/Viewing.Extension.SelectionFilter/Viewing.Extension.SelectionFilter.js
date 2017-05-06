@@ -172,11 +172,6 @@ class SelectionFilterExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   initLoadEvents () {
 
-    this.on('model.ready', (args) => {
-
-      this.onModelReady(args)
-    })
-
     this.viewerEvent([
 
       Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
@@ -205,6 +200,7 @@ class SelectionFilterExtension extends ExtensionBase {
     Toolkit.getLeafNodes (model).then((dbIds) => {
 
       dbIds.forEach((dbId) => {
+
         this.leafNodesMap[model.guid][dbId] = true
       })
     })
@@ -229,6 +225,10 @@ class SelectionFilterExtension extends ExtensionBase {
       const model = selection.model
 
       if (!this.leafNodesMap[model.guid][dbId]) {
+
+        setTimeout(() => {
+          this.viewer.clearSelection()
+        }, 300)
 
         this.viewer.clearSelection()
       }

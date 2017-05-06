@@ -75,17 +75,27 @@ class ModelLoaderExtension extends ExtensionBase {
       this.options.loader.hide()
     }
 
+    const models = this.getModels()
+
+    const activeModel = models.length
+      ? models[0]
+      : null
+
+    this.firstFileType = activeModel
+      ? this.getFileType(activeModel.urn)
+      : null
+
     this.react.setState({
 
-      activeModel: null,
-      models: []
+      activeModel,
+      models
 
     }).then (() => {
 
       this.react.pushRenderExtension(this)
     })
 
-    const reactOptions = {
+    const transformerReactOptions = {
       pushRenderExtension: () => {
         return Promise.resolve()
       },
@@ -96,14 +106,21 @@ class ModelLoaderExtension extends ExtensionBase {
 
     this.viewer.loadDynamicExtension(
       'Viewing.Extension.ModelTransformer', {
-        fullTransform: true,
-        react: reactOptions
+
+        react: transformerReactOptions,
+        fullTransform: true
 
       }).then((modelTransformer) => {
 
         this.react.setState({
           modelTransformer
         })
+
+        if (activeModel ) {
+
+          modelTransformer.setModel(
+            activeModel)
+        }
       })
 
     this.viewer.addEventListener(
@@ -126,6 +143,20 @@ class ModelLoaderExtension extends ExtensionBase {
     console.log('Viewing.Extension.ModelLoader unloaded')
 
     return true
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  getModels () {
+
+    const models =
+      this.viewer.impl.modelQueue().getModels()
+
+    return _.sortBy(models, (m) => {
+      return m.name
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -168,14 +199,23 @@ class ModelLoaderExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  getFileType (urn) {
+
+    return window.atob(urn).split(".").pop(-1)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   loadModel (dbModel) {
 
     return new Promise(async(resolve) => {
 
       this.viewer.container.classList.remove('empty')
 
-      const fileType =
-        window.atob(dbModel.urn).split(".").pop(-1)
+      const fileType = dbModel.name ||
+        this.getFileType(dbModel.urn)
 
       const loadOptions = {
         placementTransform:
@@ -200,6 +240,7 @@ class ModelLoaderExtension extends ExtensionBase {
                 model.dbModelId = dbModel._id
                 model.name = dbModel.name
                 model.guid = this.guid()
+                model.urn = dbModel.urn
 
                 resolve (model)
               })
@@ -215,6 +256,7 @@ class ModelLoaderExtension extends ExtensionBase {
               model.dbModelId = dbModel._id
               model.name = dbModel.name
               model.guid = this.guid()
+              model.urn = dbModel.urn
 
               resolve (model)
             })
@@ -289,9 +331,9 @@ class ModelLoaderExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   buildPlacementTransform (fileType) {
 
-    const placementTransform = new THREE.Matrix4()
-
     this.firstFileType = this.firstFileType || fileType
+
+    const placementTransform = new THREE.Matrix4()
 
     // those file type have different orientation
     // than other, so need to correct it

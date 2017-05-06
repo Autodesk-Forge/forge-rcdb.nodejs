@@ -33,8 +33,17 @@
   top: -1px;
 }
 
-.dialog.service > .controls > button:hover > span {
+.dialog.service > .controls > button:hover:not(:disabled) > span {
   color: #FF9800;
+}
+
+.dialog.service > .controls > button:disabled > span {
+  color: #d0d0d0;
+}
+
+.dialog.service > .controls > button:disabled > label {
+  pointer-events: none;
+  color: #9b9b9b;
 }
 
 .dialog.service > .controls > button > label {
@@ -42,3 +51,5 @@
   position: relative;
   top: -2px;
 }
+
+

@@ -128,6 +128,11 @@ export default class Markup3DTool extends EventsEmitter {
       y: event.clientY
     }
 
+    this.canvasPoint = {
+      x: event.canvasX,
+      y: event.canvasY
+    }
+
     //var viewport = this.viewer.navigation.getScreenViewport()
     //
     //var n = {
@@ -202,27 +207,20 @@ export default class Markup3DTool extends EventsEmitter {
       if (this.currentMarkup)
         return
 
-      var sel = event.selections[0]
+      const selection = event.selections[0]
 
-      //TODO CORRECT screenPoint when offset
+      const hitTest = this.viewer.clientToWorld(
+        this.screenPoint.x,
+        this.screenPoint.Y,
+        true)
 
-      var viewport = this.viewer.navigation.getScreenViewport()
-
-      var n = {
-        x: (this.screenPoint.x - viewport.left) / viewport.width,
-        y: (this.screenPoint.y - viewport.top) / viewport.height
-      }
-
-      var worldPoint = this.viewer.utilities.getHitPoint(
-        n.x, n.y)
-
-      if (worldPoint) {
+      if (hitTest) {
 
         var markup = new Markup3D(
           this.viewer,
           this.screenPoint,
-          sel.dbIdArray[0],
-          sel.fragIdsArray[0],
+          selection.dbIdArray[0],
+          selection.fragIdsArray[0],
           null, this.options)
 
         markup.labelMarker.on('mouseover', () => {

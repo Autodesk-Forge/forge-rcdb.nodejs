@@ -63,3 +63,16 @@
   pointer-events: none;
   color: #9b9b9b
 }
+
+/////////////////////////////////////////////////////////
+// add property dialog
+//
+/////////////////////////////////////////////////////////
+.add-property-dlg .content {
+  overflow: visible;
+  height: 130px;
+}
+
+.add-property-dlg .content .add-meta-property {
+  float: left;
+}

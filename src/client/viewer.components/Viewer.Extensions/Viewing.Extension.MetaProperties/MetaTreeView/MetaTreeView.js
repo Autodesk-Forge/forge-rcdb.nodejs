@@ -31,7 +31,26 @@ export default class MetaTreeView extends React.Component {
 
     super (props)
 
-    this.delegate = new MetaTreeDelegate()
+    this.delegate = new MetaTreeDelegate(
+      props.menuContainer)
+
+    this.delegate.on('property.edit',
+      (metaProperty) => {
+
+        if (this.props.onEditProperty) {
+
+          this.props.onEditProperty (metaProperty)
+        }
+      })
+
+    this.delegate.on('property.delete',
+      (metaProperty) => {
+
+        if (this.props.onDeleteProperty) {
+
+          this.props.onDeleteProperty (metaProperty)
+        }
+      })
   }
 
   /////////////////////////////////////////////////////////

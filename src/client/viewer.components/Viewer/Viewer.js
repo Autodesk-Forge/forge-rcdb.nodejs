@@ -124,7 +124,9 @@ class Viewer extends React.Component {
         <div className="viewer-container" ref={
           (div) => this.viewerContainer = div
         }/>
-        { panels }
+        <div className="viewer-panels-container">
+          { panels }
+        </div>
       </div>
     )
   }

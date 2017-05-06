@@ -13,6 +13,7 @@ export default class DialogSvc extends BaseSvc {
 
     super (opts)
 
+    this.disableOK = this.disableOK.bind(this)
     this.close = this.close.bind(this)
   }
 
@@ -54,6 +55,17 @@ export default class DialogSvc extends BaseSvc {
         resolve()
       })
     })
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  disableOK (disable) {
+
+    this.setState ({
+      disableOK: disable
+    }, true)
   }
 
   /////////////////////////////////////////////////////////////////

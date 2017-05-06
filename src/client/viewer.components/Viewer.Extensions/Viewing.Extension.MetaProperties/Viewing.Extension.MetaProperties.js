@@ -3,6 +3,7 @@
 // By Philippe Leefsma, Autodesk Inc, April 2017
 //
 /////////////////////////////////////////////////////////////////
+import {AddMetaProperty} from './MetaProperty'
 import MetaAPI from './Viewing.Extension.MetaProperties.API'
 import ExtensionBase from 'Viewer.ExtensionBase'
 import WidgetContainer from 'WidgetContainer'
@@ -10,6 +11,7 @@ import MetaTreeView from './MetaTreeView'
 import ServiceManager from 'SvcManager'
 import Toolkit from 'Viewer.Toolkit'
 import { ReactLoader } from 'Loader'
+import DOMPurify from 'dompurify'
 import ReactDOM from 'react-dom'
 import Label from 'Label'
 import React from 'react'
@@ -24,12 +26,17 @@ class MetaPropertiesExtension extends ExtensionBase {
 
 		super (viewer, options)
 
+    this.onDeleteProperty = this.onDeleteProperty.bind(this)
+    this.onEditProperty = this.onEditProperty.bind(this)
+    this.onMetaChanged = this.onMetaChanged.bind(this)
     this.onContextMenu = this.onContextMenu.bind(this)
     this.onSelection = this.onSelection.bind(this)
     this.renderTitle = this.renderTitle.bind(this)
 
     this.dialogSvc =
       ServiceManager.getService('DialogSvc')
+
+    this.eventSink = options.eventSink
 
     this.react = options.react
 	}
@@ -40,20 +47,15 @@ class MetaPropertiesExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
 	load () {
 
-    this.viewer.addEventListener(
-      Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT, (e) => {
+    this.eventSink.on('model.loaded', () => {
 
-        if (this.options.loader) {
-          this.options.loader.hide()
-        }
-      })
+      if (this.options.loader) {
 
-    this.viewerEvent([
+        this.options.loader.hide()
+      }
 
-      Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
-      Autodesk.Viewing.GEOMETRY_LOADED_EVENT
-
-    ]).then((args) => this.onModelLoaded(args))
+      this.initLoadEvents ()
+    })
 
     this.viewer.addEventListener(
       Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
@@ -71,10 +73,12 @@ class MetaPropertiesExtension extends ExtensionBase {
     })
 
     this.viewer.loadDynamicExtension(
-      'Viewing.Extension.ContextMenu').then((contextMenu) => {
+      'Viewing.Extension.ContextMenu').then(
+        (ctxMenuExtension) => {
 
-        contextMenu.on('buildMenu', this.onContextMenu)
-      })
+          ctxMenuExtension.addHandler(
+            this.onContextMenu)
+        })
 
     console.log('Viewing.Extension.MetaProperties loaded')
 
@@ -118,7 +122,24 @@ class MetaPropertiesExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onModelLoaded (args) {
+  initLoadEvents () {
+
+    this.viewerEvent([
+
+      Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
+      Autodesk.Viewing.GEOMETRY_LOADED_EVENT
+
+    ]).then((args) => {
+
+      this.onModelFullyLoaded(args)
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onModelFullyLoaded (args) {
 
     const model = args[0].model
 
@@ -156,9 +177,16 @@ class MetaPropertiesExtension extends ExtensionBase {
 
     if (event.selections.length) {
 
-      const nodeId = event.selections[0].dbIdArray[0]
+      const selection = event.selections[0]
 
-      this.loadNodeProperties(nodeId)
+      const nodeId = selection.dbIdArray[0]
+
+      if (nodeId !== this.nodeId) {
+
+        this.loadNodeProperties(nodeId)
+      }
+
+      this.nodeId = nodeId
 
     } else {
 
@@ -168,7 +196,14 @@ class MetaPropertiesExtension extends ExtensionBase {
 
         const instanceTree = model.getData().instanceTree
 
-        this.loadNodeProperties(instanceTree.getRootId())
+        const nodeId = instanceTree.getRootId()
+
+        if (nodeId !== this.nodeId) {
+
+          this.loadNodeProperties(nodeId)
+        }
+
+        this.nodeId = nodeId
       }
     }
   }
@@ -209,16 +244,26 @@ class MetaPropertiesExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   onContextMenu (event) {
 
-    if (event.selectedDbId) {
+    const {model} = this.react.getState()
+
+    if (!model) {
+      return
+    }
+
+    const instanceTree = model.getData().instanceTree
+
+    const dbId = event.dbId || (instanceTree
+      ? instanceTree.getRootId()
+      : -1)
+
+    if (dbId > -1) {
 
       event.menu.push({
         title: 'Add Meta Property',
         target: () => {
-          this.showMetaDlg(event.selectedDbId)
+          this.showAddMetaPropertyDlg(dbId)
         }
       })
-
-      return event.menu
     }
   }
 
@@ -226,17 +271,85 @@ class MetaPropertiesExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  showMetaDlg (nodeId) {
+  onMetaChanged (metaProperty) {
 
-    const metaProperty = {
-      displayCategory: 'Forge',
-      displayValue: 'Demo',
-      displayName: 'Meta',
-      id: this.guid(),
-      nodeId: nodeId.toString()
+    this.metaProperty = metaProperty
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onEditProperty (metaProperty) {
+
+    console.log(metaProperty)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onDeleteProperty (metaProperty) {
+
+    const onClose = (result) => {
+
+      if (result === 'OK') {
+
+        this.api.deleteNodeMetaProperty(metaProperty.id)
+      }
+
+      this.dialogSvc.off('dialog.close', onClose)
     }
 
-    this.api.addNodeMetaProperty(metaProperty)
+    this.dialogSvc.on('dialog.close', onClose)
+
+    const msg = DOMPurify.sanitize(
+      `Are you sure you want to delete`
+      + ` <b>${metaProperty.displayName}</b> ?`)
+
+    this.dialogSvc.setState({
+      title: 'Delete Property ...',
+      content:
+        <div dangerouslySetInnerHTML={{__html: msg}}>
+        </div>,
+      open: true
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  showAddMetaPropertyDlg (nodeId) {
+
+    const onClose = (result) => {
+
+      if (result === 'OK') {
+
+        const metaProperty = Object.assign(
+          this.metaProperty, {
+            nodeId: nodeId.toString(),
+            id: this.guid()
+          })
+
+        this.api.addNodeMetaProperty(metaProperty)
+      }
+
+      this.dialogSvc.off('dialog.close', onClose)
+    }
+
+    this.dialogSvc.on('dialog.close', onClose)
+
+    this.dialogSvc.setState({
+      className: 'add-property-dlg',
+      title: 'Add Meta Property ...',
+      disableOK: true,
+      open: true,
+      content:
+        <AddMetaProperty onChanged={this.onMetaChanged}
+          disableOK={this.dialogSvc.disableOK}
+        />
+    }, true)
   }
 
   /////////////////////////////////////////////////////////
@@ -316,6 +429,9 @@ class MetaPropertiesExtension extends ExtensionBase {
 
     return (
       <MetaTreeView properties={properties}
+        menuContainer={this.options.appContainer}
+        onDeleteProperty={this.onDeleteProperty}
+        onEditProperty={this.onEditProperty}
         nodeId={nodeId}
         model={model}
         name={name}

@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////
-// DerivativePropertyPanel
+// IoTPropertyPanel
 // by Philippe Leefsma, April 2016
 //
 /////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@ export default class PropertyPanel extends
     super (container, id, title)
 
     $(this.container).addClass('toolPanelBase')
-    $(this.container).addClass('predix')
+    $(this.container).addClass('IoT')
 
     this.container.dockRight = false
   }
