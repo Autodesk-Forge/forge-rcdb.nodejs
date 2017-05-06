@@ -162,6 +162,13 @@ export default class TreeView extends
   /////////////////////////////////////////////////////////
   destroyNode (nodeId) {
 
+    if (this.nodeIdToNode[nodeId]) {
+
+      delete this.nodeIdToNode[nodeId]
+
+      this.nodeIdToNode[nodeId] = null
+    }
+
     if (this.nodeToElement[nodeId]) {
 
       this.nodeToElement[nodeId].remove()
@@ -169,13 +176,6 @@ export default class TreeView extends
       delete this.nodeToElement[nodeId]
 
       this.nodeToElement[nodeId] = null
-    }
-
-    if (this.nodeIdToNode[nodeId]) {
-
-      delete this.nodeIdToNode[nodeId]
-
-      this.nodeIdToNode[nodeId] = null
     }
   }
 

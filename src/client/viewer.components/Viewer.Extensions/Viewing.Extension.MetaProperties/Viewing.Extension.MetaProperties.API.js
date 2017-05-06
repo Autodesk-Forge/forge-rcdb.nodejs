@@ -30,9 +30,9 @@ export default class MetaAPI extends ClientAPI {
   //
   //
   ///////////////////////////////////////////////////////////////
-  getNodeMetaProperties (nodeId) {
+  getNodeMetaProperties (dbId) {
 
-    const url = this.apiUrl + `/${nodeId}`
+    const url = this.apiUrl + `/${dbId}`
 
     return this.ajax(url)
   }
@@ -42,6 +42,29 @@ export default class MetaAPI extends ClientAPI {
   //
   ///////////////////////////////////////////////////////////////
   addNodeMetaProperty (metaProperty) {
+
+    const payload = {
+      metaProperty
+    }
+
+    const url = this.apiUrl
+
+    return this.ajax({
+      url: url,
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      data: JSON.stringify(payload)
+    })
+  }
+
+  ///////////////////////////////////////////////////////////////
+  //
+  //
+  ///////////////////////////////////////////////////////////////
+  updateNodeMetaProperty (metaProperty) {
 
     const payload = {
       metaProperty

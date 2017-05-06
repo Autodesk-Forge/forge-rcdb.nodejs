@@ -34,9 +34,18 @@ export default class CreateMetaProperty
 
     super (props)
 
-    this.state = {
-      type: 'Text'
-    }
+    this.state = Object.assign({}, {
+        metaType: 'Text'
+      }, props)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  componentDidMount () {
+
+    this.updateOK()
   }
 
   /////////////////////////////////////////////////////////
@@ -51,8 +60,33 @@ export default class CreateMetaProperty
         {}, this.state, state)
 
       this.setState(newState, () => {
+
+        this.updateOK()
+
         resolve()
       })
+
+      switch (state.metaType) {
+
+        case 'Text':
+
+          return this.props.onChanged({
+            displayCategory: newState.displayCategory,
+            displayValue: newState.displayValue,
+            displayName: newState.displayName,
+            metaType: newState.metaType
+          })
+
+        case 'Link':
+
+          return this.props.onChanged({
+            displayCategory: newState.displayCategory,
+            displayValue: newState.displayValue,
+            displayName: newState.displayName,
+            metaType: newState.metaType,
+            link: newState.link
+          })
+      }
     })
   }
 
@@ -73,27 +107,48 @@ export default class CreateMetaProperty
   //
   //
   /////////////////////////////////////////////////////////
-  onInputChanged (e, key) {
+  async onInputChanged (e, key) {
 
     const state = this.state
 
     state[key] = e.target.value
 
-    this.setState(state)
+    await this.setReactState(state)
+  }
 
-    const disableOK =
-      !state.category ||
-      !state.name ||
-      !state.value
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  updateOK () {
 
-    this.props.disableOK (disableOK)
+    switch (this.state.metaType) {
 
-    this.props.onChanged({
-      metaType: state.type.toLowerCase(),
-      displayCategory: state.category,
-      displayValue: state.value,
-      displayName: state.name
-    })
+      case 'Text':
+      {
+        const disableOK =
+          !this.state.displayCategory ||
+          !this.state.displayValue ||
+          !this.state.displayName
+
+        this.props.disableOK (disableOK)
+
+        break
+      }
+
+      case 'Link':
+      {
+        const disableOK =
+          !this.state.displayCategory ||
+          !this.state.displayValue ||
+          !this.state.displayName ||
+          !this.state.link
+
+        this.props.disableOK (disableOK)
+
+        break
+      }
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -102,18 +157,40 @@ export default class CreateMetaProperty
   /////////////////////////////////////////////////////////
   renderContent () {
 
-    switch (this.state.type.toLowerCase()) {
+    switch (this.state.metaType) {
 
-      case 'text':
-      case 'link':
+      case 'Text':
         return (
-          <ContentEditable
-            onChange={(e) => this.onInputChanged(e, 'value')}
-            onKeyDown={(e) => this.onKeyDown(e)}
-            data-placeholder="Property value ..."
-            className="input meta-value"
-            html={''}
-          />
+            <ContentEditable
+              onChange={(e) => this.onInputChanged(e, 'displayValue')}
+              data-placeholder="Property value ..."
+              onKeyDown={(e) => this.onKeyDown(e)}
+              html={this.state.displayValue}
+              className="input meta-value"
+            />
+        )
+      case 'Link':
+        return (
+          <div>
+            <div className="row">
+              <ContentEditable
+                onChange={(e) => this.onInputChanged(e, 'displayValue')}
+                data-placeholder="Property value ..."
+                onKeyDown={(e) => this.onKeyDown(e)}
+                html={this.state.displayValue}
+                className="input meta-value"
+              />
+            </div>
+            <div className="row">
+              <ContentEditable
+                onChange={(e) => this.onInputChanged(e, 'link')}
+                onKeyDown={(e) => this.onKeyDown(e)}
+                className="input meta-value"
+                data-placeholder="Link ..."
+                html={this.state.link}
+              />
+            </div>
+          </div>
       )
     }
   }
@@ -130,20 +207,20 @@ export default class CreateMetaProperty
         <div className="row">
 
           <DropdownButton
-            title={"Type: " +  this.state.type}
+            title={"Type: " +  this.state.metaType}
             className="type-dropdown"
             key="type-dropdown"
             id="type-dropdown">
             <MenuItem eventKey={1} key={1} onClick={() => {
                 this.setReactState({
-                  type: 'Text'
+                  metaType: 'Text'
                 })
             }}>
               Text
             </MenuItem>
             <MenuItem eventKey={2} key={2} onClick={() => {
               this.setReactState({
-                type: 'Link'
+                metaType: 'Link'
               })
             }}>
               Link
@@ -151,21 +228,22 @@ export default class CreateMetaProperty
           </DropdownButton>
 
             <ContentEditable
-              onChange={(e) => this.onInputChanged(e, 'category')}
+              onChange={(e) => this.onInputChanged(e, 'displayCategory')}
               onKeyDown={(e) => this.onKeyDown(e)}
               data-placeholder="Property category ..."
+              html={this.state.displayCategory}
               className="input meta-category"
-              html={''}
+              disabled={this.state.editMode}
             />
         </div>
 
         <div className="row">
           <ContentEditable
-            onChange={(e) => this.onInputChanged(e, 'name')}
+            onChange={(e) => this.onInputChanged(e, 'displayName')}
             onKeyDown={(e) => this.onKeyDown(e)}
             data-placeholder="Property name ..."
+            html={this.state.displayName}
             className="input meta-name"
-            html={''}
           />
         </div>
 

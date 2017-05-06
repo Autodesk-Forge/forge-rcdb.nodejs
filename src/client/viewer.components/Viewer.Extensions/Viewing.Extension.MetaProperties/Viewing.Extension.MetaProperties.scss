@@ -65,14 +65,11 @@
 }
 
 /////////////////////////////////////////////////////////
-// add property dialog
+// meta property dialog
 //
 /////////////////////////////////////////////////////////
-.add-property-dlg .content {
+.meta-property-dlg .content {
+  padding: 6px 6px 4px 6px;
   overflow: visible;
-  height: 130px;
-}
-
-.add-property-dlg .content .add-meta-property {
-  float: left;
+  height: auto;
 }

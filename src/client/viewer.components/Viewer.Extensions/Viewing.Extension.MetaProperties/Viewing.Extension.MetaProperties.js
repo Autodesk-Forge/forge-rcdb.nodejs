@@ -64,8 +64,8 @@ class MetaPropertiesExtension extends ExtensionBase {
     this.react.setState({
 
       properties: [],
-      nodeId: null,
-      model: null
+      model: null,
+      dbId: null,
 
     }).then (() => {
 
@@ -179,14 +179,9 @@ class MetaPropertiesExtension extends ExtensionBase {
 
       const selection = event.selections[0]
 
-      const nodeId = selection.dbIdArray[0]
+      const dbId = selection.dbIdArray[0]
 
-      if (nodeId !== this.nodeId) {
-
-        this.loadNodeProperties(nodeId)
-      }
-
-      this.nodeId = nodeId
+      this.loadNodeProperties(dbId)
 
     } else {
 
@@ -196,14 +191,9 @@ class MetaPropertiesExtension extends ExtensionBase {
 
         const instanceTree = model.getData().instanceTree
 
-        const nodeId = instanceTree.getRootId()
+        const dbId = instanceTree.getRootId()
 
-        if (nodeId !== this.nodeId) {
-
-          this.loadNodeProperties(nodeId)
-        }
-
-        this.nodeId = nodeId
+        this.loadNodeProperties(dbId)
       }
     }
   }
@@ -212,29 +202,39 @@ class MetaPropertiesExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  async loadNodeProperties (nodeId) {
+  async loadNodeProperties (dbId, refresh) {
 
-    await this.react.setState({
-      properties: []
-    })
+    const state = this.react.getState()
+
+    if (!refresh && dbId === state.dbId) {
+      return
+    }
+
+    if (!refresh) {
+
+      await this.react.setState({
+        properties: []
+      })
+    }
 
     const {model} = this.react.getState()
 
     const modelProperties =
       await Toolkit.getProperties(
-        model, nodeId)
+        model, dbId)
 
     const metaProperties =
-      await this.api.getNodeMetaProperties(nodeId)
+      await this.api.getNodeMetaProperties(dbId)
 
     const properties = [
       ...modelProperties,
       ...metaProperties
     ]
 
-    this.react.setState({
+    await this.react.setState({
+      guid: this.guid(),
       properties,
-      nodeId
+      dbId
     })
   }
 
@@ -271,9 +271,49 @@ class MetaPropertiesExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onMetaChanged (metaProperty) {
+  showAddMetaPropertyDlg (dbId) {
 
-    this.metaProperty = metaProperty
+    const onClose = async(result) => {
+
+      this.dialogSvc.off('dialog.close', onClose)
+
+      if (result === 'OK') {
+
+        const metaProperty = Object.assign({},
+          this.metaPropertyEdits, {
+            dbId: dbId.toString(),
+            id: this.guid()
+          })
+
+        await this.api.addNodeMetaProperty(
+          metaProperty)
+
+        this.loadNodeProperties(dbId, true)
+      }
+    }
+
+    this.dialogSvc.on('dialog.close', onClose)
+
+    this.dialogSvc.setState({
+      className: 'meta-property-dlg',
+      title: 'Add Meta Property ...',
+      disableOK: true,
+      open: true,
+      content:
+        <AddMetaProperty
+          disableOK={this.dialogSvc.disableOK}
+          onChanged={this.onMetaChanged}
+        />
+    }, true)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onMetaChanged (metaPropertyEdits) {
+
+    this.metaPropertyEdits = metaPropertyEdits
   }
 
   /////////////////////////////////////////////////////////
@@ -282,7 +322,45 @@ class MetaPropertiesExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   onEditProperty (metaProperty) {
 
-    console.log(metaProperty)
+    return new Promise ((resolve) => {
+
+      const onClose = (result) => {
+
+        this.dialogSvc.off('dialog.close', onClose)
+
+        if (result === 'OK') {
+
+          const newMetaProperty = Object.assign({},
+            this.metaPropertyEdits, {
+              dbId: metaProperty.dbId,
+              id: metaProperty.id
+            })
+
+          this.api.updateNodeMetaProperty(
+            newMetaProperty)
+
+          resolve (newMetaProperty)
+        }
+
+        resolve (false)
+      }
+
+      this.dialogSvc.on('dialog.close', onClose)
+
+      const dlgProps = Object.assign({}, metaProperty, {
+        disableOK: this.dialogSvc.disableOK,
+        onChanged: this.onMetaChanged,
+        editMode: true
+      })
+
+      this.dialogSvc.setState({
+        content: <AddMetaProperty {...dlgProps}/>,
+        className: 'meta-property-dlg',
+        title: 'Edit Meta Property ...',
+        disableOK: true,
+        open: true
+      }, true)
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -291,65 +369,37 @@ class MetaPropertiesExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   onDeleteProperty (metaProperty) {
 
-    const onClose = (result) => {
+    return new Promise ((resolve) => {
 
-      if (result === 'OK') {
+      const onClose = (result) => {
 
-        this.api.deleteNodeMetaProperty(metaProperty.id)
+        this.dialogSvc.off('dialog.close', onClose)
+
+        if (result === 'OK') {
+
+          this.api.deleteNodeMetaProperty(
+            metaProperty.id)
+
+          resolve (true)
+        }
+
+        resolve (false)
       }
 
-      this.dialogSvc.off('dialog.close', onClose)
-    }
+      this.dialogSvc.on('dialog.close', onClose)
 
-    this.dialogSvc.on('dialog.close', onClose)
+      const msg = DOMPurify.sanitize(
+        `Are you sure you want to delete`
+        + ` <b>${metaProperty.displayName}</b> ?`)
 
-    const msg = DOMPurify.sanitize(
-      `Are you sure you want to delete`
-      + ` <b>${metaProperty.displayName}</b> ?`)
-
-    this.dialogSvc.setState({
-      title: 'Delete Property ...',
-      content:
-        <div dangerouslySetInnerHTML={{__html: msg}}>
-        </div>,
-      open: true
+      this.dialogSvc.setState({
+        title: 'Delete Property ...',
+        content:
+          <div dangerouslySetInnerHTML={{__html: msg}}>
+          </div>,
+        open: true
+      })
     })
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  showAddMetaPropertyDlg (nodeId) {
-
-    const onClose = (result) => {
-
-      if (result === 'OK') {
-
-        const metaProperty = Object.assign(
-          this.metaProperty, {
-            nodeId: nodeId.toString(),
-            id: this.guid()
-          })
-
-        this.api.addNodeMetaProperty(metaProperty)
-      }
-
-      this.dialogSvc.off('dialog.close', onClose)
-    }
-
-    this.dialogSvc.on('dialog.close', onClose)
-
-    this.dialogSvc.setState({
-      className: 'add-property-dlg',
-      title: 'Add Meta Property ...',
-      disableOK: true,
-      open: true,
-      content:
-        <AddMetaProperty onChanged={this.onMetaChanged}
-          disableOK={this.dialogSvc.disableOK}
-        />
-    }, true)
   }
 
   /////////////////////////////////////////////////////////
@@ -421,20 +471,22 @@ class MetaPropertiesExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   renderTreeView (properties) {
 
-    const {model, nodeId} = this.react.getState()
+    const {guid, model, dbId} = this.react.getState()
 
     const instanceTree = model.getData().instanceTree
 
-    const name = instanceTree.getNodeName(nodeId)
+    const rootName = instanceTree.getNodeName(dbId)
 
     return (
-      <MetaTreeView properties={properties}
+      <MetaTreeView
         menuContainer={this.options.appContainer}
         onDeleteProperty={this.onDeleteProperty}
         onEditProperty={this.onEditProperty}
-        nodeId={nodeId}
+        properties={properties}
+        displayName={rootName}
         model={model}
-        name={name}
+        dbId={dbId}
+        guid={guid}
       />
     )
   }

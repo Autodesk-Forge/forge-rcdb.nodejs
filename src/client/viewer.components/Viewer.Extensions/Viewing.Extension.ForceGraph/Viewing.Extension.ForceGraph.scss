@@ -1,10 +1,10 @@
-.bar-chart .title {
+.force-graph .title {
   position: relative !important;
   overflow: visible;
   float: left;
 }
 
-.bar-chart .title > label{
+.force-graph .title > label{
   white-space: nowrap;
   font-weight: normal;
   user-select: none;
@@ -14,36 +14,36 @@
   width: 85px;
 }
 
-.bar-chart .title > .dropdown {
+.force-graph .title > .dropdown {
   position: relative;
   top: -1px;
 }
 
-.bar-chart .title > button {
+.force-graph .title > button {
   margin-left: 4px;
   height: 26px;
 }
 
-.bar-chart .title > .dropdown > button {
+.force-graph .title > .dropdown > button {
   padding: 2px 12px;
   height: 26px;
 }
 
-.bar-chart .title .dropdown-menu {
+.force-graph .title .dropdown-menu {
   overflow: scroll;
 }
 
-.bar-chart .loader-background {
+.force-graph .loader-background {
   background: #fdfdfd;
 }
 
-.bar-chart .loader,
-.bar-chart .loader:before,
-.bar-chart .loader:after {
+.force-graph .loader,
+.force-graph .loader:before,
+.force-graph .loader:after {
   top: 35%;
 }
 
-.bar-chart .loader:before,
-.bar-chart .loader:after {
+.force-graph .loader:before,
+.force-graph .loader:after {
   margin: -9px auto;
 }

@@ -431,12 +431,9 @@ export default class ModelSvc extends BaseSvc {
           },
           (err) => {
 
-            if (err) {
-
-              return reject(err)
-            }
-
-            return resolve (sequence)
+            return err
+              ? reject(err)
+              : resolve (sequence)
           })
 
       } catch (ex) {
@@ -474,12 +471,9 @@ export default class ModelSvc extends BaseSvc {
           },
           (err) => {
 
-            if (err) {
-
-              return reject(err)
-            }
-
-            return resolve (sequence)
+            return err
+              ? reject(err)
+              : resolve (sequence)
           })
 
       } catch (ex) {
@@ -520,13 +514,9 @@ export default class ModelSvc extends BaseSvc {
           },
           { multi: true }, (err) => {
 
-            if (err) {
-
-              console.log(err)
-              return reject(err)
-            }
-
-            return resolve (sequenceId)
+            return err
+              ? reject(err)
+              : resolve (sequenceId)
           })
 
       } catch (ex) {
@@ -740,10 +730,10 @@ export default class ModelSvc extends BaseSvc {
   }
 
   /////////////////////////////////////////////////////////
-  // Get meta properties for specific nodeId
+  // Get meta properties for specific dbId
   //
   /////////////////////////////////////////////////////////
-  getNodeMetaProperties (modelId, nodeId) {
+  getNodeMetaProperties (modelId, dbId) {
 
     return new Promise(async(resolve, reject) => {
 
@@ -772,11 +762,11 @@ export default class ModelSvc extends BaseSvc {
           },
           {
             $match: {
-              'metaProperties.nodeId': nodeId
+              'metaProperties.dbId': dbId
             }
           },
 
-        ], function (err, result) {
+        ], (err, result) => {
 
           const properties = result
             ? result.map((e) => { return e.metaProperties})
@@ -817,6 +807,45 @@ export default class ModelSvc extends BaseSvc {
           {
             $push: {
               'metaProperties': metaProperty
+            }
+          }, (err) => {
+
+            return err
+              ? reject(err)
+              : resolve (metaProperty)
+          })
+
+      } catch (ex) {
+
+        return reject(ex)
+      }
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // update existing config sequence
+  //
+  /////////////////////////////////////////////////////////
+  updateNodeMetaProperty (modelId, metaProperty) {
+
+    return new Promise(async(resolve, reject) => {
+
+      try {
+
+        const dbSvc = ServiceManager.getService(
+          this._config.dbName)
+
+        const collection = await dbSvc.getCollection(
+          this._config.models)
+
+        collection.update(
+          {
+            '_id': new mongo.ObjectID(modelId),
+            'metaProperties.id': metaProperty.id
+          },
+          {
+            $set: {
+              'metaProperties.$': metaProperty
             }
           }, (err) => {
 

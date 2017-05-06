@@ -21,15 +21,27 @@ export default class MetaTreeDelegate extends TreeDelegate {
     })
 
     this.contextMenu.on(
-      'context.property.edit', (metaProperty) => {
+      'context.property.edit', async (metaProperty) => {
 
-        this.emit('property.edit', metaProperty)
+        const newMetaProperty = await  this.emit(
+          'property.edit', metaProperty)
+
+        if (newMetaProperty) {
+
+          this.emit('node.update', newMetaProperty)
+        }
       })
 
     this.contextMenu.on(
-      'context.property.delete', (metaProperty) => {
+      'context.property.delete', async (metaProperty) => {
 
-        this.emit('property.delete', metaProperty)
+        const deleted = await this.emit(
+          'property.delete', metaProperty)
+
+        if (deleted) {
+
+          this.emit('node.destroy', metaProperty.id)
+        }
       })
   }
 
@@ -50,8 +62,8 @@ export default class MetaTreeDelegate extends TreeDelegate {
 
     this.rootNode = new MetaTreeNode({
 
+      displayName: data.displayName,
       propsMap: this.propsMap,
-      name: data.name,
       delegate: this,
       group: true,
       parent: null,

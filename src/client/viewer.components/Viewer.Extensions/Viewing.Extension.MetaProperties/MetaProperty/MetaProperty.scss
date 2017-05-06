@@ -3,11 +3,12 @@
   width: 100%;
 
   .row {
-    height: 38px;
+    min-height: 38px;
     margin: 0;
   }
 
   .row > div {
+    width: 100%;
     float: left;
   }
 

@@ -39,7 +39,8 @@ export default class MetaTreeView extends React.Component {
 
         if (this.props.onEditProperty) {
 
-          this.props.onEditProperty (metaProperty)
+          return this.props.onEditProperty (
+            metaProperty)
         }
       })
 
@@ -48,21 +49,51 @@ export default class MetaTreeView extends React.Component {
 
         if (this.props.onDeleteProperty) {
 
-          this.props.onDeleteProperty (metaProperty)
+          return this.props.onDeleteProperty (
+            metaProperty)
         }
       })
+
+    this.delegate.on('node.update', (metaProperty) => {
+
+      const nodeId = metaProperty.id
+
+      const node = this.tree.nodeIdToNode[nodeId]
+
+      if (node) {
+
+        node.update(metaProperty)
+      }
+    })
+
+    this.delegate.on('node.destroy', (nodeId) => {
+
+      const node = this.tree.nodeIdToNode[nodeId]
+
+      if (node && node.parent) {
+
+        node.parent.children =
+          node.parent.children.filter((child) => {
+            return child.id !== nodeId
+          })
+
+        node.parent.children.length
+          ? this.tree.destroyNode(nodeId)
+          : node.parent.destroy()
+      }
+    })
   }
 
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  loadTree (name, properties) {
+  loadTree (displayName, properties) {
 
     this.delegate.setProperties(properties)
 
     const rootNode = this.delegate.createRootNode({
-      name
+      displayName
     })
 
     this.tree = new TreeView (
@@ -80,7 +111,7 @@ export default class MetaTreeView extends React.Component {
   componentDidMount () {
 
     this.loadTree (
-      this.props.name,
+      this.props.displayName,
       this.props.properties)
   }
 
@@ -99,15 +130,14 @@ export default class MetaTreeView extends React.Component {
   /////////////////////////////////////////////////////////
   componentWillReceiveProps (props) {
 
-    if (props.model  !== this.props.model ||
-        props.nodeId !== this.props.nodeId) {
+    if (props.guid  !== this.props.guid) {
 
       this.delegate.destroy()
 
       this.tree.destroy()
 
       this.loadTree (
-        props.name,
+        props.displayName,
         props.properties)
     }
   }

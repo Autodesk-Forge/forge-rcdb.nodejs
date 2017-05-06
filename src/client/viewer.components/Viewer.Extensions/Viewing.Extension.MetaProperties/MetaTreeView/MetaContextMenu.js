@@ -20,22 +20,6 @@ export default class MetaContextMenu extends
   //
   //
   /////////////////////////////////////////////////////////
-  nodeToMeta (node) {
-
-    const metaProperty = {
-      displayValue: node.props.value,
-      metaType: node.props.metaType,
-      displayName: node.props.name,
-      id: node.props.id
-    }
-
-    return metaProperty
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
   buildMenu (event, node) {
 
     const menu = [{
@@ -43,14 +27,14 @@ export default class MetaContextMenu extends
       className: 'fa fa-edit',
       target: () => {
         this.emit('context.property.edit',
-          node.propsToMetaProperty())
+          node.toMetaProperty())
       }
     },{
       title: 'Delete property',
       className: 'fa fa-times',
       target: () => {
         this.emit('context.property.delete',
-          node.propsToMetaProperty())
+          node.toMetaProperty())
       }
     }]
 

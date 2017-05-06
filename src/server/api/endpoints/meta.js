@@ -32,10 +32,10 @@ module.exports = function() {
   })
 
   /////////////////////////////////////////////////////////
-  // Get meta properties for specific nodeId
+  // Get meta properties for specific dbId
   //
   /////////////////////////////////////////////////////////
-  router.get('/:db/:modelId/:nodeId', async(req, res) => {
+  router.get('/:db/:modelId/:dbId', async(req, res) => {
 
     try {
 
@@ -47,7 +47,7 @@ module.exports = function() {
       const response =
         await modelSvc.getNodeMetaProperties (
           req.params.modelId,
-          req.params.nodeId)
+          req.params.dbId)
 
       res.json(response)
 
@@ -62,7 +62,7 @@ module.exports = function() {
   // add meta property
   //
   /////////////////////////////////////////////////////////
-  router.put('/:db/:modelId', async(req, res) => {
+  router.post('/:db/:modelId', async(req, res) => {
 
     try {
 
@@ -75,7 +75,35 @@ module.exports = function() {
 
       const response =
         await modelSvc.addNodeMetaProperty (
-        req.params.modelId, metaProperty)
+          req.params.modelId, metaProperty)
+
+      res.json(response)
+
+    } catch (error) {
+
+      res.status(error.statusCode || 500)
+      res.json(error)
+    }
+  })
+
+  /////////////////////////////////////////////////////////
+  // update meta property
+  //
+  /////////////////////////////////////////////////////////
+  router.put('/:db/:modelId', async(req, res) => {
+
+    try {
+
+      const db = req.params.db
+
+      const modelSvc = ServiceManager.getService (
+        db + '-ModelSvc')
+
+      const metaProperty = req.body.metaProperty
+
+      const response =
+        await modelSvc.updateNodeMetaProperty (
+          req.params.modelId, metaProperty)
 
       res.json(response)
 
