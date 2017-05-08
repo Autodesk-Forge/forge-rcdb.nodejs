@@ -120,6 +120,7 @@ module.exports = {
 
   resolve: {
     modules: [
+      path.resolve('./src/client/viewer.components/Viewer.Extensions.Dynamic'),
       path.resolve('./src/client/viewer.components/Viewer.Extensions'),
       path.resolve('./src/client/viewer.components/Viewer.Commands'),
       path.resolve('./src/client/viewer.components'),

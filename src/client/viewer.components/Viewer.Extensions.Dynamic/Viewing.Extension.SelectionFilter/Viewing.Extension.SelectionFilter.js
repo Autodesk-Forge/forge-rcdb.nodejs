@@ -3,7 +3,7 @@
 // By Philippe Leefsma, Autodesk Inc, April 2017
 //
 /////////////////////////////////////////////////////////////////
-import ExtensionBase from 'Viewer.ExtensionBase'
+import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import WidgetContainer from 'WidgetContainer'
 import FilterTreeView from './FilterTreeView'
 import EventTool from 'Viewer.EventTool'
@@ -14,7 +14,7 @@ import Switch from 'Switch'
 import Label from 'Label'
 import React from 'react'
 
-class SelectionFilterExtension extends ExtensionBase {
+class SelectionFilterExtension extends MultiModelExtensionBase {
 
 	/////////////////////////////////////////////////////////////////
 	// Class constructor
@@ -25,12 +25,10 @@ class SelectionFilterExtension extends ExtensionBase {
 		super (viewer, options)
 
     this.onNodeChecked = this.onNodeChecked.bind(this)
-    this.onSelection = this.onSelection.bind(this)
+
     this.renderTitle = this.renderTitle.bind(this)
 
     this.eventTool = new EventTool(this.viewer)
-
-    this.eventSink = options.eventSink
 
     this.react = options.react
 
@@ -43,16 +41,6 @@ class SelectionFilterExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
 	load () {
 
-    this.eventSink.on('model.loaded', () => {
-
-      if (this.options.loader) {
-
-        this.options.loader.hide()
-      }
-
-      this.initLoadEvents ()
-    })
-
     this.react.setState({
 
       models: []
@@ -60,6 +48,14 @@ class SelectionFilterExtension extends ExtensionBase {
     }).then (() => {
 
       this.react.pushRenderExtension(this)
+
+      this.models.forEach ((model) => {
+
+        if (model.getData().instanceTree) {
+
+          this.addModel(model)
+        }
+      })
     })
 
     this.eventTool.on ('buttondown', () => {
@@ -122,10 +118,6 @@ class SelectionFilterExtension extends ExtensionBase {
           })
         })
 
-    this.viewer.addEventListener(
-      Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
-      this.onSelection)
-
     console.log('Viewing.Extension.SelectionFilter loaded')
 
 		return true
@@ -155,13 +147,11 @@ class SelectionFilterExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
 	unload () {
 
-    this.viewer.removeEventListener(
-      Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
-      this.onSelection)
+    console.log('Viewing.Extension.SelectionFilter unloaded')
 
     this.eventTool.deactivate()
 
-    console.log('Viewing.Extension.SelectionFilter unloaded')
+    super.unload ()
 
 		return true
 	}
@@ -170,26 +160,15 @@ class SelectionFilterExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  initLoadEvents () {
-
-    this.viewerEvent([
-
-      Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
-      Autodesk.Viewing.GEOMETRY_LOADED_EVENT
-
-    ]).then((args) => {
-
-      this.onModelFullyLoaded(args)
-    })
-
-    this.eventTool.deactivate()
-  }
-
-  async onModelFullyLoaded (args) {
+  async addModel (model) {
 
     const {models} = this.react.getState()
 
-    const model = args[0].model
+    const guids = models.map((m)=> {return m.guid})
+
+    if (guids.includes(model.guid)) {
+      return
+    }
 
     this.react.setState({
       models: [...models, model]
@@ -206,33 +185,62 @@ class SelectionFilterExtension extends ExtensionBase {
     })
 
     this.eventTool.activate()
-
-    return true
   }
 
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  onSelection (e) {
+  onModelCompletedLoad (args) {
 
-    if (e.selections.length) {
+      this.addModel (args[0].model)
+  }
 
-      const selection = e.selections[0]
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onSelection (event) {
+
+    if (event.selections.length) {
+
+      const selection = event.selections[0]
 
       const dbId = selection.dbIdArray[0]
 
       const model = selection.model
 
-      if (!this.leafNodesMap[model.guid][dbId]) {
+      if (this.leafNodesMap[model.guid]) {
 
-        setTimeout(() => {
+        if (!this.leafNodesMap[model.guid][dbId]) {
+
+          setTimeout(() => {
+            this.viewer.clearSelection()
+          }, 300)
+
           this.viewer.clearSelection()
-        }, 300)
-
-        this.viewer.clearSelection()
+        }
       }
     }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onModelUnloaded (event) {
+
+    const {models} = this.react.getState()
+
+    const model = event.model
+
+    this.react.setState({
+      models: models.filter((m) => {
+        return (m.guid !== model.guid)
+      })
+    })
+
+    delete this.leafNodesMap[model.guid]
   }
 
   /////////////////////////////////////////////////////////
@@ -282,15 +290,33 @@ class SelectionFilterExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onNodeChecked (model, node) {
+  onNodeChecked (event) {
 
-    Toolkit.getLeafNodes (model, node.id).then((dbIds) => {
+    const model = event.model
 
-      dbIds.forEach((dbId) => {
+    const node = event.node
 
-        this.leafNodesMap[model.guid][dbId] = node.checked
+    Toolkit.getLeafNodes (model, node.id).then(
+      (dbIds) => {
+
+        dbIds.forEach((dbId) => {
+
+          if (node.checked) {
+
+            const leafNode = event.tree.getNodeById(dbId)
+
+            const checked = leafNode
+              ? leafNode.checked
+              : node.checked
+
+            this.leafNodesMap[model.guid][dbId] = checked
+
+          } else {
+
+            this.leafNodesMap[model.guid][dbId] = false
+          }
+        })
       })
-    })
   }
 
   /////////////////////////////////////////////////////////
@@ -350,8 +376,6 @@ class SelectionFilterExtension extends ExtensionBase {
   renderContent () {
 
     const { models } = this.react.getState()
-
-    //console.log(models)
 
     const treeViews = models.map((model) => {
 

@@ -3,6 +3,7 @@
 // by Philippe Leefsma, April 2017
 //
 /////////////////////////////////////////////////////////
+import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import ContentEditable from 'react-contenteditable'
 import './Viewing.Extension.ModelTransformer.scss'
 import ExtensionBase from 'Viewer.ExtensionBase'
@@ -13,7 +14,7 @@ import ReactDOM from 'react-dom'
 import Label from 'Label'
 import React from 'react'
 
-class ModelTransformerExtension extends ExtensionBase {
+class ModelTransformerExtension extends MultiModelExtensionBase {
 
   /////////////////////////////////////////////////////////
   // Class constructor
@@ -23,9 +24,7 @@ class ModelTransformerExtension extends ExtensionBase {
 
     super (viewer, options)
 
-    this.onModelActivated = this.onModelActivated.bind(this)
     this.onDeactivate = this.onDeactivate.bind(this)
-    this.onSelection = this.onSelection.bind(this)
     this.renderTitle = this.renderTitle.bind(this)
     this.onTransform = this.onTransform.bind(this)
 
@@ -39,8 +38,6 @@ class ModelTransformerExtension extends ExtensionBase {
         <b>Pick position ...</b>
       </div>`,
       '#pickTooltipId')
-
-    this.eventSink = options.eventSink
 
     this.react = options.react
   }
@@ -110,18 +107,6 @@ class ModelTransformerExtension extends ExtensionBase {
         })
       })
 
-    this.viewer.addEventListener(
-      Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
-      this.onSelection)
-
-    this.viewerEvent(
-      Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT
-    ).then((args) => this.onModelRootLoaded(args))
-
-    this.eventSink.on(
-      'model.activated',
-      this.onModelActivated)
-
     console.log(
       'Viewing.Extension.ModelTransformer loaded')
 
@@ -134,21 +119,15 @@ class ModelTransformerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   unload () {
 
+    console.log(
+      'Viewing.Extension.ModelTransformer unloaded')
+
     this.viewer.unloadExtension(
       'Viewing.Extension.Transform')
 
-    this.viewer.removeEventListener(
-      Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
-      this.onSelection)
-
     this.react.popViewerPanel(this)
 
-    this.eventSink.off(
-      'model.activated',
-      this.onModelActivated)
-
-    console.log(
-      'Viewing.Extension.ModelTransformer unloaded')
+    super.unload ()
 
     return true
   }
@@ -157,18 +136,30 @@ class ModelTransformerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onModelRootLoaded (args) {
+  onModelRootLoaded (event) {
 
-    this.setModel(args[0].model)
+    this.setModel(event.model)
   }
 
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  onModelActivated (args) {
+  onModelActivated (event) {
 
-    this.setModel(args.model)
+    this.setModel(event.model)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onModelUnloaded (event) {
+
+    if (!this.models.length) {
+
+      this.clearModel()
+    }
   }
 
   /////////////////////////////////////////////////////////

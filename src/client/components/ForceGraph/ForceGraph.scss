@@ -1,5 +1,11 @@
 .force-graph {
 
+  background-color: #fdfdfd;
+  user-select: none;
+  overflow: visible;
+  height: 100%;
+  width: 100%;
+
   .node {
     cursor: pointer;
     stroke: #3182bd;

@@ -3,10 +3,8 @@
 // by Philippe Leefsma, May 2017
 //
 /////////////////////////////////////////////////////////
-import React, { PropTypes } from 'react'
-import ReactDOM from 'react-dom'
 import './ForceGraph.scss'
-import d3pie from 'd3pie'
+import React from 'react'
 import d3 from 'd3'
 
 class ForceGraph extends React.Component {
@@ -26,9 +24,9 @@ class ForceGraph extends React.Component {
   /////////////////////////////////////////////////////////
   componentDidMount () {
 
-    const {data} = this.props
+    const {root} = this.props
 
-    this.draw(data)
+    this.draw (root)
   }
 
   /////////////////////////////////////////////////////////
@@ -51,68 +49,58 @@ class ForceGraph extends React.Component {
   /////////////////////////////////////////////////////////
   componentDidUpdate () {
 
-    const {data} = this.props
+    const {root} = this.props
 
     $(this.container).empty()
 
-    this.draw(data)
+    this.draw(root)
   }
 
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  draw (data, opts= {}) {
+  draw (root) {
 
-    if (!data || !data.length) {
+    if (!root) {
 
       return
     }
 
-    const size = Math.min(
-       $(this.container).height(),
-       $(this.container).width())
+    const container = this.container
 
-    var width = "567", height = "415";
+    const height = $(this.container).height()
+    const width = $(this.container).width()
 
     var force = d3.layout.force()
       .size([width, height])
-      //.linkDistance((link)=> {
-      //  //link.source
-      //  //link.target
-      //  var dist = Math.max(link.source.size * 100, 100)
-      //  return dist;
-      //})
-      //.charge((d)=>{
-      //  return 1;
-      //})
-      .on("tick", tick);
+      .on("tick", () => tick())
 
-    var svg = d3.select(selector)
+    var svg = d3.select(container)
       .append("svg")
       .attr("width", width)
-      .attr("height", height);
+      .attr("height", height)
 
-    var link = svg.selectAll(".link");
-    var node = svg.selectAll(".node");
+    var link = svg.selectAll(".link")
+    var node = svg.selectAll(".node")
 
-    function update() {
+    const update = () => {
 
-      var nodes = flatten(root),
-        links = d3.layout.tree().links(nodes);
+      var nodes = this.flatten(root)
+      var links = d3.layout.tree().links(nodes)
 
       // Restart the force layout.
       force.nodes(nodes)
         .links(links)
-        .start();
+        .start()
 
       // Update the links…
-      link = link.data(links, function(d) {
-        return d.target.id;
-      });
+      link = link.data(links, (d) => {
+        return d.target.id
+      })
 
       // Exit any old links.
-      link.exit().remove();
+      link.exit().remove()
 
       // Enter any new links.
       link.enter().insert("line", ".node")
@@ -120,16 +108,15 @@ class ForceGraph extends React.Component {
         .attr("x1", function(d) { return d.source.x; })
         .attr("y1", function(d) { return d.source.y; })
         .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; });
+        .attr("y2", function(d) { return d.target.y; })
 
       // Update the nodes…
       node = node.data(nodes, (d)=> {
-        return d.id;
-      })
-        .style("fill", color);
+        return d.id
+      }).style("fill", color)
 
       // Exit any old nodes.
-      node.exit().remove();
+      node.exit().remove()
 
       // Enter any new nodes.
       node.enter().append("circle")
@@ -144,65 +131,78 @@ class ForceGraph extends React.Component {
         })
         .style("fill", color)
         .on("dblclick", onDoubleClick)
-        .on("click", onClick)
-        .call(force.drag);
+        .on("click", (n) => {
+
+        })
+        .call(force.drag)
     }
 
-    function tick() {
+    const tick = () => {
 
-      link.attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y; })
-        .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; });
+      link.attr("x1", (d) => { return d.source.x })
+          .attr("y1", (d) => { return d.source.y })
+          .attr("x2", (d) => { return d.target.x })
+          .attr("y2", (d) => { return d.target.y })
 
-      node.attr("cx", function(d) { return d.x; })
-        .attr("cy", function(d) { return d.y; });
+      node.attr("cx", (d) => { return d.x })
+          .attr("cy", (d) => { return d.y })
     }
 
     // Color leaf nodes orange, and packages white or blue.
-    function color(d) {
-      return d._children ?
-        "#3182bd" :
-        d.children ? "#c6dbef" : "#fd8d3c";
+    const color = (d) => {
+      return d._children
+        ? "#3182bd"
+        : d.children ? "#c6dbef" : "#fd8d3c"
     }
 
     // Toggle children on double-click.
-    function onDoubleClick(d) {
+    const onDoubleClick = (d) => {
 
       if (!d3.event.defaultPrevented) {
+
         if (d.children) {
-          d._children = d.children;
-          d.children = null;
+
+          d._children = d.children
+          d.children = null
+
         } else {
-          d.children = d._children;
-          d._children = null;
+
+          d.children = d._children
+          d._children = null
         }
-        update();
+
+        update()
       }
-    }
-
-    // fire event on click
-    var onClick = (d)=> {
-
-      this.emit('node.click', d);
-    }
-
-    // Returns a list of all nodes under parent
-    function flatten(parent) {
-
-      var nodes = [], i = 0;
-
-      function recurse(node) {
-        if (node.children) node.children.forEach(recurse);
-        if (!node.id) node.id = ++i;
-        nodes.push(node);
-      }
-
-      recurse(parent);
-      return nodes;
     }
 
     update()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  flatten (parent) {
+
+    const nodes = []
+    var i =0
+
+    const recurse = (node) => {
+
+      if (node.children) {
+
+        node.children.forEach(recurse)
+      }
+
+      if (!node.id) {
+        node.id = ++i
+      }
+      nodes.push(node)
+    }
+
+    recurse(parent)
+
+    return nodes
   }
 
   /////////////////////////////////////////////////////////

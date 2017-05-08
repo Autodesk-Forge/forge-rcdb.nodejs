@@ -3,9 +3,10 @@
 // By Philippe Leefsma, Autodesk Inc, April 2017
 //
 /////////////////////////////////////////////////////////////////
-import {AddMetaProperty} from './MetaProperty'
+import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import MetaAPI from './Viewing.Extension.MetaProperties.API'
 import ExtensionBase from 'Viewer.ExtensionBase'
+import {AddMetaProperty} from './MetaProperty'
 import WidgetContainer from 'WidgetContainer'
 import MetaTreeView from './MetaTreeView'
 import ServiceManager from 'SvcManager'
@@ -16,7 +17,7 @@ import ReactDOM from 'react-dom'
 import Label from 'Label'
 import React from 'react'
 
-class MetaPropertiesExtension extends ExtensionBase {
+class MetaPropertiesExtension extends MultiModelExtensionBase {
 
   /////////////////////////////////////////////////////////
 	// Class constructor
@@ -30,13 +31,10 @@ class MetaPropertiesExtension extends ExtensionBase {
     this.onEditProperty = this.onEditProperty.bind(this)
     this.onMetaChanged = this.onMetaChanged.bind(this)
     this.onContextMenu = this.onContextMenu.bind(this)
-    this.onSelection = this.onSelection.bind(this)
     this.renderTitle = this.renderTitle.bind(this)
 
     this.dialogSvc =
       ServiceManager.getService('DialogSvc')
-
-    this.eventSink = options.eventSink
 
     this.react = options.react
 	}
@@ -47,29 +45,22 @@ class MetaPropertiesExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
 	load () {
 
-    this.eventSink.on('model.loaded', () => {
-
-      if (this.options.loader) {
-
-        this.options.loader.hide()
-      }
-
-      this.initLoadEvents ()
-    })
-
-    this.viewer.addEventListener(
-      Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
-      this.onSelection)
-
     this.react.setState({
 
       properties: [],
       model: null,
-      dbId: null,
+      dbId: null
 
     }).then (() => {
 
       this.react.pushRenderExtension(this)
+
+      const model = this.viewer.activeModel
+
+      if (model) {
+
+        this.setModel(model)
+      }
     })
 
     this.viewer.loadDynamicExtension(
@@ -109,11 +100,9 @@ class MetaPropertiesExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
 	unload () {
 
-    this.viewer.removeEventListener(
-      Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
-      this.onSelection)
-
     console.log('Viewing.Extension.MetaProperties loaded')
+
+    super.unload ()
 
 		return true
 	}
@@ -122,44 +111,40 @@ class MetaPropertiesExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  initLoadEvents () {
+  onObjectTreeCreated (event) {
 
-    this.viewerEvent([
-
-      Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
-      Autodesk.Viewing.GEOMETRY_LOADED_EVENT
-
-    ]).then((args) => {
-
-      this.onModelFullyLoaded(args)
-    })
+    this.setModel(event.model)
   }
 
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  onModelFullyLoaded (args) {
+  onModelActivated (event) {
 
-    const model = args[0].model
+    if (event.source !== 'model.loaded') {
 
-    this.setModel(model)
+      this.setModel(event.model)
+    }
   }
 
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  setModel (model) {
+  async setModel (model) {
 
-    this.react.setState({
+    await this.react.setState({
       model
     })
 
     const modelId = model.dbModelId ||
       this.options.dbModel._id
 
-    const {apiUrl, database} = this.options
+    const database = model.database ||
+      this.options.database
+
+    const {apiUrl} = this.options
 
     this.api = new MetaAPI(
       `${apiUrl}/meta/${database}/${modelId}`)

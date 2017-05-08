@@ -3,6 +3,7 @@
 // by Philippe Leefsma, May 2017
 //
 /////////////////////////////////////////////////////////
+import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import { DropdownButton, MenuItem } from 'react-bootstrap'
 import ExtensionBase from 'Viewer.ExtensionBase'
 import WidgetContainer from 'WidgetContainer'
@@ -13,7 +14,7 @@ import ForceGraph from 'ForceGraph'
 import React from 'react'
 import d3 from 'd3'
 
-class ForceGraphExtension extends ExtensionBase {
+class ForceGraphExtension extends MultiModelExtensionBase {
 
   /////////////////////////////////////////////////////////
   // Class constructor
@@ -64,27 +65,19 @@ class ForceGraphExtension extends ExtensionBase {
       activeProperty: '',
       showLoader: true,
       disabled: false,
-      data: null,
+      root: null,
       items: []
 
-    }).then (async() => {
-
-      const graphProperties = this.options.graphProperties
-
-      $('#force-graph-dropdown').parent().find('ul').css({
-        height: Math.min(
-          $('.force-graph').height() - 42,
-          graphProperties.length * 26 + 16)
-      })
-
-      await this.react.setState({
-        items: graphProperties
-      })
-
-      this.setActiveProperty (
-        graphProperties[this.options.defaultIndex || 0])
+    }).then (() => {
 
       this.react.pushRenderExtension(this)
+
+      const model = this.viewer.activeModel
+
+      if (model) {
+
+        this.loadGraph (model)
+      }
     })
 
     console.log('Viewing.Extension.ForceGraph loaded')
@@ -98,12 +91,66 @@ class ForceGraphExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   unload () {
 
+    console.log('Viewing.Extension.ForceGraph unloaded')
+
     window.removeEventListener(
       'resize', this.onStopResize)
 
-    console.log('Viewing.Extension.ForceGraph unloaded')
+    super.unload ()
 
     return true
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async loadGraph (model) {
+
+    await this.react.setState({
+      showLoader: true
+    })
+
+    this.componentIds = await Toolkit.getLeafNodes(model)
+
+    const graphProperties =
+      this.options.graphProperties ||
+      await Toolkit.getPropertyList(
+      this.viewer, this.componentIds, model)
+
+    $('#force-graph-dropdown').parent().find('ul').css({
+      height: Math.min(
+        $('.force-graph').height() - 42,
+        graphProperties.length * 26 + 16)
+    })
+
+    await this.react.setState({
+      items: graphProperties
+    })
+
+    this.setActiveProperty (
+      graphProperties[this.options.defaultIndex || 0])
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onModelActivated (event) {
+
+    if (event.source !== 'model.loaded') {
+
+      this.loadGraph(event.model)
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onGeometryLoaded (event) {
+
+    this.loadGraph(event.model)
   }
 
   /////////////////////////////////////////////////////////
@@ -118,13 +165,14 @@ class ForceGraphExtension extends ExtensionBase {
       showLoader: true
     })
 
-    //const data = await this.buildPropertyData (propName)
+    const root = await this.buildDataTree (propName)
 
     await this.react.setState({
       activeProperty: propName,
       showLoader: false,
       guid: this.guid(),
-      disabled: false
+      disabled: false,
+      root
     })
   }
 
@@ -133,22 +181,22 @@ class ForceGraphExtension extends ExtensionBase {
   // based on viewer input property
   //
   /////////////////////////////////////////////////////////////
-  async buildCustomDataTree (propName) {
+  async buildDataTree (propName) {
 
-    var model = this.viewer.model
+    const model = this.viewer.activeModel
 
-    var root = await Toolkit.buildModelTree(model)
+    const root = await Toolkit.buildModelTree(model)
 
-    var taskFunc = (node, parent)=> {
+    const taskFunc = (node, parent) => {
 
       return new Promise(async(resolve, reject) => {
 
         try {
 
-          node.parent = parent;
+          node.parent = parent
 
-          var prop = await ViewerToolkit.getProperty(
-            model, node.dbId, propName);
+          const prop = await Toolkit.getProperty(
+            model, node.dbId, propName)
 
           if (isNaN(prop.displayValue)) {
 
@@ -167,15 +215,15 @@ class ForceGraphExtension extends ExtensionBase {
 
           return resolve()
         }
-      });
+      })
     }
 
-    await ViewerToolkit.runTaskOnDataTree(
+    await Toolkit.runTaskOnDataTree(
       root, taskFunc)
 
-      this.normalize(root)
+    this.normalize(root)
 
-      return root
+    return root
   }
 
   /////////////////////////////////////////////////////////////
@@ -183,41 +231,41 @@ class ForceGraphExtension extends ExtensionBase {
   // based on computed max over all nodes
   //
   /////////////////////////////////////////////////////////////
-  normalize(dataTree) {
+  normalize (dataTree) {
 
-    var min =  Number.MAX_VALUE;
-    var max = -Number.MAX_VALUE;
+    var min =  Number.MAX_VALUE
+    var max = -Number.MAX_VALUE
 
-    function computeMinMaxRec(node){
+    const computeMinMaxRec = (node) => {
 
-      min = Math.min(min, node.size);
-      max = Math.max(max, node.size);
+      min = Math.min(min, node.size)
+      max = Math.max(max, node.size)
 
       if(node.children){
 
         node.children.forEach((child)=>{
 
-          computeMinMaxRec(child);
-        });
+          computeMinMaxRec(child)
+        })
       }
     }
 
     if(max === 0){
-      return;
+      return
     }
 
-    computeMinMaxRec(dataTree);
+    computeMinMaxRec (dataTree)
 
-    function normalizeRec(node){
+    const normalizeRec = (node) => {
 
-      node.size /= max;
+      node.size /= max
 
-      if(node.children){
+      if (node.children) {
 
         node.children.forEach((child)=>{
 
-          normalizeRec(child);
-        });
+          normalizeRec(child)
+        })
       }
     }
   }
@@ -229,6 +277,12 @@ class ForceGraphExtension extends ExtensionBase {
   onStopResize () {
 
     const state = this.react.getState()
+
+    $('#force-graph-dropdown').parent().find('ul').css({
+      height: Math.min(
+        $('.force-graph').height() - 42,
+        state.items.length * 26 + 16)
+    })
 
     this.react.setState({
       guid: this.guid()
@@ -253,6 +307,7 @@ class ForceGraphExtension extends ExtensionBase {
         </MenuItem>
       )
     })
+
     return (
       <div className="title controls">
         <label>
@@ -284,6 +339,14 @@ class ForceGraphExtension extends ExtensionBase {
         className={this.className}>
 
         <Loader show={state.showLoader}/>
+
+        <ForceGraph onNodeClicked={(e) => {
+
+
+          }}
+          guid={state.guid}
+          root={state.root}
+        />
 
       </WidgetContainer>
     )

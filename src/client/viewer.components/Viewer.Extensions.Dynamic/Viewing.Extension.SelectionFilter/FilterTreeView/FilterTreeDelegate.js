@@ -71,9 +71,16 @@ export default class FilterTreeDelegate extends TreeDelegate {
   /////////////////////////////////////////////////////////////
   nodeClickSelector (event) {
 
-    const selector = ['HEADER', 'LABEL']
+    const targetCls = event.target.parentNode.className
+    const parentCls = event.target.className
 
-    return (selector.indexOf(event.target.nodeName) > -1)
+    if (parentCls.indexOf('handle-click') > -1 ||
+        targetCls.indexOf('handle-click') > -1) {
+
+      return false
+    }
+
+    return true
   }
 
   /////////////////////////////////////////////////////////////

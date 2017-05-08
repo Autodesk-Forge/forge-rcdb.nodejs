@@ -3,8 +3,7 @@
 // by Philippe Leefsma, April 2016
 //
 /////////////////////////////////////////////////////////
-import React, { PropTypes } from 'react'
-import ReactDOM from 'react-dom'
+import React from 'react'
 import d3pie from 'd3pie'
 import './PieChart.scss'
 import d3 from 'd3'

@@ -3,17 +3,18 @@
 // by Philippe Leefsma, March 2017
 //
 /////////////////////////////////////////////////////////
+import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import { DropdownButton, MenuItem } from 'react-bootstrap'
 import ExtensionBase from 'Viewer.ExtensionBase'
 import WidgetContainer from 'WidgetContainer'
 import {ReactLoader as Loader} from 'Loader'
-import './Viewing.Extension.BarChart.scss'
+import './Viewing.Extension.PieChart.scss'
 import Toolkit from 'Viewer.Toolkit'
-import BarChart from 'BarChart'
+import PieChart from 'PieChart'
 import React from 'react'
 import d3 from 'd3'
 
-class BarChartExtension extends ExtensionBase {
+class PieChartExtension extends MultiModelExtensionBase {
 
   /////////////////////////////////////////////////////////
   // Class constructor
@@ -22,8 +23,6 @@ class BarChartExtension extends ExtensionBase {
   constructor (viewer, options) {
 
     super (viewer, options)
-
-    this.onGeometryLoaded = this.onGeometryLoaded.bind(this)
 
     this.toggleTheming = this.toggleTheming.bind(this)
 
@@ -42,7 +41,7 @@ class BarChartExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   get className() {
 
-    return 'bar-chart'
+    return 'pie-chart'
   }
 
   /////////////////////////////////////////////////////////
@@ -51,7 +50,7 @@ class BarChartExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   static get ExtensionId() {
 
-    return 'Viewing.Extension.BarChart'
+    return 'Viewing.Extension.PieChart'
   }
 
   /////////////////////////////////////////////////////////
@@ -66,13 +65,19 @@ class BarChartExtension extends ExtensionBase {
     this.react.setState({
       activeProperty: '',
       showLoader: true,
-      disabled: false,
-      theming: false,
+      disabled: true,
       items: [],
       data: []
     }).then (() => {
 
       this.react.pushRenderExtension(this)
+
+      const model = this.viewer.activeModel
+
+      if (model) {
+
+        this.loadChart (model)
+      }
     })
 
     this.viewer.addEventListener(
@@ -93,7 +98,7 @@ class BarChartExtension extends ExtensionBase {
         }
       })
 
-    console.log('Viewing.Extension.BarChart loaded')
+    console.log('Viewing.Extension.PieChart loaded')
 
     return true
   }
@@ -111,14 +116,12 @@ class BarChartExtension extends ExtensionBase {
       this.toggleTheming()
     }
 
-    this.viewer.removeEventListener(
-      Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
-      this.onGeometryLoaded)
-
     window.removeEventListener(
       'resize', this.onStopResize)
 
-    console.log('Viewing.Extension.BarChart unloaded')
+    console.log('Viewing.Extension.PieChart unloaded')
+
+    super.unload ()
 
     return true
   }
@@ -127,19 +130,22 @@ class BarChartExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  async onGeometryLoaded () {
+  async loadChart (model) {
 
-    this.componentIds = await Toolkit.getLeafNodes(
-      this.viewer.model)
+    await this.react.setState({
+      showLoader: true
+    })
+
+    this.componentIds = await Toolkit.getLeafNodes(model)
 
     const chartProperties =
       this.options.chartProperties ||
       await Toolkit.getPropertyList(
-        this.viewer, this.componentIds)
+        this.viewer, this.componentIds, model)
 
-    $('#bar-chart-dropdown').parent().find('ul').css({
+    $('#pie-chart-dropdown').parent().find('ul').css({
       height: Math.min(
-        $('.bar-chart').height() - 42,
+        $('.pie-chart').height() - 42,
         chartProperties.length * 26 + 16)
     })
 
@@ -150,9 +156,8 @@ class BarChartExtension extends ExtensionBase {
     this.setActiveProperty (
       chartProperties[this.options.defaultIndex || 0])
 
-    var fragIds = await Toolkit.getFragIds(
-      this.viewer.model,
-      this.componentIds)
+    const fragIds = await Toolkit.getFragIds(
+      model, this.componentIds)
 
     this.fragIdToMaterial = {}
 
@@ -167,6 +172,27 @@ class BarChartExtension extends ExtensionBase {
         this.fragIdToMaterial[fragId] = material
       }
     })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onModelActivated (event) {
+
+    if (event.source !== 'model.loaded') {
+
+      this.loadChart(event.model)
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onGeometryLoaded (event) {
+
+    this.loadChart(event.model)
   }
 
   /////////////////////////////////////////////////////////
@@ -190,7 +216,7 @@ class BarChartExtension extends ExtensionBase {
         group.dbIds.forEach((dbId) => {
 
           Toolkit.setMaterial(
-            this.viewer.model, dbId,
+            this.viewer.activeModel, dbId,
             group.material)
         })
       })
@@ -201,7 +227,8 @@ class BarChartExtension extends ExtensionBase {
 
         const material = this.fragIdToMaterial[fragId]
 
-        const fragList = this.viewer.model.getFragmentList()
+        const fragList =
+          this.viewer.activeModel.getFragmentList()
 
         fragList.setMaterial(fragId, material)
       }
@@ -242,7 +269,7 @@ class BarChartExtension extends ExtensionBase {
         group.dbIds.forEach((dbId) => {
 
           Toolkit.setMaterial(
-            this.viewer.model, dbId,
+            this.viewer.activeModel, dbId,
             group.material)
         })
       })
@@ -305,8 +332,8 @@ class BarChartExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   async buildPropertyData (propName) {
 
-    var componentsMap = await Toolkit.mapComponentsByProp(
-      this.viewer.model, propName,
+    const componentsMap = await Toolkit.mapComponentsByProp(
+      this.viewer.activeModel, propName,
       this.componentIds)
 
     for (const key in componentsMap) {
@@ -317,20 +344,20 @@ class BarChartExtension extends ExtensionBase {
       }
     }
 
-    var groupedMap = this.groupMap(componentsMap, 'Other',
+    const groupedMap = this.groupMap(componentsMap, 'Other',
       this.componentIds.length, 2.0)
 
-    var keys = Object.keys (groupedMap)
+    const keys = Object.keys (groupedMap)
 
-    var colors = d3.scale.linear()
+    const colors = d3.scale.linear()
       .domain([0, keys.length * .33, keys.length * .66, keys.length])
       .range(['#FCB843', '#C2149F', '#0CC4BD', '#0270E9'])
 
     const data = keys.map((key, idx) => {
 
-      var dbIds = groupedMap[key]
+      const dbIds = groupedMap[key]
 
-      var color = colors(idx)
+      const color = colors(idx)
 
       const percent = 100 * dbIds.length / this.componentIds.length
 
@@ -356,9 +383,9 @@ class BarChartExtension extends ExtensionBase {
 
     const state = this.react.getState()
 
-    $('#bar-chart-dropdown').parent().find('ul').css({
+    $('#pie-chart-dropdown').parent().find('ul').css({
       height: Math.min(
-        $('.bar-chart').height() - 42,
+        $('.pie-chart').height() - 42,
         state.items.length * 26 + 16)
     })
 
@@ -395,14 +422,14 @@ class BarChartExtension extends ExtensionBase {
     return (
       <div className="title controls">
         <label>
-          Bar Chart
+          Pie Chart
         </label>
 
         <DropdownButton
           title={"Property: " + state.activeProperty }
           disabled={state.disabled}
-          key="bar-chart-dropdown"
-          id="bar-chart-dropdown">
+          key="pie-chart-dropdown"
+          id="pie-chart-dropdown">
          { menuItems }
         </DropdownButton>
 
@@ -431,10 +458,9 @@ class BarChartExtension extends ExtensionBase {
 
         <Loader show={state.showLoader}/>
 
-        <BarChart flex={0.30}
-          onGroupClicked={(e) => {
+        <PieChart onGroupClicked={(e) => {
 
-            const dbIds = e.dbIds
+            const dbIds = e.expanded ? [] : e.data.dbIds
 
             Toolkit.isolateFull(
               this.viewer,
@@ -445,12 +471,11 @@ class BarChartExtension extends ExtensionBase {
           guid={state.guid}
           data={state.data}
         />
-
       </WidgetContainer>
     )
   }
 }
 
 Autodesk.Viewing.theExtensionManager.registerExtension(
-  BarChartExtension.ExtensionId,
-  BarChartExtension)
+  PieChartExtension.ExtensionId,
+  PieChartExtension)

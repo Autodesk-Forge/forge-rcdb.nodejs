@@ -149,10 +149,13 @@ class ExtensionManager extends ExtensionBase {
 
       const loadExts = extensions.filter ((extension) => {
 
-        const storageExtensions = storage.extensions || []
+        if (this.options.useStorage) {
 
-        extension.enabled = extension.enabled ||
-          storageExtensions.includes(extension.id)
+          const storageExtensions = storage.extensions || []
+
+          extension.enabled = extension.enabled ||
+            storageExtensions.includes(extension.id)
+        }
 
         return extension.enabled
       })
@@ -177,51 +180,6 @@ class ExtensionManager extends ExtensionBase {
     console.log('Viewing.Extension.ExtensionManager unloaded')
 
     return true
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  initLoadEvents () {
-
-    this.events = {}
-
-    const events = [
-      {
-        id: [
-          Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
-          Autodesk.Viewing.GEOMETRY_LOADED_EVENT
-        ],
-        handler: 'onModelFullyLoaded'
-      },
-      {
-        id: Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
-        handler: 'onObjectTreeCreated'
-      },
-      {
-        id: Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT,
-        handler: 'onModelRootLoaded'
-      },
-      {
-        id: Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
-        handler: 'onGeometryLoaded'
-      },
-      {
-        id: Autodesk.Viewing.TOOLBAR_CREATED_EVENT,
-        handler: 'onToolbarCreated'
-      }
-    ]
-
-    events.forEach((event) => {
-      const eventId = event.id.toString()
-      this.viewerEvent(event.id).then((args) => {
-        this.events[eventId] = {
-          handler: event.handler,
-          args
-        }
-      })
-    })
   }
 
   /////////////////////////////////////////////////////////
@@ -255,27 +213,66 @@ class ExtensionManager extends ExtensionBase {
             extensions
           })
 
-          for (const eventId in this.events) {
-
-            const event = this.events[eventId]
-
-            if (extInstance[event.handler]) {
-
-              extInstance[event.handler](event.args)
-            }
-          }
-
-          if (extInstance.initLoadEvents) {
-
-            extInstance.initLoadEvents()
-          }
-
           resolve(extInstance)
 
         }, (error) => {
 
           reject(error)
         })
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  fireModelEvents (extInstance) {
+
+    for (const eventId in this.events) {
+
+      const event = this.events[eventId]
+
+      if (extInstance[event.handler]) {
+
+        extInstance[event.handler](event.args)
+      }
+    }
+  }
+
+  initLoadEvents () {
+
+    this.events = {}
+
+    const events = [
+      {
+        id: [
+          Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
+          Autodesk.Viewing.GEOMETRY_LOADED_EVENT
+        ],
+        handler: 'onModelFullyLoaded'
+      },
+      {
+        id: Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
+        handler: 'onObjectTreeCreated'
+      },
+      {
+        id: Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT,
+        handler: 'onModelRootLoaded'
+      },
+      {
+        id: Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
+        handler: 'onGeometryLoaded'
+      }
+    ]
+
+    events.forEach((event) => {
+      const eventId = event.id.toString()
+      this.viewerEvent(event.id).then((args) => {
+        this.events[eventId] = {
+          handler: event.handler,
+          args
+        }
+      })
     })
   }
 
@@ -313,14 +310,17 @@ class ExtensionManager extends ExtensionBase {
 
       this.react.forceUpdate()
 
-      this.storageSvc.save(
-        'extension-manager', {
-          extensions: extensions.filter((ext) => {
-            return ext.enabled
-          }).map((ext) => {
-            return ext.id
+      if (this.options.useStorage) {
+
+        this.storageSvc.save(
+          'extension-manager', {
+            extensions: extensions.filter((ext) => {
+              return ext.enabled
+            }).map((ext) => {
+              return ext.id
+            })
           })
-        })
+      }
 
     } else {
 
@@ -329,14 +329,17 @@ class ExtensionManager extends ExtensionBase {
       const extInstance =
         await this.loadDynamicExtension (extension)
 
-      this.storageSvc.save(
-        'extension-manager', {
-          extensions: extensions.filter((ext) => {
-            return ext.enabled
-          }).map((ext) => {
-            return ext.id
+      if (this.options.useStorage) {
+
+        this.storageSvc.save(
+          'extension-manager', {
+            extensions: extensions.filter((ext) => {
+              return ext.enabled
+            }).map((ext) => {
+              return ext.id
+            })
           })
-        })
+      }
     }
   }
 

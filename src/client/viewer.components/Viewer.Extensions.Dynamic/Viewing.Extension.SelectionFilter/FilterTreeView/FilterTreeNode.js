@@ -236,7 +236,8 @@ class ReactTreeNode extends React.Component {
       <div className={classNames.join(' ')}>
         <Switch onChange={(checked) => this.props.onChecked(checked)}
           disabled={this.props.disabled}
-          checked={this.props.checked}/>
+          checked={this.props.checked}
+          className="handle-click"/>
         <Label text={this.props.name}/>
       </div>
     )

@@ -332,7 +332,7 @@ class ReactTreeNode extends React.Component {
 
     a.target = '_blank'
     a.href = href
-    
+
     a.click()
   }
 

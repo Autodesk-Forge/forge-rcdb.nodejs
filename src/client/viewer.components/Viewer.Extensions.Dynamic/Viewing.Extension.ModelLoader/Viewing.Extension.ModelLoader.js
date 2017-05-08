@@ -3,8 +3,8 @@
 // by Philippe Leefsma, April 2017
 //
 /////////////////////////////////////////////////////////
+import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import ContentEditable from 'react-contenteditable'
-import ExtensionBase from 'Viewer.ExtensionBase'
 import './Viewing.Extension.ModelLoader.scss'
 import WidgetContainer from 'WidgetContainer'
 import ServiceManager from 'SvcManager'
@@ -19,7 +19,7 @@ import {
   MenuItem
 } from 'react-bootstrap'
 
-class ModelLoaderExtension extends ExtensionBase {
+class ModelLoaderExtension extends MultiModelExtensionBase {
 
   /////////////////////////////////////////////////////////
   // Class constructor
@@ -29,16 +29,13 @@ class ModelLoaderExtension extends ExtensionBase {
 
     super (viewer, options)
 
-    this.onSelection = this.onSelection.bind(this)
     this.renderTitle = this.renderTitle.bind(this)
-
-    this.modelSvc =
-      ServiceManager.getService('ModelSvc')
 
     this.dialogSvc =
       ServiceManager.getService('DialogSvc')
 
-    this.eventSink = options.eventSink
+    this.modelSvc =
+      ServiceManager.getService('ModelSvc')
 
     this.react = options.react
   }
@@ -68,14 +65,16 @@ class ModelLoaderExtension extends ExtensionBase {
   load () {
 
     if (!this.viewer.model) {
+
       this.viewer.container.classList.add('empty')
     }
 
     if (this.options.loader) {
+
       this.options.loader.hide()
     }
 
-    const models = this.getModels()
+    const models = this.models
 
     const activeModel = models.length
       ? models[0]
@@ -104,13 +103,15 @@ class ModelLoaderExtension extends ExtensionBase {
       }
     }
 
-    this.viewer.loadDynamicExtension(
-      'Viewing.Extension.ModelTransformer', {
-
+    const transformerOptions = Object.assign({}, {
         react: transformerReactOptions,
-        fullTransform: true
+        fullTransform : true,
+        hideControls : true
+      }, this.options.transformer)
 
-      }).then((modelTransformer) => {
+    this.viewer.loadDynamicExtension(
+      'Viewing.Extension.ModelTransformer',
+      transformerOptions).then((modelTransformer) => {
 
         this.react.setState({
           modelTransformer
@@ -123,10 +124,6 @@ class ModelLoaderExtension extends ExtensionBase {
         }
       })
 
-    this.viewer.addEventListener(
-      Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
-      this.onSelection)
-
     console.log('Viewing.Extension.ModelLoader loaded')
 
     return true
@@ -138,25 +135,13 @@ class ModelLoaderExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   unload () {
 
-    this.react.popViewerPanel(this)
-
     console.log('Viewing.Extension.ModelLoader unloaded')
 
+    this.react.popViewerPanel(this)
+
+    super.unload ()
+
     return true
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  getModels () {
-
-    const models =
-      this.viewer.impl.modelQueue().getModels()
-
-    return _.sortBy(models, (m) => {
-      return m.name
-    })
   }
 
   /////////////////////////////////////////////////////////
@@ -212,10 +197,7 @@ class ModelLoaderExtension extends ExtensionBase {
 
     return new Promise(async(resolve) => {
 
-      this.viewer.container.classList.remove('empty')
-
-      const fileType = dbModel.name ||
-        this.getFileType(dbModel.urn)
+      const fileType = this.getFileType(dbModel.urn)
 
       const loadOptions = {
         placementTransform:
@@ -237,6 +219,7 @@ class ModelLoaderExtension extends ExtensionBase {
             this.viewer.loadModel(path, loadOptions,
               (model) => {
 
+                model.database = this.options.database
                 model.dbModelId = dbModel._id
                 model.name = dbModel.name
                 model.guid = this.guid()
@@ -253,6 +236,7 @@ class ModelLoaderExtension extends ExtensionBase {
           this.viewer.loadModel(dbModel.path, loadOptions,
             (model) => {
 
+              model.database = this.options.database
               model.dbModelId = dbModel._id
               model.name = dbModel.name
               model.guid = this.guid()
@@ -285,6 +269,8 @@ class ModelLoaderExtension extends ExtensionBase {
         if (!filteredModels.length) {
 
           this.viewer.container.classList.add('empty')
+
+          this.firstFileType = null
         }
 
         await this.react.setState({
@@ -295,15 +281,15 @@ class ModelLoaderExtension extends ExtensionBase {
             ? filteredModels[0]
             : null
 
-        await this.setActiveModel(nextActiveModel, {
-          source: 'model.unloaded'
-        })
-
         this.eventSink.emit('model.unloaded', {
           model: activeModel
         })
 
         this.viewer.impl.unloadModel(activeModel)
+
+        await this.setActiveModel(nextActiveModel, {
+          source: 'model.unloaded'
+        })
       }
 
       this.dialogSvc.off('dialog.close', onClose)
@@ -380,6 +366,35 @@ class ModelLoaderExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  onModelBeginLoad (event) {
+
+    const {models} = this.react.getState()
+
+    const model = event.model
+
+    this.react.setState({
+      models: [...models, model]
+    })
+
+    this.setActiveModel (model, {
+      source: 'model.loaded',
+      fitToView: true
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onModelRootLoaded (event) {
+
+    this.viewer.container.classList.remove('empty')
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   onSelection (event) {
 
     if (event.selections && event.selections.length) {
@@ -404,22 +419,33 @@ class ModelLoaderExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   async setActiveModel (model, params = {}) {
 
+    const activeGuid = this.viewer.activeModel
+      ? this.viewer.activeModel.guid
+      : null
+
+    this.viewer.activeModel = model
+
     if (params.fitToView) {
 
       this.fitModelToView (model)
     }
 
-    this.setStructure(model)
-
     await this.react.setState({
-      source: params.source,
       activeModel: model
     })
 
-    this.eventSink.emit('model.activated', {
-      source: params.source,
-      model
-    })
+    if (model) {
+
+      this.setStructure(model)
+
+      if (model.guid !== activeGuid){
+
+        this.eventSink.emit('model.activated', {
+          source: params.source,
+          model
+        })
+      }
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -486,26 +512,10 @@ class ModelLoaderExtension extends ExtensionBase {
         <div key={dbModel._id} className="model-item"
           onClick={() => {
 
-            this.loadModel(dbModel).then(async(model) => {
-
-              const {models} = this.react.getState()
-
-              const modelsByName =
-                _.sortBy([...models, model], (m) => {
-                  return m.name
-                })
-
-              this.react.setState({
-                models: modelsByName
-              })
+            this.loadModel(dbModel).then((model) => {
 
               this.eventSink.emit('model.loaded', {
                 model
-              })
-
-              await this.setActiveModel (model, {
-                source: 'model.loaded',
-                fitToView: true
               })
             })
 

@@ -222,7 +222,7 @@ class ViewerConfigurator extends React.Component {
       }
 
       System.import(
-        '../../viewer.components/Viewer.Extensions/' +
+        '../../viewer.components/Viewer.Extensions.Dynamic/' +
         extension.id + '/index').then(() => {
 
         var extState = {}
@@ -632,9 +632,11 @@ class ViewerConfigurator extends React.Component {
             viewer.loadModel(modelInfo.path, {}, (model) => {
 
               model.dbModelId = this.state.dbModel._id
-              model.name = this.state.dbModel.name
+              model.name = modelInfo.name
               model.urn = modelInfo.urn
               model.guid = this.guid()
+
+              viewer.activeModel = model
 
               this.eventSvc.emit('model.loaded', {
                 model
@@ -664,6 +666,8 @@ class ViewerConfigurator extends React.Component {
               model.name = this.state.dbModel.name
               model.urn = modelInfo.urn
               model.guid = this.guid()
+
+              viewer.activeModel = model
 
               this.eventSvc.emit('model.loaded', {
                 model

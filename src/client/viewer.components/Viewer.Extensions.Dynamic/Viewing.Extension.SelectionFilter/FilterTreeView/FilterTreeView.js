@@ -40,7 +40,11 @@ export default class FilterTreeView extends React.Component {
 
     this.delegate.on('node.checked', (node) => {
 
-      this.props.onNodeChecked(props.model, node)
+      this.props.onNodeChecked({
+        model: props.model,
+        tree: this.tree,
+        node
+      })
     })
 
     this.delegate.on('node.destroy', (node) => {
