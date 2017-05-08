@@ -191,9 +191,9 @@ class SelectionFilterExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onModelCompletedLoad (args) {
+  onObjectTreeCreated (event) {
 
-      this.addModel (args[0].model)
+      this.addModel (event.model)
   }
 
   /////////////////////////////////////////////////////////
