@@ -381,7 +381,7 @@ class FaderExtension extends ExtensionBase
       <div>
         <div className="row">
           <div className="control-element">
-            Signal Strength - Legend
+            Signal Attenuation - Legend
           </div>
         </div>
 
@@ -389,7 +389,7 @@ class FaderExtension extends ExtensionBase
           width: "calc(100% - 43px)",
           height: "80px"
           }}>
-          <Gradient colorScale={["#FF0000", "#00FF00"]}
+          <Gradient colorScale={["#00FF00", "#FF0000"]}
             className="control-element"
             guid={guid}
             data={data}
