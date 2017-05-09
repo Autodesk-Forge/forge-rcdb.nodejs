@@ -124,15 +124,17 @@ class ForceGraph extends React.Component {
         .attr("cx", function(d) { return d.x })
         .attr("cy", function(d) { return d.y })
         .attr("r", function(d) {
-          var size = d.size * 80;
-          size = Math.max(size, 2.5);
-          size = Math.min(size, 8);
-          return size;
+          var size = d.size * 10.0 / root.average
+          size = Math.max(size, 3.0)
+          size = Math.min(size, 15.0)
+          return size
         })
         .style("fill", color)
         .on("dblclick", onDoubleClick)
         .on("click", (n) => {
-
+          if (this.props.onNodeClicked) {
+            this.props.onNodeClicked (n)
+          }
         })
         .call(force.drag)
     }

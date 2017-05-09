@@ -167,6 +167,8 @@ class ForceGraphExtension extends MultiModelExtensionBase {
 
     const root = await this.buildDataTree (propName)
 
+    console.log(root)
+
     await this.react.setState({
       activeProperty: propName,
       showLoader: false,
@@ -231,7 +233,7 @@ class ForceGraphExtension extends MultiModelExtensionBase {
   // based on computed max over all nodes
   //
   /////////////////////////////////////////////////////////////
-  normalize (dataTree) {
+  normalize (root) {
 
     var min =  Number.MAX_VALUE
     var max = -Number.MAX_VALUE
@@ -250,15 +252,21 @@ class ForceGraphExtension extends MultiModelExtensionBase {
       }
     }
 
-    if(max === 0){
+    computeMinMaxRec (root)
+
+    if (max === 0) {
       return
     }
 
-    computeMinMaxRec (dataTree)
+    var count = 0
+    var sum = 0
 
     const normalizeRec = (node) => {
 
       node.size /= max
+
+      sum += node.size
+      ++count
 
       if (node.children) {
 
@@ -268,6 +276,10 @@ class ForceGraphExtension extends MultiModelExtensionBase {
         })
       }
     }
+
+    normalizeRec(root)
+
+    root.average = sum/count
   }
 
   /////////////////////////////////////////////////////////
@@ -340,9 +352,13 @@ class ForceGraphExtension extends MultiModelExtensionBase {
 
         <Loader show={state.showLoader}/>
 
-        <ForceGraph onNodeClicked={(e) => {
+        <ForceGraph onNodeClicked={(node) => {
 
+            Toolkit.isolateFull(
+              this.viewer, node.dbId,
+              this.viewer.activeModel)
 
+            this.viewer.fitToView()
           }}
           guid={state.guid}
           root={state.root}
