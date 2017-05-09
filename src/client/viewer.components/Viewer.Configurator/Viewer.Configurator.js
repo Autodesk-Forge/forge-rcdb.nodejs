@@ -663,7 +663,7 @@ class ViewerConfigurator extends React.Component {
             viewer.loadModel(path, options, (model) => {
 
               model.dbModelId = this.state.dbModel._id
-              model.name = this.state.dbModel.name
+              model.name = modelInfo.name
               model.urn = modelInfo.urn
               model.guid = this.guid()
 

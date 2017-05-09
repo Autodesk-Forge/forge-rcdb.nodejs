@@ -380,6 +380,9 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
       source: 'model.loaded',
       fitToView: true
     })
+
+    this.firstFileType = this.firstFileType ||
+      this.getFileType(model.urn)
   }
 
   /////////////////////////////////////////////////////////
