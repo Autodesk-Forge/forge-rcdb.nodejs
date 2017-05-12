@@ -149,6 +149,7 @@ export default class MetaTreeNode extends EventsEmitter {
         }
 
       case 'Link':
+      case 'File':
 
         return {
           displayCategory: props.displayCategory,
@@ -340,18 +341,60 @@ class ReactTreeNode extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  renderFileProperty () {
+
+    return (
+      <div className="treenode">
+        <Label className="meta-name"
+          text={this.props.displayName}
+        />
+        <div className="meta-value meta-link editable">
+          <a target="_blank" href={this.props.link}
+            onClick={() => this.onDownloadFile (
+              this.props.filename,
+              this.props.link)}>
+            {this.props.displayValue}
+          </a>
+        </div>
+        <span className="fa fa-edit"
+          onClick={() => this.props.onEdit(this.props)}
+        />
+        <span className="fa fa-times"
+          onClick={() =>this.props.onDelete(this.props)}
+        />
+      </div>
+    )
+  }
+
+  onDownloadFile (filename, href) {
+
+    let a = document.createElement('a')
+
+    a.download = filename
+    a.href = href
+
+    a.click()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   renderPropertyTreeNode () {
 
     switch (this.props.metaType) {
 
+      case 'File':
+        return this.renderFileProperty ()
+
       case 'Link':
-        return this.renderLinkProperty()
+        return this.renderLinkProperty ()
 
       case 'Text':
-        return this.renderTextProperty()
+        return this.renderTextProperty ()
 
       default:
-        return this.renderNativeProperty()
+        return this.renderNativeProperty ()
     }
   }
 

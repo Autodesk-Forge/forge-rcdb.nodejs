@@ -13,6 +13,10 @@ const config = {
     port: 3000
   },
 
+  meta: {
+    bucketName: 'forge-rcdb-meta-dev'
+  },
+
   forge: {
 
     oauth: {

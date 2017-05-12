@@ -24,9 +24,7 @@ class BarChart extends React.Component {
   /////////////////////////////////////////////////////////
   componentDidMount () {
 
-    const {data} = this.props
-
-    this.draw(data)
+    this.draw(this.props.data)
   }
 
   /////////////////////////////////////////////////////////
@@ -49,11 +47,9 @@ class BarChart extends React.Component {
   /////////////////////////////////////////////////////////
   componentDidUpdate () {
 
-    const {data} = this.props
-
     $(this.container).empty()
 
-    this.draw(data)
+    this.draw(this.props.data)
   }
 
   /////////////////////////////////////////////////////////

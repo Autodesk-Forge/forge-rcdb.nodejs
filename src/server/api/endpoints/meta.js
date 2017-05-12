@@ -3,7 +3,10 @@ import express from 'express'
 
 module.exports = function() {
 
-  var router = express.Router()
+  const uploadSvc = ServiceManager.getService(
+    'UploadSvc')
+
+  const router = express.Router()
 
   /////////////////////////////////////////////////////////
   // Get all meta properties for model (debug only)
@@ -48,6 +51,62 @@ module.exports = function() {
         await modelSvc.getNodeMetaProperties (
           req.params.modelId,
           req.params.dbId)
+
+      res.json(response)
+
+    } catch (error) {
+
+      res.status(error.statusCode || 500)
+      res.json(error)
+    }
+  })
+
+  /////////////////////////////////////////////////////////
+  // Get download link for specific fileId
+  //
+  /////////////////////////////////////////////////////////
+  router.get('/:db/:modelId/download/:fileId', async(req, res) => {
+
+    try {
+
+      const db = req.params.db
+
+      const modelSvc = ServiceManager.getService(
+        db + '-ModelSvc')
+
+      const response =
+        await modelSvc.getNodeMetaProperties (
+        req.params.modelId,
+        req.params.fileId)
+
+      res.json(response)
+
+    } catch (error) {
+
+      res.status(error.statusCode || 500)
+      res.json(error)
+    }
+  })
+
+  /////////////////////////////////////////////////////////
+  // upload file
+  //
+  /////////////////////////////////////////////////////////
+  router.post('/:db/:modelId', uploadSvc.uploader.any(),
+    async(req, res) => {
+
+    try {
+
+      const db = req.params.db
+
+      const modelSvc = ServiceManager.getService (
+        db + '-ModelSvc')
+
+      const metaProperty = req.body.metaProperty
+
+      const response =
+        await modelSvc.addNodeMetaProperty (
+        req.params.modelId, metaProperty)
 
       res.json(response)
 

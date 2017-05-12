@@ -4,13 +4,17 @@ import './Legend.scss'
 
 class Legend extends EventsEmitter {
 
-  constructor (container, data) {
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  constructor (container, data, options = {}) {
 
     super()
 
     this.svgId = this.guid()
 
-    this.options = {
+    this.options = Object.assign({}, options, {
       textStrokeColor: '#727272',
       textFillColor: '#727272',
       textHorizontalSpacing: 32,
@@ -22,7 +26,7 @@ class Legend extends EventsEmitter {
       fontSize: 13,
       fontName: 'ArtifaktElementRegular',
       strokeWidth: 3
-    }
+    })
 
     $(container).append(`
       <svg class="legend" id="${this.svgId}">
@@ -38,6 +42,10 @@ class Legend extends EventsEmitter {
     })
   }
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   drawElement(element, idx) {
 
     var circle = this.snap.paper.circle(
@@ -92,26 +100,15 @@ class Legend extends EventsEmitter {
     })
   }
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   getFormattedText(label) {
 
     return label.length > this.options.textMaxLength ?
       label.substring(0, this.options.textMaxLength) + ' ...' :
       label
-  }
-
-  guid(format = 'xxxxxxxxxx') {
-
-    var d = new Date().getTime()
-
-    var guid = format.replace(
-      /[xy]/g,
-      function (c) {
-        var r = (d + Math.random() * 16) % 16 | 0
-        d = Math.floor(d / 16)
-        return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16)
-      })
-
-    return guid
   }
 }
 

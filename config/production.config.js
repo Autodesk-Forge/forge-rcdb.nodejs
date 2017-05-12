@@ -16,6 +16,10 @@ const config = {
     port: 443
   },
 
+  meta: {
+    bucketName: 'forge-rcdb-meta'
+  },
+
   forge: {
 
     oauth: {

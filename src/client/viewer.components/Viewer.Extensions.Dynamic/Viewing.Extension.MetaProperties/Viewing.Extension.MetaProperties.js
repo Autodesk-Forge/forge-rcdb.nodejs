@@ -1,8 +1,8 @@
-/////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 // MetaProperties Viewer Extension
 // By Philippe Leefsma, Autodesk Inc, April 2017
 //
-/////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import MetaAPI from './Viewing.Extension.MetaProperties.API'
 import ExtensionBase from 'Viewer.ExtensionBase'
@@ -256,6 +256,49 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  getFileExt (filename) {
+
+    return filename.split('.').pop(-1)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  buildMetaPayload (metaProperty) {
+
+    return new Promise((resolve, reject) => {
+
+      switch (metaProperty.metaType) {
+
+        case 'File':
+
+          const file = metaProperty.file
+
+          const fileId =
+            `${this.guid()}.${this.getFileExt(file.name)}`
+
+          const payload = Object.assign({},
+            metaProperty, {
+              link: this.api.apiUrl + `/download/${fileId}`,
+              filename: file.name,
+              fileId
+            })
+
+          delete payload.file
+
+          return resolve (payload)
+
+        default:
+          return resolve (metaProperty)
+      }
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   showAddMetaPropertyDlg (dbId) {
 
     const onClose = async(result) => {
@@ -270,8 +313,12 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
             id: this.guid()
           })
 
+        const metaPayload =
+          await this.buildMetaPayload(
+            metaProperty)
+
         await this.api.addNodeMetaProperty(
-          metaProperty)
+          metaPayload)
 
         this.loadNodeProperties(dbId, true)
       }

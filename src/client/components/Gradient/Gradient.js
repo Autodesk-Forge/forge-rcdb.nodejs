@@ -25,9 +25,7 @@ class Gradient extends React.Component {
   /////////////////////////////////////////////////////////
   componentDidMount () {
 
-    const { data } = this.props
-
-    this.draw(data)
+    this.draw(this.props.data)
   }
 
   /////////////////////////////////////////////////////////
@@ -50,11 +48,9 @@ class Gradient extends React.Component {
   /////////////////////////////////////////////////////////
   componentDidUpdate () {
 
-    const {data} = this.props
-
     $(this.container).empty()
 
-    this.draw(data)
+    this.draw(this.props.data)
   }
 
   /////////////////////////////////////////////////////////
@@ -82,8 +78,14 @@ class Gradient extends React.Component {
     const min = d3.min(data, (d) => {return d.value })
     const max = d3.max(data, (d) => {return d.value })
 
+    const clrScaleDomain = this.props.colorScale.map(
+      (clr, idx) => {
+        const lenght = this.props.colorScale.length - 1
+        return (min + (max-min) * idx/lenght)
+      })
+
     const colorScale = d3.scale.linear()
-      .domain([min, max])
+      .domain(clrScaleDomain)
       .range(this.props.colorScale)
     //.interpolate(d3.interpolateHcl);
 
@@ -92,7 +94,7 @@ class Gradient extends React.Component {
       .domain([min, max])
       .range([0, width])
 
-    //Calculate the variables for the temp gradient
+    //Calculate the variables for the gradient
     const numStops = 10
     const countRange = countScale.domain()
     const range = countRange[1] - countRange[0]

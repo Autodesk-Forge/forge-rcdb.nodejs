@@ -17,7 +17,6 @@ import path from 'path'
 import MaterialAPI from './api/endpoints/materials'
 import LMVProxy from './api/endpoints/lmv-proxy'
 import SocketAPI from './api/endpoints/socket'
-import UploadAPI from './api/endpoints/upload'
 import ConfigAPI from './api/endpoints/config'
 import ModelAPI from './api/endpoints/models'
 import ForgeAPI from './api/endpoints/forge'
@@ -28,6 +27,7 @@ import DerivativesSvc from './api/services/DerivativesSvc'
 import ServiceManager from './api/services/SvcManager'
 import MongoDbSvc from './api/services/MongoDbSvc'
 import SocketSvc from './api/services/SocketSvc'
+import UploadSvc from './api/services/UploadSvc'
 import ForgeSvc from './api/services/ForgeSvc'
 import ModelSvc from './api/services/ModelSvc'
 import OssSvc from './api/services/OssSvc'
@@ -90,12 +90,31 @@ app.use(cookieParser())
 app.use(helmet())
 
 /////////////////////////////////////////////////////////////////////
+// Services setup
+//
+/////////////////////////////////////////////////////////////////////
+const derivativesSvc = new DerivativesSvc()
+
+const forgeSvc = new ForgeSvc(
+  config.forge)
+
+const uploadSvc = new UploadSvc({
+  tempStorage: path.join(__dirname, '/../../TMP')
+})
+
+const ossSvc = new OssSvc()
+
+ServiceManager.registerService(derivativesSvc)
+ServiceManager.registerService(uploadSvc)
+ServiceManager.registerService(forgeSvc)
+ServiceManager.registerService(ossSvc)
+
+/////////////////////////////////////////////////////////////////////
 // API Routes setup
 //
 /////////////////////////////////////////////////////////////////////
 app.use('/api/materials', MaterialAPI())
 app.use('/api/socket',    SocketAPI())
-app.use('/api/upload',    UploadAPI())
 app.use('/api/config',    ConfigAPI())
 app.use('/api/models',    ModelAPI())
 app.use('/api/forge',     ForgeAPI())
@@ -177,17 +196,6 @@ const runServer = (app) => {
         ' reason: ', reason)
     })
 
-    const derivativesSvc = new DerivativesSvc()
-
-    const forgeSvc = new ForgeSvc(
-      config.forge)
-
-    const ossSvc = new OssSvc()
-
-    ServiceManager.registerService(derivativesSvc)
-    ServiceManager.registerService(forgeSvc)
-    ServiceManager.registerService(ossSvc)
-
     config.databases.forEach((dbConfig) => {
 
       switch (dbConfig.type) {
@@ -218,10 +226,10 @@ const runServer = (app) => {
       }
     })
 
-    var server = app.listen(
+    const server = app.listen(
       process.env.PORT || config.server_port || 3000, () => {
 
-        var socketSvc = new SocketSvc({
+        const socketSvc = new SocketSvc({
           session,
           server
         })
@@ -229,6 +237,7 @@ const runServer = (app) => {
         ServiceManager.registerService(socketSvc)
 
         const port = server.address().port
+
         console.log('Server listening on PORT: ' + port)
         console.log('ENV: ' + process.env.NODE_ENV)
       })

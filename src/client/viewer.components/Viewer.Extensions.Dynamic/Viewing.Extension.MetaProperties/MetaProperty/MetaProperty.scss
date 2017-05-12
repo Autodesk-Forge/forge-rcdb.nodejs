@@ -36,4 +36,19 @@
   .meta-value.input {
     width: 100%;
   }
+
+  .drop-target {
+    border: 1px solid #d2d2d2;
+    padding: 10px 0 0 0;
+    border-radius: 4px;
+    cursor: pointer;
+
+    p {
+      color: #909090;
+    }
+
+    li {
+      text-align: left;
+    }
+  }
 }

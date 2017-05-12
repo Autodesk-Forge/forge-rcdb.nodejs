@@ -16,6 +16,7 @@
 // UNINTERRUPTED OR ERROR FREE.
 /////////////////////////////////////////////////////////////////////
 import ContentEditable from 'react-contenteditable'
+import Dropzone from 'react-dropzone'
 import ReactDOM from 'react-dom'
 import React from 'react'
 import {
@@ -34,9 +35,13 @@ export default class CreateMetaProperty
 
     super (props)
 
+    this.onDrop = this.onDrop.bind(this)
+
     this.state = Object.assign({}, {
         metaType: 'Text'
       }, props)
+
+    this.props.onChanged(this.state)
   }
 
   /////////////////////////////////////////////////////////
@@ -66,7 +71,7 @@ export default class CreateMetaProperty
         resolve()
       })
 
-      switch (state.metaType) {
+      switch (newState.metaType) {
 
         case 'Text':
 
@@ -85,6 +90,16 @@ export default class CreateMetaProperty
             displayName: newState.displayName,
             metaType: newState.metaType,
             link: newState.link
+          })
+
+        case 'File':
+
+          return this.props.onChanged({
+            displayCategory: newState.displayCategory,
+            displayValue: newState.displayValue,
+            displayName: newState.displayName,
+            metaType: newState.metaType,
+            file: newState.file
           })
       }
     })
@@ -107,13 +122,24 @@ export default class CreateMetaProperty
   //
   //
   /////////////////////////////////////////////////////////
-  async onInputChanged (e, key) {
+  onInputChanged (e, key) {
 
     const state = this.state
 
     state[key] = e.target.value
 
-    await this.setReactState(state)
+    this.setReactState(state)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onDrop (files) {
+
+    this.setReactState({
+      file: files[0]
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -143,6 +169,19 @@ export default class CreateMetaProperty
           !this.state.displayValue ||
           !this.state.displayName ||
           !this.state.link
+
+        this.props.disableOK (disableOK)
+
+        break
+      }
+
+      case 'File':
+      {
+        const disableOK =
+          !this.state.displayCategory ||
+          !this.state.displayValue ||
+          !this.state.displayName ||
+          !this.state.file
 
         this.props.disableOK (disableOK)
 
@@ -191,7 +230,39 @@ export default class CreateMetaProperty
               />
             </div>
           </div>
-      )
+        )
+
+      case 'File':
+        return (
+          <div>
+            <div className="row">
+              <ContentEditable
+                onChange={(e) => this.onInputChanged(e, 'displayValue')}
+                data-placeholder="Property value ..."
+                onKeyDown={(e) => this.onKeyDown(e)}
+                html={this.state.displayValue}
+                className="input meta-value"
+              />
+            </div>
+            <div className="row">
+              <Dropzone onDrop={this.onDrop} className="drop-target">
+                <p>
+                  Drop a file here or click to browse ...
+                </p>
+                <ul>
+                {
+                  this.state.file &&
+                  <li>
+                    <b>{this.state.file.name}</b>
+                    -
+                    {this.state.file.size} bytes
+                  </li>
+                }
+                </ul>
+              </Dropzone>
+            </div>
+          </div>
+        )
     }
   }
 
@@ -224,6 +295,13 @@ export default class CreateMetaProperty
               })
             }}>
               Link
+            </MenuItem>
+            <MenuItem eventKey={3} key={3} onClick={() => {
+              this.setReactState({
+                metaType: 'File'
+              })
+            }}>
+              File
             </MenuItem>
           </DropdownButton>
 
