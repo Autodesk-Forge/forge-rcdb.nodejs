@@ -45,6 +45,10 @@
 }
 
 .config-manager .content > .controls button {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+
   background: whitesmoke;
   border-radius: 4px;
   margin-left: 4px;
@@ -58,8 +62,16 @@
   position: relative;
   font-size: 16px;
   color: #9b9b9b;
-  padding: 0;
+  margin: auto;
+  padding: 0px;
+  height: 100%;
+  width:100%;
   top: -1px;
+}
+
+.config-manager .content > .controls button > span.caret {
+  margin: auto 0 auto auto;
+  width: 0px;
 }
 
 .config-manager .content > .controls button:disabled > span {
