@@ -721,7 +721,7 @@ class ConfigManagerExtension extends ExtensionBase {
 
       panel.on('update', () => {
 
-        if (!sequence.readonly) {
+        if (sequence && !sequence.readonly) {
 
           this.activateDrag ()
         }
