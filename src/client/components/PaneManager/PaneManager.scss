@@ -32,19 +32,23 @@
 }
 
 .pane-element > .title > .controls {
-  display: inline-block;
+  align-items: center;
   position: absolute;
+  display: flex;
+  height: 100%;
   right: 6px;
 }
 
 .pane-element > .title > .controls > button {
   border: 1px solid #c6c6c6;
   background-color: #e1e1e1;
+  justify-content: center;
+  align-items: center;
   border-radius: 6px;
   position: relative;
   margin-right: 4px;
   overflow: hidden;
-  margin-top: 8px;
+  display: flex;
   outline: none;
   height: 24px;
   width: 26px;
@@ -63,10 +67,9 @@
 }
 
 .pane-element > .title > .controls > button > span {
-  justify-content: center;
-  align-items: center;
-  display: flex;
-
   pointer-events: none;
-  color: #9b9b9b
+  margin: 1px 0 0 1px;
+  color: #9b9b9b;
+  height: 100%;
+  width: 100%;
 }

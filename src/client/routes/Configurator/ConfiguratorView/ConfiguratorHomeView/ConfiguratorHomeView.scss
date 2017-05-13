@@ -53,9 +53,13 @@
   .configurator-view .home .model-item img.default-thumbnail {
     min-height: 150px;
     min-width: 150px;
+    height: 150px;
+    width: 150px;
   }
 
   .configurator-view .home .model-item img {
+    min-height: 150px;
+    min-width: 150px;
     height: 150px;
     width: 150px;
     float: left;
@@ -114,9 +118,13 @@
   .configurator-view .home .model-item img.default-thumbnail {
     min-height: 70px;
     min-width: 70px;
+    height: 70px;
+    width: 70px;
   }
 
   .configurator-view .home .model-item img {
+    min-height: 70px;
+    min-width: 70px;
     height: 70px;
     width: 70px;
     float: left;
