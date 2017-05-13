@@ -343,16 +343,21 @@ class ReactTreeNode extends React.Component {
   /////////////////////////////////////////////////////////
   renderFileProperty () {
 
+    const displayLink = this.props.displayCategory +
+      '/' + this.props.displayName +
+      '/' + this.props.displayValue +
+      '/' + this.props.filename
+
     return (
       <div className="treenode">
         <Label className="meta-name"
           text={this.props.displayName}
         />
         <div className="meta-value meta-link editable">
-          <a target="_blank" href={this.props.link}
+          <a target="_blank" href={displayLink}
             onClick={() => this.onDownloadFile (
               this.props.filename,
-              this.props.link)}>
+              this.props.filelink)}>
             {this.props.displayValue}
           </a>
         </div>

@@ -63,6 +63,10 @@
 }
 
 .pane-element > .title > .controls > button > span {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+
   pointer-events: none;
   color: #9b9b9b
 }

@@ -280,7 +280,7 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
 
           const payload = Object.assign({},
             metaProperty, {
-              link: this.api.apiUrl + `/download/${fileId}`,
+              filelink: this.api.apiUrl + `/download/${fileId}`,
               filename: file.name,
               fileId
             })
