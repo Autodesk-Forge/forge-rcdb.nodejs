@@ -26,6 +26,7 @@
 }
 
 .config-manager .content > .controls > .row {
+  display: flex;
   width: 100%;
   margin: 0;
 }
@@ -56,16 +57,17 @@
   height: 26px;
   width: 30px;
   float: left;
+  padding: 0;
 }
 
 .config-manager .content > .controls button > span {
+  margin: auto auto auto 0px;
   position: relative;
   font-size: 16px;
   color: #9b9b9b;
-  margin: auto auto auto 1px;
   padding: 0px;
   height: 100%;
-  width:100%;
+  width: 100%;
   top: -1px;
 }
 

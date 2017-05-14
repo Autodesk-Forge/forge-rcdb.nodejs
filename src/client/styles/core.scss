@@ -83,14 +83,6 @@ body {
 // Reflex Layout
 //
 /////////////////////////////////////////////////////////
-.reflex-layout.horizontal > .reflex-splitter.reflex-thin {
-  height: 11px !important;
-}
-
-.reflex-layout.vertical > .reflex-splitter.reflex-thin {
-  width: 11px !important;
-}
-
 .reflex-layout > .reflex-splitter.reflex-thin {
   background: #aeaeae;
 }
@@ -119,6 +111,10 @@ div[disabled] {
 // content editable placeholder
 //
 /////////////////////////////////////////////////////////
+*[contenteditable] {
+  user-select: auto !important;
+}
+
 [contenteditable]:empty:not(:focus):before {
   content: attr(data-placeholder);
   pointer-events: none;
