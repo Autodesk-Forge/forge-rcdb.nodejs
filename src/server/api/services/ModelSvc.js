@@ -785,6 +785,72 @@ export default class ModelSvc extends BaseSvc {
   }
 
   /////////////////////////////////////////////////////////
+  // Get single meta property
+  //
+  /////////////////////////////////////////////////////////
+  getNodeMetaProperty (modelId, metaId) {
+
+    return new Promise(async(resolve, reject) => {
+
+      try {
+
+        const dbSvc = ServiceManager.getService(
+          this._config.dbName)
+
+        const collection = await dbSvc.getCollection(
+          this._config.models)
+
+        collection.aggregate([
+
+          {
+            $match: {
+              '_id': new mongo.ObjectId(modelId)
+            }
+          },
+          {
+            $project: {
+              metaProperties: 1
+            }
+          },
+          {
+            "$unwind": "$metaProperties"
+          },
+          {
+            $match: {
+              'metaProperties.id': metaId
+            }
+          },
+
+        ], (err, result) => {
+
+          const properties = result
+            ? result.map((e) => { return e.metaProperties})
+            : []
+
+          if (err) {
+
+            return reject(err)
+          }
+
+          if (!properties.length) {
+
+            return reject({
+              statusCode: 404,
+              msg: 'Not Found'
+            })
+          }
+
+          resolve(properties[0])
+        })
+
+      } catch (ex) {
+
+        return reject(ex)
+      }
+    })
+  }
+
+  /////////////////////////////////////////////////////////
   // add meta property
   //
   /////////////////////////////////////////////////////////
@@ -899,5 +965,4 @@ export default class ModelSvc extends BaseSvc {
       }
     })
   }
-
 }

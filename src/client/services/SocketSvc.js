@@ -26,7 +26,7 @@ export default class SocketSvc extends BaseSvc {
   // Socket Connection handler
   //
   ///////////////////////////////////////////////////////////////////
-  connect() {
+  connect () {
 
     return new Promise((resolve, reject) => {
 
@@ -61,7 +61,7 @@ export default class SocketSvc extends BaseSvc {
   //
   //
   ///////////////////////////////////////////////////////////////////
-  emit(msgId, msg) {
+  emit (msgId, msg) {
 
     if(this.socket) {
 
@@ -73,9 +73,9 @@ export default class SocketSvc extends BaseSvc {
   //
   //
   ///////////////////////////////////////////////////////////////////
-  broadcast(msgId, msg, filter = null) {
+  broadcast (msgId, msg, filter = null) {
 
-    if(this.socket) {
+    if (this.socket) {
 
       this.socket.emit('broadcast', {
         filter,

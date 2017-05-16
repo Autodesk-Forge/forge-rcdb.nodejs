@@ -282,12 +282,19 @@ export default class ViewerToolkit {
 
       try {
 
+        const dbIdInt = parseInt(dbId)
+
+        if (isNaN(dbIdInt)) {
+
+          return reject(dbId + ' is not a valid integer')
+        }
+
         if (requestedProps) {
 
           const propTasks = requestedProps.map((displayName) => {
 
             return ViewerToolkit.getProperty(
-              model, dbId, displayName, 'Not Available')
+              model, dbIdInt, displayName, 'Not Available')
           })
 
           Promise.all(propTasks).then((properties) => {
@@ -297,7 +304,7 @@ export default class ViewerToolkit {
 
         } else {
 
-          model.getProperties(dbId, function(result) {
+          model.getProperties(dbIdInt, function(result) {
 
             if (result.properties) {
 

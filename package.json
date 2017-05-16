@@ -49,6 +49,7 @@
     "rimraf": "^2.6.1",
     "rmdir": "^1.2.0",
     "socket.io": "^1.7.3",
+    "superagent": "3.5.2",
     "util": "^0.10.3"
   },
   "devDependencies": {

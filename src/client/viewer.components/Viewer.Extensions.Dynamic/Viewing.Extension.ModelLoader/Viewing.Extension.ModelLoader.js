@@ -441,7 +441,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
 
       this.setStructure(model)
 
-      if (model.guid !== activeGuid){
+      if (model.guid !== activeGuid) {
 
         this.eventSink.emit('model.activated', {
           source: params.source,

@@ -27,14 +27,33 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
 
 		super (viewer, options)
 
+    this.onPropertyDeleted = this.onPropertyDeleted.bind(this)
+    this.onPropertyUpdated = this.onPropertyUpdated.bind(this)
+    this.onPropertyAdded = this.onPropertyAdded.bind(this)
     this.onDeleteProperty = this.onDeleteProperty.bind(this)
     this.onEditProperty = this.onEditProperty.bind(this)
     this.onMetaChanged = this.onMetaChanged.bind(this)
     this.onContextMenu = this.onContextMenu.bind(this)
     this.renderTitle = this.renderTitle.bind(this)
 
+
     this.dialogSvc =
       ServiceManager.getService('DialogSvc')
+
+    this.socketSvc =
+      ServiceManager.getService('SocketSvc')
+
+    this.socketSvc.on (
+      'meta.propertyDeleted',
+      this.onPropertyDeleted)
+
+    this.socketSvc.on (
+      'meta.propertyUpdated',
+      this.onPropertyUpdated)
+
+    this.socketSvc.on (
+      'meta.propertyAdded',
+      this.onPropertyAdded)
 
     this.react = options.react
 	}
@@ -102,6 +121,18 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
 
     console.log('Viewing.Extension.MetaProperties loaded')
 
+    this.socketSvc.off (
+      'meta.propertyDeleted',
+      this.onPropertyDeleted)
+
+    this.socketSvc.off (
+      'meta.propertyUpdated',
+      this.onPropertyUpdated)
+
+    this.socketSvc.off (
+      'meta.propertyAdded',
+      this.onPropertyAdded)
+
     super.unload ()
 
 		return true
@@ -126,6 +157,33 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
 
       this.setModel(event.model)
     }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onPropertyAdded (metaPayload) {
+
+    this.loadNodeProperties (metaPayload.dbId, true)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onPropertyUpdated (metaPayload) {
+
+    this.loadNodeProperties (metaPayload.dbId, true)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onPropertyDeleted (dbId) {
+
+    this.loadNodeProperties (dbId, true)
   }
 
   /////////////////////////////////////////////////////////
@@ -275,8 +333,10 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
 
           const file = metaProperty.file
 
+          const fileExt = this.getFileExt(file.name)
+
           const fileId =
-            `${this.guid()}.${this.getFileExt(file.name)}`
+            `${this.guid('xxxx-xxxx-xxxx')}.${fileExt}`
 
           const payload = Object.assign({},
             metaProperty, {
@@ -284,6 +344,10 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
               filename: file.name,
               fileId
             })
+
+          this.api.upload(fileId, file)
+
+          window.URL.revokeObjectURL(file.preview)
 
           delete payload.file
 
@@ -321,6 +385,10 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
           metaPayload)
 
         this.loadNodeProperties(dbId, true)
+
+        this.socketSvc.broadcast (
+          'meta.propertyAdded',
+          metaPayload)
       }
     }
 
@@ -362,16 +430,20 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
 
         if (result === 'OK') {
 
-          const newMetaProperty = Object.assign({},
+          const newMetaPayload = Object.assign({},
             this.metaPropertyEdits, {
               dbId: metaProperty.dbId,
               id: metaProperty.id
             })
 
           this.api.updateNodeMetaProperty(
-            newMetaProperty)
+            newMetaPayload)
 
-          resolve (newMetaProperty)
+          this.socketSvc.broadcast (
+            'meta.propertyUpdated',
+            newMetaPayload)
+
+          resolve (newMetaPayload)
         }
 
         resolve (false)
@@ -411,6 +483,10 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
 
           this.api.deleteNodeMetaProperty(
             metaProperty.id)
+
+          this.socketSvc.broadcast (
+            'meta.propertyDeleted',
+            metaProperty.dbId)
 
           resolve (true)
         }

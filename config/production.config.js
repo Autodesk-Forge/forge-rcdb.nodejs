@@ -17,7 +17,7 @@ const config = {
   },
 
   meta: {
-    bucketName: 'forge-rcdb-meta'
+    bucketKey: 'forge-rcdb-meta'
   },
 
   forge: {

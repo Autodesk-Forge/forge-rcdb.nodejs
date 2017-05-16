@@ -21,7 +21,7 @@ export default class MetaAPI extends ClientAPI {
   ///////////////////////////////////////////////////////////////
   getModelMetaProperties () {
 
-    const url = this.apiUrl
+    const url = this.apiUrl + '/all'
 
     return this.ajax(url)
   }
@@ -32,7 +32,18 @@ export default class MetaAPI extends ClientAPI {
   ///////////////////////////////////////////////////////////////
   getNodeMetaProperties (dbId) {
 
-    const url = this.apiUrl + `/${dbId}`
+    const url = this.apiUrl + `/${dbId}/properties`
+
+    return this.ajax(url)
+  }
+
+  ///////////////////////////////////////////////////////////////
+  //
+  //
+  ///////////////////////////////////////////////////////////////
+  getNodeMetaProperty (metaId) {
+
+    const url = this.apiUrl + `/properties/${metaId}`
 
     return this.ajax(url)
   }
@@ -47,7 +58,7 @@ export default class MetaAPI extends ClientAPI {
       metaProperty
     }
 
-    const url = this.apiUrl
+    const url = this.apiUrl + '/properties'
 
     return this.ajax({
       url: url,
@@ -70,7 +81,7 @@ export default class MetaAPI extends ClientAPI {
       metaProperty
     }
 
-    const url = this.apiUrl
+    const url = this.apiUrl + '/properties'
 
     return this.ajax({
       url: url,
@@ -89,11 +100,22 @@ export default class MetaAPI extends ClientAPI {
   ///////////////////////////////////////////////////////////////
   deleteNodeMetaProperty (metaId) {
 
-    const url = this.apiUrl + `/${metaId}`
+    const url = this.apiUrl + `/properties/${metaId}`
 
     return this.ajax({
       url: url,
       method: 'DELETE'
     })
+  }
+
+  ///////////////////////////////////////////////////////////////
+  //
+  //
+  ///////////////////////////////////////////////////////////////
+  upload (fileId, file) {
+
+    const url = this.apiUrl + `/upload/${fileId}`
+
+    return super.upload (url, file, {tag: 'metaFile'})
   }
 }

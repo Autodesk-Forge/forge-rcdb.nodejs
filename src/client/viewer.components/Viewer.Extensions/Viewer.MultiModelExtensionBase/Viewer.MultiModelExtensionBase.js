@@ -28,6 +28,8 @@ export default class MultiModelExtensionBase extends
 
     this.viewer = viewer
 
+    // read the modelQueue to detect currently loaded models
+    // when the extension gets loaded
     const models = viewer.impl.modelQueue().getModels()
 
     this.models = models.map((model) => {
@@ -35,40 +37,6 @@ export default class MultiModelExtensionBase extends
       model.guid = model.guid || this.guid()
 
       return model
-    })
-
-    this.eventSink = this.options.eventSink
-
-    this.eventSink.on('model.loaded', (event) => {
-
-      this.models = [...this.models, event.model]
-
-      this.viewerEvent([
-
-        Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
-        Autodesk.Viewing.GEOMETRY_LOADED_EVENT
-
-      ]).then((args) => {
-
-        this.onModelCompletedLoad (args[0])
-      })
-
-      this.onModelBeginLoad (event)
-    })
-
-    this.eventSink.on('model.activated', (event) => {
-
-      this.onModelActivated (event)
-    })
-
-    this.eventSink.on('model.unloaded', (event) => {
-
-      this.models = this.models.filter((model) => {
-
-        return model.guid !== event.model.guid
-      })
-
-      this.onModelUnloaded(event)
     })
 
     this.initializeEvents ()
@@ -108,7 +76,8 @@ export default class MultiModelExtensionBase extends
   }
 
   /////////////////////////////////////////////////////////
-  // Reload callback
+  // Reload callback, in case the extension is re-loaded
+  // more than once
   //
   /////////////////////////////////////////////////////////
   reload (options = {}) {
@@ -122,7 +91,9 @@ export default class MultiModelExtensionBase extends
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Invoked when the model starts to load
+  // The geometry and instanceTree may not be available
+  // at this time
   //
   /////////////////////////////////////////////////////////
   onModelBeginLoad (event) {
@@ -131,7 +102,8 @@ export default class MultiModelExtensionBase extends
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Triggered by ModelLoader extension when a model is
+  // selected in a multi-model environment
   //
   /////////////////////////////////////////////////////////
   onModelActivated (event) {
@@ -140,7 +112,10 @@ export default class MultiModelExtensionBase extends
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Invoked when model root node has been loaded
+  // Extensions that do not require access to full
+  // model geometry or component tree may use that
+  // event to know a new model has been loaded
   //
   /////////////////////////////////////////////////////////
   onModelRootLoaded (event) {
@@ -154,7 +129,10 @@ export default class MultiModelExtensionBase extends
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Invoked when object tree is fully loaded.
+  // Extensions that are interested in using the
+  // instanceTree need to use that event to make sure
+  // it is available
   //
   ////////////////////////////////////////////////////////
   onObjectTreeCreated (event) {
@@ -163,7 +141,7 @@ export default class MultiModelExtensionBase extends
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Invoked when geometry is fully loaded
   //
   /////////////////////////////////////////////////////////
   onGeometryLoaded (event) {
@@ -172,7 +150,8 @@ export default class MultiModelExtensionBase extends
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Invoked after onObjectTreeCreated and onGeometryLoaded
+  // have both been fired
   //
   /////////////////////////////////////////////////////////
   onModelCompletedLoad (event) {
@@ -181,7 +160,7 @@ export default class MultiModelExtensionBase extends
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Invoked once the viewer toolbar has been created
   //
   /////////////////////////////////////////////////////////
   onToolbarCreated (event) {
@@ -190,7 +169,8 @@ export default class MultiModelExtensionBase extends
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Triggered by ModelLoader extension when a model has
+  // been unloaded as per user request
   //
   /////////////////////////////////////////////////////////
   onModelUnloaded (event) {
@@ -199,7 +179,7 @@ export default class MultiModelExtensionBase extends
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Invoked when a model is being selected
   //
   /////////////////////////////////////////////////////////
   onSelection (event) {
@@ -208,10 +188,51 @@ export default class MultiModelExtensionBase extends
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Initialize all events for the extension
+  // Each event will invoke a predefined handler
+  // implemented of not by the derived extension
   //
   /////////////////////////////////////////////////////////
   initializeEvents () {
+
+    if (this.options.eventSink) {
+
+      // event object passed in options
+      this.eventSink = this.options.eventSink
+
+      this.eventSink.on('model.loaded', (event) => {
+
+        this.models = [...this.models, event.model]
+
+        this.viewerEvent([
+
+          Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
+          Autodesk.Viewing.GEOMETRY_LOADED_EVENT
+
+        ]).then((args) => {
+
+          this.onModelCompletedLoad (args[0])
+        })
+
+        this.onModelBeginLoad (event)
+      })
+
+      this.eventSink.on('model.activated', (event) => {
+
+        this.onModelActivated (event)
+      })
+
+      this.eventSink.on('model.unloaded', (event) => {
+
+        this.models = this.models.filter((model) => {
+
+          return model.guid !== event.model.guid
+        })
+
+        this.onModelUnloaded(event)
+      })
+    }
+
 
     this.viewerEvents = [
       {

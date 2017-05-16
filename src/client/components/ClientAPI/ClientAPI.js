@@ -1,3 +1,4 @@
+import superAgent from 'superagent'
 
 export default class ClientAPI {
 
@@ -56,6 +57,30 @@ export default class ClientAPI {
       })
 
       $.ajax(params)
+    })
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  upload (url, file, opts = {}) {
+
+    return new Promise ((resolve, reject) => {
+
+      const req = superAgent.post(url)
+
+      req.attach(opts.tag || 'file', file)
+
+      req.end((err, response) => {
+
+        if (err) {
+
+          return reject (err)
+        }
+
+        resolve (response)
+      })
     })
   }
 }
