@@ -360,7 +360,7 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
 
               if (percent === 100) {
 
-                notification.message = `${file.name} uploaded!`
+                notification.title = `${file.name} uploaded!`
                 notification.message = `progress: 100%`
                 notification.dismissAfter = 10000
                 notification.dismissible = true
