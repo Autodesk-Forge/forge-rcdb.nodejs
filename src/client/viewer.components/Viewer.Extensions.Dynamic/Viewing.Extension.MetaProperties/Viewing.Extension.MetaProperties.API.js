@@ -112,10 +112,14 @@ export default class MetaAPI extends ClientAPI {
   //
   //
   ///////////////////////////////////////////////////////////////
-  upload (fileId, file) {
+  upload (fileId, file, opts = {}) {
 
     const url = this.apiUrl + `/upload/${fileId}`
 
-    return super.upload (url, file, {tag: 'metaFile'})
+    const options = Object.assign({}, {
+      tag: 'metaFile'
+    }, opts)
+
+    return super.upload (url, file, options)
   }
 }

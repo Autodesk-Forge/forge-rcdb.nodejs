@@ -1,13 +1,21 @@
+import ConfiguratorView from '../ConfiguratorView'
 import { connect } from 'react-redux'
 
-import ConfiguratorView from '../ConfiguratorView'
-
 import {
-  setNavbarState,
-  setViewerEnv
+    setNavbarState,
+    setViewerEnv
   } from '../../../store/app'
 
+import {
+  removeNotifications,
+  updateNotification,
+  addNotification
+  } from 'reapop'
+
 const mapDispatchToProps = {
+  removeNotifications,
+  updateNotification,
+  addNotification,
   setNavbarState,
   setViewerEnv
 }

@@ -89,7 +89,7 @@ export default class CreateMetaProperty
             displayValue: newState.displayValue,
             displayName: newState.displayName,
             metaType: newState.metaType,
-            link: newState.link
+            link: newState.link.trim()
           })
 
         case 'File':
@@ -99,6 +99,10 @@ export default class CreateMetaProperty
             displayValue: newState.displayValue,
             displayName: newState.displayName,
             metaType: newState.metaType,
+            filename: newState.filename,
+            filesize: newState.filesize,
+            filelink: newState.filelink,
+            fileId: newState.fileId,
             file: newState.file
           })
       }
@@ -126,7 +130,9 @@ export default class CreateMetaProperty
 
     const state = this.state
 
-    state[key] = e.target.value
+    state[key] = !!e.target.value
+      ? e.target.value.replace(/&nbsp;/g, '')
+      : e.target.value
 
     this.setReactState(state)
   }
@@ -137,8 +143,17 @@ export default class CreateMetaProperty
   /////////////////////////////////////////////////////////
   onDrop (files) {
 
+    if (this.state.file) {
+
+      window.URL.revokeObjectURL(this.state.file.preview)
+    }
+
+    const file = files[0]
+
     this.setReactState({
-      file: files[0]
+      filename: file.name,
+      filesize: file.size,
+      file
     })
   }
 
@@ -181,7 +196,7 @@ export default class CreateMetaProperty
           !this.state.displayCategory ||
           !this.state.displayValue ||
           !this.state.displayName ||
-          !this.state.file
+          !this.state.filename
 
         this.props.disableOK (disableOK)
 
@@ -245,17 +260,19 @@ export default class CreateMetaProperty
               />
             </div>
             <div className="row">
-              <Dropzone onDrop={this.onDrop} className="drop-target">
+              <Dropzone className="drop-target"
+                onDrop={this.onDrop}
+                multiple={false} >
                 <p>
                   Drop a file here or click to browse ...
                 </p>
                 <ul>
                 {
-                  this.state.file &&
+                  this.state.filename &&
                   <li>
-                    <b>{this.state.file.name}</b>
-                    -
-                    {this.state.file.size} bytes
+                    <b>{this.state.filename}</b>
+                    <br/>
+                    {this.state.filesize} bytes
                   </li>
                 }
                 </ul>

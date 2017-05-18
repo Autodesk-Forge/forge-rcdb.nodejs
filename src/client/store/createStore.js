@@ -16,9 +16,13 @@ export default (initialState = {}) => {
   // Store Enhancers
   // ======================================================
   const enhancers = []
+
   if (config.env === 'development') {
+
     const devToolsExtension = window.devToolsExtension
+
     if (typeof devToolsExtension === 'function') {
+
       enhancers.push(devToolsExtension())
     }
   }
@@ -34,6 +38,7 @@ export default (initialState = {}) => {
       ...enhancers
     )
   )
+
   store.asyncReducers = {}
 
   // To unsubscribe, invoke `store.unsubscribeHistory()` anytime

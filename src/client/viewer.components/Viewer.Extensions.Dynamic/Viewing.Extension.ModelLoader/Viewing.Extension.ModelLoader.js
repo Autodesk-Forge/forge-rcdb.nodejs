@@ -69,11 +69,6 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
       this.viewer.container.classList.add('empty')
     }
 
-    if (this.options.loader) {
-
-      this.options.loader.hide()
-    }
-
     const models = this.models
 
     const activeModel = models.length
@@ -145,7 +140,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Displays model selection popup dialog
   //
   /////////////////////////////////////////////////////////
   showModelDlg () {
@@ -165,9 +160,10 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
     this.modelSvc.getModels(this.options.database).then(
       (models) => {
 
-        const dbModelsByName = _.sortBy(models, (model) => {
-          return model.name
-        })
+        const dbModelsByName =
+          _.sortBy(models, (model) => {
+            return model.name
+          })
 
         this.dialogSvc.setState({
           dbModels: dbModelsByName,
@@ -181,7 +177,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Get file type by base64 decoding the model URN
   //
   /////////////////////////////////////////////////////////
   getFileType (urn) {
@@ -190,7 +186,10 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Loads a model based on database info
+  // For testing purpose also supports
+  // loading models offline
+  // See for more details: http://autode.sk/2qsKxx8
   //
   /////////////////////////////////////////////////////////
   loadModel (dbModel) {
@@ -208,7 +207,8 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
 
         case 'AutodeskProduction':
 
-          const doc = await Toolkit.loadDocument(dbModel.urn)
+          const doc = await Toolkit.loadDocument(
+            dbModel.urn)
 
           const items = Toolkit.getViewableItems(doc)
 
@@ -251,7 +251,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Unload model upon user request
   //
   /////////////////////////////////////////////////////////
   async unloadModel () {
@@ -312,7 +312,10 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // .rvt and .nwc files are z-oriented, whereas other
+  // file formats are y-oriented.
+  // Depending what file type was the initial model,
+  // we need to adjust the subsequent loaded models
   //
   /////////////////////////////////////////////////////////
   buildPlacementTransform (fileType) {
@@ -347,7 +350,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Fit whole model to view
   //
   /////////////////////////////////////////////////////////
   fitModelToView (model) {
@@ -363,7 +366,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // ModelBeginLoad event
   //
   /////////////////////////////////////////////////////////
   onModelBeginLoad (event) {
@@ -386,7 +389,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // ModelRootLoaded event
   //
   /////////////////////////////////////////////////////////
   onModelRootLoaded (event) {
@@ -395,7 +398,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Model Selected event
   //
   /////////////////////////////////////////////////////////
   onSelection (event) {
@@ -417,7 +420,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Set model as active
   //
   /////////////////////////////////////////////////////////
   async setActiveModel (model, params = {}) {
@@ -452,7 +455,8 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Fixing the model structure browser to show active
+  // model structure
   //
   /////////////////////////////////////////////////////////
   setStructure (model) {
@@ -504,7 +508,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Load model items in popup selection dialog
   //
   /////////////////////////////////////////////////////////
   setDlgItems (dbModels) {
@@ -554,7 +558,8 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // batch requests thumbnails for models shown in
+  // popup selection dialog
   //
   /////////////////////////////////////////////////////////
   batchRequestThumbnails (size) {
@@ -594,7 +599,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Panel docking mode
   //
   /////////////////////////////////////////////////////////
   async setDocking (docked) {
@@ -619,7 +624,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // React method - render panel title
   //
   /////////////////////////////////////////////////////////
   renderTitle (docked) {
@@ -644,7 +649,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // React method - render panel controls
   //
   /////////////////////////////////////////////////////////
   renderControls () {
@@ -702,7 +707,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // React method - render transformer extension UI
   //
   /////////////////////////////////////////////////////////
   renderTransformer () {
@@ -715,7 +720,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // React method - render extension UI
   //
   /////////////////////////////////////////////////////////
   render (opts) {

@@ -6,4 +6,10 @@
   width: 100vw;
 }
 
-
+.configurator-view .notifications {
+  overflow: visible;
+  position: fixed;
+  z-index: 99999;
+  top: 80px;
+  height: 0;
+}

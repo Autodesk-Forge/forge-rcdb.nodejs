@@ -61,7 +61,8 @@
     width: 50%;
   }
 
-  .treeview header.property .treenode .meta-link {
+  .treeview header.property .treenode .meta-link,
+  .treeview header.property .treenode .meta-file {
     position: relative;
     overflow: hidden;
     font-size: 100%;

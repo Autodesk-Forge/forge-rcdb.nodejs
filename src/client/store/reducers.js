@@ -1,3 +1,4 @@
+import { reducer as notificationsReducer } from 'reapop'
 import { combineReducers } from 'redux'
 
 //default reducers
@@ -6,6 +7,7 @@ import appReducer from './app'
 
 export const makeRootReducer = (asyncReducers) => {
   return combineReducers({
+    notifications: notificationsReducer(),
     location: locationReducer,
     app: appReducer,
     ...asyncReducers

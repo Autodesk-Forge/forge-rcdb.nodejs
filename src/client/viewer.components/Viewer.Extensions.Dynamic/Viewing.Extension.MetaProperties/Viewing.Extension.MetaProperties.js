@@ -325,11 +325,11 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   buildMetaPayload (metaProperty) {
 
-    return new Promise((resolve, reject) => {
+    switch (metaProperty.metaType) {
 
-      switch (metaProperty.metaType) {
+      case 'File':
 
-        case 'File':
+        if (metaProperty.file) {
 
           const file = metaProperty.file
 
@@ -341,22 +341,53 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
           const payload = Object.assign({},
             metaProperty, {
               filelink: this.api.apiUrl + `/download/${fileId}`,
-              filename: file.name,
               fileId
             })
 
-          this.api.upload(fileId, file)
+          const notification = this.options.notify.add({
+            message: 'progress: 0%',
+            title: 'Uploading ' + file.name,
+            dismissible: false,
+            status: 'loading',
+            position: 'tl'
+          })
+
+          this.api.upload(fileId, file, {
+            progress: (percent) => {
+
+              notification.message = `progress: ${percent}%`
+
+              if (percent === 100) {
+
+                notification.message = `${file.name} uploaded!`
+                notification.dismissAfter = 10000
+                notification.dismissible = true
+                notification.status = 'success'
+                notification.buttons = [{
+                  name: 'OK',
+                  primary: true
+                }]
+              }
+
+              this.options.notify.update(notification)
+            }
+          })
 
           window.URL.revokeObjectURL(file.preview)
 
           delete payload.file
 
-          return resolve (payload)
+          return payload
 
-        default:
-          return resolve (metaProperty)
-      }
-    })
+        } else {
+
+          // file not changed
+          return metaProperty
+        }
+
+      default:
+        return metaProperty
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -377,9 +408,8 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
             id: this.guid()
           })
 
-        const metaPayload =
-          await this.buildMetaPayload(
-            metaProperty)
+        const metaPayload = this.buildMetaPayload(
+          metaProperty)
 
         await this.api.addNodeMetaProperty(
           metaPayload)
@@ -430,11 +460,14 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
 
         if (result === 'OK') {
 
-          const newMetaPayload = Object.assign({},
+          const newMetaProperty = Object.assign({},
             this.metaPropertyEdits, {
               dbId: metaProperty.dbId,
               id: metaProperty.id
             })
+
+          const newMetaPayload = this.buildMetaPayload(
+            newMetaProperty)
 
           this.api.updateNodeMetaProperty(
             newMetaPayload)

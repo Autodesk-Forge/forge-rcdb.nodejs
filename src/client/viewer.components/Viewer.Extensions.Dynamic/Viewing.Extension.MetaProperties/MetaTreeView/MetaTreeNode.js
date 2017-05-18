@@ -1,4 +1,5 @@
 import EventsEmitter from 'EventsEmitter'
+import Spinner from 'react-spinkit'
 import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 import Label from 'Label'
@@ -149,7 +150,6 @@ export default class MetaTreeNode extends EventsEmitter {
         }
 
       case 'Link':
-      case 'File':
 
         return {
           displayCategory: props.displayCategory,
@@ -157,6 +157,20 @@ export default class MetaTreeNode extends EventsEmitter {
           displayName: props.displayName,
           metaType: props.metaType,
           link: props.link,
+          dbId: props.dbId,
+          id: props.id
+        }
+
+      case 'File':
+
+        return {
+          displayCategory: props.displayCategory,
+          displayValue: props.displayValue,
+          displayName: props.displayName,
+          metaType: props.metaType,
+          filelink: props.filelink,
+          filename: props.filename,
+          filesize: props.filesize,
           dbId: props.dbId,
           id: props.id
         }
@@ -348,12 +362,18 @@ class ReactTreeNode extends React.Component {
       '/' + this.props.displayValue +
       '/' + this.props.filename
 
+    const spinnerStyle = {
+      display: 'none'
+    }
+
     return (
       <div className="treenode">
         <Label className="meta-name"
           text={this.props.displayName}
         />
-        <div className="meta-value meta-link editable">
+        <div className="meta-value meta-file editable">
+          <Spinner spinnerName='cube-grid'
+            style={spinnerStyle}/>
           <a target="_blank" href={displayLink}
             onClick={() => this.onDownloadFile (
               this.props.filename,

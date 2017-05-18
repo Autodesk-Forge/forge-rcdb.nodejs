@@ -611,6 +611,7 @@ class ViewerConfigurator extends React.Component {
         loadDocument: this.loadDocument,
         database: this.props.database,
         dbModel: this.state.dbModel,
+        notify: this.props.notify,
         parentControl: ctrlGroup,
         loader: this.loader,
         model: modelInfo,

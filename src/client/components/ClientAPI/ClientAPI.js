@@ -70,6 +70,14 @@ export default class ClientAPI {
 
       const req = superAgent.post(url)
 
+      req.on('progress', (e) => {
+
+        if (opts.progress) {
+
+          opts.progress(e.percent)
+        }
+      })
+
       req.attach(opts.tag || 'file', file)
 
       req.end((err, response) => {
