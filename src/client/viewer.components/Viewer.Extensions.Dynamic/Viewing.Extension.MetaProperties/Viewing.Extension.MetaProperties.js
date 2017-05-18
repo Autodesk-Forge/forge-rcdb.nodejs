@@ -345,21 +345,23 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
             })
 
           const notification = this.options.notify.add({
-            message: 'progress: 0%',
             title: 'Uploading ' + file.name,
+            message: 'progress: 0%',
             dismissible: false,
             status: 'loading',
+            dismissAfter: 0,
             position: 'tl'
           })
 
           this.api.upload(fileId, file, {
             progress: (percent) => {
 
-              notification.message = `progress: ${percent}%`
+              notification.message = `progress: ${percent.toFixed(2)}%`
 
               if (percent === 100) {
 
                 notification.message = `${file.name} uploaded!`
+                notification.message = `progress: 100%`
                 notification.dismissAfter = 10000
                 notification.dismissible = true
                 notification.status = 'success'
