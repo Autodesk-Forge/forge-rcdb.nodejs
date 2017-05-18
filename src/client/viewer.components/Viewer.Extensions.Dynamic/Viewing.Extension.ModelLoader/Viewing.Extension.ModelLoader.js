@@ -67,6 +67,11 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
     if (!this.viewer.model) {
 
       this.viewer.container.classList.add('empty')
+
+      if (this.options.loader) {
+
+        this.options.loader.hide()
+      }
     }
 
     const models = this.models
