@@ -353,10 +353,11 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
             position: 'tl'
           })
 
-          this.api.upload(fileId, file, {
+          this.api.uploadResource(fileId, file, {
             progress: (percent) => {
 
-              notification.message = `progress: ${percent.toFixed(2)}%`
+              notification.message =
+                `progress: ${percent.toFixed(2)}%`
 
               if (percent === 100) {
 
@@ -470,6 +471,11 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
 
           const newMetaPayload = this.buildMetaPayload(
             newMetaProperty)
+
+          if (newMetaProperty.file && metaProperty.fileId) {
+
+            this.api.deleteResource(metaProperty.fileId)
+          }
 
           this.api.updateNodeMetaProperty(
             newMetaPayload)

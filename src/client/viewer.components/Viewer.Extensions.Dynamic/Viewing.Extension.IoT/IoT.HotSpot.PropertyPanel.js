@@ -19,6 +19,8 @@ export default class PropertyPanel extends
     $(this.container).addClass('IoT')
 
     this.container.dockRight = false
+
+    this.properties = []
   }
 
   /////////////////////////////////////////////////////////////
@@ -154,6 +156,22 @@ export default class PropertyPanel extends
 
       this.addMetaProperty(prop)
     })
+
+    this.properties = properties
+  }
+
+  /////////////////////////////////////////////////////////////////
+  // setVisible override
+  //
+  /////////////////////////////////////////////////////////////////
+  setVisible (show) {
+
+    if (!this.properties || !this.properties.length) {
+
+      return super.setVisible (false)
+    }
+
+    super.setVisible (show)
   }
 
   /////////////////////////////////////////////////////////////////

@@ -98,8 +98,6 @@ export default class IoTGraph extends React.Component {
       const value = this.props.value ||
         props.randomBase + (0.5 - Math.random()) * props.randomRange
 
-      console.log(this.props.threshold)
-
       this.setState({
         value
       })

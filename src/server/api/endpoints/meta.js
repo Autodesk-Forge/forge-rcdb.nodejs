@@ -146,10 +146,10 @@ module.exports = function() {
   })
 
   /////////////////////////////////////////////////////////
-  // upload file
+  // upload resource
   //
   /////////////////////////////////////////////////////////
-  router.post('/:db/:modelId/upload/:fileId',
+  router.post('/:db/:modelId/resources/:resourceId',
     uploadSvc.uploader.single('metaFile'),
     async(req, res) => {
 
@@ -163,8 +163,34 @@ module.exports = function() {
 
       const response = await ossSvc.uploadObject (
         token, config.meta.bucketKey,
-        req.params.fileId,
+        req.params.resourceId,
         file)
+
+      res.json(response)
+
+    } catch (error) {
+
+      res.status(error.statusCode || 500)
+      res.json(error)
+    }
+  })
+
+  /////////////////////////////////////////////////////////
+  // delete resource
+  //
+  /////////////////////////////////////////////////////////
+  router.delete('/:db/:modelId/resources/:resourceId',
+    async(req, res) => {
+
+    try {
+
+      const db = req.params.db
+
+      const token = await forgeSvc.get2LeggedToken()
+
+      const response = await ossSvc.deleteObject (
+        token, config.meta.bucketKey,
+        req.params.resourceId)
 
       res.json(response)
 

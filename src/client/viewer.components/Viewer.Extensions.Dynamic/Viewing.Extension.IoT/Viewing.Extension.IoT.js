@@ -6,13 +6,11 @@
 import {ReflexContainer, ReflexElement, ReflexSplitter} from 'react-reflex'
 import HotSpotPropertyPanel from './IoT.HotSpot.PropertyPanel'
 import ExtensionBase from 'Viewer.ExtensionBase'
+import WidgetContainer from 'WidgetContainer'
 import EventTool from 'Viewer.EventTool'
 import ServiceManager from 'SvcManager'
 import IoTPopover from './IoT.Popover'
 import Toolkit from 'Viewer.Toolkit'
-
-// React Stuff
-import WidgetContainer from 'WidgetContainer'
 import IoTGraph from './IoT.Graph'
 import React from 'react'
 import './Data.scss'
@@ -21,7 +19,6 @@ import './Data.scss'
 import HotSpotCommand from 'HotSpot.Command'
 
 import hotspots from './hotspots'
-
 
 class IoTExtension extends ExtensionBase {
 
@@ -35,7 +32,7 @@ class IoTExtension extends ExtensionBase {
 
     this.onSelection = this.onSelection.bind(this)
 
-    this.react = this._options.react
+    this.react = this.options.react
 
     this.hotSpotCommand = new HotSpotCommand (viewer, {
       parentControl: options.parentControl,
@@ -61,9 +58,9 @@ class IoTExtension extends ExtensionBase {
 
     this.hotSpotCommand.on('hotspot.clicked', (hotspot) => {
 
-      const state = this.react.getState()
+      console.log(JSON.stringify(this.viewer.getState({viewport:true})))
 
-      //console.log(JSON.stringify(this.viewer.getState({viewport:true})))
+      const state = this.react.getState()
 
       this.panel.setProperties(hotspot.data.properties)
 
@@ -249,7 +246,7 @@ class IoTExtension extends ExtensionBase {
     this.viewer.addEventListener(
       Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT, (e) => {
 
-        this._options.loader.hide()
+        this.options.loader.hide()
         this.hotSpotCommand.activate()
       })
 
@@ -300,8 +297,6 @@ class IoTExtension extends ExtensionBase {
     if (event.selections && event.selections.length) {
 
       const selection = event.selections[0]
-
-      const dbIds = selection.dbIdArray
 
       const data = this.viewer.clientToWorld(
         this.pointer.canvasX,
@@ -561,8 +556,6 @@ class IoTGraphContainer extends React.Component {
     const value3 = graphData
       ? graphData.lux.value
       : null
-
-    console.log('threshold1: ' + threshold1)
 
     return (
       <div>

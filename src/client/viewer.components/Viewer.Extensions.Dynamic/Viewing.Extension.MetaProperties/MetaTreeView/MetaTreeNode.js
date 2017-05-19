@@ -171,6 +171,7 @@ export default class MetaTreeNode extends EventsEmitter {
           filelink: props.filelink,
           filename: props.filename,
           filesize: props.filesize,
+          fileId:  props.fileId,
           dbId: props.dbId,
           id: props.id
         }
