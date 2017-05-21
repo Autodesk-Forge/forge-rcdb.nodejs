@@ -58,13 +58,13 @@ class IoTExtension extends ExtensionBase {
 
     this.hotSpotCommand.on('hotspot.clicked', (hotspot) => {
 
-      console.log(JSON.stringify(this.viewer.getState({viewport:true})))
+      //console.log(JSON.stringify(this.viewer.getState({viewport:true})))
 
       const state = this.react.getState()
 
       this.panel.setProperties(hotspot.data.properties)
 
-      this.hotSpotCommand.isolate(hotspot.id)
+      //this.hotSpotCommand.isolate(hotspot.id)
 
       this.panel.setVisible(true)
 
@@ -223,7 +223,7 @@ class IoTExtension extends ExtensionBase {
                 title: 'Show all objects',
                 target: () => {
                   Toolkit.isolateFull(this.viewer)
-                  this.hotSpotCommand.isolate()
+                  //this.hotSpotCommand.isolate()
                   this.viewer.fitToView()
               }}]
             : menu
@@ -303,7 +303,7 @@ class IoTExtension extends ExtensionBase {
         this.pointer.canvasY,
         true)
 
-      console.log(data)
+      //console.log(data)
     }
   }
 
@@ -334,7 +334,7 @@ class IoTExtension extends ExtensionBase {
 
       Toolkit.isolateFull(this.viewer)
 
-      this.hotSpotCommand.isolate()
+      //this.hotSpotCommand.isolate()
 
       this.panel.setVisible(false)
 
@@ -344,7 +344,7 @@ class IoTExtension extends ExtensionBase {
 
       this.panel.setProperties(item.properties)
 
-      this.hotSpotCommand.isolate(item.id)
+      //this.hotSpotCommand.isolate(item.id)
 
       this.panel.setVisible(true)
 
