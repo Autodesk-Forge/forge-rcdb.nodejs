@@ -38,6 +38,14 @@ class CoreLayout extends React.Component {
       'DialogSvc')
 
     this.dialogSvc.setComponent(this)
+
+    this.userSvc = ServiceManager.getService(
+      'UserSvc')
+
+    this.userSvc.getUser().then((user) => {
+
+      this.props.setUser(user)
+    })
   }
 
   /////////////////////////////////////////////////////////

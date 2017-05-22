@@ -101,7 +101,7 @@ class ViewerConfigurator extends React.Component {
       this.props.setViewerEnv (viewerEnv)
 
       Autodesk.Viewing.setEndpointAndApi(
-        window.location.origin + '/lmv-proxy',
+        window.location.origin + '/lmv-proxy-2legged',
         'modelDerivativeV2')
 
       Autodesk.Viewing.Private.memoryOptimizedSvfLoading = true
@@ -606,6 +606,7 @@ class ViewerConfigurator extends React.Component {
       const ctrlGroup = this.createToolbar (viewer)
 
       const defaultOptions = {
+        setNavbarState: this.props.setNavbarState,
         appContainer: ReactDOM.findDOMNode(this),
         getViewablePath: this.getViewablePath,
         loadDocument: this.loadDocument,

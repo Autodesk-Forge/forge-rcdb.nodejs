@@ -4,14 +4,16 @@ import {
   databaseChange,
   layoutChange,
   themeChange,
-  saveAppState
+  saveAppState,
+  setUser,
   } from '../../store/app'
 
 const mapDispatchToProps = {
   databaseChange,
   layoutChange,
   saveAppState,
-  themeChange
+  themeChange,
+  setUser
 }
 
 const mapStateToProps = (state) => ({

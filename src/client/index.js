@@ -14,6 +14,7 @@ import DialogSvc from 'DialogSvc'
 import SocketSvc from 'SocketSvc'
 import ModelSvc from 'ModelSvc'
 import EventSvc from 'EventSvc'
+import UserSvc from 'UserSvc'
 
 // ========================================================
 // Services Initialization
@@ -33,23 +34,20 @@ const socketSvc = new SocketSvc({
 })
 
 socketSvc.connect().then((socket) => {
-
   console.log(`${config.client.host}:${config.client.port}`)
-
-  const id = socket.id
-  console.log('Client socket connected: ' + id)
+  console.log('Client socket connected: ' + socket.id)
 })
 
 const modelSvc = new ModelSvc({
   apiUrl: '/api/models'
 })
 
-const dialogSvc = new DialogSvc({
+const dialogSvc = new DialogSvc()
 
-})
+const eventSvc = new EventSvc()
 
-const eventSvc = new EventSvc({
-
+const userSvc = new UserSvc({
+  apiUrl: '/api/forge'
 })
 
 // ========================================================
@@ -61,6 +59,7 @@ ServiceManager.registerService(socketSvc)
 ServiceManager.registerService(dialogSvc)
 ServiceManager.registerService(modelSvc)
 ServiceManager.registerService(eventSvc)
+ServiceManager.registerService(userSvc)
 
 // ========================================================
 // Store Instantiation
@@ -68,7 +67,6 @@ ServiceManager.registerService(eventSvc)
 const initialState = window.___INITIAL_STATE__
 
 const store = createStore(initialState)
-
 
 // ========================================================
 // Render Setup

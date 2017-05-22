@@ -1,8 +1,11 @@
 
 /////////////////////////////////////////////////////////////////////
-// DEVELOPMENT configuration
+// PRODUCTION configuration
 //
 /////////////////////////////////////////////////////////////////////
+const HOST_URL = 'https://forge-rcdb.autodesk.io'
+const PORT= 443
+
 const config = {
 
   env: 'production',
@@ -11,9 +14,9 @@ const config = {
     // this the public host name of your server for the
     // client socket to connect.
     // eg. https://myforgeapp.mydomain.com
-    host: 'https://forge-rcdb.autodesk.io',
+    host: `${HOST_URL}`,
     env: 'production',
-    port: 443
+    port: PORT
   },
 
   meta: {
@@ -23,8 +26,17 @@ const config = {
   forge: {
 
     oauth: {
+
+      redirectUri: `${HOST_URL}:${PORT}/api/forge/callback/oauth`,
+      authenticationUri: '/authentication/v1/authenticate',
+      refreshTokenUri: '/authentication/v1/refreshtoken',
+      authorizationUri: '/authentication/v1/authorize',
+      accessTokenUri: '/authentication/v1/gettoken',
+      baseUri: 'https://developer.api.autodesk.com',
+
       clientSecret: process.env.FORGE_CLIENT_SECRET,
       clientId: process.env.FORGE_CLIENT_ID,
+
       scope: [
         'data:read',
         'data:create',

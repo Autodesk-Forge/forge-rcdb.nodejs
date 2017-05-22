@@ -71,11 +71,16 @@
   top: 1px;
 }
 
-.forge-rcdb-navbar .forge-rcdb-span {
+.forge-rcdb-navbar a .forge-rcdb-span {
   position: relative;
+  line-height: 60px;
   font-size: 26px;
-  color: #5d5f5f;
+  color: #a5a5a5;
   top: 3px;
+}
+
+.forge-rcdb-navbar a:hover .forge-rcdb-span {
+  color: #5d5f5f;
 }
 
 .navbar-default .navbar-nav > .active > a {

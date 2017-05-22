@@ -14,6 +14,7 @@ const clean = (dir) => {
     fs.stat(dir, (fsErr, stats) => {
 
       if (fsErr) {
+
         return resolve()
       }
 

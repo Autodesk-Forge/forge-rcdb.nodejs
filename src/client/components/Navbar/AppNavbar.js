@@ -5,6 +5,7 @@ import LayoutDlg from 'Dialogs/LayoutDlg'
 import ThemeDlg from 'Dialogs/ThemeDlg'
 import AboutDlg from 'Dialogs/AboutDlg'
 import React, { PropTypes } from 'react'
+import ServiceManager from 'SvcManager'
 import './AppNavbar.scss'
 import {
   DropdownButton,
@@ -19,22 +20,30 @@ import {
 
 export default class AppNavbar extends React.Component {
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
-  state = {
-    databaseOpen: false,
-    layoutOpen:   false,
-    themeOpen:    false,
-    aboutOpen:    false,
-    menuIcons:    false
+  /////////////////////////////////////////////////////////
+  constructor (props) {
+
+    super(props)
+
+    this.state = {
+      databaseOpen: false,
+      layoutOpen:   false,
+      themeOpen:    false,
+      aboutOpen:    false,
+      menuIcons:    false
+    }
+
+    this.userSvc = ServiceManager.getService(
+      'UserSvc')
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   openDatabaseDlg () {
 
     this.setState(Object.assign({}, this.state, {
@@ -42,10 +51,10 @@ export default class AppNavbar extends React.Component {
     }))
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   openLayoutDlg () {
 
     this.setState(Object.assign({}, this.state, {
@@ -53,10 +62,10 @@ export default class AppNavbar extends React.Component {
     }))
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   openThemeDlg () {
 
     this.setState(Object.assign({}, this.state, {
@@ -64,10 +73,10 @@ export default class AppNavbar extends React.Component {
     }))
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   openAboutDlg () {
 
     this.setState(Object.assign({}, this.state, {
@@ -75,13 +84,39 @@ export default class AppNavbar extends React.Component {
     }))
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
+  login () {
+
+    const { appState } = this.props
+
+    if (appState.user) {
+
+      this.props.setUser(null)
+
+      this.userSvc.logout()
+
+    } else {
+
+      this.userSvc.login()
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   render() {
 
-    const { appState } = this.props;
+    const { appState } = this.props
+
+    const {user} = appState
+
+    const username = user
+      ? `${user.firstName} ${user.lastName}`
+      : ''
 
     return (
 
@@ -115,6 +150,16 @@ export default class AppNavbar extends React.Component {
           }
 
           <Nav pullRight>
+
+            {
+
+              appState.navbar.links.login &&
+
+              <NavItem eventKey={2} onClick={() => {this.login()}}>
+                <span className="forge-rcdb-span fa fa-user"></span>
+                &nbsp; { appState.user ? username : "Login"}
+              </NavItem>
+            }
 
             {
               appState.navbar.links.settings &&

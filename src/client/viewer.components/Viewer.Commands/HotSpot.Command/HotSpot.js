@@ -46,7 +46,7 @@ export default class HotSpot extends GraphicMarker {
     this.circle.attr({
       stroke: data.strokeColor || "#FF0000",
       fill: data.fillColor || "#FF8888",
-      fillOpacity: 0.6,
+      fillOpacity: 0.1,
       strokeWidth: 3
     })
 
@@ -154,9 +154,9 @@ export default class HotSpot extends GraphicMarker {
     })
 
     this.circle.animate({
-        fillOpacity: 0.3,
-        opacity: 0.5,
-        r: 14
+        fillOpacity: 0.5,
+        opacity: 0.85,
+        r: 16
       },
       3000,
       mina.easein, () => {

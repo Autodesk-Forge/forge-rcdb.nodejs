@@ -9,6 +9,7 @@ export const SAVE_APP_STATE = 'SAVE_APP_STATE'
 export const SET_VIEWER_ENV = 'SET_VIEWER_ENV'
 export const LAYOUT_CHANGE = 'LAYOUT_CHANGE'
 export const THEME_CHANGE = 'THEME_CHANGE'
+export const SET_USER = 'SET_USER'
 
 // ------------------------------------
 // Actions
@@ -51,6 +52,13 @@ export function setViewerEnv (env) {
   return {
     type    : SET_VIEWER_ENV,
     payload : env
+  }
+}
+
+export function setUser (user) {
+  return {
+    type    : SET_USER,
+    payload : user
   }
 }
 
@@ -107,7 +115,7 @@ const ACTION_HANDLERS = {
 
   [SET_NAVBAR_STATE] : (state, action) => {
 
-    const navbar = Object.assign({},
+    const navbar = _.merge({},
       state.navbar, action.payload)
 
     return Object.assign({}, state, {
@@ -119,6 +127,13 @@ const ACTION_HANDLERS = {
 
     return Object.assign({}, state, {
       viewerEnv: action.payload
+    })
+  },
+
+  [SET_USER] : (state, action) => {
+
+    return Object.assign({}, state, {
+      user: action.payload
     })
   }
 }
@@ -174,7 +189,8 @@ const createInitialState = () => {
         home: true
       }
     },
-    viewerEnv: null
+    viewerEnv: null,
+    user: null
   }
 
   const initialState = Object.assign({},

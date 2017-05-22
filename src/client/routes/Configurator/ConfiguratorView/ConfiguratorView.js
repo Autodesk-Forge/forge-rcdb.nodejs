@@ -48,6 +48,7 @@ class ConfiguratorView extends React.Component {
 
     const view = this.props.location.query.id
       ? <ViewerConfigurator
+          setNavbarState={this.props.setNavbarState}
           viewerEnv={this.props.appState.viewerEnv}
           setViewerEnv={this.props.setViewerEnv}
           modelId={this.props.location.query.id}

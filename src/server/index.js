@@ -15,7 +15,6 @@ import path from 'path'
 
 //Endpoints
 import MaterialAPI from './api/endpoints/materials'
-import LMVProxy from './api/endpoints/lmv-proxy'
 import SocketAPI from './api/endpoints/socket'
 import ConfigAPI from './api/endpoints/config'
 import ModelAPI from './api/endpoints/models'
@@ -25,6 +24,7 @@ import MetaAPI from './api/endpoints/meta'
 //Services
 import DerivativesSvc from './api/services/DerivativesSvc'
 import ServiceManager from './api/services/SvcManager'
+import LMVProxySvc from './api/services/LMVProxySvc'
 import MongoDbSvc from './api/services/MongoDbSvc'
 import SocketSvc from './api/services/SocketSvc'
 import UploadSvc from './api/services/UploadSvc'
@@ -95,6 +95,10 @@ app.use(helmet())
 /////////////////////////////////////////////////////////////////////
 const derivativesSvc = new DerivativesSvc()
 
+const lmvProxySvc = new LMVProxySvc({
+  endpoint: config.forge.oauth.baseUri.replace('https://', '')
+})
+
 const forgeSvc = new ForgeSvc(
   config.forge)
 
@@ -124,7 +128,17 @@ app.use('/api/meta',      MetaAPI())
 // Viewer GET Proxy
 //
 /////////////////////////////////////////////////////////////////////
-app.get('/lmv-proxy/*', LMVProxy.get)
+const proxy2legged = lmvProxySvc.generateProxy(
+  'lmv-proxy-2legged',
+  () => forgeSvc.get2LeggedToken())
+
+app.get('/lmv-proxy-2legged/*', proxy2legged)
+
+const proxy3legged = lmvProxySvc.generateProxy(
+  'lmv-proxy-3legged',
+  (session) => forgeSvc.get3LeggedToken(session))
+
+app.get('/lmv-proxy-3legged/*', proxy3legged)
 
 /////////////////////////////////////////////////////////////////////
 // This rewrites all routes requests to the root /index.html file

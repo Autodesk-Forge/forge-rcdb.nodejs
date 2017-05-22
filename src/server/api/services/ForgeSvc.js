@@ -66,6 +66,21 @@ export default class ForgeSvc extends BaseSvc {
   }
 
   /////////////////////////////////////////////////////////////////
+  // Returns current user profile
+  //
+  /////////////////////////////////////////////////////////////////
+  getUser (token) {
+
+    const url = `${this._config.oauth.baseUri}/userprofile/v1/users/@me`
+
+    return requestAsync({
+      token: token.access_token,
+      json: true,
+      url: url
+    })
+  }
+
+  /////////////////////////////////////////////////////////////////
   // Return token expiry in seconds
   //
   /////////////////////////////////////////////////////////////////
@@ -211,7 +226,7 @@ export default class ForgeSvc extends BaseSvc {
   // Get 3Legged token for client (reduced privileges)
   //
   /////////////////////////////////////////////////////////////////
-  get3LeggedTokenClient (session) {
+  get3LeggedTokenClient (session, scope) {
 
     return new Promise(async(resolve, reject) => {
 
@@ -229,7 +244,7 @@ export default class ForgeSvc extends BaseSvc {
           // request a downgraded token to provide to client App
 
           const clientToken = await this.refresh3LeggedToken(
-            session, 'data:read')
+            session, scope)
 
           this.set3LeggedTokenClient(
             session, clientToken)
@@ -240,7 +255,7 @@ export default class ForgeSvc extends BaseSvc {
         if(this.getExpiry(token) < 60) {
 
           token = await this.refresh3LeggedToken (
-            session, 'data:read')
+            session, scope)
 
           this.set3LeggedTokenClient(
             session, token)
@@ -332,16 +347,10 @@ export default class ForgeSvc extends BaseSvc {
 
           if (err) {
 
-            console.log('error: ' + url)
-            console.log(err)
-
             return reject(err)
           }
 
           if (body && body.errors) {
-
-            console.log('body error: ' + url)
-            console.log(body.errors)
 
             return reject(body.errors)
           }
@@ -378,4 +387,55 @@ export default class ForgeSvc extends BaseSvc {
       }, ms)
     })
   }
+}
+
+/////////////////////////////////////////////////////////////////
+// Utils
+//
+/////////////////////////////////////////////////////////////////
+function requestAsync(params) {
+
+  return new Promise((resolve, reject) => {
+
+    request({
+      headers: params.headers || {
+        'Authorization': 'Bearer ' + params.token
+      },
+      method: params.method || 'GET',
+      json: params.json,
+      body: params.body,
+      url: params.url
+
+    }, (err, response, body) => {
+
+      try {
+
+        if (err) {
+
+          return reject (err)
+        }
+
+        if (body && body.errors) {
+
+          const error = Array.isArray(body.errors)
+            ? body.errors[0]
+            : body.errors
+
+          return reject(error)
+        }
+
+        if (response && [200, 201, 202].indexOf(
+            response.statusCode) < 0) {
+
+          return reject(response.statusMessage)
+        }
+
+        return resolve(body)
+
+      } catch (ex) {
+
+        return reject(ex)
+      }
+    })
+  })
 }

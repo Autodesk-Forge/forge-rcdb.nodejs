@@ -1,6 +1,6 @@
 const webpack = require('webpack')
 
-function webpackCompiler (webpackConfig) {
+const webpackCompiler = (webpackConfig) => {
 
   return new Promise((resolve, reject) => {
 

@@ -250,7 +250,7 @@ class IoTExtension extends ExtensionBase {
         this.hotSpotCommand.activate()
       })
 
-    this.viewer.setProgressiveRendering(true)
+    this.viewer.setProgressiveRendering(false)
     this.viewer.setQualityLevel(false, true)
     this.viewer.setGroundReflection(false)
     this.viewer.setGroundShadow(false)
