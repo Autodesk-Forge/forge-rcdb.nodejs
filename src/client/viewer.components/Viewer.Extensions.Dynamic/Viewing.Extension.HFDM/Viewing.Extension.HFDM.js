@@ -6,6 +6,7 @@
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import HFDMCoreExtension from './Viewing.Extension.HFDM.Core'
 import WidgetContainer from 'WidgetContainer'
+import ScriptLoader from './ScriptLoader'
 import ServiceManager from 'SvcManager'
 import './Viewing.Extension.HFDM.scss'
 import { ReactLoader } from 'Loader'
@@ -29,6 +30,7 @@ class HFDMExtension extends MultiModelExtensionBase {
 
     super (viewer, options)
 
+    this.onScriptLoaded = this.onScriptLoaded.bind(this)
     this.renderTitle = this.renderTitle.bind(this)
 
     this.react = options.react
@@ -63,7 +65,7 @@ class HFDMExtension extends MultiModelExtensionBase {
 
     }).then (() => {
 
-      this.viewer.loadExtension(HFDMCoreExtension)
+      //this.onScriptLoaded()
 
       this.react.pushRenderExtension(this)
 
@@ -120,6 +122,47 @@ class HFDMExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  sleep (ms) {
+    return new Promise((resolve) => {
+      setTimeout(() => resolve (), ms)
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // callback: function (error, bearerToken)
+  //
+  /////////////////////////////////////////////////////////
+  getBearerToken (callback) {
+
+    $.get('/api/forge/token/3legged', (res) => {
+
+      callback(null, res.access_token)
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async onScriptLoaded () {
+
+    while (!(window.Forge && window.Forge.HFDM)) {
+
+      await this.sleep(100)
+    }
+
+    this.viewer.loadExtension(HFDMCoreExtension, {
+      serverUrl: 'https://developer-stg.api.autodesk.com/lynx/v1/pss',
+      hfdmURN: this.options.location.query.hfdmURN,
+      getBearerToken: this.getBearerToken,
+      HFDM_SDK: window.Forge.HFDM
+    })
+  }
+
+  /////////////////////////////////////////////////////////
   // React method - render panel title
   //
   /////////////////////////////////////////////////////////
@@ -165,12 +208,20 @@ class HFDMExtension extends MultiModelExtensionBase {
         showTitle={opts.showTitle}
         className={this.className}>
 
+        <ScriptLoader onLoaded={this.onScriptLoaded}
+          url={[
+            //"/resources/libs/hfdm/forge-entity-manager.js",
+            "/resources/libs/hfdm/forge-hfdm.js"
+          ]}/>
+
         { this.renderControls() }
 
       </WidgetContainer>
     )
   }
 }
+
+
 
 Autodesk.Viewing.theExtensionManager.registerExtension(
   HFDMExtension.ExtensionId,

@@ -52,6 +52,7 @@ class ConfiguratorView extends React.Component {
           viewerEnv={this.props.appState.viewerEnv}
           setViewerEnv={this.props.setViewerEnv}
           modelId={this.props.location.query.id}
+          location={this.props.location}
           database='configurator'
           notify={notify}
         />

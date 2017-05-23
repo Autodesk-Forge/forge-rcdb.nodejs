@@ -27,6 +27,11 @@
   top: 4px;
 }
 
+.configurator-view .home .model-item .git-link:hover {
+  text-decoration: none;
+  color: #253add;
+}
+
 .configurator-view .home .model-item:hover {
   background: rgba(255, 234, 0, 0.85);
 }

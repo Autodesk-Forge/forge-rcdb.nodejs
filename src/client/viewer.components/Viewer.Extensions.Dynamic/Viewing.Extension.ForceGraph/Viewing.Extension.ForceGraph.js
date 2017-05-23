@@ -80,6 +80,20 @@ class ForceGraphExtension extends MultiModelExtensionBase {
       }
     })
 
+    this.viewer.loadDynamicExtension(
+      'Viewing.Extension.ContextMenu', {
+        buildMenu: (menu, selectedDbId) => {
+          return !selectedDbId
+            ? [{
+            title: 'Show all objects',
+            target: () => {
+              Toolkit.isolateFull(this.viewer)
+              this.viewer.fitToView()
+            }}]
+            : menu
+        }
+      })
+
     console.log('Viewing.Extension.ForceGraph loaded')
 
     return true
@@ -166,8 +180,6 @@ class ForceGraphExtension extends MultiModelExtensionBase {
     })
 
     const root = await this.buildDataTree (propName)
-
-    console.log(root)
 
     await this.react.setState({
       activeProperty: propName,

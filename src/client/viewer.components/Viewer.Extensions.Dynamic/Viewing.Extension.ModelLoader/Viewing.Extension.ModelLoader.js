@@ -137,6 +137,9 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
 
     console.log('Viewing.Extension.ModelLoader unloaded')
 
+    this.viewer.unloadExtension(
+      'Viewing.Extension.ModelTransformer')
+
     this.react.popViewerPanel(this)
 
     super.unload ()

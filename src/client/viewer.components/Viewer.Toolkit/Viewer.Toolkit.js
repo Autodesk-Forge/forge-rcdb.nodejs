@@ -388,7 +388,7 @@ export default class ViewerToolkit {
 
       try {
 
-        model = model || viewer.model
+        model = model || viewer.activeModel || viewer.model
 
         var propertyTasks = dbIds.map((dbId) => {
 
@@ -749,7 +749,7 @@ export default class ViewerToolkit {
 
     try {
 
-      model = model || viewer.model
+      model = model || viewer.activeModel || viewer.model
 
       viewer.hide (dbIds)
 
@@ -782,7 +782,7 @@ export default class ViewerToolkit {
 
     try {
 
-      model = model || viewer.model
+      model = model || viewer.activeModel || viewer.model
 
       viewer.show (dbIds)
 
@@ -815,7 +815,7 @@ export default class ViewerToolkit {
 
     try {
 
-      model = model || viewer.model
+      model = model || viewer.activeModel || viewer.model
 
       viewer.isolate(dbIds)
 
@@ -858,7 +858,7 @@ export default class ViewerToolkit {
 
     quaternion.setFromAxisAngle(axis, angle)
 
-    model = model || viewer.model
+    model = model || viewer.activeModel || viewer.model
 
     fragIds.forEach((fragId) => {
 
@@ -922,7 +922,7 @@ export default class ViewerToolkit {
   /////////////////////////////////////////////////////////////////
   static selectiveExplode (viewer, scale, excludedFragIds, model = null) {
 
-    model = model || viewer.model
+    model = model || viewer.activeModel || viewer.model
 
     var svf = model.getData();
 
