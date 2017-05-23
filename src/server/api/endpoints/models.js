@@ -28,7 +28,8 @@ module.exports = function() {
           path: 1,
           name: 1,
           urn:  1,
-          env:  1
+          env:  1,
+          git: 1
         }
       }
 

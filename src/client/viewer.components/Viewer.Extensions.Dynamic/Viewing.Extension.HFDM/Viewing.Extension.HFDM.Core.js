@@ -5,8 +5,6 @@
 /////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import Toolkit from 'Viewer.Toolkit'
-import HFDM from './hfdm/forge-hfdm'
-
 
 class HFDMCoreExtension extends MultiModelExtensionBase {
 
@@ -44,6 +42,10 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
   load () {
 
     console.log('Viewing.Extension.HFDM.Core loaded')
+
+    SystemJS.import('/resources/libs/hfdm/forge-hfdm.js').then((res) => {
+      console.log(res)
+    })
 
     return true
   }

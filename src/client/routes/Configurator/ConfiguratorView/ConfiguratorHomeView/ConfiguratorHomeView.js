@@ -138,6 +138,11 @@ class ConfiguratorHomeView extends React.Component {
       return (
         <div key={model._id} className="model-item"
           onClick={()=>this.gotToLink(href)}>
+          <a className="git-link fa fa-github"
+            href={model.git}
+            target="_blank"
+            onClick={(e)=>{e.stopPropagation()}}>
+          </a>
           <img className={model.thumbnail ? "":"default-thumbnail"}
             src={model.thumbnail ? model.thumbnail : ""}/>
           <div className="text-content">
