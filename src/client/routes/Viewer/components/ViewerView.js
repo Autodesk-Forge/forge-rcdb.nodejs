@@ -283,10 +283,9 @@ class ViewerView extends React.Component {
 
         this.props.setViewerEnv(this.dbModel.env)
 
-        //2.14
         Autodesk.Viewing.setEndpointAndApi(
-          window.location.origin + '/lmv-proxy',
-        'modelDerivativeV2')
+          window.location.origin + '/lmv-proxy-2legged',
+          'modelDerivativeV2')
 
         Autodesk.Viewing.Private.memoryOptimizedSvfLoading = true
       }

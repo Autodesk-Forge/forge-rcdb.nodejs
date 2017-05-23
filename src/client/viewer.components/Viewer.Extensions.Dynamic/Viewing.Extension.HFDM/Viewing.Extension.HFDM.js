@@ -4,9 +4,10 @@
 //
 /////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
-import './Viewing.Extension.HFDM.scss'
+import HFDMCoreExtension from './Viewing.Extension.HFDM.Core'
 import WidgetContainer from 'WidgetContainer'
 import ServiceManager from 'SvcManager'
+import './Viewing.Extension.HFDM.scss'
 import { ReactLoader } from 'Loader'
 import Toolkit from 'Viewer.Toolkit'
 import DOMPurify from 'dompurify'
@@ -61,6 +62,8 @@ class HFDMExtension extends MultiModelExtensionBase {
 
 
     }).then (() => {
+
+      this.viewer.loadExtension(HFDMCoreExtension)
 
       this.react.pushRenderExtension(this)
 

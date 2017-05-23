@@ -135,10 +135,13 @@ class IoTExtension extends ExtensionBase {
 
         this.timeout = null
 
-        controlledHotspot.data.strokeColor = '#FF0000'
-        controlledHotspot.data.fillColor = '#FF8888'
+        controlledHotspot.setData({
+          strokeColor: "#FF0000",
+          fillColor: '#FF8888'
+        })
 
         if (controlledHotspot) {
+
           controlledHotspot.show()
         }
 
@@ -154,6 +157,11 @@ class IoTExtension extends ExtensionBase {
         })
 
       } else {
+
+        controlledHotspot.setData({
+          strokeColor: "#4CAF50",
+          fillColor: '#4CAF50'
+        })
 
         this.react.setState({
           hotspots: state.hotspots.map((hotspot) => {

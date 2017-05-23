@@ -138,6 +138,7 @@
     "snapsvg": "^0.5.1",
     "socket.io-client": "^1.7.3",
     "style-loader": "^0.12.4",
+    "systemjs": "0.20.12",
     "url-loader": "^0.5.8",
     "velocity-animate": "^1.4.3",
     "webpack": "^2.2.1",
