@@ -1,5 +1,6 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
 import Modal from 'react-modal'
+import React from 'react'
 import './ThemeDlg.scss'
 
 export default class ThemeDlg extends React.Component {

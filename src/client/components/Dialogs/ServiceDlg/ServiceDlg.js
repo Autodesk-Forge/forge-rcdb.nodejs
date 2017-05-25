@@ -31,6 +31,8 @@ export default class ServiceDlg extends React.Component {
   constructor() {
 
     super ()
+
+    this.onRequestClose = this.onRequestClose.bind(this)
   }
 
   /////////////////////////////////////////////////////////
@@ -101,6 +103,22 @@ export default class ServiceDlg extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  onRequestClose () {
+
+    if (this.props.onRequestClose) {
+
+      const close = () => this.close ()
+      
+      return this.props.onRequestClose(close)
+    }
+
+    this.close ()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   renderControls () {
 
     if (this.props.renderControls) {
@@ -144,7 +162,7 @@ export default class ServiceDlg extends React.Component {
 
     return (
       <div>
-        <Modal onRequestClose={() => {this.close()}}
+        <Modal onRequestClose={this.onRequestClose}
           className={classNames.join(' ')}
           isOpen={this.props.open}
           contentLabel="">

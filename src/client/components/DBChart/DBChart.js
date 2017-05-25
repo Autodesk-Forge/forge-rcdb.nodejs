@@ -1,7 +1,7 @@
-import React, { PropTypes } from 'react'
 import PieChart from './PieChart'
 import ReactDOM from 'react-dom'
 import Legend from 'Legend'
+import React from 'react'
 import './DBChart.scss'
 
 class DBChart extends React.Component {

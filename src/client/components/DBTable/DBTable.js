@@ -1,9 +1,10 @@
-import React, { PropTypes } from 'react'
+
+import PropTypes from 'prop-types'
 import './libs/nice-select.css'
 import './libs/nice-select'
 import './libs/Footable'
 import './libs/Footable.Editable'
-
+import React from 'react'
 import './DBTable.scss'
 
 class DBTable extends React.Component {

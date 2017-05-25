@@ -58,6 +58,8 @@ class PlantFactoryExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   load () {
 
+    this.viewer.setProgressiveRendering(true)
+
     this.viewer.addEventListener(
       Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT, (e) => {
 

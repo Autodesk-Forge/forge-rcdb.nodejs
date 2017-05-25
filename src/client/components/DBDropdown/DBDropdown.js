@@ -1,8 +1,9 @@
 import ContentEditable from 'react-contenteditable'
 import 'react-select/dist/react-select.css'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
 import Select from 'react-select'
 import './DBDropdown.scss'
+import React from 'react'
 
 class DBDropdown extends React.Component {
 

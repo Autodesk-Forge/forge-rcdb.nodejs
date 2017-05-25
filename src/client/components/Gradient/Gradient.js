@@ -3,8 +3,9 @@
 // by Philippe Leefsma, March 2017
 //
 /////////////////////////////////////////////////////////
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
+import React from 'react'
 import './Gradient.scss'
 import d3 from 'd3'
 

@@ -1,6 +1,7 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
 import Modal from 'react-modal'
 import './LayoutDlg.scss'
+import React from 'react'
 
 export default class LayoutDlg extends React.Component {
 

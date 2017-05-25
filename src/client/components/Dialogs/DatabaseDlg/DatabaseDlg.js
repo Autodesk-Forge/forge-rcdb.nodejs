@@ -1,6 +1,7 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
 import Modal from 'react-modal'
 import './DatabaseDlg.scss'
+import React from 'react'
 
 export default class DatabaseDlg extends React.Component {
 

@@ -4,9 +4,10 @@ import DatabaseDlg from 'Dialogs/DatabaseDlg'
 import LayoutDlg from 'Dialogs/LayoutDlg'
 import ThemeDlg from 'Dialogs/ThemeDlg'
 import AboutDlg from 'Dialogs/AboutDlg'
-import React, { PropTypes } from 'react'
 import ServiceManager from 'SvcManager'
+import PropTypes from 'prop-types'
 import './AppNavbar.scss'
+import React from 'react'
 import {
   DropdownButton,
   NavDropdown,

@@ -1,5 +1,6 @@
-import React, { PropTypes } from 'react';
-import Griddle from 'griddle-react';
+import Griddle from 'griddle-react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import './DBGrid.scss'
 
 var fakeData =  [
