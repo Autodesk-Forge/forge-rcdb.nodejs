@@ -22,30 +22,7 @@ import config from 'c0nfig'
 
 module.exports = function() {
 
-  var router = express.Router()
-
-  /////////////////////////////////////////////////////////
-  // 2-legged client token
-  //
-  /////////////////////////////////////////////////////////
-  //router.get('/token/2legged', async(req, res) => {
-  //
-  //  try {
-  //
-  //    var forgeSvc = ServiceManager.getService(
-  //      'ForgeSvc')
-  //
-  //    var token = await forgeSvc.request2LeggedToken(
-  //      'data:read')
-  //
-  //    res.json(token)
-  //
-  //  } catch (error) {
-  //
-  //    res.status(error.statusCode || 404)
-  //    res.json(error)
-  //  }
-  //})
+  const router = express.Router()
 
   /////////////////////////////////////////////////////////
   // Initialize OAuth library

@@ -244,49 +244,6 @@ class SelectionFilterExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  // Creates Raycastser object from the pointer
-  //
-  /////////////////////////////////////////////////////////
-  pointerToRaycaster (pointer) {
-
-    const camera = this.viewer.navigation.getCamera()
-    const domContainer = this.viewer.container
-    const pointerVector = new THREE.Vector3()
-    const pointerDir = new THREE.Vector3()
-    const raycaster = new THREE.Raycaster()
-
-    const r = domContainer.getBoundingClientRect()
-
-    const x =  ((pointer.clientX - r.left) / r.width)  * 2 - 1
-    const y = -((pointer.clientY - r.top)  / r.height) * 2 + 1
-
-    if (camera.isPerspective) {
-
-      pointerVector.set(x, y, 0.5)
-
-      pointerVector.unproject(camera)
-
-      raycaster.set(camera.position,
-        pointerVector.sub(
-          camera.position).normalize())
-
-    } else {
-
-      pointerVector.set(x, y, -1)
-
-      pointerVector.unproject(camera)
-
-      pointerDir.set(0, 0, -1)
-
-      raycaster.set(pointerVector,
-        pointerDir.transformDirection(
-          camera.matrixWorld))
-    }
-
-    return raycaster
-  }
-
-  /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
