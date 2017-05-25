@@ -3,7 +3,7 @@
 // by Philippe Leefsma, March 2017
 //
 /////////////////////////////////////////////////////////
-import ExtensionBase from 'Viewer.ExtensionBase'
+import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import './Viewing.Extension.PlantFactory.scss'
 import WidgetContainer from 'WidgetContainer'
 import {ReactLoader as Loader} from 'Loader'
@@ -15,7 +15,22 @@ import PropertyBarChart from './PropertyBarChart'
 import PropertyPieChart from './PropertyPieChart'
 import PropertyList from './PropertyList'
 
-class PlantFactoryExtension extends ExtensionBase {
+const stateInit = {
+  "viewport": {
+    "eye":[-1030.0044002713657,689.6647995313627,23.252165301460103],
+    "target":[-996.3266755707967,710.4723026870788,-1.3707349423499071],
+    "up":[0.4493194129425462,0.277608276267206,0.849144104437472],
+    "worldUpVector":[0,0,1],
+    "pivotPoint":[-925.7424926757812,757.1752319335938,-43.030099868774414],
+    "distanceToOrbit":140.45651469798588,
+    "aspectRatio":1.7655609631147542,
+    "projection":"perspective",
+    "isOrthographic":false,
+    "fieldOfView":48.981823953438095
+  }
+}
+
+class PlantFactoryExtension extends MultiModelExtensionBase {
 
   /////////////////////////////////////////////////////////
   // Class constructor
@@ -24,8 +39,6 @@ class PlantFactoryExtension extends ExtensionBase {
   constructor (viewer, options) {
 
     super (viewer, options)
-
-    this.onGeometryLoaded = this.onGeometryLoaded.bind(this)
 
     this.onStopResize = this.onStopResize.bind(this)
 
@@ -59,14 +72,6 @@ class PlantFactoryExtension extends ExtensionBase {
   load () {
 
     this.viewer.setProgressiveRendering(true)
-
-    this.viewer.addEventListener(
-      Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT, (e) => {
-
-        if(this.options.loader){
-          this.options.loader.hide()
-        }
-      })
 
     window.addEventListener(
       'resize', this.onStopResize)
@@ -113,10 +118,6 @@ class PlantFactoryExtension extends ExtensionBase {
       this.react.pushRenderExtension(this)
     })
 
-    this.viewer.addEventListener(
-      Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
-      this.onGeometryLoaded)
-
     this.viewer.loadDynamicExtension(
       'Viewing.Extension.ContextMenu', {
         buildMenu: (menu, selectedDbId) => {
@@ -142,16 +143,23 @@ class PlantFactoryExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   unload () {
 
-    this.viewer.removeEventListener(
-      Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
-      this.onGeometryLoaded)
+    console.log('Viewing.Extension.PlantFactory unloaded')
 
     window.removeEventListener(
       'resize', this.onStopResize)
 
-    console.log('Viewing.Extension.PlantFactory unloaded')
+    super.unload()
 
     return true
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onToolbarCreated () {
+
+    this.viewer.restoreState(stateInit)
   }
 
   /////////////////////////////////////////////////////////
