@@ -9,6 +9,7 @@ import './Viewing.Extension.WallDetector.scss'
 import WidgetContainer from 'WidgetContainer'
 import EventTool from 'Viewer.EventTool'
 import Toolkit from 'Viewer.Toolkit'
+import { ReactLoader } from 'Loader'
 import ThreeBSP from './threeCSG'
 import Switch from 'Switch'
 import React from 'react'
@@ -861,11 +862,11 @@ class WallDetectorExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderContent () {
 
-    const state = this.react.getState()
+    const {data} = this.react.getState()
 
     let hasActiveFloor = false
 
-    const items = state.data.map((floor) => {
+    const items = data.map((floor) => {
 
       hasActiveFloor = hasActiveFloor || floor.active
 
@@ -891,6 +892,7 @@ class WallDetectorExtension extends MultiModelExtensionBase {
 
     return (
       <div className="content">
+        <ReactLoader show={!data.length}/>
         <div className="row">
           Select an item to isolate walls on this floor:
         </div>
