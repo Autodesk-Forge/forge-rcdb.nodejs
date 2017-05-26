@@ -208,13 +208,18 @@ export default  class ThreeBSP {
     }
 
     toMesh (material) {
-        var geometry = this.toGeometry(),
-            mesh = new THREE.Mesh(geometry, material);
 
-        mesh.position.setFromMatrixPosition(this.matrix);
-        mesh.rotation.setFromRotationMatrix(this.matrix);
+        var geometry = this.toGeometry()
+        var mesh = new THREE.Mesh(geometry, material)
 
-        return mesh;
+        //mesh.position.setFromMatrixPosition(this.matrix);
+        //mesh.rotation.setFromRotationMatrix(this.matrix);
+
+        mesh.applyMatrix(this.matrix)
+
+        mesh.matrixWorld = this.matrix
+
+        return mesh
     }
 }
 class Polygon {

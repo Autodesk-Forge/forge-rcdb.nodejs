@@ -7,6 +7,7 @@ import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import MeshPropertyPanel from './MeshPropertyPanel'
 import './Viewing.Extension.WallDetector.scss'
 import WidgetContainer from 'WidgetContainer'
+import EdgesGeometry from './EdgesGeometry'
 import EventTool from 'Viewer.EventTool'
 import Toolkit from 'Viewer.Toolkit'
 import { ReactLoader } from 'Loader'
@@ -14,6 +15,7 @@ import ThreeBSP from './threeCSG'
 import Switch from 'Switch'
 import React from 'react'
 import d3 from 'd3'
+
 
 class WallDetectorExtension extends MultiModelExtensionBase {
 
@@ -25,8 +27,9 @@ class WallDetectorExtension extends MultiModelExtensionBase {
 
     super (viewer, options)
 
+    this.onLevelWallsClicked = this.onLevelWallsClicked.bind(this)
+    this.onLevelFloorClicked = this.onLevelFloorClicked.bind(this)
     this.onEnableWireFrame = this.onEnableWireFrame.bind(this)
-    this.onFloorClicked = this.onFloorClicked.bind(this)
     this.onMouseMove = this.onMouseMove.bind(this)
     this.renderTitle = this.renderTitle.bind(this)
     this.onClick = this.onClick.bind(this)
@@ -66,7 +69,7 @@ class WallDetectorExtension extends MultiModelExtensionBase {
 
     this.react.setState({
 
-      data: []
+      levels: []
 
     }).then (() => {
 
@@ -142,18 +145,39 @@ class WallDetectorExtension extends MultiModelExtensionBase {
     const modelBox =
       await this.getComponentBoundingBox(this.rootId)
 
+    const modelBoundingMesh =
+      this.createBoundingMesh(modelBox)
+
+    const modelBSP = new ThreeBSP(modelBoundingMesh)
+
     const floorsIds =
       await this.getComponentsByParentName(
         'Floors', model)
+
+    const floorMeshTasks = floorsIds.map((dbId) => {
+
+      return this.getComponentMesh(dbId)
+    })
+
+    const floorMeshes = await Promise.all(floorMeshTasks)
+
+    const floorBSPs = floorMeshes.map((mesh) => {
+
+      const bsp = new ThreeBSP(mesh)
+
+      bsp.dbId = mesh.dbId
+
+      return bsp
+    })
 
     const bboxTasks = floorsIds.map((dbId) => {
 
       return this.getComponentBoundingBox(dbId)
     })
 
-    const boxes = await Promise.all(bboxTasks)
+    const floorBoxes = await Promise.all(bboxTasks)
 
-    const extBoxes = boxes.map((box) => {
+    const extBoxes = floorBoxes.map((box, idx) => {
 
       const min = {
         x: modelBox.min.x,
@@ -168,6 +192,7 @@ class WallDetectorExtension extends MultiModelExtensionBase {
       }
 
       return {
+        floorIdx: idx,
         min,
         max
       }
@@ -178,15 +203,16 @@ class WallDetectorExtension extends MultiModelExtensionBase {
       return box.min.z
     })
 
-    const wallIds = await this.getComponentsByParentName(
-      'Walls', model)
+    const wallIds =
+      await this.getComponentsByParentName(
+        'Walls', model)
 
-    const meshTasks = wallIds.map((dbId) => {
+    const wallMeshTasks = wallIds.map((dbId) => {
 
       return this.getComponentMesh(dbId)
     })
 
-    const wallMeshes = await Promise.all(meshTasks)
+    const wallMeshes = await Promise.all(wallMeshTasks)
 
     const wallBSPs = wallMeshes.map((mesh) => {
 
@@ -203,57 +229,109 @@ class WallDetectorExtension extends MultiModelExtensionBase {
       .domain([0, nbFloors * .33, nbFloors * .66, nbFloors])
       .range(['#FCB843', '#C2149F', '#0CC4BD', '#0270E9'])
 
-    this.wallMaterials = []
+    this.levelMaterials = []
 
-    const data = []
+    const levels = []
 
     for (let idx = 0; idx < orderedExtBoxes.length-1; ++idx) {
 
-      const floorBox = {
+      const levelBox = {
         max: orderedExtBoxes[idx + 1].min,
         min: orderedExtBoxes[idx].max
       }
 
-      const wallMaterial = new THREE.MeshPhongMaterial({
+      const levelMaterial = new THREE.MeshPhongMaterial({
         side: THREE.DoubleSide,
         color: colors(idx)
       })
 
       this.viewer.impl.matman().addMaterial(
         this.guid(),
-        wallMaterial,
+        levelMaterial,
         true)
 
-      this.wallMaterials.push(wallMaterial)
+      this.levelMaterials.push(levelMaterial)
 
-      const floorMesh = this.createBoundingMesh(floorBox)
+      const levelBoundingMesh = this.createBoundingMesh(levelBox)
 
-      const floorBSP = new ThreeBSP(floorMesh)
+      const levelBSP = new ThreeBSP(levelBoundingMesh)
 
-      const floorWallMeshes = wallBSPs.map((wallBSP) => {
+      const levelWallMeshes = wallBSPs.map((wallBSP) => {
 
-        const resultBSP = floorBSP.intersect(wallBSP)
+        const resultBSP = levelBSP.intersect(wallBSP)
 
-        const mesh = resultBSP.toMesh(wallMaterial)
+        const mesh = resultBSP.toMesh(levelMaterial)
 
         mesh.dbId = wallBSP.dbId
 
         return mesh
       })
 
-      const dbId = floorsIds[idx]
+      const levelWallPaths = levelWallMeshes.map((mesh) => {
 
-      data.push({
-        name: instanceTree.getNodeName(dbId),
+        const edges = this.getHardEdges(mesh)
+
+        const filteredEdges = edges.filter((edge) => {
+
+          return (
+            (edge.start.z < levelBox.min.z + 0.1) &&
+            (edge.end.z   < levelBox.min.z + 0.1)
+          )
+        })
+
+        const lines = filteredEdges.map((edge) => {
+
+          const geometry = new THREE.Geometry()
+
+          edge.start.z += 0.05
+          edge.end.z += 0.05
+
+          geometry.vertices.push(edge.start)
+
+          geometry.vertices.push(edge.end)
+
+          geometry.computeLineDistances()
+
+          return new THREE.Line(geometry, this.lineMaterial)
+        })
+
+        const path = {
+          dbId: mesh.dbId,
+          lines
+        }
+
+        return path
+      })
+
+      const floorIdx = orderedExtBoxes[idx].floorIdx
+
+      const levelName = ` [Level #${levels.length + 1}]`
+
+      const floorMesh = modelBSP.intersect(
+        floorBSPs[floorIdx]).toMesh(
+          levelMaterial)
+
+      floorMesh.dbId = floorsIds[floorIdx]
+
+      levels.push({
         strokeColor: colors(idx),
         fillColor: colors(idx),
-        floorWallMeshes,
-        dbId
+        walls: {
+          name: 'Walls' + levelName,
+          active: false,
+          meshes: levelWallMeshes,
+          paths: levelWallPaths
+        },
+        floor: {
+          name: 'Floor' + levelName,
+          mesh: floorMesh,
+          active: false
+        }
       })
     }
 
     this.react.setState({
-      data: data.reverse()
+      levels: levels.reverse()
     })
   }
 
@@ -287,7 +365,7 @@ class WallDetectorExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  async getComponentMesh (dbId) {
+  async getComponentMesh (dbId, material = this.meshMaterial) {
 
     const fragIds = await Toolkit.getFragIds(
       this.viewer.model, dbId)
@@ -318,8 +396,7 @@ class WallDetectorExtension extends MultiModelExtensionBase {
     }
 
     const mesh = new THREE.Mesh(
-      geometry,
-      this.meshMaterial)
+      geometry, material)
 
     mesh.dbId = dbId
 
@@ -471,17 +548,10 @@ class WallDetectorExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // drawGeometry (mesh.geometry, mesh.matrixWorld)
   //
   /////////////////////////////////////////////////////////
-  drawMesh (mesh) {
-
-    const geometry = mesh.geometry
-
-    const matrix = mesh.matrixWorld
-
-    //not working
-    //geometry.applyMatrix(matrix);
+  drawGeometry (geometry, matrix) {
 
     const attributes = geometry.attributes
     const positions = geometry.vb ? geometry.vb : attributes.position.array
@@ -583,7 +653,46 @@ class WallDetectorExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  drawBox(min, max, material = this.lineMaterial) {
+  getHardEdges (mesh, matrix = null) {
+
+    const edgesGeom = new EdgesGeometry(mesh.geometry)
+
+    const positions = edgesGeom.attributes.position
+
+    matrix = matrix || mesh.matrixWorld
+
+    const edges = []
+
+    for (let idx = 0; idx < positions.length; idx += (2 * positions.itemSize)) {
+
+      const start = new THREE.Vector3(
+        positions.array[idx],
+        positions.array[idx + 1],
+        positions.array[idx + 2])
+
+      const end = new THREE.Vector3(
+        positions.array[idx + 3],
+        positions.array[idx + 4],
+        positions.array[idx + 5])
+
+      start.applyMatrix4(matrix)
+
+      end.applyMatrix4(matrix)
+
+      edges.push({
+        start,
+        end
+      })
+    }
+
+   return edges
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  drawBox (min, max, material = this.lineMaterial) {
 
     this.drawLines([
 
@@ -717,11 +826,22 @@ class WallDetectorExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onSelection (event) {
+  async onSelection (event) {
 
     if (event.selections.length) {
 
-      console.log(event.selections[0].dbIdArray[0])
+      const dbId = event.selections[0].dbIdArray[0]
+
+      const mesh = await this.getComponentMesh(dbId)
+
+      const edges = this.getHardEdges(mesh)
+
+      edges.forEach((edge) => {
+
+        this.drawLine(edge.start, edge.end)
+      })
+
+      this.viewer.impl.sceneUpdated(true)
     }
   }
 
@@ -759,34 +879,36 @@ class WallDetectorExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onFloorClicked (floor) {
+  onLevelWallsClicked (level) {
 
     const state = this.react.getState()
 
-    floor.active = !floor.active
+    level.walls.active = !level.walls.active
 
     this.react.setState({
-      data: state.data
+      levels: state.levels
     })
 
-    const {floorWallMeshes} = floor
+    const meshes = level.walls.meshes
 
-    floorWallMeshes.forEach((floorWallMesh) => {
+    meshes.forEach((mesh) => {
 
-      if (floor.active) {
+      if (level.walls.active) {
 
-        this.viewer.impl.scene.add(floorWallMesh)
-        this.intersectMeshes.push(floorWallMesh)
+        this.viewer.impl.sceneUpdated(true)
+
+        this.viewer.impl.scene.add(mesh)
+        this.intersectMeshes.push(mesh)
 
       } else {
 
-        this.viewer.impl.scene.remove(floorWallMesh)
+        this.viewer.impl.scene.remove(mesh)
       }
     })
 
-    if (!floor.active) {
+    if (!level.walls.active) {
 
-      const meshIds = floorWallMeshes.map((mesh) => {
+      const meshIds = meshes.map((mesh) => {
         return mesh.id
       })
 
@@ -797,13 +919,15 @@ class WallDetectorExtension extends MultiModelExtensionBase {
         })
     }
 
-    this.viewer.impl.sceneUpdated(true)
-
-    const nbActiveFloors = state.data.filter((floor) => {
-      return floor.active
+    const nbActiveWalls = state.levels.filter((level) => {
+      return level.walls.active
     })
 
-    if (nbActiveFloors.length) {
+    const nbActiveFloors = state.levels.filter((level) => {
+      return level.floor.active
+    })
+
+    if ((nbActiveWalls.length + nbActiveFloors.length)) {
 
       Toolkit.hide(this.viewer, this.rootId)
       this.eventTool.activate()
@@ -811,7 +935,75 @@ class WallDetectorExtension extends MultiModelExtensionBase {
     } else {
 
       Toolkit.show(this.viewer, this.rootId)
+      this.eventTool.deactivate()
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onLevelFloorClicked (level) {
+
+    const state = this.react.getState()
+
+    level.floor.active = !level.floor.active
+
+    this.react.setState({
+      levels: state.levels
+    })
+
+    const mesh = level.floor.mesh
+
+    if (level.floor.active) {
+
+      level.walls.paths.forEach((path) => {
+
+        path.lines.forEach((line) => {
+
+          this.viewer.impl.scene.add(line)
+        })
+      })
+
+      this.viewer.impl.scene.add(mesh)
+
+      this.intersectMeshes.push(mesh)
+
+    } else {
+
+      level.walls.paths.forEach((path) => {
+
+        path.lines.forEach((line) => {
+
+          this.viewer.impl.scene.remove(line)
+        })
+      })
+
+      this.viewer.impl.scene.remove(mesh)
+    }
+
+    const viewerState = this.viewer.getState({viewport: true})
+
+    this.viewer.restoreState(viewerState)
+    
+
+    const nbActiveWalls = state.levels.filter((level) => {
+      return level.walls.active
+    })
+
+    const nbActiveFloors = state.levels.filter((level) => {
+      return level.floor.active
+    })
+
+    if ((nbActiveWalls.length + nbActiveFloors.length)) {
+
+      Toolkit.hide(this.viewer, this.rootId)
       this.eventTool.activate()
+
+    } else {
+
+      Toolkit.show(this.viewer, this.rootId)
+      this.eventTool.deactivate()
     }
   }
 
@@ -823,7 +1015,7 @@ class WallDetectorExtension extends MultiModelExtensionBase {
 
     this.wireframe = checked
 
-    this.wallMaterials.forEach((material) => {
+    this.levelMaterials.forEach((material) => {
 
       material.wireframe = checked
     })
@@ -862,29 +1054,53 @@ class WallDetectorExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderContent () {
 
-    const {data} = this.react.getState()
+    const {levels} = this.react.getState()
 
-    let hasActiveFloor = false
+    let hasActiveItem = false
 
-    const items = data.map((floor) => {
+    const wallItems = levels.map((level) => {
 
-      hasActiveFloor = hasActiveFloor || floor.active
+      hasActiveItem = hasActiveItem || level.walls.active
 
-      const active = floor.active ? ' active' : ''
+      const active = level.walls.active ? ' active' : ''
 
       const style = {
-        backgroundColor: this.hexToRgbA(floor.fillColor, 0.3),
-        border: `2px solid ${floor.strokeColor}`
+        backgroundColor: this.hexToRgbA(level.fillColor, 0.3),
+        border: `2px solid ${level.strokeColor}`
       }
 
       return (
-        <div key={`item-${floor.dbId}`}
+        <div key={level.walls.name}
           className={'list-item ' + active}
-          onClick={() => this.onFloorClicked(floor)}>
+          onClick={() => this.onLevelWallsClicked(level)}>
           <div className="item-color" style={style}>
           </div>
           <label>
-            {floor.name}
+            {level.walls.name}
+          </label>
+        </div>
+      )
+    })
+
+    const floorItems = levels.map((level) => {
+
+      hasActiveItem = hasActiveItem || level.floor.active
+
+      const active = level.floor.active ? ' active' : ''
+
+      const style = {
+        backgroundColor: this.hexToRgbA(level.fillColor, 0.3),
+        border: `2px solid ${level.strokeColor}`
+      }
+
+      return (
+        <div key={level.floor.name}
+          className={'list-item ' + active}
+          onClick={() => this.onLevelFloorClicked(level)}>
+          <div className="item-color" style={style}>
+          </div>
+          <label>
+            {level.floor.name}
           </label>
         </div>
       )
@@ -892,21 +1108,32 @@ class WallDetectorExtension extends MultiModelExtensionBase {
 
     return (
       <div className="content">
-        <ReactLoader show={!data.length}/>
+
+        <ReactLoader show={!levels.length}/>
+
         <div className="row">
-          Select an item to isolate walls on this floor:
+          Select an item to isolate walls on this level:
         </div>
         <div className="item-list-container">
-            {items}
+            {wallItems}
         </div>
+
+        <div className="row">
+          Select an item to isolate floor on this level:
+        </div>
+        <div className="item-list-container">
+            {floorItems}
+        </div>
+
         {
-          hasActiveFloor &&
+          hasActiveItem &&
           <div className="row">
             Enable wireframe:
           </div>
         }
+
         {
-          hasActiveFloor &&
+          hasActiveItem &&
           <div className="row">
             <Switch className="control-element"
               onChange={this.onEnableWireFrame}

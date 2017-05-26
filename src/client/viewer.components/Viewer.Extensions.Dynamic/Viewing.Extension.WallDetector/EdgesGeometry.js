@@ -96,15 +96,12 @@ export default function EdgesGeometry( geometry, thresholdAngle ) {
 
       vertex = sourceVertices[ e.index2 ];
       vertices.push( vertex.x, vertex.y, vertex.z );
-
     }
-
   }
 
   // build geometry
 
-  this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
-
+  this.addAttribute('position', new Float32BufferAttribute( vertices, 3 ) );
 }
 
 EdgesGeometry.prototype = Object.create(THREE.BufferGeometry.prototype );

@@ -258,12 +258,6 @@ class IoTExtension extends ExtensionBase {
         this.hotSpotCommand.activate()
       })
 
-    this.viewer.setProgressiveRendering(false)
-    this.viewer.setQualityLevel(false, true)
-    this.viewer.setGroundReflection(false)
-    this.viewer.setGroundShadow(false)
-    this.viewer.setLightPreset(1)
-
     this.react.pushRenderExtension(this)
 
     this.react.setState({

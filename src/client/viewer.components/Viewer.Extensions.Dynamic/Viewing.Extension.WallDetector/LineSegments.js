@@ -3,7 +3,7 @@
  * @author mrdoob / http://mrdoob.com/
  */
 
-export default function LineSegments( geometry, material ) {
+export default function LineSegments(geometry, material ) {
 
   THREE.Line.call( this, geometry, material );
 
@@ -11,10 +11,10 @@ export default function LineSegments( geometry, material ) {
 
 }
 
-LineSegments.prototype = Object.assign( Object.create( THREE.Line.prototype ), {
+LineSegments.prototype = Object.assign(Object.create(THREE.Line.prototype), {
 
   constructor: LineSegments,
 
   isLineSegments: true
 
-} );
+})
