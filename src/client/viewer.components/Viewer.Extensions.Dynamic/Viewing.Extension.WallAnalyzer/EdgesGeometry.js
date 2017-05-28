@@ -1,3 +1,5 @@
+import THREELib from "three-js"
+const THREE = THREELib()
 
 function Float32BufferAttribute( array, itemSize ) {
 
@@ -6,7 +8,6 @@ function Float32BufferAttribute( array, itemSize ) {
 
 Float32BufferAttribute.prototype = Object.create(THREE.BufferAttribute.prototype );
 Float32BufferAttribute.prototype.constructor = Float32BufferAttribute;
-
 
 
 export default function EdgesGeometry( geometry, thresholdAngle ) {

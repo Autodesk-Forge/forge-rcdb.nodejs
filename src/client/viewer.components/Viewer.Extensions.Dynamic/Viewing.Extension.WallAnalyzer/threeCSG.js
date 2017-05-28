@@ -1,4 +1,6 @@
 /*jshint esversion: 6 */
+import THREELib from "three-js"
+const THREE = THREELib()
 
 const EPSILON = 1e-5,
     COPLANAR = 0,
@@ -6,8 +8,10 @@ const EPSILON = 1e-5,
     BACK = 2,
     SPANNING = 3;
 
-export default  class ThreeBSP {
+export default class ThreeBSP {
+
     constructor(geometry) {
+
         // Convert THREE.Geometry to ThreeBSP
         var i, _length_i,
             face, vertex, faceVertexUvs, uvs,
@@ -15,30 +19,35 @@ export default  class ThreeBSP {
             polygons = [],
             tree;
 
-        this.Polygon = Polygon;
-        this.Vertex = Vertex;
-        this.Node = Node;
-        if (geometry instanceof THREE.Geometry) {
+      if (geometry instanceof THREE.Geometry) {
+
             this.matrix = new THREE.Matrix4();
-        } else if (geometry instanceof THREE.Mesh) {
-            // #todo: add hierarchy support
+
+      } else if (geometry instanceof THREE.Mesh) {
+
             geometry.updateMatrix();
             this.matrix = geometry.matrix.clone();
             geometry = geometry.geometry;
+
         } else if (geometry instanceof Node) {
+
             this.tree = geometry;
             this.matrix = new THREE.Matrix4();
             return this;
+
         } else {
+
             throw 'ThreeBSP: Given geometry is unsupported';
         }
 
         for (i = 0, _length_i = geometry.faces.length; i < _length_i; i++) {
+
             face = geometry.faces[i];
             faceVertexUvs = geometry.faceVertexUvs[0][i];
             polygon = new Polygon();
 
             if (face instanceof THREE.Face3) {
+
                 vertex = geometry.vertices[face.a];
                 uvs = faceVertexUvs ? new THREE.Vector2(faceVertexUvs[0].x, faceVertexUvs[0].y) : null;
                 vertex = new Vertex(vertex.x, vertex.y, vertex.z, face.vertexNormals[0], uvs);
@@ -56,30 +65,7 @@ export default  class ThreeBSP {
                 vertex = new Vertex(vertex.x, vertex.y, vertex.z, face.vertexNormals[2], uvs);
                 vertex.applyMatrix4(this.matrix);
                 polygon.vertices.push(vertex);
-            } else if (typeof THREE.Face4) {
-                vertex = geometry.vertices[face.a];
-                uvs = faceVertexUvs ? new THREE.Vector2(faceVertexUvs[0].x, faceVertexUvs[0].y) : null;
-                vertex = new Vertex(vertex.x, vertex.y, vertex.z, face.vertexNormals[0], uvs);
-                vertex.applyMatrix4(this.matrix);
-                polygon.vertices.push(vertex);
 
-                vertex = geometry.vertices[face.b];
-                uvs = faceVertexUvs ? new THREE.Vector2(faceVertexUvs[1].x, faceVertexUvs[1].y) : null;
-                vertex = new Vertex(vertex.x, vertex.y, vertex.z, face.vertexNormals[1], uvs);
-                vertex.applyMatrix4(this.matrix);
-                polygon.vertices.push(vertex);
-
-                vertex = geometry.vertices[face.c];
-                uvs = faceVertexUvs ? new THREE.Vector2(faceVertexUvs[2].x, faceVertexUvs[2].y) : null;
-                vertex = new Vertex(vertex.x, vertex.y, vertex.z, face.vertexNormals[2], uvs);
-                vertex.applyMatrix4(this.matrix);
-                polygon.vertices.push(vertex);
-
-                vertex = geometry.vertices[face.d];
-                uvs = faceVertexUvs ? new THREE.Vector2(faceVertexUvs[3].x, faceVertexUvs[3].y) : null;
-                vertex = new Vertex(vertex.x, vertex.y, vertex.z, face.vertexNormals[3], uvs);
-                vertex.applyMatrix4(this.matrix);
-                polygon.vertices.push(vertex);
             } else {
                 throw 'Invalid face type at index ' + i;
             }
@@ -222,21 +208,30 @@ export default  class ThreeBSP {
         return mesh
     }
 }
+
 class Polygon {
+
     constructor(vertices, normal, w) {
+
         if (!( vertices instanceof Array )) {
+
             vertices = [];
         }
 
         this.vertices = vertices;
+
         if (vertices.length > 0) {
+
             this.calculateProperties();
+
         } else {
+
             this.normal = this.w = undefined;
         }
     }
 
     calculateProperties() {
+
         var a = this.vertices[0],
             b = this.vertices[1],
             c = this.vertices[2];
@@ -458,8 +453,11 @@ class Vertex {
 
     }
 }
+
 class Node {
+
     constructor(polygons) {
+
         var i, polygon_count,
             front = [],
             back = [];
@@ -584,5 +582,3 @@ class Node {
         if (this.back) this.back.clipTo(node);
     }
 }
-
-window.ThreeBSP = ThreeBSP;

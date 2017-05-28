@@ -139,12 +139,14 @@
     "socket.io-client": "^1.7.3",
     "style-loader": "^0.12.4",
     "systemjs": "0.20.12",
+    "three-js": "^79.0.0",
     "url-loader": "^0.5.8",
     "velocity-animate": "^1.4.3",
     "webpack": "^2.2.1",
     "webpack-dev-middleware": "^1.6.1",
     "webpack-hot-middleware": "^2.12.2",
     "webpack-manifest-plugin": "^1.1.0",
-    "webpack-md5-hash": "0.0.5"
+    "webpack-md5-hash": "0.0.5",
+    "worker-loader": "^0.8.0"
   }
 }

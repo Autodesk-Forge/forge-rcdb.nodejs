@@ -234,6 +234,24 @@ export default class ViewerToolkit {
   }
 
   /////////////////////////////////////////////////////////////////
+  // get leaf node fragIds
+  //
+  /////////////////////////////////////////////////////////////////
+  static getLeafFragIds (model, leafId) {
+
+    const instanceTree = model.getData().instanceTree
+
+    const fragIds = []
+
+    instanceTree.enumNodeFragments(
+      leafId, (fragId) => {
+        fragIds.push(fragId)
+      })
+
+    return fragIds
+  }
+
+  /////////////////////////////////////////////////////////////////
   // Node bounding box
   //
   /////////////////////////////////////////////////////////////////
@@ -788,18 +806,13 @@ export default class ViewerToolkit {
 
       const targetIds = Array.isArray(dbIds) ? dbIds : [dbIds]
 
-      const tasks = targetIds.map((dbId) => {
+      targetIds.forEach((dbId) => {
 
-        return new Promise((resolve) => {
-
-          viewer.impl.visibilityManager.setNodeOff(
-            dbId, false)
-
-          resolve()
-        })
+        viewer.impl.visibilityManager.setNodeOff(
+          dbId, false)
       })
 
-      return Promise.all(tasks)
+      return Promise.resolve()
 
     } catch (ex) {
 

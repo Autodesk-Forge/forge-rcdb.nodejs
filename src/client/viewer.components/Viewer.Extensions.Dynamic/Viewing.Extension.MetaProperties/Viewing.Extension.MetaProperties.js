@@ -363,7 +363,7 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
 
                 notification.title = `${file.name} uploaded!`
                 notification.message = `progress: 100%`
-                notification.dismissAfter = 10000
+                notification.dismissAfter = 5000
                 notification.dismissible = true
                 notification.status = 'success'
                 notification.buttons = [{
