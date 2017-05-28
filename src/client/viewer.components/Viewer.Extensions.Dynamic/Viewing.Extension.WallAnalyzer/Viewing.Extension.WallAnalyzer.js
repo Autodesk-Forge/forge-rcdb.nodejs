@@ -44,6 +44,8 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
 
     this.intersectMeshes = []
 
+    this.nbMeshesLoaded = 0
+
     this.wireframe = false
   }
 
@@ -182,16 +184,19 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
       lines
     })
 
-    const progress = data.progress.toFixed(2)
+    const progress =
+      (++this.nbMeshesLoaded) * 100 /
+      (data.levelCount * data.wallCount)
 
-    if (data.progress === 100) {
+    if (progress === 100) {
 
       this.notification.dismissAfter = 2000
       this.notification.status = 'success'
     }
 
     this.notification.message =
-      `Processing Level #${data.level+1} - Progress: ${progress}%`
+      `Processing Meshes `+
+      `- Progress: ${progress.toFixed(2)}%`
 
     this.options.notify.update(this.notification)
 

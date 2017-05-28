@@ -155,7 +155,7 @@ function getMeshGeometry (data, vertexArray) {
 //
 //
 /////////////////////////////////////////////////////////
-function postWallMesh (mesh, level, levelCount, progress) {
+function postWallMesh (mesh, stats) {
 
   const geometry = mesh.geometry
 
@@ -167,9 +167,10 @@ function postWallMesh (mesh, level, levelCount, progress) {
     msgId: 'MSG_ID_WALL_MESH',
     faces: geometry.faces,
     dbId: mesh.dbId,
-    levelCount,
-    progress,
-    level
+
+    levelCount: stats.levelCount,
+    wallCount: stats.wallCount,
+    level: stats.level
   }
 
   self.postMessage(msg)
@@ -309,8 +310,6 @@ async function workerMain () {
     }
   }
 
-  const boxProgressStep = 100 / (mergedBoxes.length-1)
-
   for (let idx = mergedBoxes.length-2; idx >= 0 ; --idx) {
 
     const levelBox = {
@@ -344,11 +343,11 @@ async function workerMain () {
 
       mesh.dbId = wallMesh.dbId
 
-      const progress =
-        (meshIdx+1)/wallMeshes.length * boxProgressStep +
-        idx * boxProgressStep
-
-      postWallMesh (mesh, idx, mergedBoxes.length-1, progress)
+      postWallMesh (mesh, {
+        levelCount: mergedBoxes.length-1,
+        wallCount: wallMeshes.length,
+        level: idx
+      })
     })
   }
 }
