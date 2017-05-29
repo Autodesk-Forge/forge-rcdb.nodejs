@@ -838,7 +838,10 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
     const a = document.createElement('a')
     a.setAttribute("download", "report.json")
     a.setAttribute("href", data)
+
+    document.body.appendChild(a)
     a.click()
+    document.body.removeChild(a)
   }
 
   /////////////////////////////////////////////////////////
