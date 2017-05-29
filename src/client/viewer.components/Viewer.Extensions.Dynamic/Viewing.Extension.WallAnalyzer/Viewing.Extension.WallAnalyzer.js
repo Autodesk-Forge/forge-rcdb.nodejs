@@ -80,6 +80,7 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
 
     this.react.setState({
 
+      analyzeComplete: false,
       loader: true,
       levels: []
 
@@ -209,6 +210,10 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
 
       this.notification.dismissAfter = 2000
       this.notification.status = 'success'
+
+      this.react.setState({
+        analyzeComplete: true
+      })
     }
 
     this.notification.message =
@@ -370,8 +375,6 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
   buildMesh (data) {
 
     const geometry = new THREE.Geometry()
-
-    console.log()
 
     data.vertices.forEach((vertex) => {
 
@@ -898,6 +901,11 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
       )
     })
 
+    const reportText = 'Analysis Reports' +
+      (state.analyzeComplete
+        ? ':'
+        : ' (in progress ...)')
+
     return (
       <div className="content">
 
@@ -934,12 +942,15 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
         }
 
         <div className="row">
-          Analysis Reports:
+          {reportText}
         </div>
-        <div className="row report" onClick={this.onDownloadReport}>
-          <span className="fa fa-cloud-download"/>
-          Download Report.json
-        </div>
+        {
+          state.analyzeComplete &&
+          <div className="row report" onClick={this.onDownloadReport}>
+            <span className="fa fa-cloud-download"/>
+            Download Report.json
+          </div>
+        }
       </div>
     )
   }
