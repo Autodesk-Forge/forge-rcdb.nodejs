@@ -78,9 +78,9 @@ class SelectionFilterExtension extends MultiModelExtensionBase {
       // because needs to check for every component
       // for intersection
 
-      //const raycaster = this.pointerToRaycaster(event)
-      //const hitTest = this.viewer.model.rayIntersect(
-      //  raycaster, true, dbIds)
+      // const raycaster = this.pointerToRaycaster(event)
+      // const hitTest = this.viewer.model.rayIntersect(
+      //   raycaster, true, dbIds)
 
       if (!this.mouseDown) {
 

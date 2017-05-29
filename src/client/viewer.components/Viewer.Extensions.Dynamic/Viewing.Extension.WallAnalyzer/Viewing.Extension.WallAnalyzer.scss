@@ -74,12 +74,40 @@
 }
 
 .wall-analyzer .item-color {
+   position: relative;
+   border-radius: 50%;
+   height: 28px;
+   margin: 4px;
+   width: 28px;
+   float: left;
+ }
+
+.wall-analyzer .report {
+  transition-property: background-color;
+  transition-timing-function: ease;
+  transition-duration: 1.0s;
+  transition-delay: 0.0s;
+
+  border: 1px solid #5f5f5f;
+  background: #f8f8f8;
+  border-radius: 4px;
+  margin-top: 10px;
+  cursor: pointer;
+  height: 38px;
+  padding: 4px;
+}
+
+.wall-analyzer .report:hover {
+  border: 2px solid rgba(37, 58, 221, 0.51);
+  background-color: #ecf2ff;
+}
+
+.wall-analyzer .report span {
   position: relative;
-  border-radius: 50%;
-  height: 28px;
-  margin: 4px;
-  width: 28px;
-  float: left;
+  margin-right: 4px;
+  font-size: 22px;
+  color: #498a42;
+  top: 3px;
 }
 
 /////////////////////////////////////////////////////////

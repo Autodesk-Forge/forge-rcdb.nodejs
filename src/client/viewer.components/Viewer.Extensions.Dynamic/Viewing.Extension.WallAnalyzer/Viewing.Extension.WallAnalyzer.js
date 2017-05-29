@@ -29,6 +29,7 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
     this.onLevelWallsClicked = this.onLevelWallsClicked.bind(this)
     this.onLevelFloorClicked = this.onLevelFloorClicked.bind(this)
     this.onEnableWireFrame = this.onEnableWireFrame.bind(this)
+    this.onDownloadReport = this.onDownloadReport.bind(this)
     this.onWorkerMessage = this.onWorkerMessage.bind(this)
     this.onMouseMove = this.onMouseMove.bind(this)
     this.renderTitle = this.renderTitle.bind(this)
@@ -47,6 +48,10 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
     this.nbMeshesLoaded = 0
 
     this.wireframe = false
+
+    this.report = {
+      levels: []
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -183,6 +188,18 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
     level.floor.paths.push({
       lines
     })
+
+    const reportLevel = this.report.levels[levelIdx] || {
+        name: `Level #${data.level+1}`,
+        walls: []
+    }
+
+    reportLevel.walls.push({
+      path: data.pathEdges,
+      dbId: mesh.dbId
+    })
+
+    this.report.levels[levelIdx] = reportLevel
 
     const progress =
       (++this.nbMeshesLoaded) * 100 /
@@ -354,6 +371,8 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
 
     const geometry = new THREE.Geometry()
 
+    console.log()
+
     data.vertices.forEach((vertex) => {
 
       geometry.vertices.push(
@@ -374,7 +393,7 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
 
     geometry.computeFaceNormals()
 
-    geometry.computeVertexNormals()
+    //geometry.computeVertexNormals()
 
     const matrixWorld = new THREE.Matrix4()
 
@@ -808,6 +827,21 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  onDownloadReport () {
+
+    const data = "data:text/json;charset=utf-8," +
+      encodeURIComponent(JSON.stringify(this.report, null, 2))
+
+    const a = document.createElement('a')
+    a.setAttribute("download", "report.json")
+    a.setAttribute("href", data)
+    a.click()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   renderContent () {
 
     const state = this.react.getState()
@@ -884,20 +918,28 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
         </div>
 
         {
-        hasActiveItem &&
-        <div className="row">
-          Enable wireframe:
-        </div>
-          }
+          hasActiveItem &&
+          <div className="row">
+            Enable wireframe:
+          </div>
+        }
 
         {
-        hasActiveItem &&
+          hasActiveItem &&
+          <div className="row">
+            <Switch className="control-element"
+              onChange={this.onEnableWireFrame}
+              checked={this.wireframe}/>
+          </div>
+        }
+
         <div className="row">
-          <Switch className="control-element"
-            onChange={this.onEnableWireFrame}
-            checked={this.wireframe}/>
+          Analysis Reports:
         </div>
-          }
+        <div className="row report" onClick={this.onDownloadReport}>
+          <span className="fa fa-cloud-download"/>
+          Download Report.json
+        </div>
       </div>
     )
   }
