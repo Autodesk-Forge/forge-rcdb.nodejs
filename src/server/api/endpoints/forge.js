@@ -178,6 +178,8 @@ module.exports = function() {
 
     } catch (error) {
 
+      console.log(error)
+
       forgeSvc.delete3LeggedToken(req.session)
 
       res.status(error.statusCode || 404)

@@ -242,6 +242,43 @@ function getHardEdges (mesh, matrix = null) {
 //
 //
 /////////////////////////////////////////////////////////
+function mergeBoxes (boxes) {
+
+  const mergedBoxes = []
+
+  let height = -Number.MAX_VALUE
+
+  for (let idx = 0; idx < boxes.length; ++idx) {
+
+    const box = boxes[idx]
+
+    if (box.max.z > height + 0.1) {
+
+      height = box.max.z
+
+      mergedBoxes.push(box)
+
+    } else {
+
+      const lastBox = mergedBoxes[mergedBoxes.length-1]
+
+      lastBox.max.x = Math.max(lastBox.max.x, box.max.x)
+      lastBox.max.y = Math.max(lastBox.max.y, box.max.y)
+
+      lastBox.min.x = Math.min(lastBox.min.x, box.min.x)
+      lastBox.min.y = Math.min(lastBox.min.y, box.min.y)
+
+      lastBox.dbIds.push(box.dbIds[0])
+    }
+  }
+
+  return mergedBoxes
+}
+
+/////////////////////////////////////////////////////////
+//
+//
+/////////////////////////////////////////////////////////
 async function workerMain () {
 
   const res = await Promise.all([
@@ -282,33 +319,25 @@ async function workerMain () {
     return box.min.z
   })
 
-  const mergedBoxes = []
+  // last box is model top
+  orderedExtBoxes.push({
 
-  let height = -Number.MAX_VALUE
+    min: {
+      x: modelBox.min.x,
+      y: modelBox.min.y,
+      z: modelBox.max.z
+    },
 
-  for (let idx = 0; idx < orderedExtBoxes.length-1; ++idx) {
+    max:{
+      x: modelBox.max.x,
+      y: modelBox.max.y,
+      z: modelBox.max.z
+    },
 
-    const box = orderedExtBoxes[idx]
+    dbIds: []
+  })
 
-    if (box.max.z > height + 0.1) {
-
-      height = box.max.z
-
-      mergedBoxes.push(box)
-
-    } else {
-
-      const lastBox = mergedBoxes[mergedBoxes.length-1]
-
-      lastBox.max.x = Math.max(lastBox.max.x, box.max.x)
-      lastBox.max.y = Math.max(lastBox.max.y, box.max.y)
-
-      lastBox.min.x = Math.min(lastBox.min.x, box.min.x)
-      lastBox.min.y = Math.min(lastBox.min.y, box.min.y)
-
-      lastBox.dbIds.push(box.dbIds[0])
-    }
-  }
+  const mergedBoxes = mergeBoxes(orderedExtBoxes)
 
   for (let idx = mergedBoxes.length-2; idx >= 0 ; --idx) {
 
@@ -321,7 +350,7 @@ async function workerMain () {
 
     const levelBSP = new ThreeBSP(levelBoundingMesh)
 
-    wallMeshes.forEach((wallMesh, meshIdx) => {
+    wallMeshes.forEach((wallMesh) => {
 
       const resultBSP = levelBSP.intersect(wallMesh.bsp)
 

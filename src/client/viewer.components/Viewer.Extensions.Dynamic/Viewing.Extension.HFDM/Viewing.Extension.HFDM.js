@@ -9,6 +9,7 @@ import WidgetContainer from 'WidgetContainer'
 import ScriptLoader from './ScriptLoader'
 import ServiceManager from 'SvcManager'
 import './Viewing.Extension.HFDM.scss'
+import Modal from 'boron/OutlineModal'
 import { ReactLoader } from 'Loader'
 import Toolkit from 'Viewer.Toolkit'
 import DOMPurify from 'dompurify'
@@ -63,17 +64,19 @@ class HFDMExtension extends MultiModelExtensionBase {
     this.react.setState({
 
 
-    }).then (() => {
+    }).then (async() => {
 
       //this.onScriptLoaded()
-
-      this.react.pushRenderExtension(this)
 
       this.options.setNavbarState({
         links: {
           login: true
         }
       })
+
+      await this.react.pushRenderExtension(this)
+
+      this.showLogin()
     })
 
     console.log('Viewing.Extension.HFDM loaded')
@@ -147,9 +150,25 @@ class HFDMExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  showLogin () {
+
+    this.react.getComponent().refs.login.show()
+  }
+
+  hideModal () {
+
+    this.refs.login.show()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   async onScriptLoaded () {
 
-    while (!(window.Forge && window.Forge.HFDM)) {
+    while (!(window.Forge &&
+             window.Forge.HFDM &&
+             window.Forge.AppFramework)) {
 
       await this.sleep(100)
     }
@@ -157,6 +176,7 @@ class HFDMExtension extends MultiModelExtensionBase {
     this.viewer.loadExtension(HFDMCoreExtension, {
       serverUrl: 'https://developer-stg.api.autodesk.com/lynx/v1/pss',
       hfdmURN: this.options.location.query.hfdmURN,
+      HFDMAppFramework: window.Forge.AppFramework,
       getBearerToken: this.getBearerToken,
       HFDM_SDK: window.Forge.HFDM
     })
@@ -208,9 +228,14 @@ class HFDMExtension extends MultiModelExtensionBase {
         showTitle={opts.showTitle}
         className={this.className}>
 
+        <Modal className="login" ref="login">
+          <h2>I am a dialog</h2>
+          <button onClick={this.doLogin}>OK</button>
+        </Modal>
+
         <ScriptLoader onLoaded={this.onScriptLoaded}
           url={[
-            //"/resources/libs/hfdm/forge-entity-manager.js",
+            "/resources/libs/hfdm/forge-entity-manager.js",
             "/resources/libs/hfdm/forge-hfdm.js"
           ]}/>
 
