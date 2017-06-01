@@ -14,16 +14,23 @@
 }
 
 .configurator-view .home .model-item {
+  position: relative;
+}
+
+.configurator-view .home .model-item .content {
   align-items: center;
   position: relative;
   display: flex;
+  color: black;
 }
 
 .configurator-view .home .model-item .git-link {
+  text-decoration: none;
   position: absolute;
   font-size: 30px;
   color: #505050;
   right: 26px;
+  z-index: 1;
   top: 4px;
 }
 

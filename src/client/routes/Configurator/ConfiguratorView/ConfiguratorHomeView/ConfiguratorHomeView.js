@@ -50,7 +50,9 @@ class ConfiguratorHomeView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  gotToLink (href) {
+  gotToLink (e, href) {
+
+    e.preventDefault()
 
     browserHistory.push(href)
   }
@@ -136,23 +138,24 @@ class ConfiguratorHomeView extends React.Component {
       const href = `/configurator?id=${model._id}`
 
       return (
-        <div key={model._id} className="model-item"
-          onClick={()=>this.gotToLink(href)}>
+        <div className="model-item" key={model._id}>
           <a className="git-link fa fa-github"
             href={model.git}
-            target="_blank"
-            onClick={(e)=>{e.stopPropagation()}}>
+            target="_blank">
           </a>
-          <img className={model.thumbnail ? "":"default-thumbnail"}
-            src={model.thumbnail ? model.thumbnail : ""}/>
-          <div className="text-content">
-            <Label text={model.name}/>
-            <br/>
-            <br/>
-            <p className="description">
-              { model.desc || '' }
-            </p>
-          </div>
+          <a className="content" href={href}
+            onClick={(e)=>this.gotToLink(e, href)}>
+            <img className={model.thumbnail ? "":"default-thumbnail"}
+              src={model.thumbnail ? model.thumbnail : ""}/>
+            <div className="text-content">
+              <Label text={model.name}/>
+              <br/>
+              <br/>
+              <p className="description">
+                { model.desc || '' }
+              </p>
+            </div>
+          </a>
         </div>
       )
     })
