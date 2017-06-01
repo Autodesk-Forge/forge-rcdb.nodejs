@@ -5,11 +5,11 @@
 /////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import HFDMCoreExtension from './Viewing.Extension.HFDM.Core'
+import { browserHistory } from 'react-router'
 import WidgetContainer from 'WidgetContainer'
 import ScriptLoader from './ScriptLoader'
 import ServiceManager from 'SvcManager'
 import './Viewing.Extension.HFDM.scss'
-import Modal from 'boron/OutlineModal'
 import { ReactLoader } from 'Loader'
 import Toolkit from 'Viewer.Toolkit'
 import DOMPurify from 'dompurify'
@@ -33,6 +33,14 @@ class HFDMExtension extends MultiModelExtensionBase {
 
     this.onScriptLoaded = this.onScriptLoaded.bind(this)
     this.renderTitle = this.renderTitle.bind(this)
+
+    this.dialogSvc =
+      ServiceManager.getService(
+        'DialogSvc')
+
+    this.userSvc =
+      ServiceManager.getService(
+        'UserSvc')
 
     this.react = options.react
   }
@@ -61,22 +69,23 @@ class HFDMExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   load () {
 
+    if (!this.options.appState.user) {
+
+      this.showLogin()
+      return true
+    }
+
     this.react.setState({
 
+    }).then (() => {
 
-    }).then (async() => {
-
-      //this.onScriptLoaded()
+      this.react.pushRenderExtension(this)
 
       this.options.setNavbarState({
         links: {
           login: true
         }
       })
-
-      await this.react.pushRenderExtension(this)
-
-      this.showLogin()
     })
 
     console.log('Viewing.Extension.HFDM loaded')
@@ -152,12 +161,31 @@ class HFDMExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   showLogin () {
 
-    this.react.getComponent().refs.login.show()
-  }
+    const onClose = (result) => {
 
-  hideModal () {
+      this.dialogSvc.off('dialog.close', onClose)
 
-    this.refs.login.show()
+      if (result === 'OK') {
+
+        this.userSvc.login()
+        return
+      }
+
+      browserHistory.push('/configurator')
+    }
+
+    this.dialogSvc.on('dialog.close', onClose)
+
+    this.dialogSvc.setState({
+      onRequestClose: () => {},
+      className: 'login-dlg',
+      title: 'Login required ...',
+      content:
+        <div>
+          Press OK to login ...
+        </div>,
+      open: true
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -213,7 +241,15 @@ class HFDMExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderControls () {
 
-    return false
+    return (
+      <div>
+        <ScriptLoader onLoaded={this.onScriptLoaded}
+          url={[
+            "/resources/libs/hfdm/forge-entity-manager.js",
+            "/resources/libs/hfdm/forge-hfdm.js"
+          ]}/>
+      </div>
+    )
   }
 
   /////////////////////////////////////////////////////////
@@ -228,18 +264,10 @@ class HFDMExtension extends MultiModelExtensionBase {
         showTitle={opts.showTitle}
         className={this.className}>
 
-        <Modal className="login" ref="login">
-          <h2>I am a dialog</h2>
-          <button onClick={this.doLogin}>OK</button>
-        </Modal>
-
-        <ScriptLoader onLoaded={this.onScriptLoaded}
-          url={[
-            "/resources/libs/hfdm/forge-entity-manager.js",
-            "/resources/libs/hfdm/forge-hfdm.js"
-          ]}/>
-
-        { this.renderControls() }
+        {
+          this.options.appState.user &&
+          this.renderControls()
+        }
 
       </WidgetContainer>
     )

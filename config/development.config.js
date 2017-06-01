@@ -30,13 +30,13 @@ const config = {
       authorizationUri: '/authentication/v1/authorize',
       accessTokenUri: '/authentication/v1/gettoken',
 
-      //baseUri: 'https://developer.api.autodesk.com',
-      //clientSecret: process.env.FORGE_CLIENT_SECRET,
-      //clientId: process.env.FORGE_CLIENT_ID,
+      baseUri: 'https://developer.api.autodesk.com',
+      clientSecret: process.env.FORGE_CLIENT_SECRET,
+      clientId: process.env.FORGE_CLIENT_ID,
 
-      baseUri: 'https://developer-stg.api.autodesk.com',
-      clientSecret: process.env.FORGE_STG_CLIENT_SECRET,
-      clientId: process.env.FORGE_STG_CLIENT_ID,
+      //baseUri: 'https://developer-stg.api.autodesk.com',
+      //clientSecret: process.env.FORGE_STG_CLIENT_SECRET,
+      //clientId: process.env.FORGE_STG_CLIENT_ID,
 
       scope: [
         'data:read',

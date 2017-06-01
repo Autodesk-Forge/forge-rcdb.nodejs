@@ -310,5 +310,8 @@
 
 .login div {
   background: transparent !important;
+}
+
+.login div:first-child {
   border: 2px solid #f3a81e;
 }

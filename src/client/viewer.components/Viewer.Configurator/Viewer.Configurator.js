@@ -20,7 +20,7 @@ class ViewerConfigurator extends React.Component {
     setViewerEnv: PropTypes.func.isRequired,
     database: PropTypes.string.isRequired,
     modelId: PropTypes.string.isRequired,
-    viewerEnv: PropTypes.string
+    appState: PropTypes.object
   }
 
   /////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ class ViewerConfigurator extends React.Component {
       this.props.database,
       this.props.modelId)
 
-    if (!this.props.viewerEnv) {
+    if (!this.props.appState.viewerEnv) {
 
       const viewerEnv = await this.initialize({
         useConsolidation: true,
@@ -612,6 +612,7 @@ class ViewerConfigurator extends React.Component {
         loadDocument: this.loadDocument,
         database: this.props.database,
         location: this.props.location,
+        appState: this.props.appState,
         dbModel: this.state.dbModel,
         notify: this.props.notify,
         parentControl: ctrlGroup,
