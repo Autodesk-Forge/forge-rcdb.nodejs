@@ -1,4 +1,4 @@
-import fetchInject from 'fetch-inject'
+//import fetchInject from 'fetch-inject'
 import React from 'react'
 
 export default class ScriptLoader extends React.Component {
@@ -46,7 +46,12 @@ export default class ScriptLoader extends React.Component {
 
     const urls = this.toArray(this.props.url)
 
-    fetchInject(urls).then(() => {
+    const loadTasks = urls.map((url) => {
+
+      return loadScript(url)
+    })
+
+    Promise.all(loadTasks).then(() => {
 
       if (this.props.onLoaded) {
 
