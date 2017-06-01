@@ -1,6 +1,10 @@
 var path = require('path')
 var fs = require('fs')
 
+require('babel-core/register')({
+  presets: ['es2015-node5', 'stage-0']
+})
+
 if (process.env.NODE_ENV === 'production') {
 
   const dist = path.resolve(__dirname, '../dist')
@@ -12,14 +16,11 @@ if (process.env.NODE_ENV === 'production') {
     }
   })
 
-  require('./static')
+  //require('./static')
 
 } else {
 
-  require('babel-core/register')({
-    presets: ['es2015-node5', 'stage-0']
-  })
-
-  require('../src/server')
+  //require('../src/server')
 }
 
+require('../src/server')
