@@ -130,7 +130,7 @@ class ForceGraphExtension extends MultiModelExtensionBase {
     const graphProperties =
       this.options.graphProperties ||
       await Toolkit.getPropertyList(
-      this.viewer, this.componentIds, model)
+        this.viewer, this.componentIds, model)
 
     $('#force-graph-dropdown').parent().find('ul').css({
       height: Math.min(

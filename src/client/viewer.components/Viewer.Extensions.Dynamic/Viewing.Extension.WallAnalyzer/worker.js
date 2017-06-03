@@ -213,7 +213,9 @@ function getHardEdges (mesh, matrix = null) {
 
   const edges = []
 
-  for (let idx = 0; idx < positions.length; idx += (2 * positions.itemSize)) {
+  for (let idx = 0;
+       idx < positions.length;
+       idx += (2 * positions.itemSize)) {
 
     const start = new THREE.Vector3(
       positions.array[idx],
@@ -379,6 +381,12 @@ async function workerMain () {
       })
     })
   }
+
+  self.close()
 }
 
+/////////////////////////////////////////////////////////
+// Run the worker
+//
+/////////////////////////////////////////////////////////
 workerMain ()

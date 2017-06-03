@@ -113,9 +113,11 @@ class FaderExtension extends ExtensionBase
   /////////////////////////////////////////////////////////
   unload () {
 
+    console.log('Viewing.Extension.Fader unloaded')
+
     this.onEnableFader (false)
 
-    console.log('Viewing.Extension.Fader unloaded')
+    this.tooltip.deactivate()
 
     return true
   }
