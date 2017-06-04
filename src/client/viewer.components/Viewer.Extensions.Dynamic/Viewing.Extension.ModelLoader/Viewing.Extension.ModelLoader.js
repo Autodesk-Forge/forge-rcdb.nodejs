@@ -521,7 +521,11 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   setDlgItems (dbModels) {
 
+    const state = this.dialogSvc.getState()
+    
     const modelDlgItems = dbModels.map((dbModel) => {
+
+      const thumbnail = dbModel.thumbnail || ''
 
       return (
         <div key={dbModel._id} className="model-item"
@@ -538,14 +542,12 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
               open: false
             })
         }}>
-          <img className={dbModel.thumbnail ? "":"default-thumbnail"}
-            src={dbModel.thumbnail ? dbModel.thumbnail : ""}/>
+          <img className={thumbnail ? "":"default-thumbnail"}
+            src={thumbnail}/>
           <Label text= {dbModel.name}/>
         </div>
       )
     })
-
-    const state = this.dialogSvc.getState()
 
     this.dialogSvc.setState({
       content:
@@ -586,7 +588,9 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
         this.options.database, modelIds).then(
           (thumbnails) => {
 
-            const dbModels = state.dbModels.map((model) => {
+            const currentState = this.dialogSvc.getState()
+
+            const dbModels = currentState.dbModels.map((model) => {
 
               const idx = modelIds.indexOf(model._id)
 

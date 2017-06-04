@@ -8,7 +8,6 @@
   },
   "scripts": {
     "build-server": "babel --presets es2015,stage-0 ./src/server -d ./bin/static",
-    "postinstall": "cross-env NODE_ENV=production npm run build-server",
     "build-prod": "cross-env NODE_ENV=production npm run build",
     "start": "node bin/start.js",
     "build": "node webpack",
