@@ -289,9 +289,7 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
 
     this.getComponentsByParentName(
       'Floors', model).then((floorsIds) => {
-
-        this.viewer.select(floorsIds)
-
+        
         const nbFloors = floorsIds.length
 
         const colors = d3.scale.linear()
