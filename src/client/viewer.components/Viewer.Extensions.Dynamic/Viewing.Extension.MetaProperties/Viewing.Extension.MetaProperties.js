@@ -36,7 +36,6 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
     this.onContextMenu = this.onContextMenu.bind(this)
     this.renderTitle = this.renderTitle.bind(this)
 
-
     this.dialogSvc =
       ServiceManager.getService('DialogSvc')
 

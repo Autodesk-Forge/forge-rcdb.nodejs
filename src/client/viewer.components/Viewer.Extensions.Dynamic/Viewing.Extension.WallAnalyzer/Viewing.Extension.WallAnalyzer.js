@@ -84,7 +84,7 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
 
     }).then (() => {
 
-      //this.react.pushRenderExtension(this)
+      this.react.pushRenderExtension(this)
     })
 
     console.log('Viewing.Extension.WallAnalyzer loaded')
