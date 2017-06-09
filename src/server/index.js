@@ -20,6 +20,7 @@ import ConfigAPI from './api/endpoints/config'
 import ModelAPI from './api/endpoints/models'
 import ForgeAPI from './api/endpoints/forge'
 import MetaAPI from './api/endpoints/meta'
+import OssAPI from './api/endpoints/oss'
 
 //Services
 import DerivativesSvc from './api/services/DerivativesSvc'
@@ -123,6 +124,7 @@ app.use('/api/config',    ConfigAPI())
 app.use('/api/models',    ModelAPI())
 app.use('/api/forge',     ForgeAPI())
 app.use('/api/meta',      MetaAPI())
+app.use('/api/oss',       OssAPI())
 
 /////////////////////////////////////////////////////////////////////
 // Viewer GET Proxy

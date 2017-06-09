@@ -522,7 +522,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   setDlgItems (dbModels) {
 
     const state = this.dialogSvc.getState()
-    
+
     const modelDlgItems = dbModels.map((dbModel) => {
 
       const thumbnail = dbModel.thumbnail || ''

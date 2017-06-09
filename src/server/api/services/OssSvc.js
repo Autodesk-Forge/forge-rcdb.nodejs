@@ -1,17 +1,19 @@
 
 import ServiceManager from './SvcManager'
+import eachLimit from 'async/eachLimit'
 import BaseSvc from './BaseSvc'
 import Forge from 'forge-apis'
 import request from 'request'
 import mzfs from 'mz/fs'
 import util from 'util'
+import fs from 'fs'
 
 export default class OssSvc extends BaseSvc {
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   constructor (config) {
 
     super(config)
@@ -20,19 +22,19 @@ export default class OssSvc extends BaseSvc {
     this._objectsAPI = new Forge.ObjectsApi()
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   name() {
 
     return 'OssSvc'
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   // Returns bucket list
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   getBuckets (token, opts = {}) {
 
     const options = {
@@ -45,20 +47,20 @@ export default class OssSvc extends BaseSvc {
       options, {autoRefresh:false}, token)
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   // Returns bucket details
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   getBucketDetails (token, bucketKey) {
 
     return this._bucketsAPI.getBucketDetails(
       bucketKey, {autoRefresh:false}, token)
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   // Returns object list in specific bucket
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   getObjects (token, bucketKey, opts = {}) {
 
     const options = {
@@ -68,30 +70,32 @@ export default class OssSvc extends BaseSvc {
     }
 
     return this._objectsAPI.getObjects(
-      bucketKey, options, {autoRefresh:false}, token)
+      bucketKey, options,
+      {autoRefresh:false}, token)
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   // Returns object details
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   getObjectDetails (token, bucketKey, objectKey, opts = {}) {
 
     return this._objectsAPI.getObjectDetails (
-      bucketKey, objectKey, opts, {autoRefresh:false}, token)
+      bucketKey, objectKey, opts,
+      {autoRefresh:false}, token)
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   // parse objectId into { bucketKey, objectKey }
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   parseObjectId (objectId) {
 
-    var parts = objectId.split('/')
+    const parts = objectId.split('/')
 
-    var bucketKey = parts[0].split(':').pop()
+    const bucketKey = parts[0].split(':').pop()
 
-    var objectKey = parts[1]
+    const objectKey = parts[1]
 
     return {
       bucketKey,
@@ -99,10 +103,10 @@ export default class OssSvc extends BaseSvc {
     }
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   // Creates a new bucket
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   createBucket (token, bucketCreationData, opts = {}) {
 
     bucketCreationData.bucketKey = validateBucketKey(
@@ -116,13 +120,14 @@ export default class OssSvc extends BaseSvc {
     }
 
     return this._bucketsAPI.createBucket(
-      bucketCreationData, options, {autoRefresh:false}, token)
+      bucketCreationData, options,
+      {autoRefresh:false}, token)
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   // Uploads object to bucket
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   uploadObject (token, bucketKey, objectKey, file) {
 
     //TODO: Not working yet - need to migrate to SDK
@@ -131,14 +136,12 @@ export default class OssSvc extends BaseSvc {
     //
     //  try {
     //
-    //    let data = await mzfs.readFile(file.path)
-    //
-    //    let stat = await mzfs.stat(file.path)
+    //    const data = await mzfs.readFile(file.path)
     //
     //    this._APIAuth.accessToken = token
     //
     //    return this._objectsAPI.uploadObject (
-    //      bucketKey, objectKey, stat.size, data, {})
+    //      bucketKey, objectKey, file.size, data, {})
     //
     //  } catch (ex) {
     //
@@ -152,17 +155,16 @@ export default class OssSvc extends BaseSvc {
 
       try {
 
-        let data = await mzfs.readFile(file.path)
+        const data = await mzfs.readFile(file.path)
 
-        var url = util.format(
+        const url = util.format(
             'https://developer.api.autodesk.com/oss/v2/buckets/%s/objects/%s',
             bucketKey,
             objectKey)
 
-        var response = await requestAsync ({
+        const response = await requestAsync ({
           method: 'PUT',
           headers: {
-            //application/vnd.autodesk.autocad.dwg
             'Content-Type': 'application/octet-stream',
             'Authorization': 'Bearer ' + token.access_token
           },
@@ -171,31 +173,135 @@ export default class OssSvc extends BaseSvc {
         })
 
         resolve(JSON.parse(response))
-      }
-      catch (ex) {
 
-        reject(ex)
+      } catch (ex) {
+
+        return reject(ex)
       }
     })
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
+  // Uploads object to bucket using resumable endpoint
+  //
+  /////////////////////////////////////////////////////////
+  uploadObjectChunked (getToken, bucketKey, objectKey,
+                       file,  opts = {}) {
+
+    return new Promise((resolve, reject) => {
+
+      const chunkSize = opts.chunkSize || 5 * 1024 * 1024
+
+      const nbChunks = Math.ceil(file.size / chunkSize)
+
+      const chunksMap = Array.from({
+        length: nbChunks
+      }, (e, i) => i)
+
+      // generates uniques session ID
+      const sessionId = this.guid()
+
+      // prepare the upload tasks
+      const uploadTasks = chunksMap.map((chunkIdx) => {
+
+        const start = chunkIdx * chunkSize
+
+        const end = Math.min(
+            file.size, (chunkIdx + 1) * chunkSize) - 1
+
+        const range = `bytes ${start}-${end}/${file.size}`
+
+        const length = end - start + 1
+
+        const readStream =
+          fs.createReadStream(file.path, {
+            start, end
+          })
+
+        const run = async () => {
+
+          const token = await getToken()
+
+          return this._objectsAPI.uploadChunk(
+            bucketKey, objectKey,
+            length, range, sessionId,
+            readStream, {},
+            {autoRefresh: false}, token)
+        }
+
+        return {
+          chunkIndex: chunkIdx,
+          run
+        }
+      })
+
+      let progress = 0
+
+      // runs asynchronously in parallel the upload tasks
+      // number of simultaneous uploads is defined by
+      // opts.concurrentUploads
+      eachLimit(uploadTasks, opts.concurrentUploads || 3,
+        (task, callback) => {
+
+          task.run().then((res) => {
+
+            if (opts.onProgress) {
+
+              progress += 100.0 / nbChunks
+
+              opts.onProgress ({
+                progress: Math.round(progress * 100) / 100,
+                chunkIndex: task.chunkIndex
+              })
+            }
+
+            callback ()
+
+          }, (err) => {
+
+            console.log('error')
+            console.log(err)
+
+            callback(err)
+          })
+
+      }, (err) => {
+
+          if (err) {
+
+            return reject(err)
+          }
+
+          return resolve({
+            fileSize: file.size,
+            bucketKey,
+            objectKey,
+            nbChunks
+          })
+      })
+    })
+  }
+
+  /////////////////////////////////////////////////////////
   // Download object from bucket
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   getObject (token, bucketKey, objectKey) {
 
-    //TODO: Not working yet - need to migrate to SDK
+    //TODO: need to migrate to SDK
 
     //this._APIAuth.accessToken = token
     //
     //return new Promise((resolve, reject) => {
     //
+    //  const  wstream = fs.createWriteStream (outputFile)
+    //
     //  this._objectsAPI.getObject (
     //    bucketKey,
     //    objectKey,
     //    { encoding: null },
-    //    function (err, data, response) {
+    //
+    //    (err, data, response) => {
     //
     //      //console.log(err)
     //      //console.log(data)
@@ -207,8 +313,9 @@ export default class OssSvc extends BaseSvc {
     //      }
     //
     //      resolve(response)
-    //    })
+    //    }).pipe (wstream)
     //})
+
 
     return new Promise((resolve, reject) => {
 
@@ -223,43 +330,58 @@ export default class OssSvc extends BaseSvc {
           'Authorization': 'Bearer ' + token.access_token
         },
         encoding: null
-      }, function(err, response, body) {
+      }, (err, response, body) => {
 
-        if(err) {
-
-          return reject(err)
-        }
-
-        resolve(body)
+        return err
+          ? reject(err)
+          : resolve(body)
       })
     })
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   // Deletes bucket
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   deleteBucket (token, bucketKey) {
 
     return this._bucketsAPI.deleteBucket(
       bucketKey, {autoRefresh:false}, token)
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   // Deletes object from bucket
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   deleteObject (token, bucketKey, objectKey) {
 
     return this._objectsAPI.deleteObject(
-      bucketKey, objectKey, {autoRefresh:false}, token)
+      bucketKey, objectKey,
+      {autoRefresh:false}, token)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  guid (format='xxxxxxxxxxxx') {
+
+    var d = new Date().getTime();
+
+    return format.replace(
+      /[xy]/g,
+      function (c) {
+        var r = (d + Math.random() * 16) % 16 | 0;
+        d = Math.floor(d / 16);
+        return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16)
+      })
   }
 }
 
-/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
 // Validates bucketKey
 //
-/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
 function validateBucketKey (bucketKey) {
 
   var result = bucketKey.replace(
@@ -268,10 +390,10 @@ function validateBucketKey (bucketKey) {
   return result.toLowerCase()
 }
 
-/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
 // Validates policyKey
 //
-/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
 function validatePolicyKey (policyKey) {
 
   policyKey = policyKey.toLowerCase()
@@ -288,10 +410,10 @@ function validatePolicyKey (policyKey) {
   return policyKey
 }
 
-/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
 // REST request wrapper
 //
-/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
 function requestAsync(params) {
 
   return new Promise( function(resolve, reject) {

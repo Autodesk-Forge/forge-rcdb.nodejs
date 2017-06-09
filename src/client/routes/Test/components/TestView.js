@@ -29,7 +29,6 @@ class TestView extends React.Component {
 
     try {
 
-
       //viewer.start()
 
     } catch(ex) {

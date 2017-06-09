@@ -41,8 +41,6 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
 
     this.worker = new Worker()
 
-    this.visibleFloorIds = []
-
     this.intersectMeshes = []
 
     this.nbMeshesLoaded = 0
@@ -86,7 +84,7 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
 
     }).then (() => {
 
-      this.react.pushRenderExtension(this)
+      //this.react.pushRenderExtension(this)
     })
 
     console.log('Viewing.Extension.WallAnalyzer loaded')
@@ -138,7 +136,9 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
 
     const data = msg.data
 
-    const mesh = this.buildMesh(data)
+    const material = this.levelMaterials[data.level]
+
+    const mesh = this.buildMesh(data, material)
 
     const levelIdx = data.levelCount - data.level - 1
 
@@ -151,6 +151,10 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
           meshes: []
         },
         floor: {
+          meshes: data.floorDbIds.map((dbId) => {
+              return this.buildComponentMesh(
+                dbId, material)
+          }),
           name: `Floor [Level #${data.level+1}]`,
           dbIds: data.floorDbIds,
           active: false,
@@ -372,7 +376,7 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  buildMesh (data) {
+  buildMesh (data, material) {
 
     const geometry = new THREE.Geometry()
 
@@ -403,7 +407,7 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
     matrixWorld.fromArray(data.matrixWorld)
 
     const mesh = new THREE.Mesh(
-      geometry, this.levelMaterials[data.level])
+      geometry, material)
 
     mesh.applyMatrix(matrixWorld)
 
@@ -467,15 +471,12 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
 
       const stride = geometry.vb ? geometry.vbstride : 3
 
-      const offsets = geometry.offsets
-
       matrixWorld = matrixWorld ||
-      renderProxy.matrixWorld.elements
+        renderProxy.matrixWorld.elements
 
       return {
         positions,
         indices,
-        offsets,
         stride
       }
     })
@@ -484,6 +485,96 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
       matrixWorld,
       meshes
     }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  buildComponentMesh (dbId, material) {
+
+    const vertexArray = []
+
+    const fragIds = Toolkit.getLeafFragIds(
+      this.viewer.model, dbId)
+
+    let matrixWorld = null
+
+    fragIds.forEach((fragId) => {
+
+      const renderProxy = this.viewer.impl.getRenderProxy(
+        this.viewer.model,
+        fragId)
+
+      matrixWorld = matrixWorld ||
+        renderProxy.matrixWorld
+
+      const geometry = renderProxy.geometry
+
+      const attributes = geometry.attributes
+
+      const positions = geometry.vb
+        ? geometry.vb
+        : attributes.position.array
+
+      const indices = attributes.index.array || geometry.ib
+
+      const stride = geometry.vb ? geometry.vbstride : 3
+
+      const offsets = [{
+        count: indices.length,
+        index: 0,
+        start: 0
+      }]
+
+      for (var oi = 0, ol = offsets.length; oi < ol; ++oi) {
+
+        var start = offsets[oi].start
+        var count = offsets[oi].count
+        var index = offsets[oi].index
+
+        for (var i = start, il = start + count; i < il; i += 3) {
+
+          const a = index + indices[i]
+          const b = index + indices[i + 1]
+          const c = index + indices[i + 2]
+
+          const vA = new THREE.Vector3()
+          const vB = new THREE.Vector3()
+          const vC = new THREE.Vector3()
+
+          vA.fromArray(positions, a * stride)
+          vB.fromArray(positions, b * stride)
+          vC.fromArray(positions, c * stride)
+
+          vertexArray.push(vA)
+          vertexArray.push(vB)
+          vertexArray.push(vC)
+        }
+      }
+    })
+
+    const geometry = new THREE.Geometry()
+
+    for (var i = 0; i < vertexArray.length; i += 3) {
+
+      geometry.vertices.push(vertexArray[i])
+      geometry.vertices.push(vertexArray[i + 1])
+      geometry.vertices.push(vertexArray[i + 2])
+
+      const face = new THREE.Face3(i, i + 1, i + 2)
+
+      geometry.faces.push(face)
+    }
+
+    geometry.computeFaceNormals()
+
+    const mesh = new THREE.Mesh(
+      geometry, material)
+
+    mesh.applyMatrix(matrixWorld)
+
+    return mesh
   }
 
   /////////////////////////////////////////////////////////
@@ -672,8 +763,6 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
 
       if (level.walls.active) {
 
-        this.viewer.impl.sceneUpdated(true)
-
         this.viewer.impl.scene.add(mesh)
         this.intersectMeshes.push(mesh)
 
@@ -707,7 +796,6 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
     if ((nbActiveWalls.length + nbActiveFloors.length)) {
 
       Toolkit.hide(this.viewer, this.rootId)
-      Toolkit.show(this.viewer, this.visibleFloorIds)
       this.eventTool.activate()
 
     } else {
@@ -731,6 +819,8 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
       levels: state.levels
     })
 
+    const meshes = level.floor.meshes
+
     if (level.floor.active) {
 
       level.floor.paths.forEach((path) => {
@@ -741,8 +831,9 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
         })
       })
 
-      level.floor.dbIds.forEach((dbId) => {
-        this.visibleFloorIds.push(dbId)
+      meshes.forEach((mesh) => {
+        this.viewer.impl.scene.add(mesh)
+        this.intersectMeshes.push(mesh)
       })
 
     } else {
@@ -755,9 +846,14 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
         })
       })
 
-      this.visibleFloorIds =
-        this.visibleFloorIds.filter((dbId) => {
-          return !level.floor.dbIds.includes(dbId)
+      const meshIds = meshes.map((mesh) => {
+        return mesh.id
+      })
+
+      this.intersectMeshes =
+        this.intersectMeshes.filter((mesh) => {
+
+          return !meshIds.includes(mesh.id)
         })
     }
 
@@ -777,7 +873,6 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
     if ((nbActiveWalls.length + nbActiveFloors.length)) {
 
       Toolkit.hide(this.viewer, this.rootId)
-      Toolkit.show(this.viewer, this.visibleFloorIds)
 
     } else {
 
@@ -962,7 +1057,9 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  renderTitle (docked) {
+  renderTitle (titleOpts = {}) {
+
+    const docked = titleOpts.docked
 
     const spanClass = docked
       ? 'fa fa-chain-broken'
@@ -973,12 +1070,15 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
         <label>
           Wall Analyzer
         </label>
-        <div className="wall-analyzer-controls">
-          <button onClick={() => this.setDocking(docked)}
-            title="Toggle docking mode">
-            <span className={spanClass}/>
-          </button>
-        </div>
+        {
+          titleOpts.showDocking &&
+          <div className="wall-analyzer-controls">
+            <button onClick={() => this.setDocking(docked)}
+              title="Toggle docking mode">
+              <span className={spanClass}/>
+            </button>
+          </div>
+        }
       </div>
     )
   }
@@ -987,7 +1087,7 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  render (opts) {
+  render (opts = {}) {
 
     return (
       <WidgetContainer
@@ -1005,3 +1105,5 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
 Autodesk.Viewing.theExtensionManager.registerExtension(
   WallAnalyzerExtension.ExtensionId,
   WallAnalyzerExtension)
+
+
