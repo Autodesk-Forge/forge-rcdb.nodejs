@@ -846,6 +846,10 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
         })
       })
 
+      meshes.forEach((mesh) => {
+        this.viewer.impl.scene.remove(mesh)
+      })
+
       const meshIds = meshes.map((mesh) => {
         return mesh.id
       })
