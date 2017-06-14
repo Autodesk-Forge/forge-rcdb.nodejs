@@ -97,7 +97,10 @@ function buildComponentMesh (data) {
 
   const matrixWorld = new THREE.Matrix4()
 
-  matrixWorld.fromArray(data.matrixWorld)
+  if(data.matrixWorld) {
+
+    matrixWorld.fromArray(data.matrixWorld)
+  }
 
   const mesh = new THREE.Mesh(geometry)
 
@@ -155,23 +158,19 @@ function getMeshGeometry (data, vertexArray) {
 //
 //
 /////////////////////////////////////////////////////////
-function postWallMesh (mesh, stats) {
+function postWallMesh (mesh, opts) {
 
   const geometry = mesh.geometry
 
-  const msg = {
+  const msg = Object.assign({}, {
     matrixWorld: mesh.matrix.elements,
     vertices: geometry.vertices,
     floorDbIds: mesh.floorDbIds,
     pathEdges: mesh.pathEdges,
     msgId: 'MSG_ID_WALL_MESH',
     faces: geometry.faces,
-    dbId: mesh.dbId,
-
-    levelCount: stats.levelCount,
-    wallCount: stats.wallCount,
-    level: stats.level
-  }
+    dbId: mesh.dbId
+  }, opts)
 
   self.postMessage(msg)
 }
@@ -254,7 +253,9 @@ function mergeBoxes (boxes) {
 
     const box = boxes[idx]
 
-    if (box.max.z > height + 0.1) {
+    const diff = box.max.z - height
+
+    if (diff > 0.5) {
 
       height = box.max.z
 
@@ -377,7 +378,8 @@ async function workerMain () {
       postWallMesh (mesh, {
         levelCount: mergedBoxes.length-1,
         wallCount: wallMeshes.length,
-        level: idx
+        level: idx,
+        levelBox
       })
     })
   }

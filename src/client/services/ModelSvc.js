@@ -30,7 +30,7 @@ export default class ModelSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   getModels (dbName) {
 
-    var url = `${this._config.apiUrl}/${dbName}`
+    const url = `${this._config.apiUrl}/${dbName}`
 
     return this._api.ajax(url)
   }
@@ -41,7 +41,7 @@ export default class ModelSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   getModel (dbName, modelId) {
 
-    var url = `${this._config.apiUrl}/${dbName}/${modelId}`
+    const url = `${this._config.apiUrl}/${dbName}/${modelId}`
 
     return this._api.ajax(url)
   }
@@ -52,7 +52,7 @@ export default class ModelSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   getThumbnails (dbName, modelIds) {
 
-    var url = `${this._config.apiUrl}/${dbName}/thumbnails`
+    const url = `${this._config.apiUrl}/${dbName}/thumbnails`
 
     return this._api.ajax({
       url: url,

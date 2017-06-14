@@ -8,7 +8,7 @@ export default class Leader {
   /////////////////////////////////////////////////////////////////
   constructor(container, startPoint) {
 
-    var snap = Snap(container)
+    var snap = Snap (container)
 
     this.line = snap.paper.line(
       startPoint.x, startPoint.y,

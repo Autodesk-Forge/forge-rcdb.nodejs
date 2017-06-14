@@ -53,9 +53,9 @@ const config = {
       //style:    'https://developer.api.autodesk.com/viewingservice/v1/viewers/style.css?v=2.14'
 
       // requires local copy of viewer lib - not provided in this sample
-      viewer3D: '/resources/libs/viewer-2.14/viewer3D.js',
-      threeJS:  '/resources/libs/viewer-2.14/three.js',
-      style:    '/resources/libs/viewer-2.14/style.css'
+      viewer3D: '/resources/libs/viewer-2.15/viewer3D.js',
+      threeJS:  '/resources/libs/viewer-2.15/three.js',
+      style:    '/resources/libs/viewer-2.15/style.css'
     }
   },
   databases: [

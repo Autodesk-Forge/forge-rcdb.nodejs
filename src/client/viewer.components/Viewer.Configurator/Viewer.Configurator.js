@@ -231,19 +231,19 @@ class ViewerConfigurator extends React.Component {
 
         this.setReactState(extState).then(() => {
 
-          if (viewer.loadExtension (extension.id, options)) {
-
-            const extInstance = viewer.getExtension (
-              extension.id)
+          viewer.loadExtension (
+            extension.id, options).then((extInstance) => {
 
             this.eventSvc.emit('extension.loaded', {
               extension: extInstance
             })
 
             return resolve (extInstance)
-          }
 
-          reject ('Failed to load extension: ' + extension.id)
+          }, (err) => {
+
+            reject ('Failed to load extension: ' + extension.id)
+          })
         })
 
       }, (error) => {

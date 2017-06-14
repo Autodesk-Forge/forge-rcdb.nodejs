@@ -43,10 +43,7 @@ class FaderExtension extends ExtensionBase
         this.options.loader.hide()
       })
 
-    if (!this.viewer.loadExtension(FaderCoreExtension)) {
-
-      return false
-    }
+    this.viewer.loadExtension(FaderCoreExtension)
 
     this.hotSpotCommand = new HotSpotCommand (
       this.viewer)

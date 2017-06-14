@@ -320,7 +320,6 @@ export default class ModelSvc extends BaseSvc {
 
             if (err) {
 
-              console.log(err)
               return reject(err)
             }
 

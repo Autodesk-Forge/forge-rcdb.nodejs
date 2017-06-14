@@ -35,8 +35,8 @@ export default class Markup3D extends EventsEmitter {
     this.initialMeshPos = this.meshPosition(
       this.fragId)
 
-    this.initialWorldPoint = worldPoint || this.screenToWorld(
-      screenPoint)
+    this.initialWorldPoint = worldPoint ||
+      this.screenToWorld(screenPoint)
 
     this.pinMarker = new PinMarker(
       viewer,

@@ -152,8 +152,8 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
         },
         floor: {
           meshes: data.floorDbIds.map((dbId) => {
-            return this.buildComponentMesh(
-              dbId, material)
+              return this.buildComponentMesh(
+                dbId, material)
           }),
           name: `Floor [Level #${data.level+1}]`,
           dbIds: data.floorDbIds,
@@ -162,9 +162,10 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
         },
         report: {
           level: `Level ${data.level+1}`,
+          boundingBox: msg.levelBox,
           walls: []
         }
-      }
+    }
 
     state.levels[levelIdx] = level
 
@@ -289,35 +290,35 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
 
     this.getComponentsByParentName(
       'Floors', model).then((floorsIds) => {
-        
+
         const nbFloors = floorsIds.length
 
         const colors = d3.scale.linear()
           .domain([0, nbFloors * .33, nbFloors * .66, nbFloors])
           .range(['#FCB843', '#C2149F', '#0CC4BD', '#0270E9'])
 
-        this.levelMaterials = []
-        this.levelColors = []
+          this.levelMaterials = []
+          this.levelColors = []
 
-        floorsIds.forEach((dbId, idx) => {
+          floorsIds.forEach((dbId, idx) => {
 
-          const levelMaterial = new THREE.MeshPhongMaterial({
-            side: THREE.DoubleSide,
-            color: colors(idx)
+            const levelMaterial = new THREE.MeshPhongMaterial({
+              side: THREE.DoubleSide,
+              color: colors(idx)
+            })
+
+            this.viewer.impl.matman().addMaterial(
+              this.guid(),
+              levelMaterial,
+              true)
+
+            this.levelMaterials.push(levelMaterial)
+
+            this.levelColors.push(colors(idx))
+
+            this.postComponent (
+              dbId, 'Floors', floorsIds.length)
           })
-
-          this.viewer.impl.matman().addMaterial(
-            this.guid(),
-            levelMaterial,
-            true)
-
-          this.levelMaterials.push(levelMaterial)
-
-          this.levelColors.push(colors(idx))
-
-          this.postComponent (
-            dbId, 'Floors', floorsIds.length)
-        })
       })
 
     this.getComponentsByParentName(
@@ -328,7 +329,7 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
           return this.postComponent (
             dbId, 'Walls', wallIds.length)
         })
-      })
+    })
 
     this.react.setState({
       loader: false
@@ -341,28 +342,28 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   async postModelInfo () {
 
-  const model = this.viewer.model
+    const model = this.viewer.model
 
-  const instanceTree = model.getData().instanceTree
+    const instanceTree = model.getData().instanceTree
 
-  this.rootId = instanceTree.getRootId()
+    this.rootId = instanceTree.getRootId()
 
-  const fragIds = await Toolkit.getFragIds(
-    model, this.rootId)
+    const fragIds = await Toolkit.getFragIds(
+      model, this.rootId)
 
-  const fragList = model.getFragmentList()
+    const fragList = model.getFragmentList()
 
-  const boundingBox =
-    this.getModifiedWorldBoundingBox(
-      fragIds, fragList)
+    const boundingBox =
+      this.getModifiedWorldBoundingBox(
+        fragIds, fragList)
 
-  const msg = {
-    msgId: 'MSG_ID_MODEL_INFO',
-    boundingBox
+    const msg = {
+      msgId: 'MSG_ID_MODEL_INFO',
+      boundingBox
+    }
+
+    this.worker.postMessage(msg)
   }
-
-  this.worker.postMessage(msg)
-}
 
   /////////////////////////////////////////////////////////
   //
@@ -494,7 +495,7 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
       const stride = geometry.vb ? geometry.vbstride : 3
 
       matrixWorld = matrixWorld ||
-      renderProxy.matrixWorld.elements
+        renderProxy.matrixWorld.elements
 
       return {
         positions,
@@ -510,13 +511,18 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Creates a standard THREE.Mesh out of a Viewer
+  // component
   //
   /////////////////////////////////////////////////////////
   buildComponentMesh (dbId, material) {
 
     const vertexArray = []
 
+    // first we assume the component dbId is a leaf
+    // component: ie has no child so contains
+    // geometry. This util method will return all fragIds
+    // associated with that specific dbId
     const fragIds = Toolkit.getLeafFragIds(
       this.viewer.model, dbId)
 
@@ -524,12 +530,14 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
 
     fragIds.forEach((fragId) => {
 
+      // for each fragId, get the proxy in order to access
+      // THREE geometry
       const renderProxy = this.viewer.impl.getRenderProxy(
         this.viewer.model,
         fragId)
 
       matrixWorld = matrixWorld ||
-      renderProxy.matrixWorld
+        renderProxy.matrixWorld
 
       const geometry = renderProxy.geometry
 
@@ -576,6 +584,7 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
       }
     })
 
+    // builds a standard THREE.Geometry
     const geometry = new THREE.Geometry()
 
     for (var i = 0; i < vertexArray.length; i += 3) {
@@ -589,13 +598,19 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
       geometry.faces.push(face)
     }
 
+    // auto compute normals
     geometry.computeFaceNormals()
 
+    // creates THREE.Mesh
     const mesh = new THREE.Mesh(
       geometry, material)
 
+    // transform
     mesh.applyMatrix(matrixWorld)
 
+    // store associated dbId in case we want to invoke
+    // viewer.model.getProperties (dbId, ...) on that
+    // mesh
     mesh.dbId = dbId
 
     return mesh
@@ -731,11 +746,11 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   async onSelection (event) {
 
-  if (event.selections.length) {
+    if (event.selections.length) {
 
-    const dbId = event.selections[0].dbIdArray[0]
+      const dbId = event.selections[0].dbIdArray[0]
+    }
   }
-}
 
   /////////////////////////////////////////////////////////
   //
@@ -932,24 +947,24 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   async setDocking (docked) {
 
-  const id = WallAnalyzerExtension.ExtensionId
+    const id = WallAnalyzerExtension.ExtensionId
 
-  if (docked) {
+    if (docked) {
 
-  await this.react.popRenderExtension(id)
+      await this.react.popRenderExtension(id)
 
-    this.react.pushViewerPanel(this, {
-      height: 250,
-      width: 350
-    })
+      this.react.pushViewerPanel(this, {
+        height: 250,
+        width: 350
+      })
 
-  } else {
+    } else {
 
-  await this.react.popViewerPanel(id)
+      await this.react.popViewerPanel(id)
 
-    this.react.pushRenderExtension(this)
+      this.react.pushRenderExtension(this)
+    }
   }
-}
 
   /////////////////////////////////////////////////////////
   //
@@ -983,45 +998,16 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
 
     const levels = state.levels
 
-    const wallItems = levels.map((level) => {
+    const items = levels.map((level) => {
 
-      hasActiveItem = hasActiveItem || level.walls.active
+      hasActiveItem =
+        hasActiveItem ||
+        level.walls.active ||
+        level.floor.active
 
-      const active = level.walls.active ? ' active' : ''
+      const wallsActive = level.walls.active ? ' active' : ''
 
-      const style = {
-        backgroundColor: this.hexToRgbA(level.fillColor, 0.3),
-        border: `2px solid ${level.strokeColor}`
-      }
-
-      return (
-        <div key={level.walls.name}
-          className={'list-item ' + active}
-          onClick={() => this.onLevelWallsClicked(level)}>
-          <div className="item-color" style={style}>
-          </div>
-          <label>
-            {level.walls.name}
-          </label>
-          {
-            false &&
-            <div onClick={(e) => {
-              this.onLevelReportClicked(e, level.report)
-            }}
-              className="level-report">
-              <span className="fa fa-cloud-download"/>
-                {level.name}.json
-            </div>
-          }
-        </div>
-      )
-    })
-
-    const floorItems = levels.map((level) => {
-
-      hasActiveItem = hasActiveItem || level.floor.active
-
-      const active = level.floor.active ? ' active' : ''
+      const floorActive = level.floor.active ? ' active' : ''
 
       const style = {
         backgroundColor: this.hexToRgbA(level.fillColor, 0.3),
@@ -1029,14 +1015,33 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
       }
 
       return (
-        <div key={level.floor.name}
-          className={'list-item ' + active}
-          onClick={() => this.onLevelFloorClicked(level)}>
+        <div key={level.walls.name} className='list-item'>
+
           <div className="item-color" style={style}>
           </div>
+
           <label>
-            {level.floor.name}
+            {level.name}
           </label>
+
+          <div onClick={(e) => {
+            this.onLevelReportClicked(e, level.report)
+          }}
+            className="level-report">
+            <span className="fa fa-cloud-download"/>
+              report.json
+          </div>
+
+          <div onClick={() => this.onLevelFloorClicked(level)}
+              className={"level-floor" + floorActive}>
+            Floor
+          </div>
+
+          <div onClick={() => this.onLevelWallsClicked(level)}
+            className={"level-walls" + wallsActive}>
+            Walls
+          </div>
+
         </div>
       )
     })
@@ -1047,36 +1052,28 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
         <ReactLoader show={state.loader}/>
 
         <div className="row">
-          Select an item to isolate walls on this level:
+          Select an item to isolate walls or floor on this level:
         </div>
 
         <div className="item-list-container">
-            {wallItems}
-        </div>
-
-        <div className="row">
-          Select an item to isolate floor on this level:
-        </div>
-
-        <div className="item-list-container">
-            {floorItems}
+            {items}
         </div>
 
         {
-        hasActiveItem &&
-        <div className="row">
-          Enable wireframe:
-        </div>
-          }
+          hasActiveItem &&
+          <div className="row">
+            Enable wireframe:
+          </div>
+        }
 
         {
-        hasActiveItem &&
-        <div className="row">
-          <Switch className="control-element"
-            onChange={this.onEnableWireFrame}
-            checked={this.wireframe}/>
-        </div>
-          }
+          hasActiveItem &&
+          <div className="row">
+            <Switch className="control-element"
+              onChange={this.onEnableWireFrame}
+              checked={this.wireframe}/>
+          </div>
+        }
       </div>
     )
   }
@@ -1099,14 +1096,14 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
           Wall Analyzer
         </label>
         {
-        titleOpts.showDocking &&
-        <div className="wall-analyzer-controls">
-          <button onClick={() => this.setDocking(docked)}
-            title="Toggle docking mode">
-            <span className={spanClass}/>
-          </button>
-        </div>
-          }
+          titleOpts.showDocking &&
+          <div className="wall-analyzer-controls">
+            <button onClick={() => this.setDocking(docked)}
+              title="Toggle docking mode">
+              <span className={spanClass}/>
+            </button>
+          </div>
+        }
       </div>
     )
   }

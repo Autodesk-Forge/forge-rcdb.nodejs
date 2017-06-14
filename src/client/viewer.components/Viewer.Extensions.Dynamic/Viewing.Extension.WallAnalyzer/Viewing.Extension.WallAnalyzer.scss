@@ -51,13 +51,7 @@
   border-radius: 4px;
   margin-bottom: 4px;
   overflow: hidden;
-  cursor: pointer;
   height: 38px;
-}
-
-.wall-analyzer .list-item:hover {
-  background-color: #ecf2ff;
-  border: 2px solid rgba(37, 58, 221, 0.51);
 }
 
 .wall-analyzer .list-item.active {
@@ -68,8 +62,8 @@
 .wall-analyzer .list-item label {
   white-space: nowrap;
   position: relative;
+  margin-left: 6px;
   float: left;
-  left: 44px;
   top: 8px;
 }
 
@@ -80,34 +74,81 @@
    margin: 4px;
    width: 28px;
    float: left;
- }
+}
 
-.wall-analyzer .report {
-  transition-property: background-color;
+.wall-analyzer .level-walls {
   transition-timing-function: ease;
+  transition-property: background;
   transition-duration: 1.0s;
   transition-delay: 0.0s;
 
-  border: 1px solid #5f5f5f;
-  background: #f8f8f8;
+  border: 1px solid #c6c6c6;
+  height: calc(100% - 7px);
   border-radius: 4px;
-  margin-top: 10px;
-  cursor: pointer;
-  height: 38px;
-  padding: 4px;
-}
-
-.wall-analyzer .report:hover {
-  border: 2px solid rgba(37, 58, 221, 0.51);
-  background-color: #ecf2ff;
-}
-
-.wall-analyzer .report span {
   position: relative;
+  margin-right: 6px;
+  cursor: pointer;
+  float: right;
+  padding: 3px;
+  width: 50px;
+  top: 4px;
+}
+
+.wall-analyzer .level-walls.active,
+.wall-analyzer .level-walls:hover {
+  background: #ecf2ff;
+  border: 2px solid rgba(37, 58, 221, 0.51);
+}
+
+.wall-analyzer .level-floor {
+  transition-timing-function: ease;
+  transition-property: background;
+  transition-duration: 1.0s;
+  transition-delay: 0.0s;
+
+  border: 1px solid #c6c6c6;
+  height: calc(100% - 7px);
+  border-radius: 4px;
+  position: relative;
+  margin-right: 6px;
+  cursor: pointer;
+  float: right;
+  padding: 3px;
+  width: 50px;
+  top: 4px;
+}
+
+.wall-analyzer .level-floor.active,
+.wall-analyzer .level-floor:hover {
+  background: #ecf2ff;
+  border: 2px solid rgba(37, 58, 221, 0.51);
+}
+
+.wall-analyzer .level-report {
+  transition-timing-function: ease;
+  transition-property: background;
+  transition-duration: 1.0s;
+  transition-delay: 0.0s;
+
+  border: 1px solid #c6c6c6;
+  height: calc(100% - 7px);
+  border-radius: 4px;
+  position: relative;
+  margin-right: 6px;
+  cursor: pointer;
+  float: right;
+  padding: 3px;
+  top: 4px;
+}
+
+.wall-analyzer .level-report:hover {
+  background: #ecf2ff;
+  border: 1px solid rgba(37, 58, 221, 0.51);
+}
+
+.wall-analyzer .level-report span {
   margin-right: 4px;
-  font-size: 22px;
   color: #498a42;
-  top: 3px;
 }
 
 /////////////////////////////////////////////////////////

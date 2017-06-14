@@ -7,13 +7,13 @@ import EventsEmitter from 'EventsEmitter'
 
 export default class PointTracker extends EventsEmitter {
 
-  constructor(viewer) {
+  constructor (viewer) {
 
-    super();
+    super ()
 
-    this._viewer = viewer;
+    this.worldPoint = new THREE.Vector3()
 
-    this.worldPoint = new THREE.Vector3();
+    this.viewer = viewer
 
     //used to bind 'this' inside event hander
     this.cameraChangedHandler = (event)=>
@@ -26,10 +26,10 @@ export default class PointTracker extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   setScreenPoint (screenPoint) {
 
-    var n = this.normalize(screenPoint);
+    var n = this.normalize(screenPoint)
 
-    this.worldPoint = this._viewer.utilities.getHitPoint(
-      n.x, n.y);
+    this.worldPoint =
+      this.viewer.utilities.getHitPoint(n.x, n.y);
   }
 
   /////////////////////////////////////////////////////////////////
@@ -38,9 +38,8 @@ export default class PointTracker extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   getScreenPoint() {
 
-    var screenPoint = this.worldToScreen(
-      this.worldPoint,
-      this._viewer.navigation.getCamera());
+    var screenPoint = this.viewer.worldToClient(
+      this.worldPoint)
 
     return screenPoint;
   }
@@ -51,11 +50,10 @@ export default class PointTracker extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   setWorldPoint(worldPoint) {
 
-    this.worldPoint = worldPoint;
+    this.worldPoint = worldPoint
 
-    var screenPoint = this.worldToScreen(
-      this.worldPoint,
-      this._viewer.navigation.getCamera());
+    var screenPoint = this.viewer.worldToClient(
+      this.worldPoint)
 
     this.emit('modified', screenPoint);
   }
@@ -75,7 +73,7 @@ export default class PointTracker extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   activate() {
 
-    this._viewer.addEventListener(
+    this.viewer.addEventListener(
       Autodesk.Viewing.CAMERA_CHANGE_EVENT,
       this.cameraChangedHandler);
   }
@@ -86,7 +84,7 @@ export default class PointTracker extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   deactivate() {
 
-    this._viewer.removeEventListener(
+    this.viewer.removeEventListener(
       Autodesk.Viewing.CAMERA_CHANGE_EVENT,
       this.cameraChangedHandler);
   }
@@ -97,9 +95,12 @@ export default class PointTracker extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   onCameraChanged(event) {
 
-    var screenPoint = this.worldToScreen(
-      this.worldPoint,
-      this._viewer.navigation.getCamera());
+    //var screenPoint = this.worldToScreen(
+    //  this.worldPoint,
+    //  this.viewer.navigation.getCamera());
+
+    var screenPoint = this.viewer.worldToClient(
+      this.worldPoint)
 
     this.emit('modified', screenPoint);
   }
@@ -110,49 +111,12 @@ export default class PointTracker extends EventsEmitter {
   ///////////////////////////////////////////////////////////////////////////
   normalize (screenPoint) {
 
-    var viewport = this._viewer.navigation.getScreenViewport()
+    var viewport = this.viewer.navigation.getScreenViewport()
 
     return {
 
       x: (screenPoint.x - viewport.left) / viewport.width,
       y: (screenPoint.y - viewport.top) / viewport.height
     }
-  }
-
-  ///////////////////////////////////////////////////////////////////////////
-  // world -> screen coords conversion
-  //
-  ///////////////////////////////////////////////////////////////////////////
-  worldToScreen (worldPoint, camera) {
-
-    var p = new THREE.Vector4()
-
-    p.x = worldPoint.x
-    p.y = worldPoint.y
-    p.z = worldPoint.z
-    p.w = 1
-
-    p.applyMatrix4(camera.matrixWorldInverse)
-    p.applyMatrix4(camera.projectionMatrix)
-
-    // Don't want to mirror values with negative z (behind camera)
-    // if camera is inside the bounding box,
-    // better to throw markers to the screen sides.
-    if (p.w > 0) {
-
-      p.x /= p.w;
-      p.y /= p.w;
-      p.z /= p.w;
-    }
-
-    // This one is multiplying by width/2 and height/2,
-    // and offsetting by canvas location
-    var point = this._viewer.impl.viewportToClient(p.x, p.y);
-
-    // snap to the center of the pixel
-    point.x = Math.floor(point.x) + 0.5;
-    point.y = Math.floor(point.y) + 0.5;
-
-    return point;
   }
 }

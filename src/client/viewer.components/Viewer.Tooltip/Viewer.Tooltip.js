@@ -268,43 +268,6 @@ export default class ViewerTooltip extends EventsEmitter {
     return this.viewer.utilities.getHitPoint(n.x, n.y)
   }
 
-  ///////////////////////////////////////////////////////////////////////////
-  // world -> screen coords conversion
-  //
-  ///////////////////////////////////////////////////////////////////////////
-  worldToScreen (worldPoint, camera) {
-
-    var p = new THREE.Vector4()
-
-    p.x = worldPoint.x
-    p.y = worldPoint.y
-    p.z = worldPoint.z
-    p.w = 1
-
-    p.applyMatrix4(camera.matrixWorldInverse)
-    p.applyMatrix4(camera.projectionMatrix)
-
-    // Don't want to mirror values with negative z (behind camera)
-    // if camera is inside the bounding box,
-    // better to throw markers to the screen sides.
-    if (p.w > 0) {
-
-      p.x /= p.w
-      p.y /= p.w
-      p.z /= p.w
-    }
-
-    // This one is multiplying by width/2 and height/2,
-    // and offsetting by canvas location
-    var point = this._viewer.impl.viewportToClient(p.x, p.y)
-
-    // snap to the center of the pixel
-    point.x = Math.floor(point.x) + 0.5
-    point.y = Math.floor(point.y) + 0.5
-
-    return point
-  }
-
   /////////////////////////////////////////////////////////////////
   //
   //
