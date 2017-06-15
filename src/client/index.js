@@ -14,7 +14,7 @@ import DialogSvc from 'DialogSvc'
 import SocketSvc from 'SocketSvc'
 import ModelSvc from 'ModelSvc'
 import EventSvc from 'EventSvc'
-import UserSvc from 'UserSvc'
+import ForgeSvc from 'ForgeSvc'
 
 // ========================================================
 // Services Initialization
@@ -46,7 +46,7 @@ const dialogSvc = new DialogSvc()
 
 const eventSvc = new EventSvc()
 
-const userSvc = new UserSvc({
+const forgeSvc = new ForgeSvc({
   apiUrl: '/api/forge'
 })
 
@@ -59,7 +59,7 @@ ServiceManager.registerService(socketSvc)
 ServiceManager.registerService(dialogSvc)
 ServiceManager.registerService(modelSvc)
 ServiceManager.registerService(eventSvc)
-ServiceManager.registerService(userSvc)
+ServiceManager.registerService(forgeSvc)
 
 // ========================================================
 // Store Instantiation

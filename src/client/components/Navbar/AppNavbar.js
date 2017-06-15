@@ -37,8 +37,8 @@ export default class AppNavbar extends React.Component {
       menuIcons:    false
     }
 
-    this.userSvc = ServiceManager.getService(
-      'UserSvc')
+    this.forgeSvc = ServiceManager.getService(
+      'ForgeSvc')
   }
 
   /////////////////////////////////////////////////////////
@@ -97,11 +97,11 @@ export default class AppNavbar extends React.Component {
 
       this.props.setUser(null)
 
-      this.userSvc.logout()
+      this.forgeSvc.logout()
 
     } else {
 
-      this.userSvc.login()
+      this.forgeSvc.login()
     }
   }
 

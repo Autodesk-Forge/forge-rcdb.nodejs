@@ -68,6 +68,29 @@ module.exports = function() {
   })
 
   /////////////////////////////////////////////////////////
+  // GET /clientId
+  // Get Forge app clientId
+  //
+  /////////////////////////////////////////////////////////
+  router.get('/clientId', async (req, res) => {
+
+    try {
+
+      const forgeSvc = ServiceManager.getService(
+        'ForgeSvc')
+
+      res.json({
+        clientId: forgeSvc.clientId
+      })
+
+    } catch (ex) {
+
+      res.status(ex.status || 500)
+      res.json(ex)
+    }
+  })
+
+  /////////////////////////////////////////////////////////
   // GET /user
   // Get current user
   //
@@ -157,35 +180,34 @@ module.exports = function() {
 
   /////////////////////////////////////////////////////////
   // reduced scope token
+  // Not needed here because of proxy use
   //
   /////////////////////////////////////////////////////////
-  router.get('/token/3legged', async (req, res) => {
-
-    const forgeSvc = ServiceManager.getService(
-      'ForgeSvc')
-
-    try {
-
-      const token = await forgeSvc.get3LeggedTokenClient(
-        req.session,
-        'data:write')
-
-      res.json({
-        expires_in: forgeSvc.getExpiry(token),
-        access_token: token.access_token,
-        scope: token.scope
-      })
-
-    } catch (error) {
-
-      console.log(error)
-
-      forgeSvc.delete3LeggedToken(req.session)
-
-      res.status(error.statusCode || 404)
-      res.json(error)
-    }
-  })
+  //router.get('/token/3legged', async (req, res) => {
+  //
+  //  const forgeSvc = ServiceManager.getService(
+  //    'ForgeSvc')
+  //
+  //  try {
+  //
+  //    const token = await forgeSvc.get3LeggedTokenClient(
+  //      req.session,
+  //      'viewable:read')
+  //
+  //    res.json({
+  //      expires_in: forgeSvc.getExpiry(token),
+  //      access_token: token.access_token,
+  //      scope: token.scope
+  //    })
+  //
+  //  } catch (error) {
+  //
+  //    forgeSvc.delete3LeggedToken(req.session)
+  //
+  //    res.status(error.statusCode || 404)
+  //    res.json(error)
+  //  }
+  //})
 
   return router
 }

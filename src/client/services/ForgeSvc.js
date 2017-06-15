@@ -2,7 +2,7 @@
 import ClientAPI from 'ClientAPI'
 import BaseSvc from './BaseSvc'
 
-export default class MaterialSvc extends BaseSvc {
+export default class ForgeSvc extends BaseSvc {
 
   /////////////////////////////////////////////////////////////////
   //
@@ -13,6 +13,12 @@ export default class MaterialSvc extends BaseSvc {
     super (config)
 
     this.api = new ClientAPI(config.apiUrl)
+
+    this.api.ajax(`${this._config.apiUrl}/clientId`).then(
+      (res) => {
+
+        this._clientId = res.clientId
+      })
   }
 
   /////////////////////////////////////////////////////////////////
@@ -21,7 +27,16 @@ export default class MaterialSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   name() {
 
-    return 'UserSvc'
+    return 'ForgeSvc'
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  get clientId() {
+
+    return this._clientId
   }
 
   /////////////////////////////////////////////////////////////////
@@ -41,6 +56,8 @@ export default class MaterialSvc extends BaseSvc {
       const url = await this.getLoginURL()
 
       window.location.assign(url)
+
+      return null
     }
   }
 

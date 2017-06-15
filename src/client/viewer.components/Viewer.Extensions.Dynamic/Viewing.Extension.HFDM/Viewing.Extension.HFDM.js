@@ -38,9 +38,9 @@ class HFDMExtension extends MultiModelExtensionBase {
       ServiceManager.getService(
         'DialogSvc')
 
-    this.userSvc =
+    this.forgeSvc =
       ServiceManager.getService(
-        'UserSvc')
+        'ForgeSvc')
 
     this.react = options.react
   }
@@ -167,7 +167,7 @@ class HFDMExtension extends MultiModelExtensionBase {
 
       if (result === 'OK') {
 
-        this.userSvc.login()
+        this.forgeSvc.login()
         return
       }
 
