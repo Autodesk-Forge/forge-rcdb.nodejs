@@ -209,12 +209,10 @@ export default class Markup3DTool extends EventsEmitter {
 
       const selection = event.selections[0]
 
-      const hitTest = this.viewer.clientToWorld(
-        this.screenPoint.x,
-        this.screenPoint.Y,
-        true)
+      const worldPoint = this.screenToWorld(
+        this.screenPoint)
 
-      if (hitTest) {
+      if (worldPoint) {
 
         var markup = new Markup3D(
           this.viewer,
@@ -345,5 +343,21 @@ export default class Markup3DTool extends EventsEmitter {
         this.markupCollection[markup.id] = markup
       })
     }
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  screenToWorld (screenPoint) {
+
+    var viewport = this.viewer.navigation.getScreenViewport()
+
+    var n = {
+      x: (screenPoint.x - viewport.left) / viewport.width,
+      y: (screenPoint.y - viewport.top ) / viewport.height
+    }
+
+    return this.viewer.utilities.getHitPoint(n.x, n.y)
   }
 }

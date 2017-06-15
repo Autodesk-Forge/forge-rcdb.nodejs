@@ -144,11 +144,29 @@ export default class AppNavbar extends React.Component {
                 <NavItem eventKey={1}>
                   <span className={"forge-rcdb-span " + (this.state.menuIcons ? "fa fa-home":"")}>
                   </span>
-                  &nbsp; Home
+                  <label className="nav-label">
+                    &nbsp; Home
+                  </label>
                 </NavItem>
               </LinkContainer>
             </Nav>
           }
+
+           {
+             appState.navbar.links.gallery &&
+
+             <Nav>
+               <LinkContainer to={{ pathname: '/gallery', query: { } }}>
+                 <NavItem eventKey={2}>
+                   <span className={"forge-rcdb-span " + (this.state.menuIcons ? "fa fa-home":"")}>
+                   </span>
+                   <label className="nav-label">
+                   &nbsp; Gallery
+                   </label>
+                 </NavItem>
+               </LinkContainer>
+             </Nav>
+           }
 
           <Nav pullRight>
 
@@ -156,9 +174,12 @@ export default class AppNavbar extends React.Component {
 
               appState.navbar.links.login &&
 
-              <NavItem eventKey={2} onClick={() => {this.login()}}>
-                <span className="forge-rcdb-span fa fa-user"></span>
+              <NavItem eventKey={3} onClick={() => {this.login()}}>
+                <span className="forge-rcdb-span fa fa-user">
+                </span>
+                <label className="nav-label">
                 &nbsp; { appState.user ? username : "Login"}
+                </label>
               </NavItem>
             }
 
@@ -169,7 +190,9 @@ export default class AppNavbar extends React.Component {
                 title={
                   <div className="dropdown-div">
                     <span className={"forge-rcdb-span " + (this.state.menuIcons ? "fa fa-gear" : "")}></span>
-                  &nbsp; Settings &nbsp;
+                    <label className="nav-label">
+                    &nbsp; Settings &nbsp;
+                    </label>
                   </div>
                   }>
                 <MenuItem eventKey={3.1} onClick={() => {
@@ -203,7 +226,9 @@ export default class AppNavbar extends React.Component {
 
               <NavItem eventKey={4} onClick={() => {this.openAboutDlg()}}>
                 <span className={"forge-rcdb-span " + (this.state.menuIcons ? "fa fa-question-circle":"")}></span>
-              &nbsp; About ...
+                <label className="nav-label">
+                &nbsp; About ...
+                </label>
               </NavItem>
             }
           </Nav>

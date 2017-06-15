@@ -14,6 +14,11 @@
   height: 65px;
 }
 
+.navbar-nav .nav-label {
+  position: relative;
+  top: -2px;
+}
+
 .navbar-brand>img {
   display: block;
   margin: 5px;
@@ -36,8 +41,8 @@
 
 .forge-rcdb-navbar .dropdown .caret {
   position: relative;
-  top: -60px;
-  left: 35px;
+  top: -66px;
+  left: 36px;
 }
 
 .forge-rcdb-navbar .app-logo {

@@ -1,8 +1,8 @@
 // We only need to import the modules necessary for initial render
 import CoreLayout from '../layouts/CoreLayout'
 import ConfiguratorRoute from './Configurator'
+import GalleryRoute from './Gallery'
 import ViewerRoute from './Viewer'
-import UploadRoute from './Upload'
 import HomeRoute from './Home'
 import TestRoute from './Test'
 
@@ -15,8 +15,8 @@ export const createRoutes = (store) => ({
   indexRoute  : HomeRoute(store),
   childRoutes : [
     ConfiguratorRoute(store),
+    GalleryRoute(store),
     ViewerRoute(store),
-    UploadRoute(store),
     TestRoute(store)
   ]
 })

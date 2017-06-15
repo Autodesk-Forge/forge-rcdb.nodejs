@@ -73,7 +73,8 @@ class BarChartExtension extends MultiModelExtensionBase {
 
       this.react.pushRenderExtension(this)
 
-      const model = this.viewer.activeModel
+      const model = this.viewer.activeModel ||
+        this.viewer.model
 
       if (model) {
 
@@ -212,8 +213,11 @@ class BarChartExtension extends MultiModelExtensionBase {
 
         group.dbIds.forEach((dbId) => {
 
+          const model = this.viewer.activeModel ||
+            this.viewer.model
+
           Toolkit.setMaterial(
-            this.viewer.activeModel, dbId,
+            model, dbId,
             group.material)
         })
       })
@@ -224,8 +228,11 @@ class BarChartExtension extends MultiModelExtensionBase {
 
         const material = this.fragIdToMaterial[fragId]
 
+        const model = this.viewer.activeModel ||
+          this.viewer.model
+
         const fragList =
-          this.viewer.activeModel.getFragmentList()
+          model.getFragmentList()
 
         fragList.setMaterial(fragId, material)
       }
@@ -265,8 +272,11 @@ class BarChartExtension extends MultiModelExtensionBase {
 
         group.dbIds.forEach((dbId) => {
 
+          const model = this.viewer.activeModel ||
+            this.viewer.model
+
           Toolkit.setMaterial(
-            this.viewer.activeModel, dbId,
+            model, dbId,
             group.material)
         })
       })
@@ -329,8 +339,11 @@ class BarChartExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   async buildPropertyData (propName) {
 
+    const model = this.viewer.activeModel ||
+      this.viewer.model
+
     const componentsMap = await Toolkit.mapComponentsByProp(
-      this.viewer.activeModel, propName,
+      model, propName,
       this.componentIds)
 
     for (const key in componentsMap) {
@@ -459,9 +472,12 @@ class BarChartExtension extends MultiModelExtensionBase {
 
             const dbIds = e.dbIds
 
+            const model = this.viewer.activeModel ||
+              this.viewer.model
+
             Toolkit.isolateFull(
               this.viewer, dbIds,
-              this.viewer.activeModel)
+              model)
 
             this.viewer.fitToView()
           }}

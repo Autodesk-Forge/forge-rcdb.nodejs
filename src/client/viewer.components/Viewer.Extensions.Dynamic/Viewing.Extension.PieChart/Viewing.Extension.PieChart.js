@@ -72,7 +72,8 @@ class PieChartExtension extends MultiModelExtensionBase {
 
       this.react.pushRenderExtension(this)
 
-      const model = this.viewer.activeModel
+      const model = this.viewer.activeModel ||
+        this.viewer.model
 
       if (model) {
 
@@ -215,8 +216,11 @@ class PieChartExtension extends MultiModelExtensionBase {
 
         group.dbIds.forEach((dbId) => {
 
+          const model = this.viewer.activeModel ||
+            this.viewer.model
+
           Toolkit.setMaterial(
-            this.viewer.activeModel, dbId,
+            model, dbId,
             group.material)
         })
       })
@@ -227,8 +231,10 @@ class PieChartExtension extends MultiModelExtensionBase {
 
         const material = this.fragIdToMaterial[fragId]
 
-        const fragList =
-          this.viewer.activeModel.getFragmentList()
+        const model = this.viewer.activeModel ||
+          this.viewer.model
+
+        const fragList = model.getFragmentList()
 
         fragList.setMaterial(fragId, material)
       }
@@ -268,8 +274,11 @@ class PieChartExtension extends MultiModelExtensionBase {
 
         group.dbIds.forEach((dbId) => {
 
+          const model = this.viewer.activeModel ||
+            this.viewer.model
+
           Toolkit.setMaterial(
-            this.viewer.activeModel, dbId,
+            model, dbId,
             group.material)
         })
       })
@@ -332,8 +341,11 @@ class PieChartExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   async buildPropertyData (propName) {
 
+    const model = this.viewer.activeModel ||
+      this.viewer.model
+
     const componentsMap = await Toolkit.mapComponentsByProp(
-      this.viewer.activeModel, propName,
+      model, propName,
       this.componentIds)
 
     for (const key in componentsMap) {
