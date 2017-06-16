@@ -15,6 +15,7 @@ class GalleryView extends React.Component {
         settings: false,
         gallery: true,
         about: true,
+        login: true,
         home: false
       }
     })
