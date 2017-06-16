@@ -27,7 +27,7 @@ const config = {
 
     oauth: {
 
-      redirectUri: `${HOST_URL}:${PORT}/api/forge/callback/oauth`,
+      redirectUri: `${HOST_URL}/api/forge/callback/oauth`,
       authenticationUri: '/authentication/v1/authenticate',
       refreshTokenUri: '/authentication/v1/refreshtoken',
       authorizationUri: '/authentication/v1/authorize',
