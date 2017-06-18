@@ -57,7 +57,7 @@ export default class CreateMetaProperty
   //
   //
   /////////////////////////////////////////////////////////
-  setReactState (state) {
+  assignState (state) {
 
     return new Promise((resolve) => {
 
@@ -134,7 +134,7 @@ export default class CreateMetaProperty
       ? e.target.value.replace(/&nbsp;/g, '')
       : e.target.value
 
-    this.setReactState(state)
+    this.assignState(state)
   }
 
   /////////////////////////////////////////////////////////
@@ -150,7 +150,7 @@ export default class CreateMetaProperty
 
     const file = files[0]
 
-    this.setReactState({
+    this.assignState({
       filename: file.name,
       filesize: file.size,
       file
@@ -300,21 +300,21 @@ export default class CreateMetaProperty
             key="type-dropdown"
             id="type-dropdown">
             <MenuItem eventKey={1} key={1} onClick={() => {
-                this.setReactState({
+                this.assignState({
                   metaType: 'Text'
                 })
             }}>
               Text
             </MenuItem>
             <MenuItem eventKey={2} key={2} onClick={() => {
-              this.setReactState({
+              this.assignState({
                 metaType: 'Link'
               })
             }}>
               Link
             </MenuItem>
             <MenuItem eventKey={3} key={3} onClick={() => {
-              this.setReactState({
+              this.assignState({
                 metaType: 'File'
               })
             }}>

@@ -36,6 +36,12 @@ class HomeView extends React.Component {
 
       this.batchRequestThumbnails(5)
 
+      this.props.setNavbarState({
+        links: {
+          settings: false
+        }
+      })
+
     } catch(ex) {
 
       console.log(ex)
@@ -111,12 +117,12 @@ class HomeView extends React.Component {
 
             {this.state.models.map((model, idx) => {
               return (
-                <Link key={idx} to={`/viewer?id=${model._id}`}>
+                <Link key={idx} to={`/database?id=${model._id}`}>
                   <figure>
                     <figcaption>
                       {model.name}
                     </figcaption>
-                    <img className={model.thumbnail ? "":"default-thumbnail"}
+                    <img className={model.thumbnail ? "":"default-adsk"}
                       src={model.thumbnail ? model.thumbnail : ""}/>
                   </figure>
                 </Link>)

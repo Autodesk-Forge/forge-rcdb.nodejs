@@ -1,6 +1,6 @@
 .home {
-  background-color: #284e99;
   overflow: hidden;
+  height: 100%;
 }
 
 .home .welcome {
@@ -9,13 +9,6 @@
   width: 100%;
   z-index: 0;
   top: 120px;
-}
-
-.home .logo-hero {
-  opacity: 1;
-  display: block;
-  width: auto;
-  height: calc(100vh - 65px) !important;
 }
 
 @media screen and (min-width: 460px) {
@@ -170,9 +163,14 @@
   color: #333333;
 }
 
-.home .models .responsive-grid a img:hover {
-  //transform: scale(1.10);
+.home .models .responsive-grid a img {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.home .models .responsive-grid a img:hover {
+  transform: scale(1.05);
+  border: 1px solid #bbbbbb;
 }
 
 .home .models .responsive-grid figcaption {

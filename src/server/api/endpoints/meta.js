@@ -13,24 +13,19 @@ module.exports = function() {
   const forgeSvc = ServiceManager.getService(
     'ForgeSvc')
 
+  const bucket = config.meta.bucket
+
   forgeSvc.get2LeggedToken().then((token) => {
 
     ossSvc.getBucketDetails (
-      token, config.meta.bucketKey).then((bucket) => {
-
-        //console.log('Meta Bucket found: ')
-        //console.log(bucket)
+      token, bucket.bucketKey).then(() => {
 
       }, (error) => {
 
-        if (error.statusCode) {
+        if (error.statusCode === 404) {
 
-          const bucketCreationData = {
-            bucketKey: config.meta.bucketKey,
-            policyKey: 'Persistent'
-          }
-
-          ossSvc.createBucket (token, bucketCreationData)
+          ossSvc.createBucket (
+            token, bucket)
         }
       })
   })

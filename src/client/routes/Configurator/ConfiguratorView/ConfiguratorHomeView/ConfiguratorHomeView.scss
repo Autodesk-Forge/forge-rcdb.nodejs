@@ -30,6 +30,7 @@
   font-size: 30px;
   color: #505050;
   right: 26px;
+  width: 26px;
   z-index: 1;
   top: 4px;
 }
@@ -41,6 +42,10 @@
 
 .configurator-view .home .model-item:hover {
   background: rgba(255, 234, 0, 0.85);
+}
+
+.configurator-view .home .model-item img {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
 @media screen and (min-width: 900px) {

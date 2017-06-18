@@ -1,7 +1,7 @@
 
 export default class Loader {
 
-  constructor (container, opts = {autoLoad: true}) {
+  constructor (container, opts = {autoLoad: false}) {
 
     this.background = document.createElement('div')
 
@@ -22,18 +22,20 @@ export default class Loader {
     this.loader.className = 'loader'
   }
 
-  hide () {
+  show (show) {
 
-    this.background.style.transitionProperty = 'background'
+    if (show) {
 
-    this.background.classList.add('disabled')
-  }
+      this.background.style.transitionProperty = 'none'
 
-  show () {
+      this.background.classList.remove('disabled')
 
-    this.background.style.transitionProperty = 'none'
+    } else {
 
-    this.background.classList.remove('disabled')
+      this.background.style.transitionProperty = 'background'
+
+      this.background.classList.add('disabled')
+    }
   }
 }
 

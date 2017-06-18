@@ -1,4 +1,6 @@
+import NotificationsSystem from 'reapop'
 import ServiceManager from 'SvcManager'
+import theme from 'reapop-theme-wybo'
 import PropTypes from 'prop-types'
 import 'react-reflex/styles.css'
 import 'Dialogs/dialogs.scss'
@@ -24,29 +26,28 @@ class CoreLayout extends React.Component {
 
     super()
 
-    this.state = {
-
-    }
+    //theme.notificationsContainer.className.main = 'notifications'
   }
 
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  componentWillMount () {
+  async componentWillMount () {
 
-    this.dialogSvc = ServiceManager.getService(
-      'DialogSvc')
+    this.dialogSvc =
+      ServiceManager.getService(
+        'DialogSvc')
 
     this.dialogSvc.setComponent(this)
 
-    this.forgeSvc = ServiceManager.getService(
-      'ForgeSvc')
+    this.forgeSvc =
+      ServiceManager.getService(
+        'ForgeSvc')
 
-    this.forgeSvc.getUser().then((user) => {
+    const user = await this.forgeSvc.getUser()
 
-      this.props.setUser(user)
-    })
+    this.props.setUser(user)
   }
 
   /////////////////////////////////////////////////////////
@@ -59,6 +60,9 @@ class CoreLayout extends React.Component {
 
     return (
       <div className='container'>
+        <div className='notifications'>
+          <NotificationsSystem theme={theme}/>
+        </div>
         <link rel="stylesheet" type="text/css"
           href={appState.storage.theme.css}
         />

@@ -1,6 +1,118 @@
-.gallery {
-  background-color: #284e99;
+.gallery-view {
   height: calc(100vh - 65px);
+  background-color: #284e99;
+  padding: 10px 0;
   color: white;
+
+  .search {
+    margin: 0 auto 10px auto;
+    background: #7b92bf;
+    max-width: 978px;
+    height: 30px;
+    width: 95%;
+  }
+
+  .container {
+    background: rgba(248, 248, 248, 0.4);
+    height: calc(100% - 46px);
+    margin: 0 auto 0 auto;
+    overflow: scroll;
+    width: 95%;
+  }
+
+  @media only screen and (max-width: 876px) {
+
+    .search {
+      max-width: 978px;
+    }
+
+    .container {
+      max-width: 978px;
+    }
+
+    .primary {
+      max-width: 100%;
+      margin-left: 0;
+      float: none;
+      width: auto;
+    }
+
+    .secondary {
+
+    }
+  }
+
+  @media only screen and (min-width: 875px) {
+
+    .search {
+      max-width: 978px;
+    }
+
+    .container {
+      max-width: 978px;
+    }
+
+    .primary {
+      margin-left: 3.0%;
+      width: 63%;
+      float: left;
+    }
+
+    .secondary {
+      margin-left: 3.0%;
+      float: left;
+      width: 28%;
+    }
+  }
+
+  .item:hover {
+
+  }
+
+  .item {
+    box-shadow: 20px 20px 33px 0px rgba(0, 0, 0, 0.21);
+    background: #ffffff;
+    text-align: left;
+    overflow: hidden;
+    margin: 16px 0;
+    color: black;
+    padding: 0;
+
+    .content {
+      cursor: pointer;
+      height: 100px;
+    }
+
+    .content:hover {
+      text-decoration: none;
+    }
+
+    .image-container {
+      height: 100px;
+      width: 100px;
+      float: left;
+    }
+
+    .image-container img {
+      object-position: center;
+      height: 100%;
+      width: 100%;
+    }
+
+    .title {
+      width: calc(100% - 110px);
+      margin: 20px 0 0 10px;
+      height: 80px;
+      float: left;
+    }
+
+    .footer {
+      border-top: 1px solid gainsboro;
+      background: #f9f9f9;
+      height: 30px;
+      float: left;
+      width: 100%;
+    }
+  }
 }
 

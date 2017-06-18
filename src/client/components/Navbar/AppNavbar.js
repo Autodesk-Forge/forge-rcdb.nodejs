@@ -142,29 +142,41 @@ export default class AppNavbar extends React.Component {
             <Nav>
               <LinkContainer to={{ pathname: '/', query: { } }}>
                 <NavItem eventKey={1}>
-                  <span className={"forge-rcdb-span " + (this.state.menuIcons ? "fa fa-home":"")}/>
                   <label className="nav-label">
-                    &nbsp; Home
+                  &nbsp; Home
                   </label>
                 </NavItem>
               </LinkContainer>
             </Nav>
           }
 
-           {
-             appState.navbar.links.gallery &&
+          {
+            appState.navbar.links.demos &&
 
-             <Nav>
-               <LinkContainer to={{ pathname: '/gallery', query: { } }}>
-                 <NavItem eventKey={2}>
-                   <span className={"forge-rcdb-span " + (this.state.menuIcons ? "fa fa-home":"")}/>
-                   <label className="nav-label">
-                   &nbsp; Gallery
-                   </label>
-                 </NavItem>
-               </LinkContainer>
-             </Nav>
-           }
+            <Nav>
+              <LinkContainer to={{ pathname: '/configurator'}}>
+                <NavItem eventKey={2}>
+                  <label className="nav-label">
+                  &nbsp; Demos
+                  </label>
+                </NavItem>
+              </LinkContainer>
+            </Nav>
+          }
+
+          {
+            appState.navbar.links.gallery &&
+
+            <Nav>
+              <LinkContainer to={{ pathname: '/gallery', query: { } }}>
+                <NavItem eventKey={3}>
+                  <label className="nav-label">
+                  &nbsp; Gallery
+                  </label>
+                </NavItem>
+              </LinkContainer>
+            </Nav>
+          }
 
           <Nav pullRight>
 
@@ -172,16 +184,16 @@ export default class AppNavbar extends React.Component {
 
               appState.navbar.links.login &&
 
-              <NavItem eventKey={3} onClick={() => {this.login()}}>
-                {
-                  !appState.user &&
-                  <span className="forge-rcdb-span fa fa-user"/>
-                }
-                {
-                  appState.user &&
-                  <img className="avatar" src={appState.user.profileImages.sizeX80}/>
-                }
-                <label className="nav-label" style={{top: appState.user ? "2px" : "-2px"}}>
+              <NavItem eventKey={4} onClick={() => {this.login()}}>
+                  {
+                    !appState.user &&
+                    <span className="a360-logo"/>
+                  }
+                  {
+                    appState.user &&
+                    <img className="avatar" src={appState.user.profileImages.sizeX80}/>
+                  }
+                <label className="nav-label">
                 &nbsp; { appState.user ? username : "Login"}
                 </label>
               </NavItem>
@@ -190,35 +202,34 @@ export default class AppNavbar extends React.Component {
             {
               appState.navbar.links.settings &&
 
-              <NavDropdown id="settings-dropdown" eventKey={3}
+              <NavDropdown id="settings-dropdown" eventKey={5}
                 title={
                   <div className="dropdown-div">
-                    <span className={"forge-rcdb-span " + (this.state.menuIcons ? "fa fa-gear" : "")}/>
                     <label className="nav-label">
                     &nbsp; Settings &nbsp;
                     </label>
                   </div>
                   }>
-                <MenuItem eventKey={3.1} onClick={() => {
+                <MenuItem eventKey={5.1} onClick={() => {
                   this.openDatabaseDlg()
                 }}>
                   <span className="fa fa-database"/>
-                  &nbsp; Select database ...
+                &nbsp; Select database ...
                 </MenuItem>
                 <MenuItem divider/>
-                <MenuItem eventKey={3.2} onClick={() => {
+                <MenuItem eventKey={5.2} onClick={() => {
                   this.openLayoutDlg()
                 }}>
                   <span className="fa fa-th-large"/>
-                  &nbsp; Select layout ...
+                &nbsp; Select layout ...
                 </MenuItem>
                 <MenuItem divider/>
-                <MenuItem eventKey={3.3} onClick={() => {
+                <MenuItem eventKey={5.3} onClick={() => {
                   this.openThemeDlg()
                 }}>
                   <span className="fa fa-paint-brush">
                   </span>
-                  &nbsp; Select theme ...
+                &nbsp; Select theme ...
                 </MenuItem>
               </NavDropdown>
             }
@@ -226,8 +237,7 @@ export default class AppNavbar extends React.Component {
             {
               appState.navbar.links.about &&
 
-              <NavItem eventKey={4} onClick={() => {this.openAboutDlg()}}>
-                <span className={"forge-rcdb-span " + (this.state.menuIcons ? "fa fa-question-circle":"")}/>
+              <NavItem eventKey={6} onClick={() => {this.openAboutDlg()}}>
                 <label className="nav-label">
                 &nbsp; About ...
                 </label>

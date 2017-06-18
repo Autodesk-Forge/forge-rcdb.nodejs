@@ -149,7 +149,7 @@ const getStorage = () => {
   const storage = storageSvc.load(
     'AppState.storage') || {}
 
-  const storageVersion = 1.0
+  const storageVersion = 2.0
 
   const defaultStorage = {
     layoutType: 'flexLayoutRight',
@@ -185,6 +185,9 @@ const createInitialState = () => {
     navbar: {
       links:{
         settings: true,
+        gallery: true,
+        login: true,
+        demos: true,
         about: true,
         home: true
       }

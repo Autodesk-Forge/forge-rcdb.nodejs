@@ -19,8 +19,18 @@ const config = {
     port: PORT
   },
 
+  gallery: {
+    bucket: {
+      bucketKey: 'forge-rcdb-gallery-tmp-prod',
+      policyKey: 'Transient'
+    }
+  },
+
   meta: {
-    bucketKey: 'forge-rcdb-meta'
+    bucket: {
+      bucketKey: 'forge-rcdb-meta',
+      policyKey: 'Persistent'
+    }
   },
 
   forge: {
@@ -39,8 +49,8 @@ const config = {
 
       scope: [
         'data:read',
-        'data:create',
         'data:write',
+        'data:create',
         'bucket:read',
         'bucket:create'
       ]

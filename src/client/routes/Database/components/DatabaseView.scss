@@ -1,0 +1,16 @@
+.viewer-view {
+  height: calc(100vh - 69px);
+  background-color: #dadada;
+  position: relative;
+  width: 100vw;
+}
+
+// hide chart on small screens - still show on ipad
+//@media (max-height: 767px) {
+//  #pie-chart-container{
+//    display: none;
+//  }
+//  .legend-scroll{
+//    height: 100%;
+//  }
+//}

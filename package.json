@@ -41,7 +41,7 @@
     "cookie-parser": "^1.4.3",
     "express": "^4.14.0",
     "express-session": "^1.15.1",
-    "forge-apis": "^0.2.7",
+    "forge-apis": "^0.4.0",
     "helmet": "^3.4.1",
     "memoizee": "^0.4.3",
     "moment": "^2.17.1",

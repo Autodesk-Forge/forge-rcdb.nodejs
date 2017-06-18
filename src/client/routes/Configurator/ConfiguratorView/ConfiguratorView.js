@@ -1,7 +1,5 @@
 import ConfiguratorHomeView from './ConfiguratorHomeView'
 import ViewerConfigurator from 'Viewer.Configurator'
-import NotificationsSystem from 'reapop'
-import theme from 'reapop-theme-wybo'
 import './ConfiguratorView.scss'
 import React from 'react'
 
@@ -15,8 +13,11 @@ class ConfiguratorView extends React.Component {
 
     super (props)
 
-    theme.notificationsContainer.className.main =
-      'notifications'
+    this.notify = {
+      remove: this.props.removeNotifications,
+      update: this.props.updateNotification,
+      add: this.props.addNotification
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -27,9 +28,7 @@ class ConfiguratorView extends React.Component {
 
     this.props.setNavbarState({
       links: {
-        settings: false,
-        about: true,
-        home: false
+        settings: false
       }
     })
   }
@@ -40,12 +39,6 @@ class ConfiguratorView extends React.Component {
   /////////////////////////////////////////////////////////
   render () {
 
-    const notify = {
-      remove: this.props.removeNotifications,
-      update: this.props.updateNotification,
-      add: this.props.addNotification
-    }
-
     const view = this.props.location.query.id
       ? <ViewerConfigurator
           setNavbarState={this.props.setNavbarState}
@@ -54,13 +47,13 @@ class ConfiguratorView extends React.Component {
           appState={this.props.appState}
           location={this.props.location}
           database='configurator'
-          notify={notify}
+          notify={this.notify}
+          showLoader={true}
         />
       : <ConfiguratorHomeView/>
 
     return (
       <div className="configurator-view">
-        <NotificationsSystem theme={theme}/>
         { view }
       </div>
     )

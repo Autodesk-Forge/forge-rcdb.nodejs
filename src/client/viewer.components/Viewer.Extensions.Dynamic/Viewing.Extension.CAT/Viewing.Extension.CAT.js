@@ -307,7 +307,7 @@ class CATExtension extends ExtensionBase {
         viewport: true
       }, true)
 
-    this._options.loader.hide()
+    this._options.loader.show(false)
 
     this.hotSpotCommand.activate()
   }

@@ -1,9 +1,14 @@
-import { connect } from 'react-redux'
 
 import HomeView from '../components/HomeView'
 
-const mapDispatchToProps = {
+import { connect } from 'react-redux'
 
+import {
+  setNavbarState
+  } from '../../../store/app'
+
+const mapDispatchToProps = {
+  setNavbarState
 }
 
 const mapStateToProps = (state) => ({

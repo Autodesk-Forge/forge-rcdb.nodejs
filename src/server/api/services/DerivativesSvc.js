@@ -181,6 +181,9 @@ export default class DerivativeSvc extends BaseSvc {
 
     //TODO: SDK KO
 
+    //return this._derivativesAPI.getThumbnail (
+    //  urn, {}, {autoRefresh:false}, token)
+
     const url = `${DerivativeSvc.SERVICE_BASE_URL}/designdata/` +
         `${urn}/thumbnail?` +
         `width=${options.width}&` +
@@ -210,12 +213,10 @@ export default class DerivativeSvc extends BaseSvc {
             return reject(response.statusMessage)
           }
 
-          resolve(bufferToBase64(body))
+          //resolve(bufferToBase64(body))
+          resolve (body)
 
         } catch(ex){
-
-          console.log(url)
-          console.log(body)
 
           reject(ex)
         }

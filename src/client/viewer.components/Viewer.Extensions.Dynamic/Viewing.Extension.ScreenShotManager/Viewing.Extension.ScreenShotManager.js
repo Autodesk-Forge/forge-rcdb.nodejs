@@ -58,7 +58,7 @@ class ScreenShotManagerExtension extends ExtensionBase {
       Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT, (e) => {
 
         if(this.options.loader){
-          this.options.loader.hide()
+          this.options.loader.show(false)
         }
       })
 

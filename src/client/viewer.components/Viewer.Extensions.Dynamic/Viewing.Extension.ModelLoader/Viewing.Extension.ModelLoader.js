@@ -70,7 +70,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
 
       if (this.options.loader) {
 
-        this.options.loader.hide()
+        this.options.loader.show(false)
       }
     }
 
@@ -179,8 +179,6 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
         }, true)
 
         this.setDlgItems (dbModelsByName)
-
-        this.batchRequestThumbnails(5)
       })
   }
 
@@ -204,7 +202,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
 
     return new Promise(async(resolve) => {
 
-      const fileType = this.getFileType(dbModel.urn)
+      const fileType = this.getFileType(dbModel.model.urn)
 
       const loadOptions = {
         placementTransform:
@@ -216,7 +214,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
         case 'AutodeskProduction':
 
           const doc = await Toolkit.loadDocument(
-            dbModel.urn)
+            dbModel.model.urn)
 
           const items = Toolkit.getViewableItems(doc)
 
@@ -229,9 +227,9 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
 
                 model.database = this.options.database
                 model.dbModelId = dbModel._id
+                model.urn = dbModel.model.urn
                 model.name = dbModel.name
                 model.guid = this.guid()
-                model.urn = dbModel.urn
 
                 resolve (model)
               })
@@ -246,9 +244,9 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
 
               model.database = this.options.database
               model.dbModelId = dbModel._id
+              model.urn = dbModel.model.urn
               model.name = dbModel.name
               model.guid = this.guid()
-              model.urn = dbModel.urn
 
               resolve (model)
             })
@@ -525,8 +523,6 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
 
     const modelDlgItems = dbModels.map((dbModel) => {
 
-      const thumbnail = dbModel.thumbnail || ''
-
       return (
         <div key={dbModel._id} className="model-item"
           onClick={() => {
@@ -542,8 +538,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
               open: false
             })
         }}>
-          <img className={thumbnail ? "":"default-thumbnail"}
-            src={thumbnail}/>
+          <img src={`/api/gallery/thumbnails/${dbModel.model.urn}`}/>
           <Label text= {dbModel.name}/>
         </div>
       )
@@ -565,49 +560,6 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
           </div>
         </div>
     }, true)
-  }
-
-  /////////////////////////////////////////////////////////
-  // batch requests thumbnails for models shown in
-  // popup selection dialog
-  //
-  /////////////////////////////////////////////////////////
-  batchRequestThumbnails (size) {
-
-    const state = this.dialogSvc.getState()
-
-    const chunks = _.chunk(state.dbModels, size)
-
-    chunks.forEach((modelChunk) => {
-
-      const modelIds = modelChunk.map((model) => {
-        return model._id
-      })
-
-      this.modelSvc.getThumbnails(
-        this.options.database, modelIds).then(
-          (thumbnails) => {
-
-            const currentState = this.dialogSvc.getState()
-
-            const dbModels = currentState.dbModels.map((model) => {
-
-              const idx = modelIds.indexOf(model._id)
-
-              return (idx < 0
-                ? model
-                : Object.assign({}, model, {
-                  thumbnail: thumbnails[idx]
-                }))
-            })
-
-            this.dialogSvc.setState({
-              dbModels
-            }, true)
-
-            this.setDlgItems (dbModels)
-          })
-    })
   }
 
   /////////////////////////////////////////////////////////

@@ -3,8 +3,7 @@ import UploadView from '../components/GalleryView'
 import { connect } from 'react-redux'
 
 import {
-  setNavbarState,
-  setViewerEnv
+  setNavbarState
   } from '../../../store/app'
 
 import {
@@ -17,8 +16,7 @@ const mapDispatchToProps = {
   removeNotifications,
   updateNotification,
   addNotification,
-  setNavbarState,
-  setViewerEnv
+  setNavbarState
 }
 
 const mapStateToProps = (state) => (

@@ -124,7 +124,7 @@ export default class MultiModelExtensionBase extends
 
     if (this.options.loader) {
 
-      this.options.loader.hide()
+      this.options.loader.show(false)
     }
   }
 

@@ -16,8 +16,18 @@ const config = {
     port: PORT
   },
 
+  gallery: {
+    bucket: {
+        bucketKey: 'forge-rcdb-gallery-tmp-dev',
+        policyKey: 'Transient'
+      }
+  },
+
   meta: {
-    bucketKey: 'forge-rcdb-meta-dev'
+    bucket: {
+      bucketKey: 'forge-rcdb-meta-dev',
+      policyKey: 'Persistent'
+    }
   },
 
   forge: {
@@ -31,8 +41,8 @@ const config = {
       accessTokenUri: '/authentication/v1/gettoken',
 
       baseUri: 'https://developer.api.autodesk.com',
-      clientSecret: process.env.FORGE_CLIENT_SECRET,
-      clientId: process.env.FORGE_CLIENT_ID,
+      clientSecret: process.env.FORGE_DEV_CLIENT_SECRET,
+      clientId: process.env.FORGE_DEV_CLIENT_ID,
 
       //baseUri: 'https://developer-stg.api.autodesk.com',
       //clientSecret: process.env.FORGE_STG_CLIENT_SECRET,
@@ -40,17 +50,17 @@ const config = {
 
       scope: [
         'data:read',
-        'data:create',
         'data:write',
+        'data:create',
         'bucket:read',
         'bucket:create'
       ]
     },
 
     viewer: {
-      //viewer3D: 'https://developer.api.autodesk.com/viewingservice/v1/viewers/viewer3D.js?v=2.14',
-      //threeJS:  'https://developer.api.autodesk.com/viewingservice/v1/viewers/three.js?v=2.14',
-      //style:    'https://developer.api.autodesk.com/viewingservice/v1/viewers/style.css?v=2.14'
+      //viewer3D: 'https://developer.api.autodesk.com/viewingservice/v1/viewers/viewer3D.js?v=2.15',
+      //threeJS:  'https://developer.api.autodesk.com/viewingservice/v1/viewers/three.js?v=2.15',
+      //style:    'https://developer.api.autodesk.com/viewingservice/v1/viewers/style.css?v=2.15'
 
       // requires local copy of viewer lib - not provided in this sample
       viewer3D: '/resources/libs/viewer-2.15/viewer3D.js',

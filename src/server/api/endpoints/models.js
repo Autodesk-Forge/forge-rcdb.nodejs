@@ -17,19 +17,20 @@ module.exports = function() {
 
     try {
 
-      var db = req.params.db
+      const db = req.params.db
 
-      var modelSvc = ServiceManager.getService(
+      const modelSvc = ServiceManager.getService(
         db + '-ModelSvc')
 
-      var opts = {
+      let opts = {
         pageQuery: {
+          model: 1,
           desc: 1,
           path: 1,
           name: 1,
           urn:  1,
           env:  1,
-          git: 1
+          git:  1
         }
       }
 
@@ -44,17 +45,21 @@ module.exports = function() {
         }
       }
 
-      if(req.query.skip)
+      if (req.query.skip) {
+
         opts.pageQuery.skip = req.query.skip
+      }
 
-      if(req.query.limit)
+      if(req.query.limit) {
+
         opts.pageQuery.limit = req.query.limit
+      }
 
-      var response = await modelSvc.getModels(opts)
+      const response = await modelSvc.getModels(opts)
 
       res.json(response)
-    }
-    catch (error) {
+
+    } catch (error) {
 
       res.status(error.statusCode || 500)
       res.json(error)
@@ -69,14 +74,14 @@ module.exports = function() {
 
     try {
 
-      var db = req.params.db
+      const db = req.params.db
 
-      var modelSvc = ServiceManager.getService(
+      const modelSvc = ServiceManager.getService(
         db + '-ModelSvc');
 
-      var modelIds = req.body
+      const modelIds = req.body
 
-      var response = await modelSvc.getThumbnails(
+      const response = await modelSvc.getThumbnails(
         modelIds)
 
       res.json(response)

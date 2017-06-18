@@ -9,40 +9,41 @@
     width: 100%;
   }
 
-  .treeview header {
+  .treeview lmvheader {
     transition-property: background, border;
     transition-timing-function: ease;
     transition-duration: 1.5s;
     transition-delay: 0.0s;
 
     background: rgba(245, 245, 245, 0.5);
+    margin-bottom: -4px;
     border: none;
     height: 30px;
   }
 
-  .treeview header.property,
-  .treeview header.category {
+  .treeview lmvheader.property,
+  .treeview lmvheader.category {
     width: calc(100% - 25px);
   }
 
-  .treeview header:hover {
+  .treeview lmvheader:hover {
     background: rgba(0, 105, 245, 0.35);
   }
 
-  .treeview group>header.root {
+  .treeview group > lmvheader.root {
     background-color: #d8d8d8 !important;
   }
 
-  .treeview group>header.category {
+  .treeview group > lmvheader.category {
     background-color: #e6e6e6 !important;
   }
 
-  .treeview group > header > icon {
+  .treeview group > lmvheader > icon {
     height: 20px;
     float: left;
   }
 
-  .treeview header.category .treenode-container {
+  .treeview lmvheader.category .treenode-container {
     width: calc(100% - 46px);
     overflow: hidden;
     float: left;
@@ -52,17 +53,17 @@
     float: left;
   }
 
-  .treeview header.property .treenode {
+  .treeview lmvheader.property .treenode {
     width: 100%;
   }
 
-  .treeview header.property .treenode .meta-value,
-  .treeview header.property .treenode .meta-name {
+  .treeview lmvheader.property .treenode .meta-value,
+  .treeview lmvheader.property .treenode .meta-name {
     width: 50%;
   }
 
-  .treeview header.property .treenode .meta-link,
-  .treeview header.property .treenode .meta-file {
+  .treeview lmvheader.property .treenode .meta-link,
+  .treeview lmvheader.property .treenode .meta-file {
     position: relative;
     overflow: hidden;
     font-size: 100%;
@@ -71,11 +72,11 @@
     float: left;
   }
 
-  .treeview header:hover.property .treenode .meta-value.editable {
+  .treeview lmvheader:hover.property .treenode .meta-value.editable {
     width: calc(50% - 50px);
   }
 
-  .treeview header.property .treenode span {
+  .treeview lmvheader.property .treenode span {
     transition-property: color;
     transition-timing-function: ease;
     transition-duration: 1.0s;
@@ -87,17 +88,17 @@
     display: none;
   }
 
-  .treeview header.property .treenode span.fa-edit {
+  .treeview lmvheader.property .treenode span.fa-edit {
     position: relative;
     top: 1px;
   }
 
-  .treeview header:hover.property .treenode span {
+  .treeview lmvheader:hover.property .treenode span {
     color: rgba(47, 47, 47, 0.60);
     display: inline;
   }
 
-  .treeview header:hover.property .treenode span:hover {
+  .treeview lmvheader:hover.property .treenode span:hover {
     color: #FF9800;
   }
 

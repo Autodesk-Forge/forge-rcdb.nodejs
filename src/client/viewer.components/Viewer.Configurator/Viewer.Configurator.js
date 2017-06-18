@@ -66,7 +66,7 @@ class ViewerConfigurator extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  setReactState (state) {
+  assignState (state) {
 
     return new Promise((resolve) => {
 
@@ -107,7 +107,7 @@ class ViewerConfigurator extends React.Component {
       Autodesk.Viewing.Private.memoryOptimizedSvfLoading = true
     }
 
-    this.setReactState({
+    this.assignState({
       dbModel
     })
 
@@ -229,7 +229,7 @@ class ViewerConfigurator extends React.Component {
 
         extState[extension.id] = {}
 
-        this.setReactState(extState).then(() => {
+        this.assignState(extState).then(() => {
 
           viewer.loadExtension (
             extension.id, options).then((extInstance) => {
@@ -267,7 +267,7 @@ class ViewerConfigurator extends React.Component {
         ? 1.0 - (layout.leftFlex || layout.rightFlex || 0.3)
         : 1.0
 
-      await this.setReactState({
+      await this.assignState({
         paneExtStyle: { display: 'block' }
       })
 
@@ -276,7 +276,7 @@ class ViewerConfigurator extends React.Component {
 
       setTimeout(() => {
 
-        this.setReactState({
+        this.assignState({
           renderExtension: extension
         }).then(() => {
 
@@ -295,7 +295,7 @@ class ViewerConfigurator extends React.Component {
 
     return new Promise ((resolve) => {
 
-      this.setReactState({
+      this.assignState({
         renderExtension: null
       }).then(() => {
         resolve ()
@@ -306,7 +306,7 @@ class ViewerConfigurator extends React.Component {
         await this.runAnimation(
           this.viewerFlex, 1.0, 1.0)
 
-        await this.setReactState({
+        await this.assignState({
           paneExtStyle: { display: 'none' }
         })
 
@@ -347,7 +347,7 @@ class ViewerConfigurator extends React.Component {
               newPanelState[panelId] = Object.assign({},
                 panelState, state)
 
-              this.setReactState(newPanelState).then(() => {
+              this.assignState(newPanelState).then(() => {
 
                 resolve(newPanelState)
               })
@@ -364,7 +364,7 @@ class ViewerConfigurator extends React.Component {
 
         const panel = new Panel (props)
 
-        this.setReactState({
+        this.assignState({
           viewerPanels: [
             ...this.state.viewerPanels,
             panel
@@ -399,7 +399,7 @@ class ViewerConfigurator extends React.Component {
             return (panel.id !== targetPanelId)
           })
 
-          this.setReactState({
+          this.assignState({
             viewerPanels
           })
           resolve ()
@@ -460,7 +460,7 @@ class ViewerConfigurator extends React.Component {
                   ? _.merge({}, extState, state)
                   : Object.assign({}, extState, state)
 
-                this.setReactState(newExtState).then(() => {
+                this.assignState(newExtState).then(() => {
 
                   resolve (newExtState)
                 })
@@ -553,7 +553,7 @@ class ViewerConfigurator extends React.Component {
 
       return new Promise((resolve) => {
 
-        this.setReactState({
+        this.assignState({
           viewerFlex
         }).then(() => resolve())
       })
@@ -598,6 +598,8 @@ class ViewerConfigurator extends React.Component {
     try {
 
       this.loader = new Loader(viewer.container)
+
+      this.loader.show(this.props.showLoader)
 
       viewer.start()
 

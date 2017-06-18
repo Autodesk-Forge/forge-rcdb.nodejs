@@ -40,7 +40,7 @@ class FaderExtension extends ExtensionBase
     this.viewer.addEventListener(
       Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT, (e) => {
 
-        this.options.loader.hide()
+        this.options.loader.show(false)
       })
 
     this.viewer.loadExtension(FaderCoreExtension)
