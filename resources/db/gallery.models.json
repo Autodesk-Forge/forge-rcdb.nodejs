@@ -1,10 +1,64 @@
-
-
-
-
-
-
-
-
-
-
+{ 
+    "_id" : ObjectId("57f3739777c879f48ad54a44"), 
+    "name" : "Office", 
+    "env" : "AutodeskProduction", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9vZmZpY2UucnZ0", 
+        "role" : "3d"
+    }
+}
+{ 
+    "_id" : ObjectId("57efaf0377c8eb0a560ef467"), 
+    "name" : "Engine", 
+    "env" : "AutodeskProduction", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9lbmdpbmUuZHdm", 
+        "role" : "3d"
+    }
+}
+{ 
+    "_id" : ObjectId("5841e11f540a4d30802763e2"), 
+    "name" : "V8", 
+    "path" : "resources/models/v8/0.svf", 
+    "env" : "AutodeskProduction", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9WOC5mM2Q=", 
+        "role" : "3d"
+    }
+}
+{ 
+    "_id" : ObjectId("5933cf4d5cdbe364a829e5d1"), 
+    "name" : "Suspension", 
+    "env" : "AutodeskProduction", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9TdXNwZW5zaW9uLmR3Zg==", 
+        "role" : "3d"
+    }
+}
+{ 
+    "_id" : ObjectId("5933d6255cdbe364a829e5d3"), 
+    "name" : "Suspension Fork", 
+    "env" : "AutodeskProduction", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9TdXNwZW5zaW9uJTIwRm9yay5kd2Y=", 
+        "role" : "3d"
+    }
+}
+{ 
+    "_id" : ObjectId("583ec7efebfb320e3cef26a5"), 
+    "name" : "210 King", 
+    "env" : "AutodeskProduction", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS8yMTAlMjBLaW5nJTIwLSUyMDIwMTUucnZ0", 
+        "role" : "3d"
+    }
+}
+{ 
+    "_id" : ObjectId("5933ce1c5cdbe3629ff8a1e8"), 
+    "name" : "Sport Car", 
+    "env" : "AutodeskProduction", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9TcG9ydHMlMjBDYXIuZHdmeA==", 
+        "role" : "3d"
+    }
+}

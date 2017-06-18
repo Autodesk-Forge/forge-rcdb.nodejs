@@ -85,34 +85,41 @@ class ViewerConfigurator extends React.Component {
   /////////////////////////////////////////////////////////
   async componentDidMount () {
 
-    this.loader = new Loader(this.loaderContainer)
+    try {
 
-    const dbModel = await this.modelSvc.getModel(
-      this.props.database,
-      this.props.modelId)
+      this.loader = new Loader(this.loaderContainer)
 
-    if (!this.props.appState.viewerEnv) {
+      const dbModel = await this.modelSvc.getModel(
+        this.props.database,
+        this.props.modelId)
 
-      const viewerEnv = await this.initialize({
-        useConsolidation: true,
-        env: dbModel.env
+      if (!this.props.appState.viewerEnv) {
+
+        const viewerEnv = await this.initialize({
+          useConsolidation: true,
+          env: dbModel.env
+        })
+
+        this.props.setViewerEnv (viewerEnv)
+
+        Autodesk.Viewing.setEndpointAndApi(
+          window.location.origin + '/lmv-proxy-2legged',
+          'modelDerivativeV2')
+
+        Autodesk.Viewing.Private.memoryOptimizedSvfLoading = true
+      }
+
+      this.assignState({
+        dbModel
       })
 
-      this.props.setViewerEnv (viewerEnv)
+      window.addEventListener(
+        'resize', this.onResize)
 
-      Autodesk.Viewing.setEndpointAndApi(
-        window.location.origin + '/lmv-proxy-2legged',
-        'modelDerivativeV2')
+    } catch (ex) {
 
-      Autodesk.Viewing.Private.memoryOptimizedSvfLoading = true
+      return this.props.onError(ex)
     }
-
-    this.assignState({
-      dbModel
-    })
-
-    window.addEventListener(
-      'resize', this.onResize)
   }
 
   /////////////////////////////////////////////////////////

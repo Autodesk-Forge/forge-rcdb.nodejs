@@ -1,8 +1,20 @@
 import ViewerConfigurator from 'Viewer.Configurator'
+import { browserHistory } from 'react-router'
 import './ViewerView.scss'
 import React from 'react'
 
 class ViewerView extends React.Component {
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  constructor (props) {
+
+    super (props)
+
+    this.onError = this.onError.bind(this)
+  }
 
   /////////////////////////////////////////////////////////
   //
@@ -21,6 +33,18 @@ class ViewerView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  onError (error) {
+
+    if (error.responseJSON === 'Not Found') {
+
+      browserHistory.push('/404')
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   render() {
 
     return (
@@ -31,6 +55,7 @@ class ViewerView extends React.Component {
           modelId={this.props.location.query.id}
           appState={this.props.appState}
           location={this.props.location}
+          onError={this.onError}
           database='gallery'
         />
       </div>
