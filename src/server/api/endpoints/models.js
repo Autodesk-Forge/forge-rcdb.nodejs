@@ -1,9 +1,18 @@
 import ServiceManager from '../services/SvcManager'
+import queryString from 'querystring'
 import express from 'express'
+import {Buffer} from 'buffer'
 import config from'c0nfig'
 import path from 'path'
 
 module.exports = function() {
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  const derivativesSvc = ServiceManager.getService(
+    'DerivativesSvc')
 
   const uploadSvc = ServiceManager.getService(
     'UploadSvc')
@@ -16,6 +25,10 @@ module.exports = function() {
 
   const bucket = config.gallery.bucket
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   forgeSvc.get2LeggedToken().then((token) => {
 
     ossSvc.getBucketDetails (
@@ -31,6 +44,10 @@ module.exports = function() {
       })
   })
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   const guid = (format = 'xxxxxxxxxx') => {
 
     var d = new Date().getTime()
@@ -44,6 +61,56 @@ module.exports = function() {
       })
 
     return guid
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  const btoa = (str) => {
+
+    return new Buffer(str).toString('base64')
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  const postSVFJob = (data) => {
+
+    const bucketKey = queryString.escape(data.bucketKey)
+    const objectKey = queryString.escape(data.objectKey)
+
+    const fileId = (
+      `urn:adsk.objects:os.object:${bucketKey}/${objectKey}`)
+
+    const urn = btoa(fileId).replace(
+      new RegExp('=', 'g'), '')
+
+    const job = {
+      input: {
+        urn
+      },
+      output: {
+        force: true,
+        formats:[{
+          type: 'svf',
+          views: ['2d', '3d']
+        }]
+      }
+    }
+
+    derivativesSvc.postJobWithProgress(job, {
+      query: { type: 'geometry' },
+      onProgress: (progress) => {
+
+        console.log(progress)
+
+        if (progress === '100%') {
+
+        }
+      }
+    })
   }
 
   const router = express.Router()
@@ -231,6 +298,11 @@ module.exports = function() {
         objectKey,
         file, opts)
 
+      postSVFJob({
+        bucketKey,
+        objectKey
+      })
+
       res.json(response)
 
     } catch (error) {
@@ -240,11 +312,12 @@ module.exports = function() {
     }
   })
 
-  //////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   // return states sequence
   //
-  ///////////////////////////////////////////////////////////////////////////////
-  router.get('/:db/:modelId/states/sequence', async(req, res)=> {
+  /////////////////////////////////////////////////////////
+  router.get('/:db/:modelId/states/sequence',
+    async(req, res)=> {
 
     try {
 
@@ -265,11 +338,12 @@ module.exports = function() {
     }
   })
 
-  //////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   // save states sequence
   //
-  ///////////////////////////////////////////////////////////////////////////////
-  router.post('/:db/:modelId/states/sequence', async(req, res)=> {
+  /////////////////////////////////////////////////////////
+  router.post('/:db/:modelId/states/sequence',
+    async(req, res)=> {
 
     try {
 
@@ -293,10 +367,10 @@ module.exports = function() {
     }
   })
 
-  //////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   // return all states
   //
-  ///////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   router.get('/:db/:modelId/states', async(req, res)=> {
 
     try {
@@ -318,11 +392,12 @@ module.exports = function() {
     }
   })
 
-  //////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   // remove state
   //
-  ///////////////////////////////////////////////////////////////////////////////
-  router.delete('/:db/:modelId/states/:stateId', async(req, res)=> {
+  /////////////////////////////////////////////////////////
+  router.delete('/:db/:modelId/states/:stateId',
+    async(req, res)=> {
 
     try {
 
@@ -344,10 +419,10 @@ module.exports = function() {
     }
   })
 
-  //////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   // adds new state
   //
-  ///////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   router.post('/:db/:modelId/states', async(req, res)=> {
 
     try {

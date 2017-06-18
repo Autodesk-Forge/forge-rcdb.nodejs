@@ -50,9 +50,13 @@ export default class ModelSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////////////
-  getThumbnailUrl (dbName, modelId) {
+  getThumbnailUrl (dbName, modelId, size = 200) {
 
-    return `${this._config.apiUrl}/${dbName}/${modelId}/thumbnail`
+    const url =
+      `${this._config.apiUrl}/${dbName}/${modelId}/thumbnail` +
+      `?size=${size}`
+
+    return url
   }
 
   /////////////////////////////////////////////////////////////////

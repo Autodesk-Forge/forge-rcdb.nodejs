@@ -36,6 +36,16 @@ class CoreLayout extends React.Component {
   /////////////////////////////////////////////////////////
   async componentWillMount () {
 
+    const notifySvc =
+      ServiceManager.getService(
+        'NotifySvc')
+
+    notifySvc.initialize ({
+      remove: this.props.removeNotifications,
+      update: this.props.updateNotification,
+      add: this.props.addNotification
+    })
+
     this.socketSvc =
       ServiceManager.getService(
         'SocketSvc')

@@ -1,5 +1,7 @@
 import { connect } from 'react-redux'
+
 import CoreLayout from './CoreLayout'
+
 import {
   databaseChange,
   layoutChange,
@@ -8,7 +10,16 @@ import {
   setUser,
   } from '../../store/app'
 
+import {
+  removeNotifications,
+  updateNotification,
+  addNotification
+  } from 'reapop'
+
 const mapDispatchToProps = {
+  removeNotifications,
+  updateNotification,
+  addNotification,
   databaseChange,
   layoutChange,
   saveAppState,

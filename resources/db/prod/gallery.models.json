@@ -62,3 +62,11 @@
         "role" : "3d"
     }
 }
+{ 
+    "_id" : ObjectId("57efaead77c8eb0a560ef465"), 
+    "name" : "Car Seat", 
+    "env" : "AutodeskProduction", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9zZWF0LmR3Zg"
+    }
+}

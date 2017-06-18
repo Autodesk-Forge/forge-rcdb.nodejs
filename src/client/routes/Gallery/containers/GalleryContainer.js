@@ -6,16 +6,7 @@ import {
   setNavbarState
   } from '../../../store/app'
 
-import {
-  removeNotifications,
-  updateNotification,
-  addNotification
-  } from 'reapop'
-
 const mapDispatchToProps = {
-  removeNotifications,
-  updateNotification,
-  addNotification,
   setNavbarState
 }
 

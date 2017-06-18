@@ -15,17 +15,14 @@ class GalleryView extends React.Component {
 
     super (props)
 
-    this.notify = {
-      remove: this.props.removeNotifications,
-      update: this.props.updateNotification,
-      add: this.props.addNotification
-    }
-
     this.modelSvc = ServiceManager.getService(
       'ModelSvc')
 
     this.socketSvc = ServiceManager.getService(
       'SocketSvc')
+
+    this.notifySvc = ServiceManager.getService(
+      'NotifySvc')
 
     this.state = {
       models: []
@@ -61,10 +58,18 @@ class GalleryView extends React.Component {
       }
     })
 
-    const models = await this.modelSvc.getModels('gallery')
+    const models =
+      await this.modelSvc.getModels(
+        'gallery')
+
+    const modelsByName = _.sortBy(
+      models, (model) => {
+
+      return model.name
+    })
 
     this.assignState({
-      models
+      models: modelsByName
     })
   }
 
@@ -96,7 +101,7 @@ class GalleryView extends React.Component {
   renderModel (modelInfo) {
 
     const thumbnailUrl = this.modelSvc.getThumbnailUrl(
-      'gallery', modelInfo._id)
+      'gallery', modelInfo._id, 200)
 
     const href = `/viewer?id=${modelInfo._id}`
 
@@ -128,7 +133,7 @@ class GalleryView extends React.Component {
       return this.renderModel(model)
     })
 
-    return _.sortBy(models, (model) => model.name)
+    return models
   }
 
   /////////////////////////////////////////////////////////
