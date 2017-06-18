@@ -1,13 +1,52 @@
 import ServiceManager from '../services/SvcManager'
 import express from 'express'
 import config from'c0nfig'
-import Debug from 'debug'
+import path from 'path'
 
 module.exports = function() {
 
-  var router = express.Router()
+  const uploadSvc = ServiceManager.getService(
+    'UploadSvc')
 
-  var debug = Debug('ModelAPI')
+  const ossSvc = ServiceManager.getService(
+    'OssSvc')
+
+  const forgeSvc = ServiceManager.getService(
+    'ForgeSvc')
+
+  const bucket = config.gallery.bucket
+
+  forgeSvc.get2LeggedToken().then((token) => {
+
+    ossSvc.getBucketDetails (
+      token, bucket.bucketKey).then(() => {
+
+      }, (error) => {
+
+        if (error.statusCode === 404) {
+
+          ossSvc.createBucket (
+            token, bucket)
+        }
+      })
+  })
+
+  const guid = (format = 'xxxxxxxxxx') => {
+
+    var d = new Date().getTime()
+
+    var guid = format.replace(
+      /[xy]/g,
+      function (c) {
+        var r = (d + Math.random() * 16) % 16 | 0
+        d = Math.floor(d / 16)
+        return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16)
+      })
+
+    return guid
+  }
+
+  const router = express.Router()
 
   //////////////////////////////////////////////////////////////////////////////
   //
@@ -67,24 +106,28 @@ module.exports = function() {
   })
 
   //////////////////////////////////////////////////////////////////////////////
-  // get thumbnails batch mode
+  //
   //
   ///////////////////////////////////////////////////////////////////////////////
-  router.post('/:db/thumbnails', async(req, res)=> {
+  router.get('/:db/:modelId', async (req, res)=> {
 
     try {
 
       const db = req.params.db
 
       const modelSvc = ServiceManager.getService(
-        db + '-ModelSvc');
+        db + '-ModelSvc')
 
-      const modelIds = req.body
+      const pageQuery = {
+        thumbnail: 0
+      }
 
-      const response = await modelSvc.getThumbnails(
-        modelIds)
+      const model = await modelSvc.getById(
+        req.params.modelId, {
+          pageQuery
+        })
 
-      res.json(response)
+      res.json(model)
 
     } catch (error) {
 
@@ -93,32 +136,104 @@ module.exports = function() {
     }
   })
 
-  //////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
+  // GET /{collection}/model/{modelId}/thumbnail
+  // Get model thumbnail
   //
-  //
-  ///////////////////////////////////////////////////////////////////////////////
-  router.get('/:db/:modelId', async (req, res)=> {
+  /////////////////////////////////////////////////////////
+  router.get('/:db/:modelId/thumbnail', async (req, res) => {
 
     try {
 
-      var db = req.params.db
+      const db = req.params.db
 
-      var modelSvc = ServiceManager.getService(
+      const modelSvc = ServiceManager.getService(
         db + '-ModelSvc')
 
-      var pageQuery = {
+      const model = await modelSvc.getById(
+        req.params.modelId)
 
+      if (model.thumbnail) {
+
+        const img = new Buffer(model.thumbnail, 'base64')
+
+        res.contentType('image/png')
+        return res.end(img, 'binary')
       }
 
-      var response = await modelSvc.getById(
-        req.params.modelId,
-        {pageQuery})
+      const options = {
+        height: req.query.size || 400,
+        width: req.query.size || 400
+      }
+
+      const token = await forgeSvc.get2LeggedToken()
+
+      const derivativesSvc = ServiceManager.getService(
+        'DerivativesSvc')
+
+      const response = await derivativesSvc.getThumbnail(
+        token, model.model.urn, options)
+
+      res.contentType('image/png')
+      res.end(response, 'binary')
+
+    } catch (ex) {
+
+      res.status(ex.statusCode || 500)
+      res.json(ex)
+    }
+  })
+
+  /////////////////////////////////////////////////////////
+  // upload resource
+  //
+  /////////////////////////////////////////////////////////
+  router.post('/:db',
+    uploadSvc.uploader.single('model'),
+    async(req, res) => {
+
+    try {
+
+      const file = req.file
+
+      const bucketKey = bucket.bucketKey
+
+      const objectKey = guid('xxxx-xxxx-xxxx') +
+        path.extname(file.originalname)
+
+      const opts = {
+        chunkSize: 5 * 1024 * 1024, //5MB chunks
+        concurrentUploads: 3,
+        onProgress: (info) => {
+
+          const socketId = req.body.socketId
+
+          if (socketId) {
+
+            const socketSvc = ServiceManager.getService(
+              'SocketSvc')
+
+            const msg = Object.assign({}, info, {
+              bucketKey,
+              objectKey
+            })
+
+            socketSvc.broadcast (
+              'progress', msg, socketId)
+          }
+        }
+      }
+
+      const response =
+        await ossSvc.uploadObjectChunked (
+        () => forgeSvc.get2LeggedToken(),
+        bucketKey,
+        objectKey,
+        file, opts)
 
       res.json(response)
 
     } catch (error) {
-
-      debug(error)
 
       res.status(error.statusCode || 500)
       res.json(error)
@@ -144,8 +259,6 @@ module.exports = function() {
       res.json(response)
 
     } catch (error) {
-
-      debug(error)
 
       res.status(error.statusCode || 500)
       res.json(error)

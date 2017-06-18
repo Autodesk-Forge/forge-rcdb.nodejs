@@ -1,3 +1,4 @@
+import ModelUploader from 'ModelUploader'
 import ServiceManager from 'SvcManager'
 import { Link } from 'react-router'
 import './GalleryView.scss'
@@ -20,8 +21,11 @@ class GalleryView extends React.Component {
       add: this.props.addNotification
     }
 
-    this.gallerySvc = ServiceManager.getService(
-      'GallerySvc')
+    this.modelSvc = ServiceManager.getService(
+      'ModelSvc')
+
+    this.socketSvc = ServiceManager.getService(
+      'SocketSvc')
 
     this.state = {
       models: []
@@ -57,7 +61,7 @@ class GalleryView extends React.Component {
       }
     })
 
-    const models = await this.gallerySvc.getModels()
+    const models = await this.modelSvc.getModels('gallery')
 
     this.assignState({
       models
@@ -68,7 +72,31 @@ class GalleryView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  onUploadProgress (file, percent) {
+
+    console.log(percent)
+
+    //const notification = this.notification
+    //
+    //if (notification.progress < 50) {
+    //
+    //  notification.progress = percent/2
+    //
+    //  notification.message =
+    //    `progress: ${(percent/2).toFixed(2)}%`
+    //
+    //  this.notify.update(notification)
+    //}
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   renderModel (modelInfo) {
+
+    const thumbnailUrl = this.modelSvc.getThumbnailUrl(
+      'gallery', modelInfo._id)
 
     const href = `/viewer?id=${modelInfo._id}`
 
@@ -76,7 +104,7 @@ class GalleryView extends React.Component {
       <div key={modelInfo._id} className="item">
         <Link className="content" to={href}>
           <div className="image-container">
-            <Image src={`/api/gallery/thumbnails/${modelInfo.model.urn}`}/>
+            <Image src={thumbnailUrl}/>
           </div>
           <h3 className="title">
               {modelInfo.name}
@@ -100,7 +128,7 @@ class GalleryView extends React.Component {
       return this.renderModel(model)
     })
 
-    return models
+    return _.sortBy(models, (model) => model.name)
   }
 
   /////////////////////////////////////////////////////////
@@ -120,7 +148,16 @@ class GalleryView extends React.Component {
             </div>
           </div>
           <div className="secondary">
-            <div/>
+            {
+            false &&
+            <div className="uploader">
+              <ModelUploader apiUrl={'/api/models/gallery'}
+                onProgress={this.onUploadProgress}
+                socketId={this.socketSvc.socketId}
+              />
+            </div>
+            }
+          <div/>
           </div>
         </div>
       </div>

@@ -16,8 +16,23 @@
     background: rgba(248, 248, 248, 0.4);
     height: calc(100% - 46px);
     margin: 0 auto 0 auto;
-    overflow: scroll;
     width: 95%;
+  }
+
+  .primary {
+    height: calc(100% - 30px);
+    overflow: scroll;
+    margin-top: 16px;
+  }
+
+  .secondary {
+    margin: 16px 0 0 0;
+  }
+
+  .uploader {
+    background: #f9f9f9;
+    color: #284e99;
+    height: 130px;
   }
 
   @media only screen and (max-width: 876px) {
@@ -53,15 +68,15 @@
     }
 
     .primary {
-      margin-left: 3.0%;
+      margin: 16px 0px 0 3.0%;
+      padding-right: 40px;
       width: 63%;
       float: left;
     }
 
     .secondary {
-      margin-left: 3.0%;
       float: left;
-      width: 28%;
+      width: 32%;
     }
   }
 
@@ -72,9 +87,10 @@
   .item {
     box-shadow: 20px 20px 33px 0px rgba(0, 0, 0, 0.21);
     background: #ffffff;
+    margin: 0 0 16px 0;
     text-align: left;
     overflow: hidden;
-    margin: 16px 0;
+
     color: black;
     padding: 0;
 

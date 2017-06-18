@@ -26,7 +26,8 @@ class CoreLayout extends React.Component {
 
     super()
 
-    //theme.notificationsContainer.className.main = 'notifications'
+    this.onForgeUploadProgress =
+      this.onForgeUploadProgress.bind(this)
   }
 
   /////////////////////////////////////////////////////////
@@ -34,6 +35,13 @@ class CoreLayout extends React.Component {
   //
   /////////////////////////////////////////////////////////
   async componentWillMount () {
+
+    this.socketSvc =
+      ServiceManager.getService(
+        'SocketSvc')
+
+    this.socketSvc.on('progress',
+      this.onForgeUploadProgress)
 
     this.dialogSvc =
       ServiceManager.getService(
@@ -48,6 +56,42 @@ class CoreLayout extends React.Component {
     const user = await this.forgeSvc.getUser()
 
     this.props.setUser(user)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onForgeUploadProgress (msg) {
+
+    console.log('forge')
+    console.log(msg)
+
+    //const percent = 50.0 + msg.progress * 0.5
+    //
+    //const notification = this.notification
+    //
+    //notification.progress = percent
+    //
+    //notification.message =
+    //  `progress: ${percent.toFixed(2)}%`
+    //
+    //if (percent === 100) {
+    //
+    //  notification.title = `${msg.objectKey} uploaded!`
+    //  notification.message = `progress: 100%`
+    //  notification.dismissAfter = 2000
+    //  notification.dismissible = true
+    //  notification.status = 'success'
+    //  notification.buttons = [{
+    //    name: 'OK',
+    //    primary: true
+    //  }]
+    //
+    //  this.postSVFJob(msg)
+    //}
+    //
+    //this.notify.update(notification)
   }
 
   /////////////////////////////////////////////////////////

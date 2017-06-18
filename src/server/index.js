@@ -15,7 +15,6 @@ import path from 'path'
 
 //Endpoints
 import MaterialAPI from './api/endpoints/materials'
-import GalleryAPI from './api/endpoints/gallery'
 import SocketAPI from './api/endpoints/socket'
 import ConfigAPI from './api/endpoints/config'
 import ModelAPI from './api/endpoints/models'
@@ -119,7 +118,6 @@ ServiceManager.registerService(ossSvc)
 //
 /////////////////////////////////////////////////////////////////////
 app.use('/api/materials', MaterialAPI())
-app.use('/api/gallery',   GalleryAPI())
 app.use('/api/socket',    SocketAPI())
 app.use('/api/config',    ConfigAPI())
 app.use('/api/models',    ModelAPI())

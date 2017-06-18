@@ -9,7 +9,6 @@ import React from 'react'
 //Services
 import ServiceManager from 'SvcManager'
 import MaterialSvc from 'MaterialSvc'
-import GallerySvc from 'GallerySvc'
 import StorageSvc from 'StorageSvc'
 import DialogSvc from 'DialogSvc'
 import SocketSvc from 'SocketSvc'
@@ -39,10 +38,6 @@ socketSvc.connect().then((socket) => {
   console.log('Client socket connected: ' + socket.id)
 })
 
-const gallerySvc = new GallerySvc({
-  apiUrl: '/api/gallery'
-})
-
 const modelSvc = new ModelSvc({
   apiUrl: '/api/models'
 })
@@ -59,7 +54,6 @@ const forgeSvc = new ForgeSvc({
 // Services Registration
 // ========================================================
 ServiceManager.registerService(materialSvc)
-ServiceManager.registerService(gallerySvc)
 ServiceManager.registerService(storageSvc)
 ServiceManager.registerService(socketSvc)
 ServiceManager.registerService(dialogSvc)

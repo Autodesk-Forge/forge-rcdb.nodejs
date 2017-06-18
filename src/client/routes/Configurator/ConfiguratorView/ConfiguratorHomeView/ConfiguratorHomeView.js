@@ -2,6 +2,7 @@ import ContentEditable from 'react-contenteditable'
 import { browserHistory } from 'react-router'
 import ServiceManager from 'SvcManager'
 import './ConfiguratorHomeView.scss'
+import Image from 'Image'
 import React from 'react'
 import Label from 'Label'
 
@@ -25,6 +26,23 @@ class ConfiguratorHomeView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  assignState (state) {
+
+    return new Promise((resolve) => {
+
+      const newState = Object.assign(
+        {}, this.state, state)
+
+      this.setState(newState, () => {
+        resolve()
+      })
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   async componentWillMount () {
 
     this.modelSvc = ServiceManager.getService(
@@ -38,11 +56,8 @@ class ConfiguratorHomeView extends React.Component {
         return model.name
       })
 
-    this.setState(Object.assign({}, this.state, {
+    this.assignState({
       models: modelsbyName
-    }), () => {
-
-      this.batchRequestThumbnails(5)
     })
   }
 
@@ -83,42 +98,6 @@ class ConfiguratorHomeView extends React.Component {
     this.setState(state)
   }
 
-  /////////////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////////////
-  batchRequestThumbnails (size) {
-
-    const chunks = _.chunk(this.state.models, size)
-
-    chunks.forEach((modelChunk) => {
-
-      const modelIds = modelChunk.map((model) => {
-        return model._id
-      })
-
-      this.modelSvc.getThumbnails('configurator', modelIds).then(
-        (thumbnails) => {
-
-          const models = this.state.models.map((model) => {
-
-            const idx = modelIds.indexOf(model._id)
-
-            return (idx < 0
-              ? model
-              : Object.assign({}, model, {
-              thumbnail: thumbnails[idx]
-            }))
-          })
-
-          this.setState(
-            Object.assign({}, this.state, {
-              models
-            }))
-        })
-    })
-  }
-
   /////////////////////////////////////////////////////////
   //
   //
@@ -135,6 +114,9 @@ class ConfiguratorHomeView extends React.Component {
 
     return filteredModels.map((model) => {
 
+      const thumbnailUrl = this.modelSvc.getThumbnailUrl(
+        'configurator', model._id)
+
       const href = `/configurator?id=${model._id}`
 
       return (
@@ -145,8 +127,7 @@ class ConfiguratorHomeView extends React.Component {
           </a>
           <a className="content" href={href}
             onClick={(e)=>this.gotToLink(e, href)}>
-            <img className={model.thumbnail ? "":"default-adsk"}
-              src={model.thumbnail ? model.thumbnail : ""}/>
+            <Image src={thumbnailUrl}/>
             <div className="text-content">
               <Label text={model.name}/>
               <br/>

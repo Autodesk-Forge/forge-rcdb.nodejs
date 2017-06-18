@@ -1,5 +1,6 @@
 import ServiceManager from 'SvcManager'
 import { Link } from 'react-router'
+import Image from 'Image'
 import React from 'react'
 import './HomeView.scss'
 
@@ -34,8 +35,6 @@ class HomeView extends React.Component {
         models: modelsbyName
       }))
 
-      this.batchRequestThumbnails(5)
-
       this.props.setNavbarState({
         links: {
           settings: false
@@ -61,49 +60,7 @@ class HomeView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////////////
-  batchRequestThumbnails (size) {
-
-    const chunks = _.chunk(this.state.models, size)
-
-    chunks.forEach((modelChunk) => {
-
-      const modelIds = modelChunk.map((model) => {
-        return model._id
-      })
-
-      this.modelSvc.getThumbnails('rcdb', modelIds).then(
-        (thumbnails) => {
-
-          const models = this.state.models.map((model) => {
-
-            const idx = modelIds.indexOf(model._id)
-
-            return (idx < 0
-              ? model
-              : Object.assign({}, model, {
-              thumbnail: thumbnails[idx]
-            }))
-          })
-
-          this.setState(
-            Object.assign({}, this.state, {
-              models
-            }))
-        })
-    })
-  }
-
-  /////////////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////////////
   render() {
-
-    const Text = ({content}) => {
-      return (
-        <p dangerouslySetInnerHTML={{__html: content}}></p>
-      );
-    }
 
     return (
       <div className="home">
@@ -115,17 +72,23 @@ class HomeView extends React.Component {
 
           <div className="content responsive-grid">
 
-            {this.state.models.map((model, idx) => {
-              return (
-                <Link key={idx} to={`/database?id=${model._id}`}>
-                  <figure>
-                    <figcaption>
+            {
+              this.state.models.map((model, idx) => {
+
+                const thumbnailUrl =
+                  this.modelSvc.getThumbnailUrl (
+                    'rcdb', model._id)
+
+                return (
+                  <Link key={idx} to={`/database?id=${model._id}`}>
+                    <figure>
+                      <figcaption>
                       {model.name}
-                    </figcaption>
-                    <img className={model.thumbnail ? "":"default-adsk"}
-                      src={model.thumbnail ? model.thumbnail : ""}/>
-                  </figure>
-                </Link>)
+                      </figcaption>
+                      <Image src={thumbnailUrl}/>
+                      </figure>
+                    </Link>
+                )
               })
             }
           </div>
