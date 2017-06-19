@@ -523,6 +523,9 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
 
     const modelDlgItems = dbModels.map((dbModel) => {
 
+      const thumbnailUrl = this.modelSvc.getThumbnailUrl(
+        this.options.database, dbModel._id, 200)
+
       return (
         <div key={dbModel._id} className="model-item"
           onClick={() => {
@@ -538,7 +541,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
               open: false
             })
         }}>
-          <img src={`/api/gallery/thumbnails/${dbModel.model.urn}`}/>
+          <img src={thumbnailUrl}/>
           <Label text= {dbModel.name}/>
         </div>
       )

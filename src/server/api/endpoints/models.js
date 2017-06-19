@@ -100,7 +100,8 @@ module.exports = function() {
       }
     }
 
-    derivativesSvc.postJobWithProgress(job, {
+    derivativesSvc.postJobWithProgress(
+      data.getToken, job, {
       query: { type: 'geometry' },
       onProgress: (progress) => {
 
@@ -108,6 +109,18 @@ module.exports = function() {
 
         if (progress === '100%') {
 
+          const modelInfo = {
+            env: "AutodeskProduction",
+            name : "Car Seat",
+            model : {
+              urn
+            }
+          }
+
+          const modelSvc = ServiceManager.getService(
+            data.db + '-ModelSvc')
+
+          modelSvc.register(modelInfo)
         }
       }
     })
@@ -299,6 +312,9 @@ module.exports = function() {
         file, opts)
 
       postSVFJob({
+        getToken: () => forgeSvc.get2LeggedToken(),
+        name: file.originalname,
+        db: req.params.db,
         bucketKey,
         objectKey
       })

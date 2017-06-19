@@ -11,10 +11,10 @@ export default class DerivativeSvc extends BaseSvc {
     return 'https://developer.api.autodesk.com/modelderivative/v2'
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   constructor (config) {
 
     super(config)
@@ -22,81 +22,109 @@ export default class DerivativeSvc extends BaseSvc {
     this._derivativesAPI = new Forge.DerivativesApi()
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   name () {
 
     return 'DerivativesSvc'
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
-  postJob (token, payload) {
+  /////////////////////////////////////////////////////////
+  async postJob (getToken, payload) {
+
+    const token = ((typeof getToken == 'function')
+      ? await getToken()
+      : getToken)
 
     return this._derivativesAPI.translate (payload, {
       'xAdsForce': payload.output.force
     }, {autoRefresh:false}, token)
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
-  getFormats (token, opts = {}) {
+  /////////////////////////////////////////////////////////
+  async getFormats (getToken, opts = {}) {
+
+    const token = ((typeof getToken == 'function')
+      ? await getToken()
+      : getToken)
 
     return this._derivativesAPI.getFormats(
       opts,  {autoRefresh:false}, token)
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
-  getMetadata (token, urn, opts = {}) {
+  /////////////////////////////////////////////////////////
+  async getMetadata (getToken, urn, opts = {}) {
+
+    const token = ((typeof getToken == 'function')
+      ? await getToken()
+      : getToken)
 
     return this._derivativesAPI.getMetadata(
       urn, opts, {autoRefresh:false}, token)
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
-  getHierarchy (token, urn, guid, opts = {}) {
+  /////////////////////////////////////////////////////////
+  async getHierarchy (getToken, urn, guid, opts = {}) {
+
+    const token = ((typeof getToken == 'function')
+      ? await getToken()
+      : getToken)
 
     return this._derivativesAPI.getModelviewMetadata(
       urn, guid, opts, {autoRefresh:false}, token)
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
-  getProperties (token, urn, guid, opts = {}) {
+  /////////////////////////////////////////////////////////
+  async getProperties (getToken, urn, guid, opts = {}) {
+
+    const token = ((typeof getToken == 'function')
+      ? await getToken()
+      : getToken)
 
     return this._derivativesAPI.getModelviewProperties(
       urn, guid, opts, {autoRefresh:false}, token)
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
-  getManifest (token, urn, opts = {}) {
+  /////////////////////////////////////////////////////////
+  async getManifest (getToken, urn, opts = {}) {
+
+    const token = ((typeof getToken == 'function')
+      ? await getToken()
+      : getToken)
 
     return this._derivativesAPI.getManifest (
       urn, opts, {autoRefresh:false}, token)
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
-  deleteManifest (token, urn) {
+  /////////////////////////////////////////////////////////
+  async deleteManifest (getToken, urn) {
+
+    const token = ((typeof getToken == 'function')
+      ? await getToken()
+      : getToken)
 
     //return this._derivativesAPI.deleteManifest (
     //  urn, {autoRefresh:false}, token)
@@ -112,11 +140,15 @@ export default class DerivativeSvc extends BaseSvc {
     })
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
-  download (token, urn, derivativeURN, opts = {}) {
+  /////////////////////////////////////////////////////////
+  async download (getToken, urn, derivativeURN, opts = {}) {
+
+    const token = ((typeof getToken == 'function')
+      ? await getToken()
+      : getToken)
 
     // TODO SDK KO
     //this._APIAuth.accessToken = token
@@ -178,9 +210,13 @@ export default class DerivativeSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////
-  getThumbnail (token, urn, options = {
+  async getThumbnail (getToken, urn, options = {
     width: 100, height: 100
   }) {
+
+    const token = ((typeof getToken == 'function')
+      ? await getToken()
+      : getToken)
 
     //TODO: SDK KO
 
@@ -232,26 +268,6 @@ export default class DerivativeSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////
-  postJob (payload) {
-
-    const url = `${this.apiUrl}/job`
-
-    const data = {
-      payload: JSON.stringify(payload)
-    }
-
-    return this.ajax({
-      rawBody: true,
-      type: 'POST',
-      data,
-      url
-    })
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
   buildDefaultJobQuery (job) {
 
     switch (job.output.formats[0].type) {
@@ -262,14 +278,14 @@ export default class DerivativeSvc extends BaseSvc {
 
       case 'obj':
 
-        const objIds = job.output.formats[0].advanced.objectIds
+        const {objectIds} = job.output.formats[0].advanced
 
-        if (objIds) {
+        if (objectIds) {
 
           return (derivative) => {
             return (
             derivative.role === 'obj' &&
-            _.isEqual(derivative.objectIds, objIds)
+            _.isEqual(derivative.objectIds, objectIds)
             )
           }
         }
@@ -280,22 +296,23 @@ export default class DerivativeSvc extends BaseSvc {
     }
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
-  postJobWithProgress (job, opts) {
+  /////////////////////////////////////////////////////////
+  postJobWithProgress (getToken, job, opts) {
 
     return new Promise(async(resolve, reject) => {
 
       try {
 
-        console.log('Posting Job:')
-        console.log(job)
+        const token = ((typeof getToken == 'function')
+          ? await getToken()
+          : getToken)
 
-        var jobRes = await this.postJob(job)
+        var jobRes = await this.postJob(token, job)
 
-        if (jobRes.result === 'success' || jobRes.result === 'created') {
+        if (['success', 'created'].includes(jobRes.result)) {
 
           const onProgress = (progress) => {
 
@@ -334,13 +351,13 @@ export default class DerivativeSvc extends BaseSvc {
     })
   }
 
-  ///////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  ///////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   findDerivatives (parent, query) {
 
-    if(!parent) {
+    if (!parent) {
 
       return []
     }
@@ -385,10 +402,10 @@ export default class DerivativeSvc extends BaseSvc {
     return []
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   hasDerivative (manifest, query) {
 
     var derivatives = this.findDerivatives(
@@ -397,11 +414,11 @@ export default class DerivativeSvc extends BaseSvc {
     return derivatives.length > 0
   }
 
-  ///////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  ///////////////////////////////////////////////////////////////////
-  getDerivative (urn, query, outputType,
+  /////////////////////////////////////////////////////////
+  getDerivative (token, urn, query, outputType,
                  onProgress = null,
                  skipNotFound = false) {
 
@@ -411,7 +428,12 @@ export default class DerivativeSvc extends BaseSvc {
 
         while (true) {
 
-          var manifest = await this.getManifest(urn)
+          const token = ((typeof getToken == 'function')
+            ? await getToken()
+            : getToken)
+
+          var manifest = await this.getManifest(
+            token, urn)
 
           //if(manifest.status === 'failed') {
           //  return reject(manifest)

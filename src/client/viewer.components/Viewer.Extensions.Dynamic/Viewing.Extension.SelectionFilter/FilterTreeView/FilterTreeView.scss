@@ -1,21 +1,22 @@
 .filter-tree-container {
 
-  .treeview header {
+  .treeview lmvheader {
     transition-property: background, border;
     transition-timing-function: ease;
     transition-duration: 1.5s;
     transition-delay: 0.0s;
 
     background: rgba(245, 245, 245, 0.5);
+    margin-bottom: -4px;
     border: none;
     height: 30px;
   }
 
-  .treeview header:hover {
+  .treeview lmvheader:hover {
     background: rgba(0, 105, 245, 0.35);
   }
 
-  .treeview group > header > icon {
+  .treeview group > lmvheader > icon {
     height: 20px;
     float: left;
   }

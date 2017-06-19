@@ -15,6 +15,10 @@ class GalleryView extends React.Component {
 
     super (props)
 
+    this.onUploadProgress = this.onUploadProgress.bind(this)
+
+    this.onInitUpload = this.onInitUpload.bind(this)
+
     this.modelSvc = ServiceManager.getService(
       'ModelSvc')
 
@@ -71,6 +75,25 @@ class GalleryView extends React.Component {
     this.assignState({
       models: modelsByName
     })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onInitUpload (file) {
+
+    const notification = this.notifySvc.add({
+      title: 'Uploading ' + file.name,
+      message: 'progress: 0%',
+      dismissible: false,
+      status: 'loading',
+      dismissAfter: 0,
+      position: 'tl',
+      progress: 0
+    })
+
+    console.log(notification)
   }
 
   /////////////////////////////////////////////////////////
@@ -153,12 +176,12 @@ class GalleryView extends React.Component {
             </div>
           </div>
           <div className="secondary">
-            {
-            false &&
-            <div className="uploader">
+            { false&&
+            < div className="uploader">
               <ModelUploader apiUrl={'/api/models/gallery'}
-                onProgress={this.onUploadProgress}
-                socketId={this.socketSvc.socketId}
+              onProgress={this.onUploadProgress}
+              socketId={this.socketSvc.socketId}
+              onInitUpload={this.onInitUpload}
               />
             </div>
             }

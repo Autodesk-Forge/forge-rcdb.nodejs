@@ -179,30 +179,25 @@ export default class DbSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   insert (collectionName, item) {
 
-    var _thisSvc = this;
-
-    return new Promise(async(resolve, reject)=> {
+    return new Promise(async(resolve, reject ) => {
 
       try{
 
-        var collection = await _thisSvc.getCollection(
+        const collection = await this.getCollection(
           collectionName);
 
         collection.insert(item, {w:1}, (err, result)=>{
 
-          if (err) {
+          return err
+            ? reject(err)
+            :resolve(item)
+        })
 
-            return reject(err);
-          }
+      } catch(ex) {
 
-          return resolve(item);
-        });
+        reject(ex)
       }
-      catch(ex){
-
-        reject(ex);
-      }
-    });
+    })
   }
 
   /////////////////////////////////////////////////////////////////
