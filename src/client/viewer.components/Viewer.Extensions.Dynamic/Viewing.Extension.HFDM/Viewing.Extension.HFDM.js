@@ -269,8 +269,11 @@ class HFDMExtension extends MultiModelExtensionBase {
     const {colaborateURL, inspectorURL} =
       this.react.getState()
 
+    const showLoader = !colaborateURL
+
     return (
       <div>
+        <ReactLoader show={showLoader}/>
         <ScriptLoader onLoaded={this.onScriptLoaded}
           url={[
             "/resources/libs/hfdm/forge-entity-manager.js",
