@@ -48,6 +48,12 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
             this.target = data.property
             break
           }
+
+          if (data.property._id === 'up') {
+
+            this.up = data.property
+            break
+          }
       }
     })
   }
@@ -232,7 +238,7 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
         Types.Vector3d)
 
     const cameraTarget =
-      this.viewer.navigation.getPosition()
+      this.viewer.navigation.getTarget()
 
     target.get('x').value = cameraTarget.x
     target.get('y').value = cameraTarget.y
@@ -241,6 +247,20 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
     this.workspace.insert(
       'target', target)
 
+
+    const up =
+      this.createTypeInstance(
+        Types.Vector3d)
+
+    const cameraUp =
+      this.viewer.navigation.getCameraUpVector()
+
+    up.get('x').value = cameraUp.x
+    up.get('y').value = cameraUp.y
+    up.get('z').value = cameraUp.z
+
+    this.workspace.insert(
+      'up', up)
 
     this.workspace.commit()
 

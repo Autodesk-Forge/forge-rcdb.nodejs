@@ -179,7 +179,7 @@ class GalleryView extends React.Component {
             </div>
           </div>
           <div className="secondary">
-            { true &&
+            { false &&
             < div className="uploader">
               <ModelUploader apiUrl={'/api/models/gallery'}
               onProgress={this.onUploadProgress}

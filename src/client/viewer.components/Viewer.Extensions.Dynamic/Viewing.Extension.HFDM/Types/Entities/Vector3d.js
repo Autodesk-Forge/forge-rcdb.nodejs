@@ -50,6 +50,14 @@ const Vector3dEntityFactory = (BaseEntity, entityParams) =>
         this.viewer.navigation.setTarget(target)
 
         break
+
+      case 'up':
+
+        const up = new THREE.Vector3(x, y, z)
+
+        this.viewer.navigation.setCameraUpVector(up)
+
+        break
     }
 
     this.log(property)
