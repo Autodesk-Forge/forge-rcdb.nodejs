@@ -11,7 +11,7 @@ resources/models/office
 resources/models/seat
 resources/models/tmp
 resources/models/V8
-resources/libs/
+resources/libs/lmv
 bin/static
 push-to-prod.sh
 TMP
