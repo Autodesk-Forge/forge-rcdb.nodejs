@@ -1,11 +1,14 @@
+import Events from 'events'
 
-class SvcManager {
+class SvcManager extends Events.EventEmitter {
 
   /////////////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////////////
   constructor() {
+
+    super()
 
     this._services = {}
   }
@@ -17,6 +20,8 @@ class SvcManager {
   registerService(svc) {
 
     this._services[svc.name()] = svc
+
+    this.emit('service.register', svc)
   }
 
   /////////////////////////////////////////////////////////////////
@@ -25,7 +30,7 @@ class SvcManager {
   /////////////////////////////////////////////////////////////////
   getService(name) {
 
-    if(this._services[name]){
+    if (this._services[name]) {
 
       return this._services[name]
     }
@@ -34,6 +39,6 @@ class SvcManager {
   }
 }
 
-var TheSvcManager = new SvcManager()
+const TheSvcManager = new SvcManager()
 
 export default TheSvcManager

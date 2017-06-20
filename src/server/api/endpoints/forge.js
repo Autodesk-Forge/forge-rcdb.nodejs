@@ -183,31 +183,31 @@ module.exports = function() {
   // Not needed here because of proxy use
   //
   /////////////////////////////////////////////////////////
-  //router.get('/token/3legged', async (req, res) => {
-  //
-  //  const forgeSvc = ServiceManager.getService(
-  //    'ForgeSvc')
-  //
-  //  try {
-  //
-  //    const token = await forgeSvc.get3LeggedTokenClient(
-  //      req.session,
-  //      'viewable:read')
-  //
-  //    res.json({
-  //      expires_in: forgeSvc.getExpiry(token),
-  //      access_token: token.access_token,
-  //      scope: token.scope
-  //    })
-  //
-  //  } catch (error) {
-  //
-  //    forgeSvc.delete3LeggedToken(req.session)
-  //
-  //    res.status(error.statusCode || 404)
-  //    res.json(error)
-  //  }
-  //})
+  router.get('/token/3legged', async (req, res) => {
+
+    const forgeSvc = ServiceManager.getService(
+      'ForgeSvc')
+
+    try {
+
+      const token =
+        await forgeSvc.get3LeggedTokenClient(
+          req.session, 'data:write')
+
+      res.json({
+        expires_in: forgeSvc.getExpiry(token),
+        access_token: token.access_token,
+        scope: token.scope
+      })
+
+    } catch (error) {
+
+      forgeSvc.delete3LeggedToken(req.session)
+
+      res.status(error.statusCode || 404)
+      res.json(error)
+    }
+  })
 
   return router
 }

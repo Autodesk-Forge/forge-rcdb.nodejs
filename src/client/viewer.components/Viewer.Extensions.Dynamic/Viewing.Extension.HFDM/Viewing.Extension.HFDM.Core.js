@@ -4,6 +4,7 @@
 //
 /////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
+import EventsEmitter from 'EventsEmitter'
 import Toolkit from 'Viewer.Toolkit'
 import Types from './Types'
 
@@ -17,13 +18,38 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
 
     super (viewer, options)
 
-    this.hfdm = new this.options.HFDM_SDK.HFDM()
+    this.onCameraChanged = _.throttle(
+      this.onCameraChanged.bind(this), 250)
 
     this.entityManager =
       new this.options.HFDMAppFramework.EntityManager()
 
+    this.hfdm = new this.options.HFDM_SDK.HFDM()
+
     this.hfdmFactory =
       this.options.HFDM_SDK.PropertyFactory
+
+    this.eventSink = new EventsEmitter()
+
+    this.eventSink.on('entity.created', (data) => {
+
+      switch (data.entityType) {
+
+        case 'Vector3d':
+
+          if (data.property._id === 'position') {
+
+            this.position = data.property
+            break
+          }
+
+          if (data.property._id === 'target') {
+
+            this.target = data.property
+            break
+          }
+      }
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -65,6 +91,10 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
 
     console.log('Viewing.Extension.HFDM.Core unloaded')
 
+    viewer.removeEventListener(
+      Autodesk.Viewing.CAMERA_CHANGE_EVENT,
+      this.onCameraChanged)
+
     super.unload ()
 
     return true
@@ -80,10 +110,15 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
 
     const {BaseEntity} = this.options.HFDMAppFramework
 
+    const entityParams = {
+      eventSink: this.eventSink,
+      viewer: this.viewer
+    }
+
     this.entityManager.registerEntity(
       Type.name,
       Type.typeId,
-      Type.Entity(BaseEntity))
+      Type.Entity(BaseEntity, entityParams))
   }
 
   /////////////////////////////////////////////////////////
@@ -101,87 +136,154 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   async initializeHFDM() {
 
-  try {
+    try {
 
-    this.workspace = this.hfdm.createWorkspace()
+      this.workspace = this.hfdm.createWorkspace()
 
-    this.workspace.on('modified', (changeSet) => {
+      this.workspace.on('modified', (changeSet) => {
 
-      console.log(changeSet)
-    })
+        console.log(changeSet)
+      })
 
-    await this.hfdm.connect({
-      getBearerToken: this.options.getBearerToken,
-      serverUrl: this.options.serverUrl
-    })
+      console.log('Connecting to HFDM ...')
 
-    console.log('Successfully connected to HFDM')
+      await this.hfdm.connect({
+        getBearerToken: this.options.getToken,
+        serverUrl: this.options.serverUrl
+      })
 
-    const initParameters = {
-      urn: this.options.hfdmURN
+      console.log('Successfully connected to HFDM')
+
+      const initParameters = {
+        urn: this.options.hfdmURN
+      }
+
+      await this.workspace.initialize(initParameters)
+
+      this.registerType(Types.Vector3d)
+
+      this.entityManager.bind(this.workspace)
+
+      const branchGUID =
+        this.workspace.getActiveBranch().getGuid()
+
+      this.options.getToken((err, token) => {
+
+        const inspectorURL =
+          `${this.options.serverUrl}/PropertyInspector.html?` +
+          `branchGuid=${branchGUID}&` +
+          `token=${token}`
+
+        this.emit('inspectorURL', inspectorURL)
+      })
+
+      if (!this.options.hfdmURN) {
+
+        const colaborateURL =
+          window.location.href + '&hfdmURN=' +
+          this.workspace.getActiveUrn()
+
+        this.emit('colaborateURL', colaborateURL)
+
+        this.initializeAsHost()
+
+      } else {
+
+        const colaborateURL = window.location.href
+
+        this.emit('colaborateURL', colaborateURL)
+
+        this.initializeAsParticipant()
+      }
+
+    } catch (ex) {
+
+      console.log(ex)
     }
 
-    await this.workspace.initialize(initParameters)
+    return true
+  }
 
-    this.entityManager.bind(this.workspace)
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  initializeAsHost () {
 
-    const branchGUID =
-      this.workspace.getActiveBranch().getGuid()
+    console.log('Initialize as HOST')
 
-    const inspectorURL =
-      `${this.options.serverUrl}/PropertyInspector.html?` +
-      `branchGuid=${branchGUID}`
-      //`token=${branchGUID}`
-
-    console.log('------- inspectorURL -------')
-    console.log(inspectorURL)
-
-    if (!this.options.hfdmURN) {
-
-      const colaborateURL =
-        window.location.href + '&hfdmURN=' +
-        this.workspace.getActiveUrn()
-
-      console.log('------- colaborateURL -------')
-      console.log(colaborateURL)
-
-    } else {
-
-      console.log('------- colaborateURL -------')
-      console.log(window.location.href)
-    }
-
-    this.registerType(Types.Vector2d)
-
-    const pos1 =
+    const position =
       this.createTypeInstance(
-        Types.Vector2d)
+        Types.Vector3d)
 
-    const pos2 =
-      this.createTypeInstance(
-        Types.Vector2d)
+    const cameraPosition =
+      this.viewer.navigation.getPosition()
 
-    //setInterval(() => {
-    //
-    //  vector2d.get('x').value = Math.random()
-    //
-    //}, 1000)
+    position.get('x').value = cameraPosition.x
+    position.get('y').value = cameraPosition.y
+    position.get('z').value = cameraPosition.z
 
     this.workspace.insert(
-      'pos1', pos1)
+      'position', position)
+
+
+    const target =
+      this.createTypeInstance(
+        Types.Vector3d)
+
+    const cameraTarget =
+      this.viewer.navigation.getPosition()
+
+    target.get('x').value = cameraTarget.x
+    target.get('y').value = cameraTarget.y
+    target.get('z').value = cameraTarget.z
 
     this.workspace.insert(
-      'pos2', pos2)
+      'target', target)
+
 
     this.workspace.commit()
 
-  } catch (ex) {
-
-    console.log(ex)
+    this.viewer.addEventListener(
+      Autodesk.Viewing.CAMERA_CHANGE_EVENT,
+      this.onCameraChanged)
   }
 
-  return true
-}
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  initializeAsParticipant () {
+
+    console.log('Initialize as PARTICIPANT')
+
+    this.viewer.addEventListener(
+      Autodesk.Viewing.CAMERA_CHANGE_EVENT,
+      this.onCameraChanged)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onCameraChanged (event) {
+
+      const nav = this.viewer.navigation
+
+      const position = nav.getPosition()
+
+      const target = nav.getTarget()
+
+      this.position.get('x').value = position.x
+      this.position.get('y').value = position.y
+      this.position.get('z').value = position.z
+
+      this.target.get('x').value = target.x
+      this.target.get('y').value = target.y
+      this.target.get('z').value = target.z
+
+      this.workspace.commit()
+  }
 }
 
 Autodesk.Viewing.theExtensionManager.registerExtension(

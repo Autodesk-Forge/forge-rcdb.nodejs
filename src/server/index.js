@@ -218,7 +218,9 @@ const runServer = (app) => {
 
           const dbSvc = new MongoDbSvc(dbConfig)
 
-          dbSvc.connect().then( () => {
+          dbSvc.connect().then(() => {
+
+            ServiceManager.registerService(dbSvc)
 
             for (const key in dbConfig.collections) {
 
@@ -232,8 +234,6 @@ const runServer = (app) => {
 
               ServiceManager.registerService(modelSvc)
             }
-
-            ServiceManager.registerService(dbSvc)
           })
 
           break;

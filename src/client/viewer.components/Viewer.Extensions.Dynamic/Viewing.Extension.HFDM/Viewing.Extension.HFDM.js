@@ -4,7 +4,7 @@
 //
 /////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
-import HFDMCoreExtension from './Viewing.Extension.HFDM.Core'
+import HFDMCoreExtensionId from './Viewing.Extension.HFDM.Core'
 import { browserHistory } from 'react-router'
 import WidgetContainer from 'WidgetContainer'
 import ScriptLoader from './ScriptLoader'
@@ -32,6 +32,7 @@ class HFDMExtension extends MultiModelExtensionBase {
     super (viewer, options)
 
     this.onScriptLoaded = this.onScriptLoaded.bind(this)
+
     this.renderTitle = this.renderTitle.bind(this)
 
     this.dialogSvc =
@@ -69,23 +70,29 @@ class HFDMExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   load () {
 
-    if (!this.options.appState.user) {
-
-      this.showLogin()
-      return true
-    }
-
     this.react.setState({
+
+      user: this.options.appState.user,
+      colaborateURL: null,
+      inspectorURL: null
 
     }).then (() => {
 
       this.react.pushRenderExtension(this)
 
-      this.options.setNavbarState({
-        links: {
-          login: true
-        }
-      })
+      if (!this.options.appState.user) {
+
+        this.forgeSvc.getUser().then((user) => {
+
+          this.react.setState({
+            user
+          })
+
+        }, (err) => {
+
+          this.showLogin()
+        })
+      }
     })
 
     console.log('Viewing.Extension.HFDM loaded')
@@ -147,7 +154,7 @@ class HFDMExtension extends MultiModelExtensionBase {
   // callback: function (error, bearerToken)
   //
   /////////////////////////////////////////////////////////
-  getBearerToken (callback) {
+  getToken (callback) {
 
     $.get('/api/forge/token/3legged', (res) => {
 
@@ -201,12 +208,30 @@ class HFDMExtension extends MultiModelExtensionBase {
       await this.sleep(100)
     }
 
-    this.viewer.loadExtension(HFDMCoreExtension, {
-      serverUrl: 'https://developer-stg.api.autodesk.com/lynx/v1/pss',
-      hfdmURN: this.options.location.query.hfdmURN,
-      HFDMAppFramework: window.Forge.AppFramework,
-      getBearerToken: this.getBearerToken,
-      HFDM_SDK: window.Forge.HFDM
+    const HFDMCoreExtension =
+      await this.viewer.loadExtension(
+        HFDMCoreExtensionId, {
+          serverUrl: 'https://developer.api.autodesk.com/lynx/v1/pss',
+          hfdmURN: this.options.location.query.hfdmURN,
+          HFDMAppFramework: window.Forge.AppFramework,
+          HFDM_SDK: window.Forge.HFDM,
+          getToken: this.getToken
+        })
+
+    HFDMCoreExtension.on('colaborateURL', (colaborateURL) => {
+
+      console.log('------- colaborateURL -------')
+      console.log(colaborateURL)
+
+      this.react.setState({
+        colaborateURL
+      })
+    })
+
+    HFDMCoreExtension.on('inspectorURL', (inspectorURL) => {
+
+      console.log('------- inspectorURL -------')
+      console.log(inspectorURL)
     })
   }
 
@@ -241,6 +266,9 @@ class HFDMExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderControls () {
 
+    const {colaborateURL, inspectorURL} =
+      this.react.getState()
+
     return (
       <div>
         <ScriptLoader onLoaded={this.onScriptLoaded}
@@ -248,6 +276,13 @@ class HFDMExtension extends MultiModelExtensionBase {
             "/resources/libs/hfdm/forge-entity-manager.js",
             "/resources/libs/hfdm/forge-hfdm.js"
           ]}/>
+        <br/>
+        {
+          colaborateURL &&
+          <a href={colaborateURL} target='_blank'>
+            Collaborate URL
+          </a>
+        }
       </div>
     )
   }
@@ -258,23 +293,20 @@ class HFDMExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   render (opts) {
 
+    const {user} = this.react.getState()
+
     return (
       <WidgetContainer
         renderTitle={() => this.renderTitle(opts.docked)}
         showTitle={opts.showTitle}
         className={this.className}>
-
         {
-          this.options.appState.user &&
-          this.renderControls()
+          user && this.renderControls()
         }
-
       </WidgetContainer>
     )
   }
 }
-
-
 
 Autodesk.Viewing.theExtensionManager.registerExtension(
   HFDMExtension.ExtensionId,

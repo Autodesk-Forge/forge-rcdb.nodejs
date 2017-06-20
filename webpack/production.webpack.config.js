@@ -165,7 +165,8 @@ module.exports = {
         removeAttributeQuotes: true,
         collapseWhitespace: true,
         removeComments: true,
-        minifyCSS: true
+        minifyCSS: true,
+        html5: true
       },
       inject: 'body'
     }),

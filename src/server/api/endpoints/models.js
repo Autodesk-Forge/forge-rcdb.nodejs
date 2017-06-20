@@ -72,6 +72,11 @@ module.exports = function() {
     return new Buffer(str).toString('base64')
   }
 
+  const atob = (b64Encoded) => {
+
+    return new Buffer(b64Encoded, 'base64').toString()
+  }
+
   /////////////////////////////////////////////////////////
   //
   //
@@ -105,13 +110,11 @@ module.exports = function() {
       query: { type: 'geometry' },
       onProgress: (progress) => {
 
-        console.log(progress)
-
         if (progress === '100%') {
 
           const modelInfo = {
-            env: "AutodeskProduction",
-            name : "Car Seat",
+            env: 'AutodeskProduction',
+            name : data.name,
             model : {
               urn
             }
@@ -126,13 +129,58 @@ module.exports = function() {
     })
   }
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  const cleanModels = async(modelSvc) => {
+
+    const models = await modelSvc.getModels()
+
+    const token = await forgeSvc.get2LeggedToken()
+
+    models.forEach((modelInfo) => {
+
+      const fileId = atob(modelInfo.model.urn)
+
+      const objectId = ossSvc.parseObjectId(fileId)
+
+      ossSvc.getObjectDetails (token,
+        objectId.bucketKey,
+        objectId.objectKey).then((res) => {
+
+        }, (err) => {
+
+          if (err.statusCode === 404) {
+
+          }
+        })
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  ServiceManager.on('service.register', (svc) => {
+
+    if (svc.name() === 'gallery-ModelSvc') {
+
+      cleanModels(svc)
+    }
+  })
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   const router = express.Router()
 
-  //////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  ///////////////////////////////////////////////////////////////////////////////
-  router.get('/:db', async (req, res)=> {
+  /////////////////////////////////////////////////////////
+  router.get('/:db', async (req, res) => {
 
     try {
 
@@ -313,7 +361,7 @@ module.exports = function() {
 
       postSVFJob({
         getToken: () => forgeSvc.get2LeggedToken(),
-        name: file.originalname,
+        name: path.parse(file.originalname).name,
         db: req.params.db,
         bucketKey,
         objectKey

@@ -241,6 +241,10 @@ export default class ForgeSvc extends BaseSvc {
 
       try {
 
+        const scopeStr = Array.isArray(scope)
+          ? scope.join(' ')
+          : scope
+
         if (!session.forge) {
 
           return reject({
@@ -253,7 +257,7 @@ export default class ForgeSvc extends BaseSvc {
           // request a downgraded token to provide to client App
 
           const clientToken = await this.refresh3LeggedToken(
-            session, scope)
+            session, scopeStr)
 
           this.set3LeggedTokenClient(
             session, clientToken)
@@ -264,7 +268,7 @@ export default class ForgeSvc extends BaseSvc {
         if(this.getExpiry(token) < 60) {
 
           token = await this.refresh3LeggedToken (
-            session, scope)
+            session, scopeStr)
 
           this.set3LeggedTokenClient(
             session, token)

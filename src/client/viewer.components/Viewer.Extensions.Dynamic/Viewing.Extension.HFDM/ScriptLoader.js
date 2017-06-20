@@ -48,7 +48,7 @@ export default class ScriptLoader extends React.Component {
 
     const loadTasks = urls.map((url) => {
 
-      return loadScript(url)
+      return this.loadScript(url)
     })
 
     Promise.all(loadTasks).then(() => {

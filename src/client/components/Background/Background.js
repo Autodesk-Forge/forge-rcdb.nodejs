@@ -14,8 +14,8 @@ class Background extends React.Component {
     this.state = {
       variance: 0.8,
       dimensions: {
-        height: 0,
-        width: 0
+        height: 1,
+        width: 1
       }
     }
 
@@ -59,6 +59,7 @@ class Background extends React.Component {
       <Measure
         bounds
         onResize={(rect) => {
+
           this.assignState({ dimensions: rect.bounds })
         }}>
         {
@@ -66,17 +67,18 @@ class Background extends React.Component {
 
             return (
               <div ref={measureRef} className="background">
-                {
-                  (dimensions.with !==0 && dimensions.height !==0) &&
-                  <Trianglify output="svg"
-                    cell_size={60}
-                    x_colors='Blues'
-                    y_colors='match_x'
-                    variance={variance}
-                    height={dimensions.height}
-                    width={dimensions.width}
-                  />
-                }
+               {
+                (dimensions.with !==0 && dimensions.height !==0) &&
+                <Trianglify
+                  height={dimensions.height}
+                  width={dimensions.width}
+                  variance={variance}
+                  y_colors='match_x'
+                  x_colors='Blues'
+                  cell_size={60}
+                  output="svg"
+                />
+               }
               </div>
             )
           }

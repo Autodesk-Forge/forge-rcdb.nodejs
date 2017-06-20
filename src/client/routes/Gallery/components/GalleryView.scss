@@ -5,8 +5,9 @@
   color: white;
 
   .search {
+    background: rgba(248, 248, 248, 0.4);
     margin: 0 auto 10px auto;
-    background: #7b92bf;
+    position: relative;
     max-width: 978px;
     height: 30px;
     width: 95%;
@@ -16,6 +17,7 @@
     background: rgba(248, 248, 248, 0.4);
     height: calc(100% - 46px);
     margin: 0 auto 0 auto;
+    position: relative;
     width: 95%;
   }
 

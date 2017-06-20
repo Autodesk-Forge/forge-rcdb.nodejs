@@ -17,7 +17,7 @@ export default class DerivativeSvc extends BaseSvc {
   /////////////////////////////////////////////////////////
   constructor (config) {
 
-    super(config)
+    super (config)
 
     this._derivativesAPI = new Forge.DerivativesApi()
   }
@@ -306,13 +306,9 @@ export default class DerivativeSvc extends BaseSvc {
 
       try {
 
-        const token = ((typeof getToken == 'function')
-          ? await getToken()
-          : getToken)
+        const jobRes = await this.postJob(getToken, job)
 
-        var jobRes = await this.postJob(token, job)
-
-        if (['success', 'created'].includes(jobRes.result)) {
+        if (['success', 'created'].includes(jobRes.body.result)) {
 
           const onProgress = (progress) => {
 
@@ -323,6 +319,7 @@ export default class DerivativeSvc extends BaseSvc {
           }
 
           const derivative = await this.getDerivative (
+            getToken,
             job.input.urn,
             opts.query || this.buildDefaultJobQuery(job),
             job.output.formats[0].type,
@@ -418,7 +415,7 @@ export default class DerivativeSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////
-  getDerivative (token, urn, query, outputType,
+  getDerivative (getToken, urn, query, outputType,
                  onProgress = null,
                  skipNotFound = false) {
 
@@ -428,12 +425,10 @@ export default class DerivativeSvc extends BaseSvc {
 
         while (true) {
 
-          const token = ((typeof getToken == 'function')
-            ? await getToken()
-            : getToken)
+          const manifestRes = await this.getManifest(
+            getToken, urn)
 
-          var manifest = await this.getManifest(
-            token, urn)
+          const manifest = manifestRes.body
 
           //if(manifest.status === 'failed') {
           //  return reject(manifest)

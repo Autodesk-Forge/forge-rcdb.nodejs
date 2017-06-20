@@ -1,5 +1,6 @@
 import ModelUploader from 'ModelUploader'
 import ServiceManager from 'SvcManager'
+import Background from 'Background'
 import { Link } from 'react-router'
 import './GalleryView.scss'
 import Image from 'Image'
@@ -166,7 +167,9 @@ class GalleryView extends React.Component {
   render() {
 
     return (
+
       <div className="gallery-view">
+        <Background/>
         <div className="search">
         </div>
         <div className="container">
@@ -176,7 +179,7 @@ class GalleryView extends React.Component {
             </div>
           </div>
           <div className="secondary">
-            { false&&
+            { true &&
             < div className="uploader">
               <ModelUploader apiUrl={'/api/models/gallery'}
               onProgress={this.onUploadProgress}
