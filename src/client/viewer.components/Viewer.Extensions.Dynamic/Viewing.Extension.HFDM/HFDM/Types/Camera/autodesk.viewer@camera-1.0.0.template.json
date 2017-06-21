@@ -1,0 +1,17 @@
+{
+  "typeid": "autodesk.viewer:camera-1.0.0",
+  "properties": [
+    {
+      "id": "position",
+      "typeid": "autodesk.math:vector3d-1.0.0"
+    },
+    {
+      "id": "target",
+      "typeid": "autodesk.math:vector3d-1.0.0"
+    },
+    {
+      "id": "upVector",
+      "typeid": "autodesk.math:vector3d-1.0.0"
+    }
+  ]
+}

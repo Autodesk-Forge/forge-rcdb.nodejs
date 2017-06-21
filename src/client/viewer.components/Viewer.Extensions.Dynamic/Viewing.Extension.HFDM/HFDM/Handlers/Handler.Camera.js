@@ -29,14 +29,14 @@ export default class CameraPositionHandler extends BaseHandler {
 
     const nav = this.viewer.navigation
 
-    const position = this.getPropertyAsVector(
+    const position = this.getVectorProperty(
       'position')
 
-    const target = this.getPropertyAsVector(
+    const target = this.getVectorProperty(
       'target')
 
-    const up = this.getPropertyAsVector(
-      'up')
+    const up = this.getVectorProperty(
+      'upVector')
 
     nav.setPosition(position)
     nav.setCameraUpVector(up)
@@ -49,6 +49,9 @@ export default class CameraPositionHandler extends BaseHandler {
   /////////////////////////////////////////////////////////
   onRemove() {
 
+    this.viewer.removeEventListener(
+      Autodesk.Viewing.CAMERA_CHANGE_EVENT,
+      this.onCameraChanged)
   }
 
   /////////////////////////////////////////////////////////
@@ -65,9 +68,9 @@ export default class CameraPositionHandler extends BaseHandler {
 
     const target = nav.getTarget()
 
-    this.setPropertyFromVector('position', position)
-    this.setPropertyFromVector('target', target)
-    this.setPropertyFromVector('up', up)
+    this.setVectorProperty('position', position)
+    this.setVectorProperty('target', target)
+    this.setVectorProperty('upVector', up)
 
     this.workspace.commit()
   }
@@ -76,37 +79,28 @@ export default class CameraPositionHandler extends BaseHandler {
   //
   //
   /////////////////////////////////////////////////////////
-  setPropertyFromVector (name, v) {
+  setVectorProperty (name, v) {
 
-    this.property.get(`${name}.x`).value = v.x
-    this.property.get(`${name}.y`).value = v.y
-    this.property.get(`${name}.z`).value = v.z
+    const vectorProperty = this.property.get(name)
+
+    vectorProperty.get('x').value = v.x
+    vectorProperty.get('y').value = v.y
+    vectorProperty.get('z').value = v.z
   }
 
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  getPropertyAsVector (name) {
+  getVectorProperty (name) {
 
-    const x = this.property.get(`${name}.x`).value
-    const y = this.property.get(`${name}.y`).value
-    const z = this.property.get(`${name}.z`).value
+    const vectorProperty = this.property.get(name)
+
+    const x = vectorProperty.get('x').value
+    const y = vectorProperty.get('y').value
+    const z = vectorProperty.get('z').value
 
     return new THREE.Vector3(x, y, z)
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  log () {
-
-    const x = this.property.get('x').value.toFixed(2)
-    const y = this.property.get('y').value.toFixed(2)
-    const z = this.property.get('z').value.toFixed(2)
-
-    console.log(`${this.property._id}: [${x}, ${y}, ${z}]`)
   }
 }
 

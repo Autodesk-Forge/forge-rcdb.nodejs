@@ -6,9 +6,12 @@
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import EntityClassFactory from './HFDM/HFDM.Entity.ClassFactory'
 import HandlerManager from './HFDM/Handlers/Handler.Manager'
-import Camera from './HFDM/Types/Camera'
 import EventsEmitter from 'EventsEmitter'
 import Toolkit from 'Viewer.Toolkit'
+
+// Types
+import Vector3d from './HFDM/Types/Vector3d'
+import Camera from './HFDM/Types/Camera'
 
 // Handlers
 import CameraHandler from './HFDM/Handlers/Handler.Camera'
@@ -35,6 +38,9 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
 
     this.handlerManager.registerHandler(
       'camera', new CameraHandler(viewer))
+
+    this.registerType(Vector3d)
+    this.registerType(Camera)
   }
 
   /////////////////////////////////////////////////////////
@@ -125,7 +131,7 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
 
       this.workspace.on('modified', (changeSet) => {
 
-        console.log(changeSet)
+        //console.log(changeSet)
       })
 
       console.log('Connecting to HFDM ...')
@@ -142,8 +148,6 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
       }
 
       await this.workspace.initialize(initParameters)
-
-      this.registerType(Camera)
 
       this.handlerManager.bind(this.workspace)
 
@@ -203,28 +207,44 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
     const target =
       this.viewer.navigation.getTarget()
 
-    const up =
+    const upVector =
       this.viewer.navigation.getCameraUpVector()
 
     const cameraProperty =
       this.createTypeInstance(Camera)
 
-    cameraProperty.get('position.x').value = position.x
-    cameraProperty.get('position.y').value = position.y
-    cameraProperty.get('position.z').value = position.z
+    this.setVectorProperty(
+      cameraProperty,
+      'position',
+      position)
 
-    cameraProperty.get('target.x').value = target.x
-    cameraProperty.get('target.y').value = target.y
-    cameraProperty.get('target.z').value = target.z
+    this.setVectorProperty(
+      cameraProperty,
+      'target',
+      target)
 
-    cameraProperty.get('up.x').value = up.x
-    cameraProperty.get('up.y').value = up.y
-    cameraProperty.get('up.z').value = up.z
+    this.setVectorProperty(
+      cameraProperty,
+      'upVector',
+      upVector)
 
     this.workspace.insert(
       'camera', cameraProperty)
 
     this.workspace.commit()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  setVectorProperty (parentProperty, name, v) {
+
+    const vectorProperty = parentProperty.get(name)
+
+    vectorProperty.get('x').value = v.x
+    vectorProperty.get('y').value = v.y
+    vectorProperty.get('z').value = v.z
   }
 
   /////////////////////////////////////////////////////////

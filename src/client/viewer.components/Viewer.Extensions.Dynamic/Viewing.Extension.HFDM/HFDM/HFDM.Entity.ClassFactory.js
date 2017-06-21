@@ -23,6 +23,18 @@ const EntityClassFactory = (BaseEntity, handlerMng) =>
   onModify (context) {
 
     this.handler.onModify(context)
+
+    const path = context[0]._path.split('.')
+
+    if (path.length > 2) {
+
+      const parentHandlerId = path[path.length-3]
+
+      const parentHandler = handlerMng.getHandler(
+        parentHandlerId)
+
+      parentHandler.onModify(context)
+    }
   }
 
   /////////////////////////////////////////////////////////

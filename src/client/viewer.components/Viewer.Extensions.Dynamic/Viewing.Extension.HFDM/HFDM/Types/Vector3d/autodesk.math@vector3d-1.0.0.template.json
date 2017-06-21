@@ -1,0 +1,17 @@
+{
+  "typeid": "autodesk.math:vector3d-1.0.0",
+  "properties": [
+    {
+      "id": "x",
+      "typeid": "Float64"
+    },
+    {
+      "id": "y",
+      "typeid": "Float64"
+    },
+    {
+      "id": "z",
+      "typeid": "Float64"
+    }
+  ]
+}
