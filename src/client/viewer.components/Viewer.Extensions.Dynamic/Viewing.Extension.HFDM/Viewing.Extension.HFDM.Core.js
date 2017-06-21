@@ -19,7 +19,7 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
     super (viewer, options)
 
     this.onCameraChanged = _.throttle(
-      this.onCameraChanged.bind(this), 250)
+      this.onCameraChanged.bind(this), 300)
 
     this.entityManager =
       new this.options.HFDMAppFramework.EntityManager()
@@ -288,21 +288,27 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   onCameraChanged (event) {
 
-      const nav = this.viewer.navigation
+    const nav = this.viewer.navigation
 
-      const position = nav.getPosition()
+    const position = nav.getPosition()
 
-      const target = nav.getTarget()
+    const target = nav.getTarget()
 
-      this.position.get('x').value = position.x
-      this.position.get('y').value = position.y
-      this.position.get('z').value = position.z
+    const up = nav.getCameraUpVector()
 
-      this.target.get('x').value = target.x
-      this.target.get('y').value = target.y
-      this.target.get('z').value = target.z
+    this.position.get('x').value = position.x
+    this.position.get('y').value = position.y
+    this.position.get('z').value = position.z
 
-      this.workspace.commit()
+    this.target.get('x').value = target.x
+    this.target.get('y').value = target.y
+    this.target.get('z').value = target.z
+
+    this.up.get('x').value = up.x
+    this.up.get('y').value = up.y
+    this.up.get('z').value = up.z
+
+    this.workspace.commit()
   }
 }
 
