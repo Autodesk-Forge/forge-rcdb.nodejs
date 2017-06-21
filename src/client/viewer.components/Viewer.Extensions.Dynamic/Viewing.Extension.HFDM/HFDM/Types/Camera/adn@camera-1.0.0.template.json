@@ -1,0 +1,41 @@
+{
+  "typeid": "adn:camera-1.0.0",
+  "properties": [
+    {
+      "id": "position.x",
+      "typeid": "Float64"
+    },
+    {
+      "id": "position.y",
+      "typeid": "Float64"
+    },
+    {
+      "id": "position.z",
+      "typeid": "Float64"
+    },
+    {
+      "id": "target.x",
+      "typeid": "Float64"
+    },
+    {
+      "id": "target.y",
+      "typeid": "Float64"
+    },
+    {
+      "id": "target.z",
+      "typeid": "Float64"
+    },
+    {
+      "id": "up.x",
+      "typeid": "Float64"
+    },
+    {
+      "id": "up.y",
+      "typeid": "Float64"
+    },
+    {
+      "id": "up.z",
+      "typeid": "Float64"
+    }
+  ]
+}

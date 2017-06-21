@@ -4,9 +4,14 @@
 //
 /////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
+import EntityClassFactory from './HFDM/HFDM.Entity.ClassFactory'
+import HandlerManager from './HFDM/Handlers/Handler.Manager'
+import Camera from './HFDM/Types/Camera'
 import EventsEmitter from 'EventsEmitter'
 import Toolkit from 'Viewer.Toolkit'
-import Types from './Types'
+
+// Handlers
+import CameraHandler from './HFDM/Handlers/Handler.Camera'
 
 class HFDMCoreExtension extends MultiModelExtensionBase {
 
@@ -18,9 +23,6 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
 
     super (viewer, options)
 
-    this.onCameraChanged = _.throttle(
-      this.onCameraChanged.bind(this), 300)
-
     this.entityManager =
       new this.options.HFDMAppFramework.EntityManager()
 
@@ -29,33 +31,10 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
     this.hfdmFactory =
       this.options.HFDM_SDK.PropertyFactory
 
-    this.eventSink = new EventsEmitter()
+    this.handlerManager = new HandlerManager()
 
-    this.eventSink.on('entity.created', (data) => {
-
-      switch (data.entityType) {
-
-        case 'Vector3d':
-
-          if (data.property._id === 'position') {
-
-            this.position = data.property
-            break
-          }
-
-          if (data.property._id === 'target') {
-
-            this.target = data.property
-            break
-          }
-
-          if (data.property._id === 'up') {
-
-            this.up = data.property
-            break
-          }
-      }
-    })
+    this.handlerManager.registerHandler(
+      'camera', new CameraHandler(viewer))
   }
 
   /////////////////////////////////////////////////////////
@@ -112,19 +91,17 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   registerType (Type) {
 
-    this.hfdmFactory.register(Type.json)
+    this.hfdmFactory.register(Type.template)
 
     const {BaseEntity} = this.options.HFDMAppFramework
 
-    const entityParams = {
-      eventSink: this.eventSink,
-      viewer: this.viewer
-    }
+    const EntityClass = EntityClassFactory(
+      BaseEntity, this.handlerManager)
 
     this.entityManager.registerEntity(
       Type.name,
       Type.typeId,
-      Type.Entity(BaseEntity, entityParams))
+      EntityClass)
   }
 
   /////////////////////////////////////////////////////////
@@ -166,7 +143,9 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
 
       await this.workspace.initialize(initParameters)
 
-      this.registerType(Types.Vector3d)
+      this.registerType(Camera)
+
+      this.handlerManager.bind(this.workspace)
 
       this.entityManager.bind(this.workspace)
 
@@ -219,54 +198,33 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
     console.log('Initialize as HOST')
 
     const position =
-      this.createTypeInstance(
-        Types.Vector3d)
-
-    const cameraPosition =
       this.viewer.navigation.getPosition()
 
-    position.get('x').value = cameraPosition.x
-    position.get('y').value = cameraPosition.y
-    position.get('z').value = cameraPosition.z
-
-    this.workspace.insert(
-      'position', position)
-
-
     const target =
-      this.createTypeInstance(
-        Types.Vector3d)
-
-    const cameraTarget =
       this.viewer.navigation.getTarget()
 
-    target.get('x').value = cameraTarget.x
-    target.get('y').value = cameraTarget.y
-    target.get('z').value = cameraTarget.z
-
-    this.workspace.insert(
-      'target', target)
-
-
     const up =
-      this.createTypeInstance(
-        Types.Vector3d)
-
-    const cameraUp =
       this.viewer.navigation.getCameraUpVector()
 
-    up.get('x').value = cameraUp.x
-    up.get('y').value = cameraUp.y
-    up.get('z').value = cameraUp.z
+    const cameraProperty =
+      this.createTypeInstance(Camera)
+
+    cameraProperty.get('position.x').value = position.x
+    cameraProperty.get('position.y').value = position.y
+    cameraProperty.get('position.z').value = position.z
+
+    cameraProperty.get('target.x').value = target.x
+    cameraProperty.get('target.y').value = target.y
+    cameraProperty.get('target.z').value = target.z
+
+    cameraProperty.get('up.x').value = up.x
+    cameraProperty.get('up.y').value = up.y
+    cameraProperty.get('up.z').value = up.z
 
     this.workspace.insert(
-      'up', up)
+      'camera', cameraProperty)
 
     this.workspace.commit()
-
-    this.viewer.addEventListener(
-      Autodesk.Viewing.CAMERA_CHANGE_EVENT,
-      this.onCameraChanged)
   }
 
   /////////////////////////////////////////////////////////
@@ -276,39 +234,6 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
   initializeAsParticipant () {
 
     console.log('Initialize as PARTICIPANT')
-
-    this.viewer.addEventListener(
-      Autodesk.Viewing.CAMERA_CHANGE_EVENT,
-      this.onCameraChanged)
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  onCameraChanged (event) {
-
-    const nav = this.viewer.navigation
-
-    const position = nav.getPosition()
-
-    const target = nav.getTarget()
-
-    const up = nav.getCameraUpVector()
-
-    this.position.get('x').value = position.x
-    this.position.get('y').value = position.y
-    this.position.get('z').value = position.z
-
-    this.target.get('x').value = target.x
-    this.target.get('y').value = target.y
-    this.target.get('z').value = target.z
-
-    this.up.get('x').value = up.x
-    this.up.get('y').value = up.y
-    this.up.get('z').value = up.z
-
-    this.workspace.commit()
   }
 }
 
