@@ -118,7 +118,7 @@ class CoreLayout extends React.Component {
     if (!notification) {
 
       notification = this.notifySvc.add({
-        title: 'Translating ' + msg.name,
+        title: 'Translating ' + msg.filename,
         dismissible: false,
         status: 'loading',
         dismissAfter: 0,
