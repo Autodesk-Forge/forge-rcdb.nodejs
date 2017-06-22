@@ -137,7 +137,10 @@ class CoreLayout extends React.Component {
         name: 'Load',
         primary: true,
         onClick: () => {
-          browserHistory.push(`/viewer?id=${msg.modelId}`)
+          const host = window.location.protocol +
+            '//' + window.location.host
+          const url = `${host}/viewer?id=${msg.modelId}`
+          window.open(url,'_blank')
         }
       }, {
         name: 'Close',
