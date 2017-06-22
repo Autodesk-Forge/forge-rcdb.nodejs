@@ -80,6 +80,14 @@ export default class ClientAPI {
 
       req.attach(opts.tag || 'file', file)
 
+      if (opts.data) {
+
+        for (var key in opts.data) {
+
+          req.field(key, opts.data[key])
+        }
+      }
+
       req.end((err, response) => {
 
         if (err) {

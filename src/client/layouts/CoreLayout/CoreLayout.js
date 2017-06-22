@@ -1,3 +1,4 @@
+import { browserHistory } from 'react-router'
 import NotificationsSystem from 'reapop'
 import ServiceManager from 'SvcManager'
 import theme from 'reapop-theme-wybo'
@@ -26,6 +27,9 @@ class CoreLayout extends React.Component {
 
     super()
 
+    this.onForgeTranslateProgress =
+      this.onForgeTranslateProgress.bind(this)
+
     this.onForgeUploadProgress =
       this.onForgeUploadProgress.bind(this)
   }
@@ -36,11 +40,11 @@ class CoreLayout extends React.Component {
   /////////////////////////////////////////////////////////
   async componentWillMount () {
 
-    const notifySvc =
+    this.notifySvc =
       ServiceManager.getService(
         'NotifySvc')
 
-    notifySvc.initialize ({
+    this.notifySvc.initialize ({
       remove: this.props.removeNotifications,
       update: this.props.updateNotification,
       add: this.props.addNotification
@@ -50,8 +54,11 @@ class CoreLayout extends React.Component {
       ServiceManager.getService(
         'SocketSvc')
 
-    this.socketSvc.on('progress',
+    this.socketSvc.on('upload.progress',
       this.onForgeUploadProgress)
+
+    this.socketSvc.on('svf.progress',
+      this.onForgeTranslateProgress)
 
     this.dialogSvc =
       ServiceManager.getService(
@@ -74,34 +81,73 @@ class CoreLayout extends React.Component {
   /////////////////////////////////////////////////////////
   onForgeUploadProgress (msg) {
 
-    console.log('forge')
-    console.log(msg)
+    const notification = this.notifySvc.getNotification(
+      msg.uploadId)
 
-    //const percent = 50.0 + msg.progress * 0.5
-    //
-    //const notification = this.notification
-    //
-    //notification.progress = percent
-    //
-    //notification.message =
-    //  `progress: ${percent.toFixed(2)}%`
-    //
-    //if (percent === 100) {
-    //
-    //  notification.title = `${msg.objectKey} uploaded!`
-    //  notification.message = `progress: 100%`
-    //  notification.dismissAfter = 2000
-    //  notification.dismissible = true
-    //  notification.status = 'success'
-    //  notification.buttons = [{
-    //    name: 'OK',
-    //    primary: true
-    //  }]
-    //
-    //  this.postSVFJob(msg)
-    //}
-    //
-    //this.notify.update(notification)
+    const percent = 50.0 + msg.progress * 0.5
+
+    notification.message =
+      `progress: ${percent.toFixed(2)}%`
+
+    if (percent === 100) {
+
+      notification.title = `${msg.filename} uploaded!`
+      notification.message = `progress: 100%`
+      notification.dismissAfter = 2000
+      notification.dismissible = true
+      notification.status = 'success'
+      notification.buttons = [{
+        primary: true,
+        name: 'OK'
+      }]
+    }
+
+    this.notifySvc.update(notification)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onForgeTranslateProgress (msg) {
+
+    let notification =
+      this.notifySvc.getNotification(
+        msg.jobId)
+
+    if (!notification) {
+
+      notification = this.notifySvc.add({
+        title: 'Translating ' + msg.name,
+        dismissible: false,
+        status: 'loading',
+        dismissAfter: 0,
+        position: 'tl',
+        id: msg.jobId
+      })
+    }
+
+    notification.message = `progress: ${msg.progress}`
+
+    if (msg.progress === '100%') {
+
+      notification.status = 'success'
+
+      notification.buttons = [{
+        name: 'Load',
+        primary: true,
+        onClick: () => {
+          browserHistory.push(`/viewer?id=${msg.modelId}`)
+        }
+      }, {
+        name: 'Close',
+        onClick: () => {
+          this.notifySvc.remove(notification)
+        }
+      }]
+    }
+
+    this.notifySvc.update(notification)
   }
 
   /////////////////////////////////////////////////////////

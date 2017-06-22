@@ -5,28 +5,28 @@ import _ from 'lodash'
 
 export default class ModelSvc extends BaseSvc {
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   constructor (config) {
 
     super (config)
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   name() {
 
     return (this._config.name + '-ModelSvc') || 'ModelSvc'
   }
 
-  //////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  ///////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   getById (modelId, opts = {}) {
 
     return new Promise(async(resolve, reject) => {
@@ -54,36 +54,31 @@ export default class ModelSvc extends BaseSvc {
     })
   }
 
-  //////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  ///////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   getModels (opts = {}) {
 
-    return new Promise(async(resolve, reject) => {
+    try {
 
-      try {
+      const dbSvc = ServiceManager.getService(
+        this._config.dbName)
 
-        const dbSvc = ServiceManager.getService(
-          this._config.dbName)
+      return dbSvc.getItems(
+        this._config.models,
+        opts)
 
-        const models = await dbSvc.getItems(
-          this._config.models,
-          opts)
+    } catch (ex) {
 
-        return resolve (models)
-
-      } catch (ex) {
-
-        return reject (ex)
-      }
-    })
+      return Promise.reject (ex)
+    }
   }
 
-  //////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  ///////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   getThumbnails (modelIds, opts = {}) {
 
     return new Promise(async(resolve, reject) => {
@@ -130,22 +125,40 @@ export default class ModelSvc extends BaseSvc {
   /////////////////////////////////////////////////////////
   register (modelInfo) {
 
-    return new Promise((resolve, reject)=> {
+    try {
 
-      try {
+      const dbSvc = ServiceManager.getService(
+        this._config.dbName)
 
-        const dbSvc = ServiceManager.getService(
-          this._config.dbName)
+      return dbSvc.insert(
+        this._config.models,
+        modelInfo)
 
-        return dbSvc.insert(
-          this._config.models,
-          modelInfo)
+    } catch (ex) {
 
-      } catch (ex) {
+      return Promise.reject (ex)
+    }
+  }
 
-        return reject (ex)
-      }
-    })
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  deleteModel (modelId) {
+
+    try {
+
+      const dbSvc = ServiceManager.getService(
+        this._config.dbName)
+
+      return dbSvc.removeItems(this._config.models, {
+        _id: new mongo.ObjectId(modelId)
+      })
+
+    } catch (ex) {
+
+      return Promise.reject (ex)
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -154,7 +167,7 @@ export default class ModelSvc extends BaseSvc {
   /////////////////////////////////////////////////////////
   getSequence (modelId) {
 
-    return new Promise(async(resolve, reject)=> {
+    return new Promise(async(resolve, reject) => {
 
       try {
 
@@ -183,13 +196,13 @@ export default class ModelSvc extends BaseSvc {
     })
   }
 
-  ///////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   // set states sequence
   //
-  ///////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   setSequence (modelId, sequence) {
 
-    return new Promise(async(resolve, reject)=> {
+    return new Promise(async(resolve, reject) => {
 
       try {
 
@@ -219,13 +232,13 @@ export default class ModelSvc extends BaseSvc {
     })
   }
 
-  ///////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   // returns states
   //
-  ///////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   getStates (modelId) {
 
-    return new Promise(async(resolve, reject)=> {
+    return new Promise(async(resolve, reject) => {
 
       try {
 
@@ -254,13 +267,13 @@ export default class ModelSvc extends BaseSvc {
     })
   }
 
-  ///////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   // adds new state
   //
-  ///////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   addState (modelId, state) {
 
-    return new Promise(async(resolve, reject)=> {
+    return new Promise(async(resolve, reject) => {
 
       try {
 
@@ -272,7 +285,7 @@ export default class ModelSvc extends BaseSvc {
 
         collection.update(
           {
-            '_id': new mongo.ObjectID(modelId),
+            '_id': new mongo.ObjectID(modelId)
           },
           {
             $push: {
@@ -293,13 +306,13 @@ export default class ModelSvc extends BaseSvc {
     })
   }
 
-  ///////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   // remove state
   //
-  ///////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   removeState (modelId, stateId) {
 
-    return new Promise(async(resolve, reject)=> {
+    return new Promise(async(resolve, reject) => {
 
       try {
 
@@ -342,7 +355,7 @@ export default class ModelSvc extends BaseSvc {
   /////////////////////////////////////////////////////////
   getConfigSequence (modelId, sequenceId) {
 
-    return new Promise(async(resolve, reject)=> {
+    return new Promise(async(resolve, reject) => {
 
       try {
 

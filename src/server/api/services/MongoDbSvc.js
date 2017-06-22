@@ -24,173 +24,141 @@ import fs from 'fs'
 
 export default class DbSvc extends BaseSvc {
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   constructor(config) {
 
-    super(config)
+    super (config)
 
-    this._db = null;
+    this._db = null
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   get config() {
 
     return this._config
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   name() {
 
-    return this._config.dbName || 'MongoDbSvc';
+    return this._config.dbName || 'MongoDbSvc'
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   getConnectionURL() {
 
-    var _thisSvc = this;
 
-    if (_thisSvc._config.user.length &&
-        _thisSvc._config.pass.length) {
+    if (this._config.user.length && this._config.pass.length) {
 
       return util.format('mongodb://%s:%s@%s:%d/%s',
-        _thisSvc._config.user,
-        _thisSvc._config.pass,
-        _thisSvc._config.dbhost,
-        _thisSvc._config.port,
-        _thisSvc._config.dbName);
-    }
-    else {
+        this._config.user,
+        this._config.pass,
+        this._config.dbhost,
+        this._config.port,
+        this._config.dbName)
+
+    } else {
 
       return util.format('mongodb://%s:%d/%s',
-        _thisSvc._config.dbhost,
-        _thisSvc._config.port,
-        _thisSvc._config.dbName);
+        this._config.dbhost,
+        this._config.port,
+        this._config.dbName)
     }
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   connect() {
 
-    var _thisSvc = this;
+    return new Promise((resolve, reject) => {
 
-    var promise = new Promise((resolve, reject) => {
+      const url = this.getConnectionURL()
 
-      var url = _thisSvc.getConnectionURL();
+      const client = mongo.MongoClient
 
-      var client = mongo.MongoClient;
-
-      client.connect(url, (err, db)=> {
+      client.connect(url, (err, db) => {
 
         if (err) {
 
-          return reject(err);
-        }
-        else {
+          return reject(err)
+
+        } else {
 
           console.log('MongoDbSvc: connected to ' +
-            _thisSvc._config.dbName)
+            this._config.dbName)
 
-          _thisSvc._db = db;
+          this._db = db
 
-          return resolve(db);
+          return resolve(db)
         }
-      });
-    });
-
-    return promise;
+      })
+    })
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   getDb() {
 
-    var _thisSvc = this;
+    return new Promise((resolve) => {
+
+      return this._db
+        ? resolve(this._db)
+        : this.connect()
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  getCollection (collectionName) {
 
     return new Promise((resolve, reject)=> {
 
-      try{
+      this._db.collection(collectionName,
+        (err, collection)=> {
 
-        if(_thisSvc._db) {
-
-          return resolve(_thisSvc._db);
-        }
-        else {
-
-          return _thisSvc.connect();
-        }
-      }
-      catch(ex){
-
-        reject(ex);
-      }
-    });
+          return err
+            ? reject(err)
+            : resolve(collection)
+      })
+    })
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
-  getCollection(collectionName) {
-
-    var _thisSvc = this;
-
-    return new Promise((resolve, reject)=> {
-
-      try{
-
-        _thisSvc._db.collection(collectionName,
-          (err, collection)=> {
-
-            if (err) {
-
-              return reject(err);
-            }
-
-            return resolve(collection);
-          });
-      }
-      catch(ex){
-
-        reject(ex);
-      }
-    });
-  }
-
-  /////////////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   insert (collectionName, item) {
 
-    return new Promise(async(resolve, reject ) => {
+    return new Promise(async(resolve, reject) => {
 
       try{
 
         const collection = await this.getCollection(
-          collectionName);
+          collectionName)
 
-        collection.insert(item, {w:1}, (err, result)=>{
+        collection.insert(item, {w:1}, (err, result) => {
 
           return err
             ? reject(err)
-            :resolve(item)
+            : resolve(item)
         })
 
       } catch(ex) {
@@ -200,10 +168,10 @@ export default class DbSvc extends BaseSvc {
     })
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   findOne(collectionName, opts = {}) {
 
     var _thisSvc = this;
@@ -238,10 +206,10 @@ export default class DbSvc extends BaseSvc {
     });
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   findOrCreate(collectionName, item, query) {
 
     var _thisSvc = this;
@@ -274,10 +242,10 @@ export default class DbSvc extends BaseSvc {
     });
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   updateItem(collectionName, query, opts = {}) {
 
     var _thisSvc = this;
@@ -308,10 +276,10 @@ export default class DbSvc extends BaseSvc {
     });
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   updateItem(collectionName, item, query) {
 
     var _thisSvc = this;
@@ -348,10 +316,10 @@ export default class DbSvc extends BaseSvc {
     })
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   upsertItem(collectionName, item, query) {
 
     var _thisSvc = this;
@@ -386,10 +354,10 @@ export default class DbSvc extends BaseSvc {
     })
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   distinct(collectionName, key) {
 
     var _thisSvc = this;
@@ -418,10 +386,10 @@ export default class DbSvc extends BaseSvc {
     });
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   getCursor (collectionName, opts = {}) {
 
     var _thisSvc = this;
@@ -447,10 +415,10 @@ export default class DbSvc extends BaseSvc {
     return promise;
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   getItems (collectionName, opts = {}) {
 
     var _thisSvc = this
@@ -481,33 +449,43 @@ export default class DbSvc extends BaseSvc {
     return promise;
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
-  removeCollection(name, opts) {
+  /////////////////////////////////////////////////////////
+  dropCollection (collectionName) {
 
-    var _thisSvc = this;
+    return new Promise(async(resolve, reject) => {
 
-    var promise = new Promise((resolve, reject)=> {
+      const collection = await this.getCollection(
+        collectionName)
 
-      _thisSvc._db.collection(name, (err, collection)=> {
+      collection.drop((err, result) => {
 
-        if (err) {
-          return reject(err);
-        }
+        return err
+          ? reject(err)
+          : resolve(result)
+      })
+    })
+  }
 
-        collection.remove({}, (err, result)=> {
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  removeItems (collectionName, query) {
 
-            if (err) {
-              return reject(err);
-            }
+    return new Promise(async(resolve, reject) => {
 
-            return resolve(result);
-          });
-      });
-    });
+      const collection = await this.getCollection(
+        collectionName)
 
-    return promise;
+      collection.remove(query, (err, result) => {
+
+        return err
+          ? reject(err)
+          : resolve(result)
+      })
+    })
   }
 }

@@ -10,6 +10,8 @@ export default class NotifySvc extends BaseSvc {
   constructor (config) {
 
     super (config)
+
+    this.noticationMap = {}
   }
 
   /////////////////////////////////////////////////////////
@@ -34,9 +36,23 @@ export default class NotifySvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////
+  getNotification (notificationId) {
+
+    return this.noticationMap[notificationId] || null
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   remove (notification) {
 
     this.notify.remove (notification)
+
+    if (this.noticationMap[notification.id]) {
+
+      delete this.noticationMap[notification.id]
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -52,8 +68,12 @@ export default class NotifySvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////
-  add (notification) {
+  add (notificationInfo) {
 
-    this.notify.add (notification)
+    const notification = this.notify.add (notificationInfo)
+
+    this.noticationMap[notification.id] = notification
+
+    return notification
   }
 }

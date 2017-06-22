@@ -82,40 +82,32 @@ class GalleryView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  onInitUpload (file) {
+  onInitUpload (data) {
 
-    const notification = this.notifySvc.add({
-      title: 'Uploading ' + file.name,
+    this.notifySvc.add({
+      title: 'Uploading ' + data.file.name,
       message: 'progress: 0%',
       dismissible: false,
       status: 'loading',
+      id: data.uploadId,
       dismissAfter: 0,
-      position: 'tl',
-      progress: 0
+      position: 'tl'
     })
-
-    console.log(notification)
   }
 
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  onUploadProgress (file, percent) {
+  onUploadProgress (data) {
 
-    console.log(percent)
+    const notification =
+      this.notifySvc.getNotification(data.uploadId)
 
-    //const notification = this.notification
-    //
-    //if (notification.progress < 50) {
-    //
-    //  notification.progress = percent/2
-    //
-    //  notification.message =
-    //    `progress: ${(percent/2).toFixed(2)}%`
-    //
-    //  this.notify.update(notification)
-    //}
+      notification.message =
+        `progress: ${(data.percent/2).toFixed(2)}%`
+
+    this.notifySvc.update(notification)
   }
 
   /////////////////////////////////////////////////////////
@@ -179,15 +171,13 @@ class GalleryView extends React.Component {
             </div>
           </div>
           <div className="secondary">
-            { false &&
-            < div className="uploader">
+            <div className="uploader">
               <ModelUploader apiUrl={'/api/models/gallery'}
-              onProgress={this.onUploadProgress}
-              socketId={this.socketSvc.socketId}
-              onInitUpload={this.onInitUpload}
-              />
+                onProgress={this.onUploadProgress}
+                socketId={this.socketSvc.socketId}
+                onInitUpload={this.onInitUpload}
+                />
             </div>
-            }
           <div/>
           </div>
         </div>

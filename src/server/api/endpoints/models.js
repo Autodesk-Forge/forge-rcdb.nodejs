@@ -105,10 +105,21 @@ module.exports = function() {
       }
     }
 
+    const socketSvc = ServiceManager.getService(
+      'SocketSvc')
+
+    const jobId = guid()
+
     derivativesSvc.postJobWithProgress(
       data.getToken, job, {
       query: { type: 'geometry' },
-      onProgress: (progress) => {
+      onProgress: async(progress) => {
+
+        let msg = {
+          filename: data.filename,
+          progress,
+          jobId
+        }
 
         if (progress === '100%') {
 
@@ -123,7 +134,15 @@ module.exports = function() {
           const modelSvc = ServiceManager.getService(
             data.db + '-ModelSvc')
 
-          modelSvc.register(modelInfo)
+          const res = await modelSvc.register(modelInfo)
+
+          msg.modelId = res._id
+        }
+
+        if (data.socketId) {
+
+          socketSvc.broadcast (
+            'svf.progress', msg, data.socketId)
         }
       }
     })
@@ -153,6 +172,7 @@ module.exports = function() {
 
           if (err.statusCode === 404) {
 
+            modelSvc.deleteModel(modelInfo._id)
           }
         })
     })
@@ -322,32 +342,34 @@ module.exports = function() {
 
     try {
 
-      const file = req.file
-
       const bucketKey = bucket.bucketKey
+
+      const socketId = req.body.socketId
+
+      const file = req.file
 
       const objectKey = guid('xxxx-xxxx-xxxx') +
         path.extname(file.originalname)
+
+      const socketSvc = ServiceManager.getService(
+        'SocketSvc')
 
       const opts = {
         chunkSize: 5 * 1024 * 1024, //5MB chunks
         concurrentUploads: 3,
         onProgress: (info) => {
 
-          const socketId = req.body.socketId
-
           if (socketId) {
 
-            const socketSvc = ServiceManager.getService(
-              'SocketSvc')
-
             const msg = Object.assign({}, info, {
+              filename: file.originalname,
+              uploadId: req.body.uploadId,
               bucketKey,
               objectKey
             })
 
             socketSvc.broadcast (
-              'progress', msg, socketId)
+              'upload.progress', msg, socketId)
           }
         }
       }
@@ -362,9 +384,11 @@ module.exports = function() {
       postSVFJob({
         getToken: () => forgeSvc.get2LeggedToken(),
         name: path.parse(file.originalname).name,
+        filename: file.originalname,
         db: req.params.db,
         bucketKey,
-        objectKey
+        objectKey,
+        socketId
       })
 
       res.json(response)
