@@ -13,6 +13,8 @@ class ConfiguratorView extends React.Component {
 
     super (props)
 
+    this.onError = this.onError.bind(this)
+
     this.notify = {
       remove: this.props.removeNotifications,
       update: this.props.updateNotification,
@@ -37,6 +39,15 @@ class ConfiguratorView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  onError (error) {
+
+    console.error(error)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   render () {
 
     const view = this.props.location.query.id
@@ -47,6 +58,7 @@ class ConfiguratorView extends React.Component {
           appState={this.props.appState}
           location={this.props.location}
           database='configurator'
+          onError={this.onError}
           notify={this.notify}
           showLoader={true}
         />

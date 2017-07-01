@@ -18,9 +18,14 @@ export default class ServiceDlg extends React.Component {
   //
   /////////////////////////////////////////////////////////
   static defaultProps = {
+
+    captionCancel: 'Cancel',
+    captionOK: 'OK',
+
     showCancel: true,
-    disableOK: false,
     showOK: true,
+
+    disableOK: false,
     className: ''
   }
 
@@ -130,19 +135,23 @@ export default class ServiceDlg extends React.Component {
       <div className="controls">
         {
           this.props.showOK &&
-          <button disabled={this.props.disableOK}
+          <button className="ok" disabled={this.props.disableOK}
             onClick={() => this.onOk()}>
             <span className="fa fa-check">
             </span>
-            <label>OK</label>
+            <label>
+              {this.props.captionOK}
+            </label>
           </button>
         }
         {
           this.props.showCancel &&
-          <button onClick={() => this.onCancel()}>
+          <button className="cancel" onClick={() => this.onCancel()}>
             <span className="fa fa-times">
             </span>
-            <label>Cancel</label>
+            <label>
+              {this.props.captionCancel}
+            </label>
           </button>
         }
       </div>

@@ -4,6 +4,10 @@ import config from 'c0nfig'
 
 module.exports = function() {
 
+  /////////////////////////////////////////////////////////
+  // Services
+  //
+  /////////////////////////////////////////////////////////
   const uploadSvc = ServiceManager.getService(
     'UploadSvc')
 
@@ -15,6 +19,10 @@ module.exports = function() {
 
   const bucket = config.meta.bucket
 
+  /////////////////////////////////////////////////////////
+  // initialize
+  //
+  /////////////////////////////////////////////////////////
   forgeSvc.get2LeggedToken().then((token) => {
 
     ossSvc.getBucketDetails (
@@ -30,13 +38,18 @@ module.exports = function() {
       })
   })
 
+  /////////////////////////////////////////////////////////
+  //router
+  //
+  /////////////////////////////////////////////////////////
   const router = express.Router()
 
   /////////////////////////////////////////////////////////
   // Get all meta properties for model (debug only)
   //
   /////////////////////////////////////////////////////////
-  router.get('/:db/:modelId/properties', async(req, res) => {
+  router.get('/:db/:modelId/properties',
+    async(req, res) => {
 
     try {
 

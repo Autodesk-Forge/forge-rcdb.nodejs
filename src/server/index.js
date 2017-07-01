@@ -41,8 +41,6 @@ import config from'c0nfig'
 /////////////////////////////////////////////////////////////////////
 var app = express()
 
-app.set('trust proxy', 1)
-
 if(process.env.NODE_ENV === 'development') {
 
   app.use(session({
@@ -53,6 +51,26 @@ if(process.env.NODE_ENV === 'development') {
     },
     resave: false,
     saveUninitialized: true
+  }))
+
+  const allowCrossDomain = (req, res, next) => {
+
+    res.header('Access-Control-Allow-Methods',
+      'GET,PUT,POST,DELETE')
+
+    res.header('Access-Control-Allow-Headers',
+      'Content-Type')
+
+    res.header('Access-Control-Allow-Origin',
+      '*')
+
+    next()
+  }
+
+  app.use(allowCrossDomain)
+
+  app.use(helmet({
+    frameguard: false
   }))
 
 } else {
@@ -81,6 +99,8 @@ if(process.env.NODE_ENV === 'development') {
       autoRemoveInterval: 10 // In minutes. Default
     })
   }))
+
+  app.use(helmet())
 }
 
 app.use('/resources', express.static(__dirname + '/../../resources'))
@@ -88,7 +108,6 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.set('trust proxy', 1)
 app.use(cookieParser())
-app.use(helmet())
 
 /////////////////////////////////////////////////////////////////////
 // Services setup

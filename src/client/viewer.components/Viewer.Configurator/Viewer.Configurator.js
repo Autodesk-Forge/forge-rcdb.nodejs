@@ -660,6 +660,8 @@ class ViewerConfigurator extends React.Component {
 
           case 'AutodeskProduction':
 
+            console.log(modelInfo.urn)
+
             this.viewerDocument =
               await this.loadDocument(modelInfo.urn)
 

@@ -8,7 +8,7 @@ import path from 'path'
 module.exports = function() {
 
   /////////////////////////////////////////////////////////
-  //
+  // Services
   //
   /////////////////////////////////////////////////////////
   const derivativesSvc = ServiceManager.getService(
@@ -26,7 +26,7 @@ module.exports = function() {
   const bucket = config.gallery.bucket
 
   /////////////////////////////////////////////////////////
-  //
+  // initialize
   //
   /////////////////////////////////////////////////////////
   forgeSvc.get2LeggedToken().then((token) => {
@@ -176,6 +176,10 @@ module.exports = function() {
           }
         })
     })
+
+    setTimeout(() => {
+      cleanModels(modelSvc)
+    }, 1000 * 60 * 60 * 24)
   }
 
   /////////////////////////////////////////////////////////

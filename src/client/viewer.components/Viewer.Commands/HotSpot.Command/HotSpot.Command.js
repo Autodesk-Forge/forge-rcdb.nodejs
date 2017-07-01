@@ -49,6 +49,34 @@ export default class HotSpotCommand extends ViewerCommand {
     })
 
     this.hotspots = []
+
+    if (options.animate) {
+
+      this.animate()
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  animate () {
+
+    const filteredHotspots =
+      this.hotspots.filter((hotspot) => {
+
+      return !hotspot.removed
+    })
+
+    const tasks = filteredHotspots.map((hotspot) => {
+
+      return hotspot.animate()
+    })
+
+    Promise.all(tasks).then(() => {
+
+      setTimeout(() => this.animate(), 100)
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -57,8 +85,7 @@ export default class HotSpotCommand extends ViewerCommand {
   /////////////////////////////////////////////////////////
   createHotSpot (data) {
 
-    const hotSpot = new HotSpot(
-      this.viewer, data)
+    const hotSpot = new HotSpot(this.viewer, data)
 
     hotSpot.on('singleclick', (event) => {
 

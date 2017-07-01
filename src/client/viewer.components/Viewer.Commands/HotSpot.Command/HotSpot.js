@@ -60,7 +60,6 @@ export default class HotSpot extends GraphicMarker {
     this.activateLock3d (viewer)
     this.setWorldPoint (data.worldPoint)
     this.setSelectable (true)
-    this.animate ()
 
     const show = !(this.occlusion && this.checkOcclusion())
 
@@ -161,25 +160,25 @@ export default class HotSpot extends GraphicMarker {
   /////////////////////////////////////////////////////////
   animate () {
 
-    this.circle.attr({
-      fillOpacity: 0.95,
-      opacity: 1,
-      r: 0
-    })
+    return new Promise((resolve) => {
 
-    this.circle.animate({
-        fillOpacity: 0.5,
-        opacity: 0.85,
-        r: 15
-      },
-      3000,
-      mina.easein, () => {
-        if (!this.removed) {
-          setTimeout(() => {
-            this.animate()
-          }, 100)
-        }
+      this.circle.attr({
+        fillOpacity: 0.95,
+        opacity: 1,
+        r: 0
       })
+
+      this.circle.animate({
+          fillOpacity: 0.5,
+          opacity: 0.85,
+          r: 15
+        },
+        3000,
+        mina.easein, () => {
+
+          resolve(this)
+        })
+    })
   }
 
   /////////////////////////////////////////////////////////

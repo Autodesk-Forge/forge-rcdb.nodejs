@@ -10,8 +10,8 @@ import EventsEmitter from 'EventsEmitter'
 import Toolkit from 'Viewer.Toolkit'
 
 // Types
-import Vector3d from './HFDM/Types/Vector3d'
-import Camera from './HFDM/Types/Camera'
+import Vector3d from './HFDM/Types/Math.Vector3d'
+import Camera from './HFDM/Types/Viewer.Camera'
 
 // Handlers
 import CameraHandler from './HFDM/Handlers/Handler.Camera'
@@ -158,6 +158,8 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
 
       this.options.getToken((err, token) => {
 
+        //http://ecs-master-opt.ecs.ads.autodesk.com:5000/PropertyInspector.html
+
         const inspectorURL =
           `${this.options.serverUrl}/PropertyInspector.html?` +
           `branchGuid=${branchGUID}&` +
@@ -262,3 +264,7 @@ Autodesk.Viewing.theExtensionManager.registerExtension(
   HFDMCoreExtension)
 
 export default HFDMCoreExtension.ExtensionId
+
+
+
+

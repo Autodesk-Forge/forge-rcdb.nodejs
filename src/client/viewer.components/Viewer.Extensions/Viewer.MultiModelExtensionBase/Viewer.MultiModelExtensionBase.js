@@ -281,6 +281,7 @@ export default class MultiModelExtensionBase extends
     const eventTasks = eventIdArray.map((id) => {
       return new Promise ((resolve) => {
         const __handler = (args) => {
+          this.viewer.removeEventListener (id, __handler)
           resolve (args)
         }
         this.viewer.addEventListener (id, __handler)

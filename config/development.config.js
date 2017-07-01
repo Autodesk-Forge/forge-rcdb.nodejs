@@ -44,10 +44,6 @@ const config = {
       clientSecret: process.env.FORGE_DEV_CLIENT_SECRET,
       clientId: process.env.FORGE_DEV_CLIENT_ID,
 
-      //baseUri: 'https://developer-stg.api.autodesk.com',
-      //clientSecret: process.env.FORGE_STG_CLIENT_SECRET,
-      //clientId: process.env.FORGE_STG_CLIENT_ID,
-
       scope: [
         'data:read',
         'data:write',
@@ -62,7 +58,6 @@ const config = {
       //threeJS:  'https://developer.api.autodesk.com/viewingservice/v1/viewers/three.js?v=2.15',
       //style:    'https://developer.api.autodesk.com/viewingservice/v1/viewers/style.css?v=2.15'
 
-      // requires local copy of viewer lib - not provided in this sample
       viewer3D: '/resources/libs/lmv/2.15/viewer3D.js',
       threeJS:  '/resources/libs/lmv/2.15/three.js',
       style:    '/resources/libs/lmv/2.15/style.css'

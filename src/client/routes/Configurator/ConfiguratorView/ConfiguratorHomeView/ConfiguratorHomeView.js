@@ -2,6 +2,7 @@ import ContentEditable from 'react-contenteditable'
 import { browserHistory } from 'react-router'
 import ServiceManager from 'SvcManager'
 import './ConfiguratorHomeView.scss'
+import { Link } from 'react-router'
 import Image from 'Image'
 import React from 'react'
 import Label from 'Label'
@@ -18,7 +19,7 @@ class ConfiguratorHomeView extends React.Component {
 
     this.state = {
       search: '',
-      models: []
+      items: []
     }
   }
 
@@ -51,13 +52,13 @@ class ConfiguratorHomeView extends React.Component {
     const models = await this.modelSvc.getModels(
       'configurator')
 
-    const modelsbyName = _.sortBy(models,
+    const items = _.sortBy(models,
       (model) => {
         return model.name
       })
 
     this.assignState({
-      models: modelsbyName
+      items
     })
   }
 
@@ -91,54 +92,62 @@ class ConfiguratorHomeView extends React.Component {
   /////////////////////////////////////////////////////////
   onSearchChanged (e) {
 
-    const state = Object.assign(this.state, {
+    this.assignState({
       search: e.target.value.toLowerCase()
     })
-
-    this.setState(state)
   }
 
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  renderModels () {
+  renderItem (item) {
 
-    const {search, models} = this.state
+    const thumbnailUrl = this.modelSvc.getThumbnailUrl(
+      'configurator', item._id)
 
-    const filteredModels = models.filter((model) => {
-        return search.length
-          ? model.name.toLowerCase().indexOf(search) > -1
-          : true
-      })
+    const href = `/configurator?id=${item._id}`
 
-    return filteredModels.map((model) => {
-
-      const thumbnailUrl = this.modelSvc.getThumbnailUrl(
-        'configurator', model._id)
-
-      const href = `/configurator?id=${model._id}`
-
-      return (
-        <div className="model-item" key={model._id}>
+    return (
+      <div key={item._id} className="item">
+        <Link className="content" to={href}>
+          <div className="image-container">
+            <Image src={thumbnailUrl}/>
+          </div>
+          <label className="title">
+              { item.name }
+          </label>
+          <p className="description">
+              { item.desc || '' }
+          </p>
+        </Link>
+        <div className="footer">
           <a className="git-link fa fa-github"
-            href={model.git}
+            href={item.git}
             target="_blank">
           </a>
-          <a className="content" href={href}
-            onClick={(e)=>this.gotToLink(e, href)}>
-            <Image src={thumbnailUrl}/>
-            <div className="text-content">
-              <Label text={model.name}/>
-              <br/>
-              <br/>
-              <p className="description">
-                { model.desc || '' }
-              </p>
-            </div>
-          </a>
         </div>
-      )
+      </div>
+    )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  renderItems () {
+
+    const {search, items} = this.state
+
+    const filteredItems = items.filter((model) => {
+      return search.length
+        ? model.name.toLowerCase().indexOf(search) > -1
+        : true
+    })
+
+    return filteredItems.map((item) => {
+
+      return this.renderItem(item)
     })
   }
 
@@ -156,8 +165,12 @@ class ConfiguratorHomeView extends React.Component {
           data-placeholder="Search ..."
           html={this.state.search}
           className="search"/>
-        <div className="scroller">
-          { this.renderModels() }
+        <div className="container">
+          <div className="primary">
+            <div className="items">
+              {this.renderItems()}
+            </div>
+          </div>
         </div>
       </div>
     )

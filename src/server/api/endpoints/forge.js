@@ -179,8 +179,7 @@ module.exports = function() {
   })
 
   /////////////////////////////////////////////////////////
-  // reduced scope token
-  // Not needed here because of proxy use
+  // 3-legged token
   //
   /////////////////////////////////////////////////////////
   router.get('/token/3legged', async (req, res) => {
@@ -204,7 +203,31 @@ module.exports = function() {
 
       forgeSvc.delete3LeggedToken(req.session)
 
-      res.status(error.statusCode || 404)
+      res.status(error.statusCode || 500)
+      res.json(error)
+    }
+  })
+
+  /////////////////////////////////////////////////////////
+  // 2-legged token
+  //
+  /////////////////////////////////////////////////////////
+  router.get('/token/2legged', async (req, res) => {
+
+    const forgeSvc = ServiceManager.getService(
+      'ForgeSvc')
+
+    try {
+
+      const token =
+        await forgeSvc.request2LeggedToken(
+          'viewables:read')
+
+      res.json(token)
+
+    } catch (error) {
+
+      res.status(error.statusCode || 500)
       res.json(error)
     }
   })

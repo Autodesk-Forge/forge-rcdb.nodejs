@@ -1,3 +1,4 @@
+import ContentEditable from 'react-contenteditable'
 import ModelUploader from 'ModelUploader'
 import ServiceManager from 'SvcManager'
 import Background from 'Background'
@@ -30,7 +31,8 @@ class GalleryView extends React.Component {
       'NotifySvc')
 
     this.state = {
-      models: []
+      search: '',
+      items: []
     }
   }
 
@@ -67,14 +69,14 @@ class GalleryView extends React.Component {
       await this.modelSvc.getModels(
         'gallery')
 
-    const modelsByName = _.sortBy(
+    const items = _.sortBy(
       models, (model) => {
 
       return model.name
     })
 
     this.assignState({
-      models: modelsByName
+      items
     })
   }
 
@@ -114,21 +116,45 @@ class GalleryView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  renderModel (modelInfo) {
+  onKeyDown (e) {
+
+    if (e.keyCode === 13) {
+
+      e.stopPropagation()
+      e.preventDefault()
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onSearchChanged (e) {
+
+    this.assignState({
+      search: e.target.value.toLowerCase()
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  renderItem (item) {
 
     const thumbnailUrl = this.modelSvc.getThumbnailUrl(
-      'gallery', modelInfo._id, 200)
+      'gallery', item._id, 200)
 
-    const href = `/viewer?id=${modelInfo._id}`
+    const href = `/viewer?id=${item._id}`
 
     return (
-      <div key={modelInfo._id} className="item">
+      <div key={item._id} className="item">
         <Link className="content" to={href}>
           <div className="image-container">
             <Image src={thumbnailUrl}/>
           </div>
           <h3 className="title">
-              {modelInfo.name}
+              {item.name}
           </h3>
         </Link>
         <div className="footer">
@@ -142,14 +168,20 @@ class GalleryView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  renderModels () {
+  renderItems () {
 
-    const models = this.state.models.map((model) => {
+    const {search, items} = this.state
 
-      return this.renderModel(model)
+    const filteredItems = items.filter((model) => {
+      return search.length
+        ? model.name.toLowerCase().indexOf(search) > -1
+        : true
     })
 
-    return models
+    return filteredItems.map((item) => {
+
+      return this.renderItem(item)
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -162,12 +194,16 @@ class GalleryView extends React.Component {
 
       <div className="gallery-view">
         <Background/>
-        <div className="search">
-        </div>
+        <ContentEditable
+          onChange={(e) => this.onSearchChanged(e)}
+          onKeyDown={(e) => this.onKeyDown(e)}
+          data-placeholder="Search ..."
+          html={this.state.search}
+          className="search"/>
         <div className="container">
           <div className="primary">
             <div className="items">
-              {this.renderModels()}
+              {this.renderItems()}
             </div>
           </div>
           <div className="secondary">
