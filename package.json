@@ -42,6 +42,7 @@
     "cookie-parser": "^1.4.3",
     "express": "^4.14.0",
     "express-session": "^1.15.1",
+    "fetch-inject": "1.8.2",
     "forge-apis": "^0.4.0",
     "helmet": "^3.4.1",
     "memoizee": "^0.4.3",
@@ -52,9 +53,10 @@
     "redux-thunk": "2.2.0",
     "rimraf": "^2.6.1",
     "rmdir": "^1.2.0",
-    "socket.io": "^1.7.3",
+    "socket.io": "2.0.2",
     "superagent": "3.5.2",
-    "util": "^0.10.3"
+    "util": "^0.10.3",
+    "webpack-hot-middleware": "2.18.1"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.5",

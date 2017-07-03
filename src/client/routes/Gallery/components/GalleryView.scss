@@ -48,7 +48,7 @@
     margin-bottom: 16px;
     background: #f9f9f9;
     color: #284e99;
-    height: 136px;
+    height: 130px;
   }
 
   .recent {
@@ -118,16 +118,27 @@
     padding: 0;
 
     .content {
+      transition-property: background;
+      transition-timing-function: ease;
+      transition-duration: 0.85s;
+      transition-delay: 0.0s;
+
       cursor: pointer;
       display: block;
       height: 100px;
     }
 
     .content:hover {
+      background: rgba(189, 217, 255, 0.80);
       text-decoration: none;
     }
 
+    .content:hover img {
+      transform: scale(1.1);
+    }
+
     .image-container {
+      overflow: hidden;
       height: 100px;
       width: 100px;
       float: left;

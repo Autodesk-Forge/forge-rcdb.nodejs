@@ -14,11 +14,18 @@
   }
 
   a:hover img {
-    //transform: scale(1.15);
+    transform: scale(1.1)
   }
 
-  figure {
+  a:hover button {
+    border: solid 1px #1bb1f4;
+  }
+
+  button {
+    border: solid 1px #dedede;
+    background: transparent;
     overflow: hidden;
+    outline: none;
     margin: 0;
   }
 
@@ -28,7 +35,6 @@
 
   img {
     transition: transform .2s ease-in-out;
-    border: solid 1px #dedede;
     max-width: 100%;
     display: block;
     height: auto;

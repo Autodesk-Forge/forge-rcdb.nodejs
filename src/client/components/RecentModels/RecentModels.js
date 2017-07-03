@@ -62,6 +62,7 @@ class RecentModels extends BaseComponent {
       const href = `/viewer?id=${model._id}`
 
       return {
+        title: model.name,
         src: thumbnailUrl,
         link: href
       }

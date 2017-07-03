@@ -13,9 +13,9 @@ class ImageGrid extends React.Component {
 
       return (
         <a key={img.link} href={img.link} target="_blank">
-          <figure>
+          <button title={img.title}>
             <img src={img.src}/>
-          </figure>
+          </button>
         </a>
       )
     })
