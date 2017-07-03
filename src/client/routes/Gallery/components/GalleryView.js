@@ -93,9 +93,7 @@ class GalleryView extends BaseComponent {
   //
   /////////////////////////////////////////////////////////
   onUploadProgress (data) {
-
-    console.log(data.percent)
-
+    
     const notification =
       this.notifySvc.getNotification(data.uploadId)
 
