@@ -3,7 +3,7 @@
 // by Philippe Leefsma, March 2016
 //
 /////////////////////////////////////////////////////////////////////
-import './styles/Viewing.Extension.Particle.LHC.css'
+import './Viewing.Extension.Particle.LHC.css'
 import ToolPanelBase from 'ToolPanelBase'
 
 class LHCPanel extends ToolPanelBase {
@@ -99,7 +99,7 @@ class LHCExtension extends Autodesk.Viewing.Extension {
 
     return 'Viewing.Extension.Particle.LHC'
   }
-  
+
   /////////////////////////////////////////////////////////////////
   // Load callback
   //

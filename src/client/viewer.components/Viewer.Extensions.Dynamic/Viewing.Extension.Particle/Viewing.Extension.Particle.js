@@ -124,9 +124,10 @@ class ParticleExtension extends MultiModelExtensionBase {
 
       this.transformTool.activate()
 
+      this.activeParticleTool = this.particleToolMesh
+
       if (this.options.autoStart) {
 
-        this.activeParticleTool = this.particleToolMesh
         this.particleToolMesh.activate()
       }
 
@@ -210,14 +211,19 @@ class ParticleExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////////////
   unload() {
 
+    console.log('Viewing.Extension.Particle unloaded')
+
     $('#particle-toolbar').remove()
 
-    if(this.particlePanel) {
+    if (this.particlePanel) {
 
       this.particlePanel.setVisible(false)
     }
 
-    this.viewer.activeParticleTool.deactivate()
+    if (this.viewer.activeParticleTool) {
+
+      this.viewer.activeParticleTool.deactivate()
+    }
 
     this.transformTool.off()
 

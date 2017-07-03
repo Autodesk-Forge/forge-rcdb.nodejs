@@ -104,6 +104,11 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
 
     console.log('Viewing.Extension.WallAnalyzer unloaded')
 
+    if (this.notification) {
+
+      this.options.notify.remove(this.notification)
+    }
+
     this.eventTool.off()
 
     super.unload ()
@@ -118,6 +123,8 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
   reset () {
 
     this.options.notify.remove(this.notification)
+
+    this.notification = null
 
     this.react.setState({
       loader: true,

@@ -5,15 +5,21 @@
   color: white;
 
   .search {
-    background: rgba(248, 248, 248, 0.85);
+    background: rgba(248, 248, 248, 0.4);
     margin: 0 auto 10px auto;
     padding: 5px 0 0 30px;
     position: relative;
     max-width: 978px;
     text-align: left;
     height: 30px;
-    color: black;
+    color: white;
     width: 95%;
+  }
+
+  .search[contenteditable]:empty:not(:focus):before {
+    content: attr(data-placeholder);
+    pointer-events: none;
+    color: #d8d8d8;
   }
 
   .container {
@@ -21,6 +27,7 @@
     height: calc(100% - 46px);
     margin: 0 auto 0 auto;
     position: relative;
+    overflow: scroll;
     width: 95%;
   }
 
@@ -31,14 +38,21 @@
   }
 
   .secondary {
+    height: calc(100% - 30px);
     margin: 16px 0 0 0;
-    overflow: hidden;
+    overflow: scroll;
   }
 
   .uploader {
+    box-shadow: 20px 20px 33px 0px rgba(0, 0, 0, 0.21);
+    margin-bottom: 16px;
     background: #f9f9f9;
     color: #284e99;
-    height: 130px;
+    height: 136px;
+  }
+
+  .recent {
+    box-shadow: 20px 20px 33px 0px rgba(0, 0, 0, 0.21);
   }
 
   @media only screen and (max-width: 876px) {
@@ -59,7 +73,10 @@
     }
 
     .secondary {
-
+      max-width: 100%;
+      margin-left: 0;
+      float: none;
+      width: auto;
     }
   }
 
@@ -75,14 +92,15 @@
 
     .primary {
       margin: 16px 0px 0 3.0%;
-      padding-right: 40px;
-      width: 63%;
+      padding: 0px 40px 0 0;
       float: left;
+      width: 63%;
     }
 
     .secondary {
+      padding: 0px 40px 0 0;
       float: left;
-      width: 32%;
+      width: 34%;
     }
   }
 
@@ -129,7 +147,7 @@
     .footer {
       border-top: 1px solid gainsboro;
       background: #f9f9f9;
-      height: 30px;
+      height: 36px;
       float: left;
       width: 100%;
     }

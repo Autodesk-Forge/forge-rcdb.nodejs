@@ -39,6 +39,17 @@ export default class ModelSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////////////
+  getRecentModels (dbName) {
+
+    const url = `${this._config.apiUrl}/${dbName}/recents`
+
+    return this._api.ajax(url)
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
   getModel (dbName, modelId) {
 
     const url = `${this._config.apiUrl}/${dbName}/${modelId}`

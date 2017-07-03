@@ -1,27 +1,21 @@
 /////////////////////////////////////////////////////////
-// Viewing.Extension.ModelLoader
-// by Philippe Leefsma, April 2017
+// Viewing.Extension.Physics
+// by Philippe Leefsma, July 2017
 //
 /////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
-import HFDMCoreExtensionId from './Viewing.Extension.HFDM.Core'
-import { browserHistory } from 'react-router'
+import PhysicsCoreExtensionId from './Viewing.Extension.Physics.Core'
 import WidgetContainer from 'WidgetContainer'
+import './Viewing.Extension.Physics.scss'
 import ScriptLoader from 'ScriptLoader'
 import ServiceManager from 'SvcManager'
-import './Viewing.Extension.HFDM.scss'
 import { ReactLoader } from 'Loader'
 import Toolkit from 'Viewer.Toolkit'
-import DOMPurify from 'dompurify'
 import ReactDOM from 'react-dom'
 import Label from 'Label'
 import React from 'react'
-import {
-  DropdownButton,
-  MenuItem
-} from 'react-bootstrap'
 
-class HFDMExtension extends MultiModelExtensionBase {
+class PhysicsExtension extends MultiModelExtensionBase {
 
   /////////////////////////////////////////////////////////
   // Class constructor
@@ -35,14 +29,6 @@ class HFDMExtension extends MultiModelExtensionBase {
 
     this.renderTitle = this.renderTitle.bind(this)
 
-    this.dialogSvc =
-      ServiceManager.getService(
-        'DialogSvc')
-
-    this.forgeSvc =
-      ServiceManager.getService(
-        'ForgeSvc')
-
     this.react = options.react
   }
 
@@ -52,7 +38,7 @@ class HFDMExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   get className() {
 
-    return 'hfdm'
+    return 'physics'
   }
 
   /////////////////////////////////////////////////////////
@@ -61,7 +47,7 @@ class HFDMExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   static get ExtensionId() {
 
-    return 'Viewing.Extension.HFDM'
+    return 'Viewing.Extension.Physics'
   }
 
   /////////////////////////////////////////////////////////
@@ -72,30 +58,13 @@ class HFDMExtension extends MultiModelExtensionBase {
 
     this.react.setState({
 
-      user: this.options.appState.user,
-      colaborateURL: null,
-      inspectorURL: null
 
     }).then (() => {
 
       this.react.pushRenderExtension(this)
-
-      if (!this.options.appState.user) {
-
-        this.forgeSvc.getUser().then((user) => {
-
-          this.react.setState({
-            user
-          })
-
-        }, (err) => {
-
-          this.showLogin()
-        })
-      }
     })
 
-    console.log('Viewing.Extension.HFDM loaded')
+    console.log('Viewing.Extension.Physics loaded')
 
     return true
   }
@@ -106,7 +75,7 @@ class HFDMExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   unload () {
 
-    console.log('Viewing.Extension.HFDM unloaded')
+    console.log('Viewing.Extension.Physics unloaded')
 
     this.react.popViewerPanel(this)
 
@@ -121,7 +90,7 @@ class HFDMExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   async setDocking (docked) {
 
-    const id = HFDMExtension.ExtensionId
+    const id = PhysicsExtension.ExtensionId
 
     if (docked) {
 
@@ -144,95 +113,13 @@ class HFDMExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  sleep (ms) {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve (), ms)
-    })
-  }
-
-  /////////////////////////////////////////////////////////
-  // callback: function (error, bearerToken)
-  //
-  /////////////////////////////////////////////////////////
-  getToken (callback) {
-
-    $.get('/api/forge/token/3legged', (res) => {
-
-      callback(null, res.access_token)
-    })
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  showLogin () {
-
-    const onClose = (result) => {
-
-      this.dialogSvc.off('dialog.close', onClose)
-
-      if (result === 'OK') {
-
-        this.forgeSvc.login()
-        return
-      }
-
-      browserHistory.push('/configurator')
-    }
-
-    this.dialogSvc.on('dialog.close', onClose)
-
-    this.dialogSvc.setState({
-      onRequestClose: () => {},
-      className: 'login-dlg',
-      title: 'Login required ...',
-      content:
-        <div>
-          Press OK to login ...
-        </div>,
-      open: true
-    })
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
   async onScriptLoaded () {
 
-    while (!(window.Forge &&
-             window.Forge.HFDM &&
-             window.Forge.AppFramework)) {
-
-      await this.sleep(100)
-    }
-
-    const HFDMCoreExtension =
+    this.physicsCore =
       await this.viewer.loadExtension(
-        HFDMCoreExtensionId, {
-          serverUrl: 'https://developer.api.autodesk.com/lynx/v1/pss',
-          hfdmURN: this.options.location.query.hfdmURN,
-          HFDMAppFramework: window.Forge.AppFramework,
-          HFDM_SDK: window.Forge.HFDM,
-          getToken: this.getToken
+        PhysicsCoreExtensionId, {
+
         })
-
-    HFDMCoreExtension.on('colaborateURL', (colaborateURL) => {
-
-      console.log('------- colaborateURL -------')
-      console.log(colaborateURL)
-
-      this.react.setState({
-        colaborateURL
-      })
-    })
-
-    HFDMCoreExtension.on('inspectorURL', (inspectorURL) => {
-
-      console.log('------- inspectorURL -------')
-      console.log(inspectorURL)
-    })
   }
 
   /////////////////////////////////////////////////////////
@@ -248,9 +135,9 @@ class HFDMExtension extends MultiModelExtensionBase {
     return (
       <div className="title">
         <label>
-          HFDM
+          Physics
         </label>
-        <div className="hfdm-controls">
+        <div className="physics-controls">
           <button onClick={() => this.setDocking(docked)}
             title="Toggle docking mode">
             <span className={spanClass}/>
@@ -266,26 +153,15 @@ class HFDMExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderControls () {
 
-    const {colaborateURL, inspectorURL} =
-      this.react.getState()
-
-    const showLoader = !colaborateURL
+    const showLoader = true
 
     return (
       <div>
         <ReactLoader show={showLoader}/>
         <ScriptLoader onLoaded={this.onScriptLoaded}
           url={[
-            "/resources/libs/hfdm/forge-entity-manager.js",
-            "/resources/libs/hfdm/forge-hfdm.js"
+
           ]}/>
-        <br/>
-        {
-          colaborateURL &&
-          <a href={colaborateURL} target='_blank'>
-            Collaborate URL
-          </a>
-        }
       </div>
     )
   }
@@ -312,5 +188,5 @@ class HFDMExtension extends MultiModelExtensionBase {
 }
 
 Autodesk.Viewing.theExtensionManager.registerExtension(
-  HFDMExtension.ExtensionId,
-  HFDMExtension)
+  PhysicsExtension.ExtensionId,
+  PhysicsExtension)

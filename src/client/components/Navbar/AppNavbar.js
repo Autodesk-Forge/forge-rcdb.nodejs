@@ -245,13 +245,18 @@ export default class AppNavbar extends React.Component {
             }
           </Nav>
 
-          <DatabaseDlg
-            close={()=>{ this.setState(Object.assign({}, this.state, {
-              databaseOpen: false
-            }))}}
-            databaseChange={this.props.databaseChange}
-            open={this.state.databaseOpen}
-          />
+          {
+            false &&
+            <DatabaseDlg
+              close={()=> {
+                this.setState(Object.assign({}, this.state, {
+                  databaseOpen: false
+                }))
+              }}
+              databaseChange={this.props.databaseChange}
+              open={this.state.databaseOpen}
+            />
+          }
 
           <LayoutDlg
             close={()=>{ this.setState(Object.assign({}, this.state, {

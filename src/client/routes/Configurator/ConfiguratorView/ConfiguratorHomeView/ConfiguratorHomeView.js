@@ -1,13 +1,14 @@
 import ContentEditable from 'react-contenteditable'
 import { browserHistory } from 'react-router'
+import BaseComponent from 'BaseComponent'
 import ServiceManager from 'SvcManager'
+import Item from './ConfiguratorItem'
 import './ConfiguratorHomeView.scss'
 import { Link } from 'react-router'
-import Image from 'Image'
 import React from 'react'
 import Label from 'Label'
 
-class ConfiguratorHomeView extends React.Component {
+class ConfiguratorHomeView extends BaseComponent {
 
   /////////////////////////////////////////////////////////
   //
@@ -16,6 +17,9 @@ class ConfiguratorHomeView extends React.Component {
   constructor () {
 
     super ()
+
+    this.modelSvc = ServiceManager.getService(
+      'ModelSvc')
 
     this.state = {
       search: '',
@@ -27,35 +31,10 @@ class ConfiguratorHomeView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  assignState (state) {
-
-    return new Promise((resolve) => {
-
-      const newState = Object.assign(
-        {}, this.state, state)
-
-      this.setState(newState, () => {
-        resolve()
-      })
-    })
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
   async componentWillMount () {
 
-    this.modelSvc = ServiceManager.getService(
-      'ModelSvc')
-
-    const models = await this.modelSvc.getModels(
+    const items = await this.modelSvc.getModels(
       'configurator')
-
-    const items = _.sortBy(models,
-      (model) => {
-        return model.name
-      })
 
     this.assignState({
       items
@@ -101,40 +80,6 @@ class ConfiguratorHomeView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  renderItem (item) {
-
-    const thumbnailUrl = this.modelSvc.getThumbnailUrl(
-      'configurator', item._id)
-
-    const href = `/configurator?id=${item._id}`
-
-    return (
-      <div key={item._id} className="item">
-        <Link className="content" to={href}>
-          <div className="image-container">
-            <Image src={thumbnailUrl}/>
-          </div>
-          <label className="title">
-              { item.name }
-          </label>
-          <p className="description">
-              { item.desc || '' }
-          </p>
-        </Link>
-        <div className="footer">
-          <a className="git-link fa fa-github"
-            href={item.git}
-            target="_blank">
-          </a>
-        </div>
-      </div>
-    )
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
   renderItems () {
 
     const {search, items} = this.state
@@ -147,7 +92,7 @@ class ConfiguratorHomeView extends React.Component {
 
     return filteredItems.map((item) => {
 
-      return this.renderItem(item)
+      return <Item key={item._id} item={item}/>
     })
   }
 

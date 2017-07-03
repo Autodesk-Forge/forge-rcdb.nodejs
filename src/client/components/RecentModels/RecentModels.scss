@@ -1,10 +1,8 @@
-
-.model-uploader {
-  overflow: hidden;
-  height: 100%;
+.recent-models {
+  background: #ffffff;
 }
 
-.model-uploader > .title {
+.recent-models > .title {
   border-bottom: 1px solid #dedede;
   padding: 4px 0 4px 8px;
   background: #f9f9f9;
@@ -15,17 +13,14 @@
   color: #6d6d6d;
 }
 
-.model-uploader > .title > span {
+.recent-models > .title > span {
   position: relative;
   margin-right: 6px;
   font-size: 24px;
   top: 2px;
 }
 
-.model-uploader .content {
-  padding: 10px 10px 0 0;
-  border-radius: 4px;
-  background: white;
-  cursor: pointer;
-  height: 100%;
+.recent-models .content {
+  margin: 4px 0 0 4px;
+  overflow: auto;
 }

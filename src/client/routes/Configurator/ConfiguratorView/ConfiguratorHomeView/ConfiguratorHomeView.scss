@@ -7,15 +7,21 @@
   height: 100%;
 
   .search {
-    background: rgba(248, 248, 248, 0.85);
+    background: rgba(248, 248, 248, 0.4);
     margin: 0 auto 10px auto;
     padding: 5px 0 0 30px;
     position: relative;
     max-width: 978px;
     text-align: left;
     height: 30px;
-    color: black;
+    color: white;
     width: 95%;
+  }
+
+  .search[contenteditable]:empty:not(:focus):before {
+    content: attr(data-placeholder);
+    pointer-events: none;
+    color: #d8d8d8;
   }
 
   .container {
@@ -82,26 +88,32 @@
     }
   }
 
-  .item:hover {
-
+  .item:last-child {
+    padding-bottom: 100px;
   }
 
   .item {
     box-shadow: 20px 20px 33px 0px rgba(0, 0, 0, 0.21);
-    background: #ffffff;
     margin: 0 0 16px 0;
+    min-height: 246px;
     text-align: left;
-    overflow: hidden;
     color: black;
     padding: 0;
 
     .content {
+      transition-property: background;
+      transition-timing-function: ease;
+      transition-duration: 0.85s;
+      transition-delay: 0.0s;
+
+      background: rgba(245, 245, 245, 0.8);
       cursor: pointer;
       display: block;
-      height: 200px;
+      height: 216px;
     }
 
     .content:hover {
+      background: rgba(255, 253, 60, 0.9);
       text-decoration: none;
     }
 
@@ -136,13 +148,25 @@
     .footer {
       border-top: 1px solid gainsboro;
       background: #f9f9f9;
-      height: 30px;
+      height: 34px;
       float: left;
       width: 100%;
 
+      .dropdown {
+        margin-left: 9px;
+        top: 4px;
+
+        .dropdown-toggle.btn {
+          background: #dedede;
+          padding: 1px 12px;
+          min-width: 198px;
+          border-radius: 0;
+        }
+      }
+
       .git-link {
         text-decoration: none;
-        margin: 1px 4px 0 0;
+        margin: 3px 4px 0 0;
         cursor: pointer;
         font-size: 28px;
         color: black;

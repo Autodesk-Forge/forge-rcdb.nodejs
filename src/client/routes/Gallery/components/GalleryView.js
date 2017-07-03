@@ -1,13 +1,15 @@
 import ContentEditable from 'react-contenteditable'
 import ModelUploader from 'ModelUploader'
+import BaseComponent from 'BaseComponent'
 import ServiceManager from 'SvcManager'
+import RecentModels from 'RecentModels'
 import Background from 'Background'
 import { Link } from 'react-router'
 import './GalleryView.scss'
 import Image from 'Image'
 import React from 'react'
 
-class GalleryView extends React.Component {
+class GalleryView extends BaseComponent {
 
   /////////////////////////////////////////////////////////
   //
@@ -18,14 +20,17 @@ class GalleryView extends React.Component {
     super (props)
 
     this.onUploadProgress = this.onUploadProgress.bind(this)
-
     this.onInitUpload = this.onInitUpload.bind(this)
+    this.refresh = this.refresh.bind(this)
 
     this.modelSvc = ServiceManager.getService(
       'ModelSvc')
 
     this.socketSvc = ServiceManager.getService(
       'SocketSvc')
+
+    this.socketSvc.on('model.added',
+      this.refresh)
 
     this.notifySvc = ServiceManager.getService(
       'NotifySvc')
@@ -40,23 +45,6 @@ class GalleryView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  assignState (state) {
-
-    return new Promise((resolve) => {
-
-      const newState = Object.assign(
-        {}, this.state, state)
-
-      this.setState(newState, () => {
-        resolve()
-      })
-    })
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
   async componentWillMount () {
 
     this.props.setNavbarState({
@@ -65,15 +53,18 @@ class GalleryView extends React.Component {
       }
     })
 
-    const models =
+    this.refresh()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async refresh () {
+
+    const items =
       await this.modelSvc.getModels(
-        'gallery')
-
-    const items = _.sortBy(
-      models, (model) => {
-
-      return model.name
-    })
+      'gallery')
 
     this.assignState({
       items
@@ -106,10 +97,15 @@ class GalleryView extends React.Component {
     const notification =
       this.notifySvc.getNotification(data.uploadId)
 
-      notification.message =
-        `progress: ${(data.percent/2).toFixed(2)}%`
+    if (!notification.forgeUpload) {
 
-    this.notifySvc.update(notification)
+      const progress = data.percent * 0.5
+
+      notification.message =
+        `progress: ${progress.toFixed(2)}%`
+
+      this.notifySvc.update(notification)
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -212,7 +208,12 @@ class GalleryView extends React.Component {
                 onProgress={this.onUploadProgress}
                 socketId={this.socketSvc.socketId}
                 onInitUpload={this.onInitUpload}
-                />
+              />
+            </div>
+            <div className="recent">
+              <RecentModels database="gallery"
+                size="small"
+              />
             </div>
           <div/>
           </div>

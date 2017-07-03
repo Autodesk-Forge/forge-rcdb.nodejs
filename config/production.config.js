@@ -22,7 +22,7 @@ const config = {
   gallery: {
     bucket: {
       bucketKey: 'forge-rcdb-gallery-tmp-prod',
-      policyKey: 'Transient'
+      policyKey: 'Persistent'
     }
   },
 

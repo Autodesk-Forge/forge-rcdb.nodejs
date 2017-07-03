@@ -124,12 +124,17 @@ module.exports = function() {
         if (progress === '100%') {
 
           const modelInfo = {
+            lifetime: 60 * 60 * 24 * 30, // 30 days
             env: 'AutodeskProduction',
+            timestamp: new Date(),
             name : data.name,
             model : {
               urn
             }
           }
+
+          socketSvc.broadcast (
+            'model.added', modelInfo)
 
           const modelSvc = ServiceManager.getService(
             data.db + '-ModelSvc')
@@ -149,7 +154,8 @@ module.exports = function() {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Remove models which are too old or
+  // don't exist anymore on OSS
   //
   /////////////////////////////////////////////////////////
   const cleanModels = async(modelSvc) => {
@@ -160,7 +166,9 @@ module.exports = function() {
 
     models.forEach((modelInfo) => {
 
-      const fileId = atob(modelInfo.model.urn)
+      const urn = modelInfo.model.urn
+
+      const fileId = atob(urn)
 
       const objectId = ossSvc.parseObjectId(fileId)
 
@@ -168,11 +176,29 @@ module.exports = function() {
         objectId.bucketKey,
         objectId.objectKey).then((res) => {
 
+          if (modelInfo.lifetime) {
+
+            const now = new Date()
+
+            const age = (now - modelInfo.timestamp) / 1000
+
+            if (age > modelInfo.lifetime) {
+
+              modelSvc.deleteModel(modelInfo._id)
+
+              derivativesSvc.deleteManifest(
+                token, urn)
+            }
+          }
+
         }, (err) => {
 
           if (err.statusCode === 404) {
 
             modelSvc.deleteModel(modelInfo._id)
+
+            derivativesSvc.deleteManifest(
+              token, urn)
           }
         })
     })
@@ -213,8 +239,9 @@ module.exports = function() {
       const modelSvc = ServiceManager.getService(
         db + '-ModelSvc')
 
-      let opts = {
+      const opts = {
         pageQuery: {
+          extraModels: 1,
           model: 1,
           desc: 1,
           path: 1,
@@ -222,6 +249,9 @@ module.exports = function() {
           urn:  1,
           env:  1,
           git:  1
+        },
+        sort: {
+          name: 1
         }
       }
 
@@ -257,11 +287,52 @@ module.exports = function() {
     }
   })
 
-  //////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  ///////////////////////////////////////////////////////////////////////////////
-  router.get('/:db/:modelId', async (req, res)=> {
+  /////////////////////////////////////////////////////////
+  router.get('/:db/recents', async (req, res) => {
+
+    try {
+
+      const db = req.params.db
+
+      const modelSvc = ServiceManager.getService(
+        db + '-ModelSvc')
+
+      const opts = {
+        pageQuery: {
+          limit: 12,
+          model: 1,
+          name: 1,
+          urn:  1
+        },
+        sort: {
+          _id: -1
+        }
+      }
+
+      if(req.query.limit) {
+
+        opts.pageQuery.limit = req.query.limit
+      }
+
+      const response = await modelSvc.getModels(opts)
+
+      res.json(response)
+
+    } catch (error) {
+
+      res.status(error.statusCode || 500)
+      res.json(error)
+    }
+  })
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  router.get('/:db/:modelId', async (req, res) => {
 
     try {
 

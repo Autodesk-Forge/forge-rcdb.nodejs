@@ -84,12 +84,14 @@ class CoreLayout extends React.Component {
     const notification = this.notifySvc.getNotification(
       msg.uploadId)
 
-    const percent = 50.0 + msg.progress * 0.5
+    notification.forgeUpload = true
+
+    const progress = 50.0 + msg.progress * 0.5
 
     notification.message =
-      `progress: ${percent.toFixed(2)}%`
+      `progress: ${progress.toFixed(2)}%`
 
-    if (percent === 100) {
+    if (progress === 100) {
 
       notification.title = `${msg.filename} uploaded!`
       notification.message = `progress: 100%`

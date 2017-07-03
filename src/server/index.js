@@ -240,6 +240,10 @@ const runServer = (app) => {
 
           dbSvc.connect().then(() => {
 
+            console.log(
+              'Connected to MongoDB Database: ' +
+              dbConfig.dbName)
+
             ServiceManager.registerService(dbSvc)
 
             for (const key in dbConfig.collections) {

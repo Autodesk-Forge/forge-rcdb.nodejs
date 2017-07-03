@@ -98,9 +98,6 @@ export default class DbSvc extends BaseSvc {
 
         } else {
 
-          console.log('MongoDbSvc: connected to ' +
-            this._config.dbName)
-
           this._db = db
 
           return resolve(db)
@@ -392,27 +389,23 @@ export default class DbSvc extends BaseSvc {
   /////////////////////////////////////////////////////////
   getCursor (collectionName, opts = {}) {
 
-    var _thisSvc = this;
+    return new Promise((resolve, reject) => {
 
-    var promise = new Promise((resolve, reject)=> {
-
-      _thisSvc._db.collection(collectionName, (err, collection)=> {
+      this._db.collection(collectionName, (err, collection)=> {
 
         if (err) {
 
-          return reject(err);
+          return reject(err)
         }
 
-        var cursor = collection.find(
+        const cursor = collection.find(
           opts.fieldQuery || {},
           opts.pageQuery || {}).
-          sort(opts.sort || {});
+          sort(opts.sort || {})
 
-        return resolve(cursor);
-      });
-    });
-
-    return promise;
+        return resolve(cursor)
+      })
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -421,13 +414,11 @@ export default class DbSvc extends BaseSvc {
   /////////////////////////////////////////////////////////
   getItems (collectionName, opts = {}) {
 
-    var _thisSvc = this
-
-    var promise = new Promise(async(resolve, reject) => {
+    return new Promise(async(resolve, reject) => {
 
       try {
 
-        var cursor = await _thisSvc.getCursor(
+        const cursor = await this.getCursor(
           collectionName, opts)
 
         cursor.toArray((err, items) => {
@@ -445,8 +436,6 @@ export default class DbSvc extends BaseSvc {
         return reject(ex)
       }
     })
-
-    return promise;
   }
 
   /////////////////////////////////////////////////////////
