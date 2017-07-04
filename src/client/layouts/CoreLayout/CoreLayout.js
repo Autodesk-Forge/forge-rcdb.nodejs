@@ -98,10 +98,6 @@ class CoreLayout extends React.Component {
       notification.dismissAfter = 2000
       notification.dismissible = true
       notification.status = 'success'
-      notification.buttons = [{
-        primary: true,
-        name: 'OK'
-      }]
     }
 
     this.notifySvc.update(notification)
@@ -127,6 +123,14 @@ class CoreLayout extends React.Component {
         position: 'tl',
         id: msg.jobId
       })
+
+      notification.buttons = [{
+        name: 'Hide',
+        onClick: () => {
+          notification.dismissAfter = 1
+          this.notifySvc.update(notification)
+        }
+      }]
     }
 
     notification.message = `progress: ${msg.progress}`
@@ -145,7 +149,7 @@ class CoreLayout extends React.Component {
           window.open(url,'_blank')
         }
       }, {
-        name: 'Close',
+        name: 'Hide',
         onClick: () => {
           this.notifySvc.remove(notification)
         }

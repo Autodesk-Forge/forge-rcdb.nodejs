@@ -145,6 +145,11 @@
     }
 
     .image-container img {
+      transition-property: transform;
+      transition-timing-function: ease;
+      transition-duration: 0.3s;
+      transition-delay: 0.0s;
+
       object-position: center;
       height: 100%;
       width: 100%;

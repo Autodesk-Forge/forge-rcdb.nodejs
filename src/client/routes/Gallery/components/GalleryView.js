@@ -77,7 +77,7 @@ class GalleryView extends BaseComponent {
   /////////////////////////////////////////////////////////
   onInitUpload (data) {
 
-    this.notifySvc.add({
+    const notification = this.notifySvc.add({
       title: 'Uploading ' + data.file.name,
       message: 'progress: 0%',
       dismissible: false,
@@ -86,6 +86,16 @@ class GalleryView extends BaseComponent {
       dismissAfter: 0,
       position: 'tl'
     })
+
+    notification.buttons = [{
+      name: 'Hide',
+      onClick: () => {
+        notification.dismissAfter = 1
+        this.notifySvc.update(notification)
+      }
+    }]
+
+    this.notifySvc.update(notification)
   }
 
   /////////////////////////////////////////////////////////

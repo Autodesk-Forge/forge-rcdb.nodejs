@@ -95,6 +95,12 @@ export default class ModelUploader extends React.Component {
           <p>
             Drop a file here or click to browse ...
           </p>
+          <hr/>
+          <p>
+            Your model will be available for
+              <br/>
+            <u>30 days</u>
+          </p>
         </Dropzone>
       </div>
     )

@@ -242,6 +242,8 @@ module.exports = function() {
       const opts = {
         pageQuery: {
           extraModels: 1,
+          timestamp: 1,
+          lifetime: 1,
           model: 1,
           desc: 1,
           path: 1,
@@ -302,7 +304,7 @@ module.exports = function() {
 
       const opts = {
         pageQuery: {
-          limit: 12,
+          limit: 15,
           model: 1,
           name: 1,
           urn:  1
