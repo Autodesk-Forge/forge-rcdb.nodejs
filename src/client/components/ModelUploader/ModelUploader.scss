@@ -2,34 +2,39 @@
 .model-uploader {
   overflow: hidden;
   height: 100%;
-}
 
-.model-uploader > .title {
-  border-bottom: 1px solid #dedede;
-  padding: 4px 0 4px 8px;
-  background: #f9f9f9;
-  text-align: left;
-  font-weight: 800;
-  font-size: 16px;
-  cursor: default;
-  color: #6d6d6d;
-}
+  .title {
+    border-bottom: 1px solid #dedede;
+    padding: 4px 0 4px 8px;
+    background: #f9f9f9;
+    text-align: left;
+    font-weight: 800;
+    font-size: 16px;
+    cursor: default;
+    color: #6d6d6d;
+  }
 
-.model-uploader > .title > span {
-  position: relative;
-  margin-right: 6px;
-  font-size: 24px;
-  top: 2px;
-}
+  .title > span {
+    position: relative;
+    margin-right: 6px;
+    font-size: 24px;
+    color: #8e8e8e;
+    top: 2px;
+  }
 
-.model-uploader .content {
-  padding: 10px 10px 0 0;
-  border-radius: 4px;
-  background: white;
-  cursor: pointer;
-  height: 100%;
-}
+  .title > label {
+    margin: 0;
+  }
 
-.model-uploader hr {
-  margin: 0 40px 10px 40px;
+  .content {
+    padding: 10px 10px 0 0;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    height: 100%;
+  }
+
+  hr {
+    margin: 0 40px 10px 40px;
+  }
 }

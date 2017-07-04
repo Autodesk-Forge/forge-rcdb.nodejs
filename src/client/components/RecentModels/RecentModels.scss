@@ -1,26 +1,33 @@
 .recent-models {
   background: #ffffff;
-}
 
-.recent-models > .title {
-  border-bottom: 1px solid #dedede;
-  padding: 4px 0 4px 8px;
-  background: #f9f9f9;
-  text-align: left;
-  font-weight: 800;
-  font-size: 16px;
-  cursor: default;
-  color: #6d6d6d;
-}
+  .title {
+    border-bottom: 1px solid #dedede;
+    padding: 4px 0 4px 8px;
+    background: #f9f9f9;
+    text-align: left;
+    font-weight: 800;
+    font-size: 16px;
+    cursor: default;
+    color: #6d6d6d;
+  }
 
-.recent-models > .title > span {
-  position: relative;
-  margin-right: 6px;
-  font-size: 24px;
-  top: 2px;
-}
+  .title > span {
+    position: relative;
+    margin-right: 6px;
+    font-size: 24px;
+    color: #8e8e8e;
+    top: 2px;
+  }
 
-.recent-models .content {
-  margin: 4px 0 0 4px;
-  overflow: auto;
+  .title > label {
+    position: relative;
+    margin: 0;
+    top: -2px;
+  }
+
+  .content {
+    margin: 4px 0 0 4px;
+    overflow: auto;
+  }
 }

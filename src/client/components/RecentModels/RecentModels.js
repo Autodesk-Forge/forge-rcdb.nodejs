@@ -1,6 +1,5 @@
 import BaseComponent from 'BaseComponent'
 import ServiceManager from 'SvcManager'
-import Measure from 'react-measure'
 import ImageGrid from 'ImageGrid'
 import './RecentModels.scss'
 import React from 'react'
@@ -17,11 +16,11 @@ class RecentModels extends BaseComponent {
 
     this.refresh = this.refresh.bind(this)
 
-    this.modelSvc = ServiceManager.getService(
-      'ModelSvc')
-
     this.socketSvc = ServiceManager.getService(
       'SocketSvc')
+
+    this.modelSvc = ServiceManager.getService(
+      'ModelSvc')
 
     this.socketSvc.on('model.added',
       this.refresh)
@@ -80,10 +79,7 @@ class RecentModels extends BaseComponent {
   renderContent () {
 
     return (
-      <ImageGrid
-        images={this.state.images}
-        size={this.props.size}
-      />
+      <ImageGrid images={this.state.images}/>
     )
   }
 
@@ -93,27 +89,18 @@ class RecentModels extends BaseComponent {
   /////////////////////////////////////////////////////////
   render () {
 
-    const { width, height } = this.state.dimensions
-
     return (
-      <Measure
-        bounds
-        onResize={(rect) => {
-          this.assignState({ dimensions: rect.bounds })
-        }}>
-        {
-          ({ measureRef }) =>
-            <div ref={measureRef} className="recent-models">
-              <div className="title">
-                <span className="fa fa-clock-o"/>
-                Recent Models
-              </div>
-              <div className="content">
-                {this.renderContent()}
-              </div>
-            </div>
-        }
-      </Measure>
+      <div className="recent-models">
+        <div className="title">
+          <span className="fa fa-info-circle"/>
+          <label>
+            Recent Models
+          </label>
+        </div>
+        <div className="content">
+            {this.renderContent()}
+        </div>
+      </div>
     )
   }
 }

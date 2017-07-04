@@ -166,6 +166,22 @@
       height: 30px;
       float: left;
       width: 100%;
+
+      .expiry {
+
+        span {
+          margin: 3px 4px 0 6px;
+          position: relative;
+          font-size: 22px;
+          color: #8e8e8e;
+        }
+
+        label {
+          position: relative;
+          color: #8e8e8e;
+          top: -3px;
+        }
+      }
     }
   }
 }

@@ -38,7 +38,12 @@
 }
 
 .footable > thead > tr {
-  background-color: rgb(255,255,255);
+  transition-property: background;
+  transition-timing-function: ease;
+  transition-duration: 0.5s;
+  transition-delay: 0.0s;
+
+  background: rgb(255,255,255);
 }
 
 .footable > tbody > tr:hover {
@@ -240,7 +245,7 @@
 }
 
 .scroll tbody {
-  height: calc(100% - 45px);
+  height: calc(100% + 113px);
   overflow: scroll;
   display: block;
   width: 100%;

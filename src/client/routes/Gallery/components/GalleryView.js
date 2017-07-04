@@ -146,12 +146,45 @@ class GalleryView extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  getExpiry (item) {
+
+    if (item.lifetime) {
+
+      const age = Date.now() - new Date(item.timestamp)
+
+      const expiry = item.lifetime - age/1000
+
+      if (expiry > 86400) {
+
+        return `Expires in: ${Math.round(expiry/86400)} days`
+      }
+
+      if (expiry > 3600) {
+
+        return `Expires in: ${Math.round(expiry/3600)} hours`
+      }
+
+      if (expiry > 60) {
+
+        return `Expires in: ${Math.round(expiry/60)} minutes`
+      }
+    }
+
+    return false
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   renderItem (item) {
 
     const thumbnailUrl = this.modelSvc.getThumbnailUrl(
       'gallery', item._id, 200)
 
     const href = `/viewer?id=${item._id}`
+
+    const expiry = this.getExpiry(item)
 
     return (
       <div key={item._id} className="item">
@@ -164,7 +197,16 @@ class GalleryView extends BaseComponent {
           </h3>
         </Link>
         <div className="footer">
-
+          {
+            expiry &&
+            <div className="expiry">
+              <span className="fa fa-clock-o">
+              </span>
+              <label>
+                {expiry}
+              </label>
+            </div>
+          }
         </div>
       </div>
     )
@@ -221,9 +263,7 @@ class GalleryView extends BaseComponent {
               />
             </div>
             <div className="recent">
-              <RecentModels database="gallery"
-                size="small"
-              />
+              <RecentModels database="gallery"/>
             </div>
           <div/>
           </div>

@@ -87,7 +87,9 @@ export default class ModelUploader extends React.Component {
       <div className="model-uploader">
         <div className="title">
           <span className="fa fa-cloud-upload"/>
-          Upload your Model
+          <label>
+            Upload your Model
+          </label>
         </div>
         <Dropzone className="content"
           onDrop={this.onDrop}
