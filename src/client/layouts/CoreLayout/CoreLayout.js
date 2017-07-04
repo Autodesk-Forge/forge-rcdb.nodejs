@@ -32,6 +32,9 @@ class CoreLayout extends React.Component {
 
     this.onForgeUploadProgress =
       this.onForgeUploadProgress.bind(this)
+
+    this.onModelAdded =
+      this.onModelAdded.bind(this)
   }
 
   /////////////////////////////////////////////////////////
@@ -59,6 +62,9 @@ class CoreLayout extends React.Component {
 
     this.socketSvc.on('svf.progress',
       this.onForgeTranslateProgress)
+
+    this.socketSvc.on('model.added',
+      this.onModelAdded)
 
     this.dialogSvc =
       ServiceManager.getService(
@@ -135,26 +141,36 @@ class CoreLayout extends React.Component {
 
     notification.message = `progress: ${msg.progress}`
 
-    if (msg.progress === '100%') {
+    this.notifySvc.update(notification)
+  }
 
-      notification.status = 'success'
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onModelAdded (msg) {
 
-      notification.buttons = [{
-        name: 'Load',
-        primary: true,
-        onClick: () => {
-          const host = window.location.protocol +
-            '//' + window.location.host
-          const url = `${host}/viewer?id=${msg.modelId}`
-          window.open(url,'_blank')
-        }
-      }, {
-        name: 'Hide',
-        onClick: () => {
-          this.notifySvc.remove(notification)
-        }
-      }]
-    }
+    let notification =
+      this.notifySvc.getNotification(
+        msg.jobId)
+
+    notification.status = 'success'
+
+    notification.buttons = [{
+      name: 'Load',
+      primary: true,
+      onClick: () => {
+        const host = window.location.protocol +
+          '//' + window.location.host
+        const url = `${host}/viewer?id=${msg.modelId}`
+        window.open(url,'_blank')
+      }
+    }, {
+      name: 'Hide',
+      onClick: () => {
+        this.notifySvc.remove(notification)
+      }
+    }]
 
     this.notifySvc.update(notification)
   }

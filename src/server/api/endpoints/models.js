@@ -115,41 +115,42 @@ module.exports = function() {
       query: { type: 'geometry' },
       onProgress: async(progress) => {
 
-        let msg = {
-          filename: data.filename,
-          progress,
-          jobId
-        }
-
-        if (progress === '100%') {
-
-          const modelInfo = {
-            lifetime: 60 * 60 * 24 * 30, // 30 days
-            env: 'AutodeskProduction',
-            timestamp: new Date(),
-            name : data.name,
-            model : {
-              urn
-            }
-          }
-
-          socketSvc.broadcast (
-            'model.added', modelInfo)
-
-          const modelSvc = ServiceManager.getService(
-            data.db + '-ModelSvc')
-
-          const res = await modelSvc.register(modelInfo)
-
-          msg.modelId = res._id
-        }
-
         if (data.socketId) {
+
+          const msg = {
+            filename: data.filename,
+            progress,
+            jobId
+          }
 
           socketSvc.broadcast (
             'svf.progress', msg, data.socketId)
         }
       }
+    }).then(async() => {
+
+      const modelInfo = {
+        lifetime: 60 * 60 * 24 * 30, // 30 days
+        env: 'AutodeskProduction',
+        timestamp: new Date(),
+        name : data.name,
+        model : {
+          urn
+        }
+      }
+
+      const modelSvc = ServiceManager.getService(
+        data.db + '-ModelSvc')
+
+      const res = await modelSvc.register(modelInfo)
+
+      const msg = {
+        filename: data.filename,
+        modelId: res._id,
+        jobId
+      }
+
+      socketSvc.broadcast ('model.added', msg)
     })
   }
 

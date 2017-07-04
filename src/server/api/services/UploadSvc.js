@@ -86,8 +86,6 @@ export default class UploadSvc extends BaseSvc {
 
           const age = (now - new Date(stat.ctime)) / 1000
 
-          console.log('file age: ' + age)
-
           if (age > maxAge) {
 
             return rimraf(filePath, (err) => {
