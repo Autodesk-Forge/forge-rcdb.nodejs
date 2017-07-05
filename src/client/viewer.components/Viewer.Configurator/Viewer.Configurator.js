@@ -608,6 +608,12 @@ class ViewerConfigurator extends React.Component {
 
       this.loader.show(this.props.showLoader)
 
+      if (this.props.onViewerCreated) {
+
+        this.props.onViewerCreated(
+          viewer, this.loader)
+      }
+
       viewer.start()
 
       viewer.prefs.tag('ignore-producer')

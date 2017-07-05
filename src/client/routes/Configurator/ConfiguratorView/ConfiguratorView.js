@@ -1,5 +1,6 @@
 import ConfiguratorHomeView from './ConfiguratorHomeView'
 import ViewerConfigurator from 'Viewer.Configurator'
+import { browserHistory } from 'react-router'
 import './ConfiguratorView.scss'
 import React from 'react'
 
@@ -41,7 +42,10 @@ class ConfiguratorView extends React.Component {
   /////////////////////////////////////////////////////////
   onError (error) {
 
-    console.error(error)
+    if (error.responseJSON === 'Not Found') {
+
+      browserHistory.push('/404')
+    }
   }
 
   /////////////////////////////////////////////////////////

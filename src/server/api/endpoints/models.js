@@ -185,10 +185,7 @@ module.exports = function() {
 
             if (age > modelInfo.lifetime) {
 
-              modelSvc.deleteModel(modelInfo._id)
-
-              derivativesSvc.deleteManifest(
-                token, urn)
+              deleteModel(urn, modelInfo._id)
             }
           }
 
@@ -196,10 +193,7 @@ module.exports = function() {
 
           if (err.statusCode === 404) {
 
-            modelSvc.deleteModel(modelInfo._id)
-
-            derivativesSvc.deleteManifest(
-              token, urn)
+            deleteModel(urn, modelInfo._id)
           }
         })
     })
@@ -207,6 +201,30 @@ module.exports = function() {
     setTimeout(() => {
       cleanModels(modelSvc)
     }, 1000 * 60 * 60 * 24)
+  }
+
+  /////////////////////////////////////////////////////////
+  // delete a model
+  //
+  /////////////////////////////////////////////////////////
+  const deleteModel = async(urn, modelId) => {
+
+    const token = await forgeSvc.get2LeggedToken()
+
+    modelSvc.deleteModel(modelId)
+
+    derivativesSvc.deleteManifest(
+      token, urn)
+
+    const socketSvc = ServiceManager.getService(
+      'SocketSvc')
+
+    const msg = {
+      modelId,
+      urn
+    }
+
+    socketSvc.broadcast ('model.deleted', msg)
   }
 
   /////////////////////////////////////////////////////////

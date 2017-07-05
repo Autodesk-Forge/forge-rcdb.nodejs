@@ -29,6 +29,9 @@ class GalleryView extends BaseComponent {
     this.socketSvc = ServiceManager.getService(
       'SocketSvc')
 
+    this.socketSvc.on('model.deleted',
+      this.refresh)
+
     this.socketSvc.on('model.added',
       this.refresh)
 

@@ -160,7 +160,7 @@ class PhysicsExtension extends MultiModelExtensionBase {
         <ReactLoader show={showLoader}/>
         <ScriptLoader onLoaded={this.onScriptLoaded}
           url={[
-
+            '/resources/libs/ammo/ammo.js'
           ]}/>
       </div>
     )

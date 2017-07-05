@@ -22,6 +22,9 @@ class RecentModels extends BaseComponent {
     this.modelSvc = ServiceManager.getService(
       'ModelSvc')
 
+    this.socketSvc.on('model.deleted',
+      this.refresh)
+
     this.socketSvc.on('model.added',
       this.refresh)
 

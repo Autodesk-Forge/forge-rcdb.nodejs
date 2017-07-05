@@ -141,6 +141,15 @@ export default class MultiModelExtensionBase extends
   }
 
   /////////////////////////////////////////////////////////
+  // Invoked model loading progress
+  //
+  /////////////////////////////////////////////////////////
+  onProgressUpdate (event) {
+
+    //console.log('MultiModelExtensionBase.onProgressUpdate')
+  }
+
+  /////////////////////////////////////////////////////////
   // Invoked when geometry is fully loaded
   //
   /////////////////////////////////////////////////////////
@@ -242,6 +251,10 @@ export default class MultiModelExtensionBase extends
       {
         id: Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT,
         handler: 'onModelRootLoaded'
+      },
+      {
+        id: Autodesk.Viewing.PROGRESS_UPDATE_EVENT,
+        handler: 'onProgressUpdate'
       },
       {
         id: Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
