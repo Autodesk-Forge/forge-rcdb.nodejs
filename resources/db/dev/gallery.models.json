@@ -38,3 +38,153 @@
         "role" : "3d"
     }
 }
+{ 
+    "_id" : ObjectId("595a2752bfad8ab3232c135b"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-03T11:15:30.058+0000"), 
+    "name" : "Sports Car", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1kZXYvNGYwMi0yMGE2LTkzODQuZHdmeA"
+    }
+}
+{ 
+    "_id" : ObjectId("595a27a6bfad8ab3232c135c"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-03T11:16:54.404+0000"), 
+    "name" : "Sports Car", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1kZXYvMmUyMi1lZWUwLWVhYWQuZHdmeA"
+    }
+}
+{ 
+    "_id" : ObjectId("595ae716d95eee02719f4aa3"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-04T00:53:42.405+0000"), 
+    "name" : "Blower", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1kZXYvZmNiYy0yNThmLTZkYzMuZHdm"
+    }
+}
+{ 
+    "_id" : ObjectId("595ae716d95eee02719f4aa4"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-04T00:53:42.406+0000"), 
+    "name" : "Blower", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1kZXYvZmNiYy0yNThmLTZkYzMuZHdm"
+    }
+}
+{ 
+    "_id" : ObjectId("595ae73fd95eee02719f4aa5"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-04T00:54:23.372+0000"), 
+    "name" : "Pug", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1kZXYvNDdmMC0wMDJmLWI3ZWIuZHdmeA"
+    }
+}
+{ 
+    "_id" : ObjectId("595ae73fd95eee02719f4aa6"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-04T00:54:23.373+0000"), 
+    "name" : "Pug", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1kZXYvNDdmMC0wMDJmLWI3ZWIuZHdmeA"
+    }
+}
+{ 
+    "_id" : ObjectId("595ae8e0d95eee02719f4aa7"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-04T01:01:20.409+0000"), 
+    "name" : "Blower", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1kZXYvZmQ5Mi0zY2RkLTgzMWYuZHdm"
+    }
+}
+{ 
+    "_id" : ObjectId("595ae8e0d95eee02719f4aa8"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-04T01:01:20.412+0000"), 
+    "name" : "Blower", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1kZXYvZmQ5Mi0zY2RkLTgzMWYuZHdm"
+    }
+}
+{ 
+    "_id" : ObjectId("595ae963d95eee02719f4aa9"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-04T01:03:31.695+0000"), 
+    "name" : "Napa", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1kZXYvZGFkMi1iMjQ1LWQwYjIucnZ0"
+    }
+}
+{ 
+    "_id" : ObjectId("595ae963d95eee02719f4aaa"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-04T01:03:31.734+0000"), 
+    "name" : "Napa", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1kZXYvNzUyNS1kMGU2LTllNDUucnZ0"
+    }
+}
+{ 
+    "_id" : ObjectId("595b60696d17d930a3acf0af"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-04T09:31:21.186+0000"), 
+    "name" : "Analyze", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1kZXYvMjYyYy0yMGNjLTBhZjAuZHdm"
+    }
+}
+{ 
+    "_id" : ObjectId("595b60696d17d930a3acf0b0"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-04T09:31:21.188+0000"), 
+    "name" : "Analyze", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1kZXYvMjYyYy0yMGNjLTBhZjAuZHdm"
+    }
+}
+{ 
+    "_id" : ObjectId("595b60eb6d17d930a3acf0b1"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-04T09:33:31.028+0000"), 
+    "name" : "Analyze1", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1kZXYvZDlkMS0xNTBjLWRiZjIuZHdm"
+    }
+}
+{ 
+    "_id" : ObjectId("595b60eb6d17d930a3acf0b2"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-04T09:33:31.029+0000"), 
+    "name" : "Analyze1", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1kZXYvZDlkMS0xNTBjLWRiZjIuZHdm"
+    }
+}
+{ 
+    "_id" : ObjectId("595b6bcb2f73995148fa8e0b"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-04T10:19:55.018+0000"), 
+    "name" : "Analyze2", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1kZXYvZGI1Ni1mNzYwLTRiMWIuZHdm"
+    }
+}

@@ -36,37 +36,92 @@
     }
 }
 { 
-    "_id" : ObjectId("5933d6255cdbe364a829e5d3"), 
-    "name" : "Suspension Fork", 
-    "env" : "AutodeskProduction", 
-    "model" : {
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9TdXNwZW5zaW9uJTIwRm9yay5kd2Y=", 
-        "role" : "3d"
-    }
-}
-{ 
-    "_id" : ObjectId("583ec7efebfb320e3cef26a5"), 
-    "name" : "210 King", 
-    "env" : "AutodeskProduction", 
-    "model" : {
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS8yMTAlMjBLaW5nJTIwLSUyMDIwMTUucnZ0", 
-        "role" : "3d"
-    }
-}
-{ 
-    "_id" : ObjectId("5933ce1c5cdbe3629ff8a1e8"), 
-    "name" : "Sport Car", 
-    "env" : "AutodeskProduction", 
-    "model" : {
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9TcG9ydHMlMjBDYXIuZHdmeA==", 
-        "role" : "3d"
-    }
-}
-{ 
     "_id" : ObjectId("57efaead77c8eb0a560ef465"), 
     "name" : "Car Seat", 
     "env" : "AutodeskProduction", 
     "model" : {
         "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9zZWF0LmR3Zg"
+    }
+}
+{ 
+    "_id" : ObjectId("595a2b2f3bffa607fd3a9a70"), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-03T11:31:59.850+0000"), 
+    "name" : "Sports Car", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzgyMjMtMzM4NS1lMDBhLmR3Zng"
+    }
+}
+{ 
+    "_id" : ObjectId("595a2c003bffa607fd3a9a73"), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-03T11:35:28.062+0000"), 
+    "name" : "Plant2", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzMzYTAtNmFjNy0wZjRkLm53ZA"
+    }
+}
+{ 
+    "_id" : ObjectId("595a2c503bffa607fd3a9a76"), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-03T11:36:48.025+0000"), 
+    "name" : "City", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzk1N2UtNzE4Yi0wYmU3Lm53ZA"
+    }
+}
+{ 
+    "_id" : ObjectId("595a2da33bffa607fd3a9a77"), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-03T11:42:27.543+0000"), 
+    "name" : "11 Jay Street", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2UyYTItMjMyYy0zYmNkLnJ2dA"
+    }
+}
+{ 
+    "_id" : ObjectId("595ae40bbe3aa412c5e89663"), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-04T00:40:43.481+0000"), 
+    "name" : "Pug", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzYyMDItNzM0NS1jYTY4LmR3Zng"
+    }
+}
+{ 
+    "_id" : ObjectId("595ae499be3aa412c5e89665"), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-04T00:43:05.987+0000"), 
+    "name" : "iPhil", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzI2OTItZjg0Ni03YzExLnppcA"
+    }
+}
+{ 
+    "_id" : ObjectId("595ae53ebe3aa412c5e89666"), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-04T00:45:50.240+0000"), 
+    "name" : "Plane engine", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2ZmYjMtM2JjOC0xYjI2LnN0ZXA"
+    }
+}
+{ 
+    "_id" : ObjectId("595ae5d9be3aa412c5e89667"), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-04T00:48:25.500+0000"), 
+    "name" : "Wyandotte Lofts", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzc5ZjQtYmNiMC0zYzBkLnJ2dA"
+    }
+}
+{ 
+    "_id" : ObjectId("595b6d867b1cac1dc8205ef0"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-04T10:27:18.316+0000"), 
+    "name" : "Analyze", 
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2ZiOGItOTdkMi03MmZlLmR3Zg"
     }
 }
