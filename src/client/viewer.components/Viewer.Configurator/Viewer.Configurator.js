@@ -1,5 +1,7 @@
 import {ReflexContainer, ReflexElement, ReflexSplitter} from 'react-reflex'
+import ViewingApplication from 'Viewer.ViewingApplication'
 import { ReactLoader, Loader } from 'Loader'
+import BaseComponent from 'BaseComponent'
 import ServiceManager from 'SvcManager'
 import './Viewer.Configurator.scss'
 import PropTypes from 'prop-types'
@@ -10,7 +12,7 @@ import Viewer from 'Viewer'
 import Panel from 'Panel'
 import React from 'react'
 
-class ViewerConfigurator extends React.Component {
+class ViewerConfigurator extends BaseComponent {
 
   /////////////////////////////////////////////////////////
   //
@@ -31,11 +33,21 @@ class ViewerConfigurator extends React.Component {
 
     super (props)
 
-    this.getViewablePath = this.getViewablePath.bind(this)
-
     this.eventSvc = ServiceManager.getService('EventSvc')
 
     this.modelSvc = ServiceManager.getService('ModelSvc')
+
+    this.onViewerStartResize =
+      this.onViewerStartResize.bind(this)
+
+    this.onViewerStopResize =
+      this.onViewerStopResize.bind(this)
+
+    this.onResize =
+      this.onResize.bind(this)
+
+    this.getViewablePath =
+      this.getViewablePath.bind(this)
 
     this.pushRenderExtension =
       this.pushRenderExtension.bind(this)
@@ -49,34 +61,15 @@ class ViewerConfigurator extends React.Component {
     this.popViewerPanel =
       this.popViewerPanel.bind(this)
 
-    this.onResize =
-      this.onResize.bind(this)
-
     this.state = {
       dataExtension: null,
       viewerPanels: [],
       viewerFlex: 1.0,
+      resizing: false,
       dbModel: null
     }
 
     this.viewerFlex = 1.0
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  assignState (state) {
-
-    return new Promise((resolve) => {
-
-      const newState = Object.assign(
-        {}, this.state, state)
-
-      this.setState(newState, () => {
-        resolve()
-      })
-    })
   }
 
   /////////////////////////////////////////////////////////
@@ -128,7 +121,7 @@ class ViewerConfigurator extends React.Component {
   /////////////////////////////////////////////////////////
   componentWillUnmount () {
 
-    window.addEventListener(
+    window.removeEventListener(
       'resize', this.onResize)
   }
 
@@ -160,8 +153,7 @@ class ViewerConfigurator extends React.Component {
     return new Promise((resolve, reject) => {
 
       const paramUrn = !urn.startsWith('urn:')
-        ? 'urn:' + urn
-        : urn
+        ? 'urn:' + urn : urn
 
       Autodesk.Viewing.Document.load(paramUrn, (doc) => {
 
@@ -175,25 +167,21 @@ class ViewerConfigurator extends React.Component {
   }
 
   /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  toArray (obj) {
-
-    return obj ? (Array.isArray(obj) ? obj : [obj]) : []
-  }
-
-  /////////////////////////////////////////////////////////
   // Return viewable path: first 3d or 2d item by default
   //
   /////////////////////////////////////////////////////////
   getViewablePath (doc, pathIdx = 0, roles = ['3d', '2d']) {
 
+    const toArray = (obj) => {
+
+      return obj ? (Array.isArray(obj) ? obj : [obj]) : []
+    }
+
     const rootItem = doc.getRootItem()
 
     let items = []
 
-    this.toArray(roles).forEach((role) => {
+    toArray(roles).forEach((role) => {
 
       items = [ ...items,
         ...Autodesk.Viewing.Document.getSubItemsWithProperties(
@@ -419,7 +407,25 @@ class ViewerConfigurator extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  setupDynamicExtensions (viewer, extensions, defaultOptions) {
+  setupDynamicExtensions (viewer) {
+
+    const ctrlGroup = this.createToolbar (viewer)
+
+    const defaultOptions = {
+      setNavbarState: this.props.setNavbarState,
+      appContainer: ReactDOM.findDOMNode(this),
+      getViewablePath: this.getViewablePath,
+      loadDocument: this.loadDocument,
+      model:this.state.dbModel.model,
+      database: this.props.database,
+      location: this.props.location,
+      appState: this.props.appState,
+      dbModel: this.state.dbModel,
+      notify: this.props.notify,
+      parentControl: ctrlGroup,
+      loader: this.loader,
+      apiUrl: '/api'
+    }
 
     const createDefaultOptions = (id) => {
 
@@ -491,6 +497,9 @@ class ViewerConfigurator extends React.Component {
       return this.loadDynamicExtension (
         viewer, {id}, fullOptions)
     }
+
+    const extensions =
+      this.state.dbModel.dynamicExtensions || []
 
     const extensionTasks = extensions.map(
       (extension) => {
@@ -618,29 +627,7 @@ class ViewerConfigurator extends React.Component {
 
       viewer.prefs.tag('ignore-producer')
 
-      const ctrlGroup = this.createToolbar (viewer)
-
-      const defaultOptions = {
-        setNavbarState: this.props.setNavbarState,
-        appContainer: ReactDOM.findDOMNode(this),
-        getViewablePath: this.getViewablePath,
-        loadDocument: this.loadDocument,
-        database: this.props.database,
-        location: this.props.location,
-        appState: this.props.appState,
-        dbModel: this.state.dbModel,
-        notify: this.props.notify,
-        parentControl: ctrlGroup,
-        loader: this.loader,
-        model: modelInfo,
-        apiUrl: `/api`
-      }
-
-      const extensions =
-        this.state.dbModel.dynamicExtensions || []
-
-      await this.setupDynamicExtensions (
-        viewer, extensions, defaultOptions)
+      await this.setupDynamicExtensions (viewer)
 
       if (modelInfo) {
 
@@ -666,14 +653,12 @@ class ViewerConfigurator extends React.Component {
 
           case 'AutodeskProduction':
 
-            console.log(modelInfo.urn)
-
             this.viewerDocument =
               await this.loadDocument(modelInfo.urn)
 
             const path = this.getViewablePath(
               this.viewerDocument,
-              modelInfo.pathIdx || 0,
+              modelInfo.pathIndex || 0,
               modelInfo.role || ['3d', '2d'])
 
             const options = {
@@ -769,11 +754,20 @@ class ViewerConfigurator extends React.Component {
   /////////////////////////////////////////////////////////
   renderModel (modelInfo) {
 
+    const {resizing} = this.state
+
+    const viewerStyle = {
+      pointerEvents: resizing
+        ? 'none'
+        : 'all'
+    }
+
     return (
-      <Viewer panels= {this.state.viewerPanels}
-        onViewerCreated={(viewer) => {
+      <Viewer onViewerCreated={(viewer) => {
           this.onViewerCreated(viewer, modelInfo)
         }}
+        panels= {this.state.viewerPanels}
+        style={viewerStyle}
       />
     )
   }
@@ -782,7 +776,18 @@ class ViewerConfigurator extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  onStopResize (e) {
+  onViewerStartResize (e) {
+
+    this.assignState({
+      resizing: true
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onViewerStopResize (e) {
 
     this.viewerFlex = e.component.props.flex
 
@@ -793,6 +798,10 @@ class ViewerConfigurator extends React.Component {
         this.state.renderExtension.onStopResize()
       }
     }
+
+    this.assignState({
+      resizing: false
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -837,12 +846,15 @@ class ViewerConfigurator extends React.Component {
             <ReflexElement style={paneExtStyle}>
               {this.renderExtension()}
             </ReflexElement>
-            <ReflexSplitter onStopResize={() => this.forceUpdate()}
+            <ReflexSplitter
+              onStopResize={() => this.forceUpdate()}
               style={paneExtStyle}
             />
-            <ReflexElement onStopResize={(e) => this.onStopResize(e)}
-              onResize={(e) => this.onResize(e)}
+            <ReflexElement
+              onStartResize={this.onViewerStartResize}
+              onStopResize={this.onViewerStopResize}
               propagateDimensions={true}
+              onResize={this.onResize}
               flex={viewerFlex}>
               {this.renderModel(modelInfo)}
             </ReflexElement>
@@ -853,13 +865,16 @@ class ViewerConfigurator extends React.Component {
         return (
           <ReflexContainer className="configurator"
             key="configurator" orientation='vertical'>
-            <ReflexElement onStopResize={(e) => this.onStopResize(e)}
-              onResize={(e) => this.onResize(e)}
+            <ReflexElement
+              onStartResize={this.onViewerStartResize}
+              onStopResize={this.onViewerStopResize}
               propagateDimensions={true}
+              onResize={this.onResize}
               flex={viewerFlex}>
               {this.renderModel(modelInfo)}
             </ReflexElement>
-            <ReflexSplitter onStopResize={() => this.forceUpdate()}
+            <ReflexSplitter
+              onStopResize={() => this.forceUpdate()}
               style={paneExtStyle}
             />
             <ReflexElement style={paneExtStyle}>

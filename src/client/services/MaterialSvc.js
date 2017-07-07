@@ -12,7 +12,7 @@ export default class MaterialSvc extends BaseSvc {
 
     super (opts)
 
-    this._api = new ClientAPI(this._config.apiUrl)
+    this.api = new ClientAPI(this._config.apiUrl)
   }
 
   /////////////////////////////////////////////////////////////////
@@ -30,9 +30,9 @@ export default class MaterialSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   getMaterials (dbName) {
 
-    const url = `${this._config.apiUrl}/${dbName}`
+    const url = dbName
 
-    return this._api.ajax(url)
+    return this.api.ajax(url)
   }
 
   /////////////////////////////////////////////////////////////////
@@ -41,9 +41,9 @@ export default class MaterialSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   postMaterial(dbName, material) {
 
-    const url = `${this._config.apiUrl}/${dbName}`
+    const url = dbName
 
-    return this._api.ajax({
+    return this.api.ajax({
       url: url,
       method: 'POST',
       headers: {

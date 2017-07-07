@@ -15,6 +15,7 @@ import path from 'path'
 
 //Endpoints
 import MaterialAPI from './api/endpoints/materials'
+import ExtractAPI from './api/endpoints/extract'
 import SocketAPI from './api/endpoints/socket'
 import ConfigAPI from './api/endpoints/config'
 import ModelAPI from './api/endpoints/models'
@@ -24,6 +25,7 @@ import MetaAPI from './api/endpoints/meta'
 //Services
 import DerivativesSvc from './api/services/DerivativesSvc'
 import ServiceManager from './api/services/SvcManager'
+import ExtractorSvc from './api/services/ExtractorSvc'
 import LMVProxySvc from './api/services/LMVProxySvc'
 import MongoDbSvc from './api/services/MongoDbSvc'
 import SocketSvc from './api/services/SocketSvc'
@@ -126,9 +128,12 @@ const uploadSvc = new UploadSvc({
   tempStorage: path.join(__dirname, '/../../TMP')
 })
 
+const extractorSvc = new ExtractorSvc()
+
 const ossSvc = new OssSvc()
 
 ServiceManager.registerService(derivativesSvc)
+ServiceManager.registerService(extractorSvc)
 ServiceManager.registerService(uploadSvc)
 ServiceManager.registerService(forgeSvc)
 ServiceManager.registerService(ossSvc)
@@ -138,6 +143,7 @@ ServiceManager.registerService(ossSvc)
 //
 /////////////////////////////////////////////////////////////////////
 app.use('/api/materials', MaterialAPI())
+app.use('/api/extract',   ExtractAPI())
 app.use('/api/socket',    SocketAPI())
 app.use('/api/config',    ConfigAPI())
 app.use('/api/models',    ModelAPI())

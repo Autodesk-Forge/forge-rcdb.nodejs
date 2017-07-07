@@ -21,7 +21,7 @@ export default class ModelUploaderAPI extends ClientAPI {
   ///////////////////////////////////////////////////////////////
   upload (file, opts = {}) {
 
-    const url = this.apiUrl
+    const url = ''
 
     const options = Object.assign({}, {
       tag: 'model'

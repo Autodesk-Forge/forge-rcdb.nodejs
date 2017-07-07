@@ -1,5 +1,4 @@
 import ServiceDlg from 'Dialogs/ServiceDlg'
-import ClientAPI from 'ClientAPI'
 import BaseSvc from './BaseSvc'
 import React from 'react'
 

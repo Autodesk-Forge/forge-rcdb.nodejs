@@ -5,6 +5,7 @@ import ServiceManager from 'SvcManager'
 import RecentModels from 'RecentModels'
 import Background from 'Background'
 import { Link } from 'react-router'
+import Spinner from 'react-spinkit'
 import './GalleryView.scss'
 import Image from 'Image'
 import React from 'react'
@@ -189,6 +190,8 @@ class GalleryView extends BaseComponent {
 
     const expiry = this.getExpiry(item)
 
+    const showSpinner = false
+
     return (
       <div key={item._id} className="item">
         <Link className="content" to={href}>
@@ -200,6 +203,19 @@ class GalleryView extends BaseComponent {
           </h3>
         </Link>
         <div className="footer">
+        {false &&
+          <div className="svf">
+            <span className="fa fa-cloud-download">
+            </span>
+            <label>
+              Download SVF
+            </label>
+            {
+              showSpinner &&
+              <Spinner spinnerName='cube-grid'/>
+            }
+          </div>
+          }
           {
             expiry &&
             <div className="expiry">

@@ -167,7 +167,64 @@
       float: left;
       width: 100%;
 
+      .svf:hover {
+        span {
+          color: #595959;
+        }
+
+        label {
+          color: #595959;
+        }
+      }
+      .svf {
+        margin-right: 10px;
+        cursor: pointer;
+        width: 152px;
+        float: left;
+
+        span {
+          transition-property: color;
+          transition-timing-function: ease;
+          transition-duration: 0.5s;
+          transition-delay: 0.0s;
+
+          margin: 3px 4px 0 6px;
+          pointer-events: none;
+          position: relative;
+          font-size: 22px;
+          color: #8e8e8e;
+          float: left;
+        }
+
+        label {
+          transition-property: color;
+          transition-timing-function: ease;
+          transition-duration: 0.5s;
+          transition-delay: 0.0s;
+
+          pointer-events: none;
+          position: relative;
+          margin-right: 6px;
+          color: #8e8e8e;
+          float: left;
+          top: 4px;
+        }
+
+        .sk-cube-grid {
+          position: relative;
+          height: 16px;
+          width: 16px;
+          float: left;
+          top: 7px;
+        }
+
+        .sk-cube {
+          background: #8e8e8e;
+        }
+      }
+
       .expiry {
+        float: left;
 
         span {
           margin: 3px 4px 0 6px;

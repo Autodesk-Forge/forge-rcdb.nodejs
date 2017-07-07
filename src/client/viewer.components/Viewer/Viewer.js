@@ -35,7 +35,8 @@ class Viewer extends React.Component {
   //
   /////////////////////////////////////////////////////////
   static defaultProps = {
-    panels: []
+    panels: [],
+    style: {}
   }
 
   /////////////////////////////////////////////////////////
@@ -144,12 +145,16 @@ class Viewer extends React.Component {
 
     return (
       <div className="viewer-app-container">
-        <div className="viewer-container" ref={
-          (div) => this.viewerContainer = div
-        }/>
+
+        <div ref={(div) => this.viewerContainer = div}
+          className="viewer-container"
+          style={this.props.style}
+        />
+
         <div className="viewer-panels-container">
           { panels }
         </div>
+
       </div>
     )
   }

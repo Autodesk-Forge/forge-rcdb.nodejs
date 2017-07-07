@@ -32,8 +32,8 @@ export default class UploadSvc extends BaseSvc {
 
     // start cleanup task to remove uploaded temp files
     setInterval(() => {
-      this.clean(config.tempStorage, 60 * 60 * 1000)
-    }, 1000 * 60 * 60 * 24)
+      this.clean(config.tempStorage, 60 * 60)
+    }, 1000 * 60 * 60)
 
     setTimeout(() => {
       this.clean(config.tempStorage)

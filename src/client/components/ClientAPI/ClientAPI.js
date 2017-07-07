@@ -12,12 +12,39 @@ export default class ClientAPI {
   }
 
   /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  buildURL (url) {
+
+    return this.apiUrl +
+      (url.indexOf('/') === 0 ? url:`/${url}`)
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  buildParams (params) {
+
+    const defaultParams = {
+      type: 'GET',
+      data: null
+    }
+
+    return Object.assign({}, defaultParams,
+      params, {
+        url: this.buildURL(params.url)
+      })
+  }
+
+  /////////////////////////////////////////////////////////////
   // fetch wrapper
   //
   /////////////////////////////////////////////////////////////
-  fetch(url, params) {
+  fetch (url, params) {
 
-    return fetch(url, params).then(response => {
+    return fetch(this.buildURL(url), params).then(response => {
 
       return response.json().then(json => {
 
@@ -30,18 +57,15 @@ export default class ClientAPI {
   // $.ajax wrapper
   //
   /////////////////////////////////////////////////////////////
-  ajax(paramsOrUrl) {
+  ajax (paramsOrUrl) {
 
-    var params = {
-      url: paramsOrUrl,
-      type: 'GET',
-      data: null
-    }
-
-    if (typeof paramsOrUrl === 'object') {
-
-      Object.assign(params, paramsOrUrl)
-    }
+    const params = (typeof paramsOrUrl === 'object')
+      ? this.buildParams(paramsOrUrl)
+      : {
+        url: this.buildURL(paramsOrUrl),
+        type: 'GET',
+        data: null
+      }
 
     return new Promise((resolve, reject) => {
 
@@ -68,7 +92,7 @@ export default class ClientAPI {
 
     return new Promise ((resolve, reject) => {
 
-      const req = superAgent.post(url)
+      const req = superAgent.post(this.buildURL(url))
 
       req.on('progress', (e) => {
 

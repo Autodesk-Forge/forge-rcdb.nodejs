@@ -12,7 +12,7 @@ export default class ModelSvc extends BaseSvc {
 
     super (opts)
 
-    this._api = new ClientAPI(this._config.apiUrl)
+    this.api = new ClientAPI(this._config.apiUrl)
   }
 
   /////////////////////////////////////////////////////////////////
@@ -30,9 +30,9 @@ export default class ModelSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   getModels (dbName) {
 
-    const url = `${this._config.apiUrl}/${dbName}`
+    const url = dbName
 
-    return this._api.ajax(url)
+    return this.api.ajax(url)
   }
 
   /////////////////////////////////////////////////////////////////
@@ -41,9 +41,9 @@ export default class ModelSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   getRecentModels (dbName) {
 
-    const url = `${this._config.apiUrl}/${dbName}/recents`
+    const url = `/${dbName}/recents`
 
-    return this._api.ajax(url)
+    return this.api.ajax(url)
   }
 
   /////////////////////////////////////////////////////////////////
@@ -52,9 +52,9 @@ export default class ModelSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   getModel (dbName, modelId) {
 
-    const url = `${this._config.apiUrl}/${dbName}/${modelId}`
+    const url = `/${dbName}/${modelId}`
 
-    return this._api.ajax(url)
+    return this.api.ajax(url)
   }
 
   /////////////////////////////////////////////////////////////////
@@ -63,8 +63,8 @@ export default class ModelSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   getThumbnailUrl (dbName, modelId, size = 200) {
 
-    const url =
-      `${this._config.apiUrl}/${dbName}/${modelId}/thumbnail` +
+    const url = this.api.apiUrl +
+      `/${dbName}/${modelId}/thumbnail` +
       `?size=${size}`
 
     return url
@@ -76,9 +76,9 @@ export default class ModelSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   getThumbnails (dbName, modelIds) {
 
-    const url = `${this._config.apiUrl}/${dbName}/thumbnails`
+    const url = `/${dbName}/thumbnails`
 
-    return this._api.ajax({
+    return this.api.ajax({
       url: url,
       method: 'POST',
       headers: {

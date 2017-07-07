@@ -27,11 +27,20 @@
   }
 
   .content {
-    padding: 10px 10px 0 0;
-    border-radius: 4px;
+    transition-property: all;
+    transition-timing-function: ease;
+    transition-duration: 0.5s;
+    transition-delay: 0.0s;
+
+    border: 2px solid #ffffff;
+    height: calc(100% - 36px);
+    padding: 8px 10px 0 0;
     background: white;
     cursor: pointer;
-    height: 100%;
+  }
+
+  .content:hover {
+    border-color: #1bb1f4;
   }
 
   hr {

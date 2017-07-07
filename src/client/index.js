@@ -8,6 +8,7 @@ import React from 'react'
 
 //Services
 import ServiceManager from 'SvcManager'
+import ExtractorSvc from 'ExtractorSvc'
 import MaterialSvc from 'MaterialSvc'
 import StorageSvc from 'StorageSvc'
 import NotifySvc from 'NotifySvc'
@@ -39,6 +40,10 @@ socketSvc.connect().then((socket) => {
   console.log('Client socket connected: ' + socket.id)
 })
 
+const extractorSvc = new ExtractorSvc({
+  apiUrl: '/api/extract'
+})
+
 const modelSvc = new ModelSvc({
   apiUrl: '/api/models'
 })
@@ -56,6 +61,7 @@ const forgeSvc = new ForgeSvc({
 // ========================================================
 // Services Registration
 // ========================================================
+ServiceManager.registerService(extractorSvc)
 ServiceManager.registerService(materialSvc)
 ServiceManager.registerService(storageSvc)
 ServiceManager.registerService(socketSvc)

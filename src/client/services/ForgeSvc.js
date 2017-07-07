@@ -14,7 +14,7 @@ export default class ForgeSvc extends BaseSvc {
 
     this.api = new ClientAPI(config.apiUrl)
 
-    this.api.ajax(`${this._config.apiUrl}/clientId`).then(
+    this.api.ajax('/clientId').then(
       (res) => {
 
         this._clientId = res.clientId
@@ -67,7 +67,7 @@ export default class ForgeSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   logout () {
 
-    const url = `${this._config.apiUrl}/logout`
+    const url = '/logout'
 
     return this.api.ajax({
       contentType: 'application/json',
@@ -83,7 +83,7 @@ export default class ForgeSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   getUser () {
 
-    const url = `${this._config.apiUrl}/user`
+    const url = '/user'
 
     return this.api.ajax(url)
   }
@@ -94,7 +94,7 @@ export default class ForgeSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   getLoginURL () {
 
-    const url = `${this._config.apiUrl}/login`
+    const url = '/login'
 
     const payload = {
       origin: window.location.href

@@ -17,7 +17,6 @@
 /////////////////////////////////////////////////////////////////////
 import './ViewingApplication.scss'
 import PropTypes from 'prop-types'
-import ReactDOM from 'react-dom'
 import React from 'react'
 
 class ViewingApplication extends React.Component {
@@ -35,7 +34,8 @@ class ViewingApplication extends React.Component {
   //
   /////////////////////////////////////////////////////////
   static defaultProps = {
-    panels: []
+    panels: [],
+    style: {}
   }
 
   /////////////////////////////////////////////////////////
@@ -71,42 +71,64 @@ class ViewingApplication extends React.Component {
   }
 
   /////////////////////////////////////////////////////////
+  // Return viewable items
+  //
+  /////////////////////////////////////////////////////////
+  getViewables (doc, roles = ['3d', '2d']) {
+
+    const toArray = (obj) => {
+
+      return obj ? (Array.isArray(obj) ? obj : [obj]) : []
+    }
+
+    const rootItem = doc.getRootItem()
+
+    let items = []
+
+    toArray(roles).forEach((role) => {
+
+      items = [ ...items,
+        ...Autodesk.Viewing.Document.getSubItemsWithProperties(
+          rootItem, { type: 'geometry', role }, true) ]
+    })
+
+    if (!items.length) {
+
+      return null
+    }
+
+    return items
+  }
+
+  /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
   loadDocument (urn) {
 
-    const itemIndex = this.props.itemIndex || 0
+    const pathIndex = this.props.pathIndex || 0
 
-    const _urn = !urn.startsWith('urn:')
-      ? 'urn:' + urn
-      : urn
+    const paramUrn = !urn.startsWith('urn:')
+      ? 'urn:' + urn : urn
 
-    this.viewingApp.loadDocument(_urn, (doc) => {
+    this.viewingApp.loadDocument(paramUrn, (doc) => {
 
-      console.log(doc)
+      const viewables = this.getViewables(doc)
 
-      const viewables = this.viewingApp.bubble.search({
-        'role': '3d'
-      })
-
-      console.log(viewables)
-
-      if (!viewables || viewables.length-1 < itemIndex) {
+      if (!viewables || viewables.length-1 < pathIndex) {
 
         console.error('Viewable path invalid ...')
         return
       }
 
-      this.viewingApp.selectItem(viewables[0].data,
+      this.viewingApp.selectItem(viewables[pathIndex],
         (viewer, item) => {
 
           this.viewer = viewer
 
           if (this.props.onViewerCreated) {
 
-            this.props.onViewerCreated(
-              this.viewer)
+            this.props.onViewerCreated(this.viewer)
           }
 
           if (this.props.onItemLoaded) {
@@ -132,8 +154,9 @@ class ViewingApplication extends React.Component {
 
     this.viewerContainer.id = this.guid()
 
-    this.viewingApp = new Autodesk.Viewing.ViewingApplication(
-      this.viewerContainer.id)
+    this.viewingApp =
+      new Autodesk.Viewing.ViewingApplication(
+        this.viewerContainer.id)
 
     this.viewingApp.registerViewer(
       this.viewingApp.k3D,
@@ -218,12 +241,16 @@ class ViewingApplication extends React.Component {
 
     return (
       <div className="viewer-app-container">
-        <div className="viewer-container" ref={
-          (div) => this.viewerContainer = div
-          }/>
+
+        <div ref={(div) => this.viewerContainer = div}
+          className="viewer-container"
+          style={this.props.style}
+        />
+
         <div className="viewer-panels-container">
           { panels }
         </div>
+
       </div>
     )
   }

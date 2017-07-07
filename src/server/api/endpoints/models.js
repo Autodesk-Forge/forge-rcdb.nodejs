@@ -135,6 +135,7 @@ module.exports = function() {
         timestamp: new Date(),
         name : data.name,
         model : {
+          fileId,
           urn
         }
       }
@@ -155,11 +156,40 @@ module.exports = function() {
   }
 
   /////////////////////////////////////////////////////////
-  // Remove models which are too old or
-  // don't exist anymore on OSS
+  // Remove models which are too old
   //
   /////////////////////////////////////////////////////////
   const cleanModels = async(modelSvc) => {
+
+    const models = await modelSvc.getModels()
+
+    models.forEach((modelInfo) => {
+
+      const urn = modelInfo.model.urn
+
+      if (modelInfo.lifetime) {
+
+        const now = new Date()
+
+        const age = (now - modelInfo.timestamp) / 1000
+
+        if (age > modelInfo.lifetime) {
+
+          deleteModel(urn, modelInfo._id)
+        }
+      }
+    })
+
+    setTimeout(() => {
+      cleanModels(modelSvc)
+    }, 1000 * 60 * 60 * 24)
+  }
+
+  /////////////////////////////////////////////////////////
+  // Remove models which are not on OSS
+  //
+  /////////////////////////////////////////////////////////
+  const cleanModelsFromOSS = async(modelSvc) => {
 
     const models = await modelSvc.getModels()
 
@@ -177,18 +207,6 @@ module.exports = function() {
         objectId.bucketKey,
         objectId.objectKey).then((res) => {
 
-          if (modelInfo.lifetime) {
-
-            const now = new Date()
-
-            const age = (now - modelInfo.timestamp) / 1000
-
-            if (age > modelInfo.lifetime) {
-
-              deleteModel(urn, modelInfo._id)
-            }
-          }
-
         }, (err) => {
 
           if (err.statusCode === 404) {
@@ -197,10 +215,6 @@ module.exports = function() {
           }
         })
     })
-
-    setTimeout(() => {
-      cleanModels(modelSvc)
-    }, 1000 * 60 * 60 * 24)
   }
 
   /////////////////////////////////////////////////////////

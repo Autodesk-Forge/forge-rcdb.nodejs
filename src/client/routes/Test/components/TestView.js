@@ -16,6 +16,9 @@ class TestView extends React.Component {
     this.onViewingApplicationCreated =
       this.onViewingApplicationCreated.bind(this)
 
+    this.onViewerCreated =
+      this.onViewerCreated.bind(this)
+
     this.state = {
       urn: null
     }
@@ -91,11 +94,6 @@ class TestView extends React.Component {
       const viewerEnv = await this.initialize({
         env: 'AutodeskProduction',
         useConsolidation: true
-        //getAccessToken: function(onGetAccessToken) {
-        //  $.get('/api/forge/token/2legged', (token) => {
-        //    onGetAccessToken(token.access_token, token.expires_in)
-        //  })
-        //}
       })
 
       this.props.setViewerEnv (viewerEnv)
@@ -108,7 +106,7 @@ class TestView extends React.Component {
     }
 
     this.assignState({
-      urn: 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LWRldi9zZWF0LmR3Zg=='
+      urn: 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LWRldi9vZmZpY2UucnZ0'
     })
   }
 
@@ -118,22 +116,14 @@ class TestView extends React.Component {
   /////////////////////////////////////////////////////////
   onViewerCreated (viewer) {
 
-    try {
 
-      //viewer.start()
-
-    } catch(ex) {
-
-      console.log('Viewer Initialization Error: ')
-      console.log(ex)
-    }
   }
 
   ////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  onViewingApplicationCreated () {
+  onViewingApplicationCreated (viewingApp) {
 
 
   }
@@ -158,11 +148,16 @@ class TestView extends React.Component {
   /////////////////////////////////////////////////////////////////
   render() {
 
+    const viewStyle = {
+      height: 'calc(100vh - 65px)'
+    }
+
     return (
-      <div className="test" style={{height:"calc(100vh - 65px)"}}>
+      <div className="test" style={viewStyle}>
         <ViewingApp
-          urn={this.state.urn}
           onViewingApplicationCreated={this.onViewingApplicationCreated}
+          onViewerCreated={this.onViewerCreated}
+          urn={this.state.urn}
         />
       </div>
     )
