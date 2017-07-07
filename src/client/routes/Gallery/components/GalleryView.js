@@ -23,6 +23,10 @@ class GalleryView extends BaseComponent {
     this.onUploadProgress = this.onUploadProgress.bind(this)
     this.onInitUpload = this.onInitUpload.bind(this)
     this.refresh = this.refresh.bind(this)
+    this.extract = this.extract.bind(this)
+
+    this.extractorSvc = ServiceManager.getService(
+      'ExtractorSvc')
 
     this.modelSvc = ServiceManager.getService(
       'ModelSvc')
@@ -181,6 +185,56 @@ class GalleryView extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  showSpinner (itemId, show) {
+
+    const items = this.state.items.map((item) => {
+      if (item._id === itemId) {
+        return Object.assign({}, item, {
+          spinner: show
+        })
+      }
+      return item
+    })
+
+    this.assignState({
+      items
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  extract (item) {
+
+    if (!item.spinner) {
+
+      const itemId = item._id
+
+      this.showSpinner(itemId, true)
+
+      this.extractorSvc.getStatus(itemId).then(() => {
+
+        this.extractorSvc.download(itemId)
+
+        setTimeout(
+          () => this.showSpinner(itemId, false),
+          2000)
+
+      }, (error) => {
+
+        if (error.status === 404) {
+
+          this.extractorSvc.extract(itemId)
+        }
+      })
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   renderItem (item) {
 
     const thumbnailUrl = this.modelSvc.getThumbnailUrl(
@@ -189,8 +243,6 @@ class GalleryView extends BaseComponent {
     const href = `/viewer?id=${item._id}`
 
     const expiry = this.getExpiry(item)
-
-    const showSpinner = false
 
     return (
       <div key={item._id} className="item">
@@ -203,19 +255,18 @@ class GalleryView extends BaseComponent {
           </h3>
         </Link>
         <div className="footer">
-        {false &&
-          <div className="svf">
+          <div className="svf"
+            onClick={() => this.extract(item)}>
             <span className="fa fa-cloud-download">
             </span>
             <label>
               Download SVF
             </label>
             {
-              showSpinner &&
+              item.spinner &&
               <Spinner spinnerName='cube-grid'/>
             }
           </div>
-          }
           {
             expiry &&
             <div className="expiry">

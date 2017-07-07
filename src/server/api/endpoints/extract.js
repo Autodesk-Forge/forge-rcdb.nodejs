@@ -14,40 +14,67 @@ module.exports = function() {
   // POST /
   //
   /////////////////////////////////////////////////////////
-  router.post('/', async (req, res) => {
+  router.post('/:modelId', async (req, res) => {
 
     try {
 
-      const payload = JSON.parse(req.body.payload)
+      const modelId = req.params.modelId
 
-      const name = payload.name
+      // supports extraction only for gallery models
+      const modelSvc = ServiceManager.getService(
+        'gallery-ModelSvc')
 
-      const urn = payload.urn
+      const dbModel = await modelSvc.getById(modelId)
 
+      res.json('processing')
+
+      // name model to download
+      const name = dbModel.name
+
+      // URN of model to download
+      const urn = dbModel.model.urn
+
+      // Get Forge service
       const forgeSvc = ServiceManager.getService(
         'ForgeSvc')
 
+      // getToken async function
       const getToken = () => forgeSvc.get2LeggedToken()
 
+      // Get Extractor service
       const extractorSvc = ServiceManager.getService(
         'ExtractorSvc')
 
+      // target path to download SVF
       const dir = path.resolve(__dirname,
-        `../../../../TMP/${name}`)
+        `../../../../TMP/${modelId}`)
 
+      // perform download
       const files = await extractorSvc.download(
-        getToken, payload.urn, dir)
+        getToken, urn, dir)
 
+      // target zipfile
       const zipfile = dir + '.zip'
 
+      // zip all files
       await extractorSvc.createZip(
         dir, zipfile + '.tmp', name, files)
 
       mzfs.rename(zipfile + '.tmp', zipfile)
 
+      // remove downloaded resources directory
       rmdir(dir)
 
-      res.json('done')
+      if (req.body.socketId) {
+
+        const socketSvc = ServiceManager.getService(
+          'SocketSvc')
+
+        const msg = {}
+
+        socketSvc.broadcast(
+          'extract.ready', msg, req.body.socketId)
+      }
 
     } catch (ex) {
 
@@ -60,14 +87,14 @@ module.exports = function() {
   // GET /status/:name
   //
   /////////////////////////////////////////////////////////
-  router.get('/status/:name', async (req, res) => {
+  router.get('/status/:modelId', async (req, res) => {
 
     try {
 
-      const name = req.params.name
+      const modelId = req.params.modelId
 
       const filename = path.resolve(__dirname,
-        `../../../../TMP/${name}.zip`)
+        `../../../../TMP/${modelId}.zip`)
 
       await mzfs.stat(filename)
 
@@ -84,18 +111,25 @@ module.exports = function() {
   // GET /download/:name
   //
   /////////////////////////////////////////////////////////
-  router.get('/download/:name', async (req, res) => {
+  router.get('/download/:modelId', async (req, res) => {
 
     try {
 
-      const name = req.params.name
+      const modelId = req.params.modelId
+
+      const modelSvc = ServiceManager.getService(
+        'gallery-ModelSvc')
+
+      const dbModel = await modelSvc.getById(modelId)
+
+      const name = dbModel.name
 
       const filename = path.resolve(__dirname,
-        `../../../../TMP/${name}.zip`)
+        `../../../../TMP/${modelId}.zip`)
 
       await mzfs.stat(filename)
 
-      res.download(filename)
+      res.download(filename, `${name}.zip`)
 
     } catch (ex) {
 

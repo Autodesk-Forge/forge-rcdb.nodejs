@@ -168,7 +168,8 @@ class CoreLayout extends React.Component {
     }, {
       name: 'Hide',
       onClick: () => {
-        this.notifySvc.remove(notification)
+        notification.dismissAfter = 1
+        this.notifySvc.update(notification)
       }
     }]
 
