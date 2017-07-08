@@ -9,7 +9,6 @@ import ExtensionBase from 'Viewer.ExtensionBase'
 import WidgetContainer from 'WidgetContainer'
 import EventTool from 'Viewer.EventTool'
 import ServiceManager from 'SvcManager'
-import IoTPopover from './IoT.Popover'
 import Toolkit from 'Viewer.Toolkit'
 import IoTGraph from './IoT.Graph'
 import React from 'react'
@@ -271,6 +270,15 @@ class IoTExtension extends ExtensionBase {
     return true
   }
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  get className() {
+
+    return 'IoT'
+  }
+
   /////////////////////////////////////////////////////////////////
   // Extension Id
   //
@@ -429,7 +437,7 @@ class IoTExtension extends ExtensionBase {
     })
 
     return (
-      <WidgetContainer title="Incidents">
+      <WidgetContainer title="Incidents" className={this.className}>
         <ReflexContainer key="incidents" orientation='horizontal'>
           <ReflexElement flex={0.35}>
             <div className="item-list-container">
@@ -438,8 +446,9 @@ class IoTExtension extends ExtensionBase {
           </ReflexElement>
           <ReflexSplitter/>
           <ReflexElement className="graph-list-container"
+            propagateDimensions={true}
             renderOnResize={true}
-            propagateDimensions={true}>
+            minSize={93}>
             {
               state.activeItem &&
               <IoTGraphContainer

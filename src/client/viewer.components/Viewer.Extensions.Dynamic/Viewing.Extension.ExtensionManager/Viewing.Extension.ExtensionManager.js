@@ -454,14 +454,18 @@ class ExtensionManager extends ExtensionBase {
     const extensionPanes = renderExtensions.map (
       (extension) => {
 
+        const flex = renderExtensions.length > 1
+          ? extension.options.flex
+          : 1.0
+
         return (
           <ExtensionPane
             renderTitle={() => extension.renderTitle(true)}
             onStopResize={(e) => this.onStopResize()}
             onResize={(e) => this.onResize()}
             className={extension.className}
-            flex={extension.options.flex}
-            key={extension.id}>
+            key={extension.id}
+            flex={flex}>
             {
               extension.render({
                 showTitle: false,

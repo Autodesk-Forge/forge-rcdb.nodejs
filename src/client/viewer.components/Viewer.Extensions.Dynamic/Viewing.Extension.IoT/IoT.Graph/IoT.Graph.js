@@ -116,7 +116,7 @@ export default class IoTGraph extends React.Component {
       ? 100 : this.props.dimensions.width
 
     const height = isNaN(this.props.dimensions.height)
-      ? 100 : Math.floor((this.props.dimensions.height - 10)/3)
+      ? 100 : Math.floor((this.props.dimensions.height - 1)/3)
 
     const label =
       `Tag ${this.props.tagId} - ` +

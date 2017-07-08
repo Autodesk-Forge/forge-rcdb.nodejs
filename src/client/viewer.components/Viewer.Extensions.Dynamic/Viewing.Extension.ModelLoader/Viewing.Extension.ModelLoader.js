@@ -202,6 +202,8 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
 
     return new Promise(async(resolve) => {
 
+      this.options.loader.show(true)
+
       const fileType = this.getFileType(dbModel.model.urn)
 
       const loadOptions = {
@@ -401,6 +403,8 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   onModelRootLoaded (event) {
 
     this.viewer.container.classList.remove('empty')
+
+    this.options.loader.show(false)
   }
 
   /////////////////////////////////////////////////////////

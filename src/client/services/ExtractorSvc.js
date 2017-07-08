@@ -33,10 +33,6 @@ export default class ExtractSvc extends BaseSvc {
     const url = modelId
 
     return this.api.ajax({
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
       data: JSON.stringify(payload),
       method: 'POST',
       url: url

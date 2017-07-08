@@ -28,6 +28,10 @@ export default class ClientAPI {
   buildParams (params) {
 
     const defaultParams = {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
       type: 'GET',
       data: null
     }

@@ -1,66 +1,69 @@
 
-.item-list-container {
-  background-color: rgba(171, 171, 171, 0.32);
-  overflow: auto;
-  padding: 8px;
-  height: 100%;
-}
+.IoT {
 
-.graph-list-container {
-  background-color: rgba(171, 171, 171, 0.32);
-  overflow: auto;
-}
+  .item-list-container {
+    background-color: #ffffff;
+    overflow: auto;
+    padding: 8px;
+    height: 100%;
+  }
 
-.graph-title {
-  background-color: rgb(255, 255, 255);
-  height: 30px;
-}
+  .graph-list-container {
+    background-color: rgba(171, 171, 171, 0.32);
+    overflow: auto;
+  }
 
-.graph-title label {
-  position: relative;
-  float: left;
-  left: 10px;
-  top: 4px;
-}
+  .graph-title {
+    background-color: whitesmoke;
+    height: 30px;
+  }
 
-.list-item {
-  transition-property: background-color;
-  transition-timing-function: ease;
-  transition-duration: 1.0s;
-  transition-delay: 0.0s;
+  .graph-title label {
+    position: relative;
+    float: left;
+    left: 10px;
+    top: 4px;
+  }
 
-  background-color: #f8f8f8;
-  border: 1px solid #5f5f5f;
-  border-radius: 4px;
-  margin-bottom: 4px;
-  overflow: hidden;
-  cursor: pointer;
-  height: 38px;
-}
+  .list-item {
+    transition-property: background-color;
+    transition-timing-function: ease;
+    transition-duration: 1.0s;
+    transition-delay: 0.0s;
 
-.list-item:hover {
-  background-color: #ecf2ff;
-  border: 2px solid rgba(37, 58, 221, 0.51);
-}
+    background-color: #f8f8f8;
+    border: 1px solid #5f5f5f;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    height: 38px;
+  }
 
-.list-item.active {
-  background-color: #c1ddff;
-  border: 1px solid #253add;
-}
+  .list-item:hover {
+    background-color: #ecf2ff;
+    border: 2px solid rgba(37, 58, 221, 0.51);
+  }
 
-.list-item label {
-  white-space: nowrap;
-  position: relative;
-  float: left;
-  left: 44px;
-  top: 8px;
-}
+  .list-item.active {
+    background-color: #c1ddff;
+    border: 1px solid #253add;
+  }
 
-.item-priority {
-  position: relative;
-  border-radius: 50%;
-  height: 28px;
-  margin: 4px;
-  width: 28px;
-  float: left;
+  .list-item label {
+    white-space: nowrap;
+    position: relative;
+    float: left;
+    left: 44px;
+    top: 8px;
+  }
+
+  .item-priority {
+    position: relative;
+    border-radius: 50%;
+    height: 28px;
+    margin: 4px;
+    width: 28px;
+    float: left;
+  }
 }

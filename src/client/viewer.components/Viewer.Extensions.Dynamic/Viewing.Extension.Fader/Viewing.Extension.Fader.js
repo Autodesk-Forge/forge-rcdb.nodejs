@@ -45,8 +45,9 @@ class FaderExtension extends ExtensionBase
 
     this.viewer.loadExtension(FaderCoreExtension)
 
-    this.hotSpotCommand = new HotSpotCommand (
-      this.viewer)
+    this.hotSpotCommand = new HotSpotCommand (this.viewer, {
+      animate: true
+    })
 
     this.tooltip = new ViewerTooltip(this.viewer, {
       stroke: '#88FF88',
