@@ -20,10 +20,20 @@ class GalleryView extends BaseComponent {
 
     super (props)
 
-    this.onUploadProgress = this.onUploadProgress.bind(this)
-    this.onInitUpload = this.onInitUpload.bind(this)
-    this.refresh = this.refresh.bind(this)
-    this.extract = this.extract.bind(this)
+    this.onUploadProgress =
+      this.onUploadProgress.bind(this)
+
+    this.onExtractReady =
+      this.onExtractReady.bind(this)
+
+    this.onInitUpload =
+      this.onInitUpload.bind(this)
+
+    this.refresh =
+      this.refresh.bind(this)
+
+    this.extract =
+      this.extract.bind(this)
 
     this.extractorSvc = ServiceManager.getService(
       'ExtractorSvc')
@@ -33,12 +43,6 @@ class GalleryView extends BaseComponent {
 
     this.socketSvc = ServiceManager.getService(
       'SocketSvc')
-
-    this.socketSvc.on('model.deleted',
-      this.refresh)
-
-    this.socketSvc.on('model.added',
-      this.refresh)
 
     this.notifySvc = ServiceManager.getService(
       'NotifySvc')
@@ -53,7 +57,7 @@ class GalleryView extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
-  async componentWillMount () {
+  componentWillMount () {
 
     this.props.setNavbarState({
       links: {
@@ -61,7 +65,32 @@ class GalleryView extends BaseComponent {
       }
     })
 
+    this.socketSvc.on('extract.ready',
+      this.onExtractReady)
+
+    this.socketSvc.on('model.deleted',
+      this.refresh)
+
+    this.socketSvc.on('model.added',
+      this.refresh)
+
     this.refresh()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  componentWillUnmount () {
+
+    this.socketSvc.off('extract.ready',
+      this.onExtractReady)
+
+    this.socketSvc.off('model.deleted',
+      this.refresh)
+
+    this.socketSvc.off('model.added',
+      this.refresh)
   }
 
   /////////////////////////////////////////////////////////
@@ -225,10 +254,23 @@ class GalleryView extends BaseComponent {
 
         if (error.status === 404) {
 
-          this.extractorSvc.extract(itemId)
+          this.extractorSvc.extract(itemId, {
+            socketId: this.socketSvc.socketId
+          })
         }
       })
     }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onExtractReady (msg) {
+
+    console.log('onExtractReady')
+
+    this.showSpinner(msg.modelId, false)
   }
 
   /////////////////////////////////////////////////////////

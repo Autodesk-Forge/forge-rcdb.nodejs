@@ -70,7 +70,9 @@ module.exports = function() {
         const socketSvc = ServiceManager.getService(
           'SocketSvc')
 
-        const msg = {}
+        const msg = {
+          modelId
+        }
 
         socketSvc.broadcast(
           'extract.ready', msg, req.body.socketId)

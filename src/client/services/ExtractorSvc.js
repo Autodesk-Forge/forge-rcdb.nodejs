@@ -28,11 +28,16 @@ export default class ExtractSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////
-  extract (modelId) {
+  extract (modelId, payload = {}) {
 
     const url = modelId
 
     return this.api.ajax({
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      data: JSON.stringify(payload),
       method: 'POST',
       url: url
     })

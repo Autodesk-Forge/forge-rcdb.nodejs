@@ -33,6 +33,9 @@ class CoreLayout extends React.Component {
     this.onForgeUploadProgress =
       this.onForgeUploadProgress.bind(this)
 
+    this.onExtractReady =
+      this.onExtractReady.bind(this)
+
     this.onModelAdded =
       this.onModelAdded.bind(this)
   }
@@ -53,9 +56,16 @@ class CoreLayout extends React.Component {
       add: this.props.addNotification
     })
 
+    this.extractorSvc =
+      ServiceManager.getService(
+        'ExtractorSvc')
+
     this.socketSvc =
       ServiceManager.getService(
         'SocketSvc')
+
+    this.socketSvc.on('extract.ready',
+      this.onExtractReady)
 
     this.socketSvc.on('upload.progress',
       this.onForgeUploadProgress)
@@ -80,6 +90,25 @@ class CoreLayout extends React.Component {
 
     this.props.setUser(user)
   }
+
+    /////////////////////////////////////////////////////////
+    //
+    //
+    /////////////////////////////////////////////////////////
+    componentWillUnmount () {
+
+      this.socketSvc.off('extract.ready',
+        this.onExtractReady)
+
+      this.socketSvc.off('upload.progress',
+        this.onForgeUploadProgress)
+
+      this.socketSvc.off('svf.progress',
+        this.onForgeTranslateProgress)
+
+      this.socketSvc.off('model.added',
+        this.onModelAdded)
+    }
 
   /////////////////////////////////////////////////////////
   //
@@ -174,6 +203,15 @@ class CoreLayout extends React.Component {
     }]
 
     this.notifySvc.update(notification)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onExtractReady (msg) {
+
+    this.extractorSvc.download(msg.modelId)
   }
 
   /////////////////////////////////////////////////////////

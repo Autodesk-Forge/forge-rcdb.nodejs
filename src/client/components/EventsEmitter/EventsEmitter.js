@@ -18,8 +18,8 @@ export default class EventsEmitter {
 
     events.split(' ').forEach((event) => {
 
-      this._events[event] = this._events[event]	|| [];
-      this._events[event].push(fct);
+      this._events[event] = this._events[event]	|| []
+      this._events[event].push(fct)
     })
 
     return this
@@ -32,8 +32,8 @@ export default class EventsEmitter {
   off (events, fct) {
 
     if(events == undefined){
-      this._events = {};
-      return;
+      this._events = {}
+      return
     }
 
     events.split(' ').forEach((event) => {
