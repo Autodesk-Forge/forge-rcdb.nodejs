@@ -108,8 +108,6 @@ export default class ClientAPI {
 
       req.attach(opts.tag || 'file', file)
 
-      req.field('socketId', opts.socketId)
-
       if (opts.data) {
 
         for (var key in opts.data) {
