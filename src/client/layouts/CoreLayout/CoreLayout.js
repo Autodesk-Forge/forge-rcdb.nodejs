@@ -1,4 +1,5 @@
 import { browserHistory } from 'react-router'
+import autobind from 'autobind-decorator'
 import NotificationsSystem from 'reapop'
 import ServiceManager from 'SvcManager'
 import theme from 'reapop-theme-wybo'
@@ -23,21 +24,9 @@ class CoreLayout extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  constructor () {
+  constructor (props) {
 
-    super()
-
-    this.onForgeTranslateProgress =
-      this.onForgeTranslateProgress.bind(this)
-
-    this.onForgeUploadProgress =
-      this.onForgeUploadProgress.bind(this)
-
-    this.onExtractReady =
-      this.onExtractReady.bind(this)
-
-    this.onModelAdded =
-      this.onModelAdded.bind(this)
+    super(props)
   }
 
   /////////////////////////////////////////////////////////
@@ -114,6 +103,7 @@ class CoreLayout extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  @autobind
   onForgeUploadProgress (msg) {
 
     const notification = this.notifySvc.getNotification(
@@ -142,6 +132,7 @@ class CoreLayout extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  @autobind
   onForgeTranslateProgress (msg) {
 
     let notification =
@@ -177,6 +168,7 @@ class CoreLayout extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  @autobind
   onModelAdded (msg) {
 
     let notification =
@@ -209,6 +201,7 @@ class CoreLayout extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  @autobind
   onExtractReady (msg) {
 
     this.extractorSvc.download(msg.modelId)

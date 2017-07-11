@@ -1,4 +1,5 @@
 
+import autobind from 'autobind-decorator'
 import BaseSvc from './BaseSvc'
 import io from 'socket.io'
 
@@ -13,12 +14,6 @@ export default class SocketSvc extends BaseSvc {
     super (config)
 
     this._connections = {}
-
-    this.handleConnection =
-      this.handleConnection.bind(this)
-
-    this.handleDisconnection =
-      this.handleDisconnection.bind(this)
 
     this._io = io(config.server)
 
@@ -40,6 +35,7 @@ export default class SocketSvc extends BaseSvc {
   // Socket Connection handler
   //
   ///////////////////////////////////////////////////////////////////
+  @autobind
   handleConnection (socket) {
 
     var _thisSvc = this
@@ -79,6 +75,7 @@ export default class SocketSvc extends BaseSvc {
   // Socket Disconnection handler
   //
   ///////////////////////////////////////////////////////////////////
+  @autobind
   handleDisconnection (id) {
 
     var _thisSvc = this

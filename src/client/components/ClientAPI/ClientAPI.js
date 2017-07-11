@@ -15,7 +15,7 @@ export default class ClientAPI {
   //
   //
   /////////////////////////////////////////////////////////////
-  buildURL (url) {
+  buildURL (url = '') {
 
     return this.apiUrl +
       (url.indexOf('/') === 0 ? url:`/${url}`)
@@ -107,6 +107,8 @@ export default class ClientAPI {
       })
 
       req.attach(opts.tag || 'file', file)
+
+      req.field('socketId', opts.socketId)
 
       if (opts.data) {
 

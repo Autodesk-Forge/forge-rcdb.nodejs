@@ -30,7 +30,9 @@ export default class HotSpotCommand extends ViewerCommand {
 
     this.commandTool.on('activate', () => {
 
-      this.control.container.classList.add('active')
+      if (this.control) {
+        this.control.container.classList.add('active')
+      }
 
       if (options.hotspots) {
 
@@ -43,7 +45,9 @@ export default class HotSpotCommand extends ViewerCommand {
 
     this.commandTool.on('deactivate', () => {
 
-      this.control.container.classList.remove('active')
+      if (this.control) {
+        this.control.container.classList.remove('active')
+      }
 
       this.removeHotSpots()
     })
@@ -142,19 +146,39 @@ export default class HotSpotCommand extends ViewerCommand {
   /////////////////////////////////////////////////////////
   isolate (ids) {
 
-    this.hotspots.forEach((hotSpot) => {
+    this.hotspots.forEach((hotspot) => {
 
       const idArray = this.toArray(ids)
 
-      const show =
-        !idArray.length ||
-        idArray.includes(hotSpot.id)
+      const show = idArray.includes(hotspot.id)
 
-      if (!hotSpot.hidden) {
+      if (!hotspot.hidden) {
 
-        hotSpot.skipOcclusion = !show
+        hotspot.skipOcclusion = !show
 
-        hotSpot.setVisible(show)
+        hotspot.setVisible(show)
+      }
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  setVisibility (ids, show) {
+
+    const hotspots = this.hotspots.filter((hotspot) => {
+
+      return ids.includes(hotspot.id)
+    })
+
+    hotspots.forEach((hotspot) => {
+
+      if (!hotspot.hidden) {
+
+        hotspot.skipOcclusion = !show
+
+        hotspot.setVisible(show)
       }
     })
   }

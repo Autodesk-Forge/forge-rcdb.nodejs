@@ -2,6 +2,7 @@ import {ReflexContainer, ReflexElement, ReflexSplitter} from 'react-reflex'
 import ViewingApplication from 'Viewer.ViewingApplication'
 import { ReactLoader, Loader } from 'Loader'
 import BaseComponent from 'BaseComponent'
+import autobind from 'autobind-decorator'
 import ServiceManager from 'SvcManager'
 import './Viewer.Configurator.scss'
 import PropTypes from 'prop-types'
@@ -36,30 +37,6 @@ class ViewerConfigurator extends BaseComponent {
     this.eventSvc = ServiceManager.getService('EventSvc')
 
     this.modelSvc = ServiceManager.getService('ModelSvc')
-
-    this.onViewerStartResize =
-      this.onViewerStartResize.bind(this)
-
-    this.onViewerStopResize =
-      this.onViewerStopResize.bind(this)
-
-    this.onResize =
-      this.onResize.bind(this)
-
-    this.getViewablePath =
-      this.getViewablePath.bind(this)
-
-    this.pushRenderExtension =
-      this.pushRenderExtension.bind(this)
-
-    this.pushViewerPanel =
-      this.pushViewerPanel.bind(this)
-
-    this.popRenderExtension =
-      this.popRenderExtension.bind(this)
-
-    this.popViewerPanel =
-      this.popViewerPanel.bind(this)
 
     this.state = {
       dataExtension: null,
@@ -170,6 +147,7 @@ class ViewerConfigurator extends BaseComponent {
   // Return viewable path: first 3d or 2d item by default
   //
   /////////////////////////////////////////////////////////
+  @autobind
   getViewablePath (doc, pathIdx = 0, roles = ['3d', '2d']) {
 
     const toArray = (obj) => {
@@ -252,6 +230,7 @@ class ViewerConfigurator extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  @autobind
   pushRenderExtension (extension) {
 
     return new Promise (async(resolve) => {
@@ -286,6 +265,7 @@ class ViewerConfigurator extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  @autobind
   popRenderExtension () {
 
     return new Promise ((resolve) => {
@@ -315,6 +295,7 @@ class ViewerConfigurator extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  @autobind
   pushViewerPanel (viewer) {
 
     return (extension, opts = {}) => {
@@ -376,6 +357,7 @@ class ViewerConfigurator extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  @autobind
   popViewerPanel (extensionId) {
 
     const targetPanelId = 'panel-' + extensionId
@@ -776,6 +758,7 @@ class ViewerConfigurator extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  @autobind
   onViewerStartResize (e) {
 
     this.assignState({
@@ -787,6 +770,7 @@ class ViewerConfigurator extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  @autobind
   onViewerStopResize (e) {
 
     this.viewerFlex = e.component.props.flex
@@ -808,6 +792,7 @@ class ViewerConfigurator extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  @autobind
   onResize () {
 
     if (this.state.renderExtension) {

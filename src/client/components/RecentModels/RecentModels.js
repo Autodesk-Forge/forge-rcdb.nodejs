@@ -1,3 +1,4 @@
+import autobind from 'autobind-decorator'
 import BaseComponent from 'BaseComponent'
 import ServiceManager from 'SvcManager'
 import ImageGrid from 'ImageGrid'
@@ -13,8 +14,6 @@ class RecentModels extends BaseComponent {
   constructor () {
 
     super ()
-
-    this.refresh = this.refresh.bind(this)
 
     this.socketSvc = ServiceManager.getService(
       'SocketSvc')
@@ -70,6 +69,7 @@ class RecentModels extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  @autobind
   async refresh () {
 
     const db = this.props.database

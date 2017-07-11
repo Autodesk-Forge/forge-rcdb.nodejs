@@ -1,4 +1,5 @@
 import ViewerCommand from 'Viewer.Command'
+import autobind from 'autobind-decorator'
 import Toolkit from 'Viewer.Toolkit'
 
 export default class ConfiguratorCommand extends ViewerCommand {
@@ -19,9 +20,6 @@ export default class ConfiguratorCommand extends ViewerCommand {
 
       this.configurationMap[config.id] = config
     })
-
-    this.onGeometryLoaded =
-      this.onGeometryLoaded.bind(this)
 
     this.viewer.addEventListener(
       Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
@@ -45,10 +43,11 @@ export default class ConfiguratorCommand extends ViewerCommand {
     return true
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
+  @autobind
   onGeometryLoaded (event) {
 
     Object.keys(this.configurationMap).forEach((configId) => {

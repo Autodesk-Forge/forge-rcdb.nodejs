@@ -23,17 +23,20 @@ export default class ViewerCommand extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   activate () {
 
-    this.commandTool.activate()
+    if (!this.commandTool.active) {
 
-    this.commandTool.on('activate', (tool) => {
+      this.commandTool.activate()
 
-      this.emit('command.activate', this)
-    })
+      this.commandTool.on('activate', (tool) => {
 
-    this.commandTool.on('deactivate', (tool) => {
+        this.emit('command.activate', this)
+      })
 
-      this.emit('command.deactivate', this)
-    })
+      this.commandTool.on('deactivate', (tool) => {
+
+        this.emit('command.deactivate', this)
+      })
+    }
   }
 
   /////////////////////////////////////////////////////////////////
@@ -42,9 +45,12 @@ export default class ViewerCommand extends EventsEmitter {
   /////////////////////////////////////////////////////////////////
   deactivate () {
 
-    this.commandTool.deactivate()
+    if (this.commandTool.active) {
 
-    this.commandTool.off()
+      this.commandTool.deactivate()
+
+      this.commandTool.off()
+    }
   }
 
   /////////////////////////////////////////////////////////////////

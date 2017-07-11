@@ -1,3 +1,4 @@
+import autobind from 'autobind-decorator'
 import PropTypes from 'prop-types'
 import React from 'react'
 
@@ -29,8 +30,6 @@ export default class Switch extends React.Component {
 
     super ()
 
-    this.toggle = this.toggle.bind(this)
-
     this.state = {
       checked: true
     }
@@ -51,6 +50,7 @@ export default class Switch extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  @autobind
   toggle () {
 
     if (this.props.disabled) {
