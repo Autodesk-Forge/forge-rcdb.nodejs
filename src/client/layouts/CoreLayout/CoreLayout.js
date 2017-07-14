@@ -80,24 +80,24 @@ class CoreLayout extends React.Component {
     this.props.setUser(user)
   }
 
-    /////////////////////////////////////////////////////////
-    //
-    //
-    /////////////////////////////////////////////////////////
-    componentWillUnmount () {
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  componentWillUnmount () {
 
-      this.socketSvc.off('extract.ready',
-        this.onExtractReady)
+    this.socketSvc.off('extract.ready',
+      this.onExtractReady)
 
-      this.socketSvc.off('upload.progress',
-        this.onForgeUploadProgress)
+    this.socketSvc.off('upload.progress',
+      this.onForgeUploadProgress)
 
-      this.socketSvc.off('svf.progress',
-        this.onForgeTranslateProgress)
+    this.socketSvc.off('svf.progress',
+      this.onForgeTranslateProgress)
 
-      this.socketSvc.off('model.added',
-        this.onModelAdded)
-    }
+    this.socketSvc.off('model.added',
+      this.onModelAdded)
+  }
 
   /////////////////////////////////////////////////////////
   //

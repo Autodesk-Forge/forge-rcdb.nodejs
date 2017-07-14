@@ -1,4 +1,4 @@
-import ModelUploaderAPI from './ModelUploader.API'
+import ServiceManager from 'SvcManager'
 import Dropzone from 'react-dropzone'
 import PropTypes from 'prop-types'
 import './ModelUploader.scss'
@@ -14,7 +14,7 @@ export default class ModelUploader extends React.Component {
 
     super (props)
 
-    this.api = new ModelUploaderAPI(this.props.apiUrl)
+    this.modelSvc = ServiceManager.getService('ModelSvc')
 
     this.onDrop = this.onDrop.bind(this)
   }
@@ -42,39 +42,46 @@ export default class ModelUploader extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  onDrop (files) {
+  async onDrop (files) {
 
-    const uploadId = this.guid()
+    const approved = await this.props.onDropFiles(files)
 
-    const file = files[0]
+    if (approved) {
 
-    const options = {
-      progress: (percent) => {
+      const uploadId = this.guid()
 
-        if (this.props.onProgress) {
+      const file = files[0]
 
-          this.props.onProgress({
-            uploadId,
-            percent,
-            file
-          })
+      const options = {
+        progress: (percent) => {
+
+          if (this.props.onProgress) {
+
+            this.props.onProgress({
+              uploadId,
+              percent,
+              file
+            })
+          }
+        },
+        data: {
+          socketId: this.props.socketId,
+          uploadId
         }
-      },
-      data: {
-        socketId: this.props.socketId,
-        uploadId
       }
+
+      if (this.props.onInitUpload) {
+
+        this.props.onInitUpload({
+          uploadId,
+          file
+        })
+      }
+
+      this.modelSvc.upload(
+        this.props.database,
+        file, options)
     }
-
-    if (this.props.onInitUpload) {
-
-      this.props.onInitUpload({
-        uploadId,
-        file
-      })
-    }
-
-    this.api.upload(file, options)
   }
 
   /////////////////////////////////////////////////////////

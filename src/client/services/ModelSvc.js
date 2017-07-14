@@ -88,4 +88,19 @@ export default class ModelSvc extends BaseSvc {
       data: JSON.stringify(modelIds)
     })
   }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  upload (dbName, file, opts = {}) {
+
+    const url = dbName
+
+    const options = Object.assign({}, {
+      tag: 'model'
+    }, opts)
+
+    return super.upload (url, file, options)
+  }
 }

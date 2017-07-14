@@ -1,4 +1,5 @@
 import ContentEditable from 'react-contenteditable'
+import autobind from 'autobind-decorator'
 import ModelUploader from 'ModelUploader'
 import BaseComponent from 'BaseComponent'
 import ServiceManager from 'SvcManager'
@@ -20,21 +21,6 @@ class GalleryView extends BaseComponent {
 
     super (props)
 
-    this.onUploadProgress =
-      this.onUploadProgress.bind(this)
-
-    this.onExtractReady =
-      this.onExtractReady.bind(this)
-
-    this.onInitUpload =
-      this.onInitUpload.bind(this)
-
-    this.refresh =
-      this.refresh.bind(this)
-
-    this.extract =
-      this.extract.bind(this)
-
     this.extractorSvc = ServiceManager.getService(
       'ExtractorSvc')
 
@@ -46,6 +32,9 @@ class GalleryView extends BaseComponent {
 
     this.notifySvc = ServiceManager.getService(
       'NotifySvc')
+
+    this.dialogSvc = ServiceManager.getService(
+      'DialogSvc')
 
     this.state = {
       search: '',
@@ -97,6 +86,7 @@ class GalleryView extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  @autobind
   async refresh () {
 
     const items =
@@ -112,6 +102,38 @@ class GalleryView extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  @autobind
+  async onDropFiles (files) {
+
+    return new Promise((resolve) => {
+
+      const onClose = (result) => {
+
+        resolve(result === 'OK')
+
+        this.dialogSvc.off('dialog.close', onClose)
+      }
+
+      this.dialogSvc.on('dialog.close', onClose)
+
+      this.dialogSvc.setState({
+        className: 'agreement-dlg',
+        title: 'Gallery Terms & Conditions',
+        captionOK: 'I Approve',
+        content:
+          <div>
+            dude
+          </div>,
+        open: true
+      })
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  @autobind
   onInitUpload (data) {
 
     const notification = this.notifySvc.add({
@@ -139,6 +161,7 @@ class GalleryView extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  @autobind
   onUploadProgress (data) {
 
     const notification =
@@ -234,6 +257,7 @@ class GalleryView extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  @autobind
   extract (item) {
 
     if (!item.spinner) {
@@ -266,9 +290,8 @@ class GalleryView extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  @autobind
   onExtractReady (msg) {
-
-    console.log('onExtractReady')
 
     this.showSpinner(msg.modelId, false)
   }
@@ -368,10 +391,12 @@ class GalleryView extends BaseComponent {
           </div>
           <div className="secondary">
             <div className="uploader">
-              <ModelUploader apiUrl={'/api/models/gallery'}
+              <ModelUploader
                 onProgress={this.onUploadProgress}
                 socketId={this.socketSvc.socketId}
                 onInitUpload={this.onInitUpload}
+                onDropFiles={this.onDropFiles}
+                database={'gallery'}
               />
             </div>
             <div className="recent">

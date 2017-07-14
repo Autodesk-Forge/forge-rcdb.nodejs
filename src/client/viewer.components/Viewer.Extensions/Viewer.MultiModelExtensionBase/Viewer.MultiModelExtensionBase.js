@@ -12,9 +12,11 @@ export default class MultiModelExtensionBase extends
     super (viewer)
 
     // bindings
+
     this.onModelCompletedLoad = this.onModelCompletedLoad.bind(this)
     this.onObjectTreeCreated  = this.onObjectTreeCreated.bind(this)
     this.onModelRootLoaded    = this.onModelRootLoaded.bind(this)
+    this.onExtensionLoaded    = this.onExtensionLoaded.bind(this)
     this.onModelActivated     = this.onModelActivated.bind(this)
     this.onGeometryLoaded     = this.onGeometryLoaded.bind(this)
     this.onToolbarCreated     = this.onToolbarCreated.bind(this)
@@ -91,6 +93,15 @@ export default class MultiModelExtensionBase extends
   }
 
   /////////////////////////////////////////////////////////
+  // Invoked when extension gets loaded
+  //
+  /////////////////////////////////////////////////////////
+  onExtensionLoaded (event) {
+
+    //console.log('MultiModelExtensionBase.onExtensionLoaded')
+  }
+
+  /////////////////////////////////////////////////////////
   // Invoked when the model starts to load
   // The geometry and instanceTree may not be available
   // at this time
@@ -120,12 +131,15 @@ export default class MultiModelExtensionBase extends
   /////////////////////////////////////////////////////////
   onModelRootLoaded (event) {
 
-    //console.log('MultiModelExtensionBase.onModelRootLoaded')
+    this.viewerEvent([
 
-    if (this.options.loader) {
+      Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
+      Autodesk.Viewing.GEOMETRY_LOADED_EVENT
 
-      this.options.loader.show(false)
-    }
+    ]).then((args) => {
+
+      this.onModelCompletedLoad (args[0])
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -138,15 +152,6 @@ export default class MultiModelExtensionBase extends
   onObjectTreeCreated (event) {
 
     //console.log('MultiModelExtensionBase.onObjectTreeCreated')
-  }
-
-  /////////////////////////////////////////////////////////
-  // Invoked model loading progress
-  //
-  /////////////////////////////////////////////////////////
-  onProgressUpdate (event) {
-
-    //console.log('MultiModelExtensionBase.onProgressUpdate')
   }
 
   /////////////////////////////////////////////////////////
@@ -213,16 +218,6 @@ export default class MultiModelExtensionBase extends
 
         this.models = [...this.models, event.model]
 
-        this.viewerEvent([
-
-          Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
-          Autodesk.Viewing.GEOMETRY_LOADED_EVENT
-
-        ]).then((args) => {
-
-          this.onModelCompletedLoad (args[0])
-        })
-
         this.onModelBeginLoad (event)
       })
 
@@ -245,16 +240,16 @@ export default class MultiModelExtensionBase extends
 
     this.viewerEvents = [
       {
+        id: Autodesk.Viewing.EXTENSION_LOADED_EVENT,
+        handler: 'onExtensionLoaded'
+      },
+      {
         id: Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
         handler: 'onObjectTreeCreated'
       },
       {
         id: Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT,
         handler: 'onModelRootLoaded'
-      },
-      {
-        id: Autodesk.Viewing.PROGRESS_UPDATE_EVENT,
-        handler: 'onProgressUpdate'
       },
       {
         id: Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
@@ -304,3 +299,4 @@ export default class MultiModelExtensionBase extends
     return Promise.all (eventTasks)
   }
 }
+

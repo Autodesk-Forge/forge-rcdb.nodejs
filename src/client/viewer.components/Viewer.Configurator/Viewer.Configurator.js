@@ -591,6 +591,39 @@ class ViewerConfigurator extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  buildTransform (transform = {}) {
+
+    const matrix = new THREE.Matrix4()
+
+    const position = new THREE.Vector3()
+
+    position.fromArray(transform.position || [0,0,0])
+
+    const euler = new THREE.Euler(
+      0,0,0, 'XYZ')
+
+    euler.fromArray(transform.euler || [0,0,0])
+
+    const quaternion = new THREE.Quaternion()
+
+    quaternion.setFromEuler(euler)
+
+    const scale = new THREE.Vector3()
+
+    scale.fromArray(transform.scale || [1,1,1])
+
+    matrix.compose(
+      position,
+      quaternion,
+      scale)
+
+    return matrix
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   async onViewerCreated (viewer, modelInfo) {
 
     try {
@@ -617,7 +650,11 @@ class ViewerConfigurator extends BaseComponent {
 
           case 'Local':
 
-            viewer.loadModel(modelInfo.path, {}, (model) => {
+            const localOptions = {
+
+            }
+
+            viewer.loadModel(modelInfo.path, localOptions, (model) => {
 
               model.dbModelId = this.state.dbModel._id
               model.name = modelInfo.name
@@ -643,12 +680,16 @@ class ViewerConfigurator extends BaseComponent {
               modelInfo.pathIndex || 0,
               modelInfo.role || ['3d', '2d'])
 
-            const options = {
+            const placementTransform = this.buildTransform(
+              modelInfo.transform)
+
+            const loadOptions = {
               sharedPropertyDbPath:
-                this.viewerDocument.getPropertyDbPath()
+                this.viewerDocument.getPropertyDbPath(),
+              placementTransform
             }
 
-            viewer.loadModel(path, options, (model) => {
+            viewer.loadModel(path, loadOptions, (model) => {
 
               model.dbModelId = this.state.dbModel._id
               model.name = modelInfo.name
