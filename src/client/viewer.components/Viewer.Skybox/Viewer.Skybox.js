@@ -4,8 +4,6 @@ export default class ViewerSkybox {
 
   constructor (viewer, options) {
 
-    this.viewer = viewer
-
     const faceMaterials = options.imageList.map((url) => {
       return new THREE.MeshBasicMaterial({
         map: THREE.ImageUtils.loadTexture(url),

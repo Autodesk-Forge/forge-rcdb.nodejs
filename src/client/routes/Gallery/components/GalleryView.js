@@ -105,28 +105,30 @@ class GalleryView extends BaseComponent {
   @autobind
   async onDropFiles (files) {
 
-    return new Promise((resolve) => {
-
-      const onClose = (result) => {
-
-        resolve(result === 'OK')
-
-        this.dialogSvc.off('dialog.close', onClose)
-      }
-
-      this.dialogSvc.on('dialog.close', onClose)
-
-      this.dialogSvc.setState({
-        className: 'agreement-dlg',
-        title: 'Gallery Terms & Conditions',
-        captionOK: 'I Approve',
-        content:
-          <div>
-            dude
-          </div>,
-        open: true
-      })
-    })
+    return Promise.resolve(true)
+  
+    //return new Promise((resolve) => {
+    //
+    //  const onClose = (result) => {
+    //
+    //    resolve(result === 'OK')
+    //
+    //    this.dialogSvc.off('dialog.close', onClose)
+    //  }
+    //
+    //  this.dialogSvc.on('dialog.close', onClose)
+    //
+    //  this.dialogSvc.setState({
+    //    className: 'agreement-dlg',
+    //    title: 'Gallery Terms & Conditions',
+    //    captionOK: 'I Approve',
+    //    content:
+    //      <div>
+    //        dude
+    //      </div>,
+    //    open: true
+    //  })
+    //})
   }
 
   /////////////////////////////////////////////////////////

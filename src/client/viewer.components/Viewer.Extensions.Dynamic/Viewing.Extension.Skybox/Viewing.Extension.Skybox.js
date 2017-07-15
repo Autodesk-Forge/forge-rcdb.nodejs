@@ -28,9 +28,13 @@ class SkyboxExtension extends MultiModelExtensionBase {
       zpos, zneg
     ]
 
+    const size = new THREE.Vector3()
+
+    size.fromArray(options.size || [10000, 10000, 10000])
+
     this.skybox = new Skybox(viewer, {
-      size: { x: 10000, y:10000, z: 10000 },
-      imageList
+      imageList,
+      size
     })
   }
 
