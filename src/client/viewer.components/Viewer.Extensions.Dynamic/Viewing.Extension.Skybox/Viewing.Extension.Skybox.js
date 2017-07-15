@@ -55,11 +55,6 @@ class SkyboxExtension extends MultiModelExtensionBase {
 
     console.log('Viewing.Extension.Skybox loaded')
 
-    this.loadContainer().then(() => {
-
-      this.options.loader.show(false)
-    })
-
     return true
   }
 
@@ -70,6 +65,11 @@ class SkyboxExtension extends MultiModelExtensionBase {
   onModelCompletedLoad () {
 
     this.viewer.navigation.toPerspective()
+
+    this.loadContainer().then(() => {
+
+      this.options.loader.show(false)
+    })
   }
 
   /////////////////////////////////////////////////////////

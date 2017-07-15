@@ -106,7 +106,7 @@ class GalleryView extends BaseComponent {
   async onDropFiles (files) {
 
     return Promise.resolve(true)
-  
+
     //return new Promise((resolve) => {
     //
     //  const onClose = (result) => {
