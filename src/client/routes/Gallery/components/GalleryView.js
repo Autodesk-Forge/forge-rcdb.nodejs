@@ -134,7 +134,7 @@ class GalleryView extends BaseComponent {
       this.dialogSvc.setState({
         className: 'agreement-dlg',
         title: 'Gallery Terms & Conditions',
-        captionOK: 'I Approve',
+        captionOK: 'I Agree',
         content:
           <div>
             <p>

@@ -27,9 +27,6 @@ class SkyboxExtension extends MultiModelExtensionBase {
     this.onCameraChanged =
       this.onCameraChanged.bind(this)
 
-    this.onUserInteraction =
-      this.onUserInteraction.bind(this)
-
     this.runAnimation =
       this.runAnimation.bind(this)
 
@@ -120,20 +117,18 @@ class SkyboxExtension extends MultiModelExtensionBase {
 
     nav.toPerspective()
 
-    const pos = nav.getPosition()
-
-    this.viewer.navigation.setPosition(
-      new THREE.Vector3(pos.x, pos.y - 100, pos.z))
-
     nav.setLockSettings({
       pan: true
     })
 
     const bounds = new THREE.Box3(
-      new THREE.Vector3(-500, -500, -500),
-      new THREE.Vector3(500, 500, 500))
+      new THREE.Vector3(-100, -100, -100),
+      new THREE.Vector3(100, 100, 100))
 
-    nav.fitBounds(true, bounds, true)
+    nav.fitBounds(true, bounds)
+
+    //this.viewer.navigation.setPosition(
+    //  new THREE.Vector3(150, 0, 150))
   }
 
   /////////////////////////////////////////////////////////
@@ -156,7 +151,7 @@ class SkyboxExtension extends MultiModelExtensionBase {
 
       this.eventTool.activate()
 
-      //this.runAnimation()
+      this.runAnimation()
     }
   }
 
@@ -202,15 +197,6 @@ class SkyboxExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onUserInteraction () {
-
-    console.log('onUserInteraction')
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
   clampLength(vector, min, max ) {
 
     const length = vector.length()
@@ -235,8 +221,7 @@ class SkyboxExtension extends MultiModelExtensionBase {
 
     if (target.length() > 10.0) {
 
-      nav.setTarget(
-        new THREE.Vector3(0,0,0))
+      nav.setTarget(new THREE.Vector3(0,0,0))
     }
 
     if (pos.length() > 700.0) {
@@ -253,14 +238,16 @@ class SkyboxExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   rotateCamera (axis, speed, dt) {
 
-    const pos = this.viewer.navigation.getPosition()
+    const nav = this.viewer.navigation
+
+    const pos = nav.getPosition()
 
     const matrix = new THREE.Matrix4().makeRotationAxis(
       axis, speed * dt);
 
     pos.applyMatrix4(matrix)
 
-    this.viewer.navigation.setPosition(pos)
+    nav.setPosition(pos)
   }
 
   /////////////////////////////////////////////////////////
