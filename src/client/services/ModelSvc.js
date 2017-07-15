@@ -101,6 +101,6 @@ export default class ModelSvc extends BaseSvc {
       tag: 'model'
     }, opts)
 
-    return super.upload (url, file, options)
+    return this.api.upload (url, file, options)
   }
 }

@@ -24,6 +24,9 @@ class SkyboxExtension extends MultiModelExtensionBase {
 
     super (viewer, options)
 
+    this.onCameraChanged =
+      this.onCameraChanged.bind(this)
+
     this.onUserInteraction =
       this.onUserInteraction.bind(this)
 
@@ -31,32 +34,6 @@ class SkyboxExtension extends MultiModelExtensionBase {
       this.runAnimation.bind(this)
 
     this.eventTool = new EventTool(viewer)
-
-    this.eventTool.on('mousewheel', (e) => {
-
-      return true
-    })
-
-    this.eventTool.on('buttondown', (e) => {
-
-      window.clearTimeout(this.timeoutId)
-
-      this.userInteraction = true
-
-      return false
-    })
-
-    this.eventTool.on('buttonup', (e) => {
-
-      this.timeoutId = window.setTimeout(() => {
-        this.stopwatch.getElapsedMs()
-        this.runAnimation()
-      }, 3500)
-
-      this.userInteraction = false
-
-      return false
-    })
 
     const imageList = [
       xpos, xneg,
@@ -93,7 +70,70 @@ class SkyboxExtension extends MultiModelExtensionBase {
 
     console.log('Viewing.Extension.Skybox loaded')
 
+    this.eventTool.on('mousewheel', (e) => {
+
+      window.clearTimeout(this.timeoutId)
+
+      this.timeoutId = window.setTimeout(() => {
+        this.stopwatch.getElapsedMs()
+        this.runAnimation()
+      }, 3500)
+
+      return false
+    })
+
+    this.eventTool.on('buttondown', (e) => {
+
+      window.clearTimeout(this.timeoutId)
+
+      this.userInteraction = true
+
+      return false
+    })
+
+    this.eventTool.on('buttonup', (e) => {
+
+      this.timeoutId = window.setTimeout(() => {
+        this.stopwatch.getElapsedMs()
+        this.runAnimation()
+      }, 3500)
+
+      this.userInteraction = false
+
+      return false
+    })
+
+    this.viewer.addEventListener(
+      Autodesk.Viewing.CAMERA_CHANGE_EVENT,
+      this.onCameraChanged)
+
     return true
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  configureNavigation () {
+
+    const nav = this.viewer.navigation
+
+    nav.toPerspective()
+
+    const pos = nav.getPosition()
+
+    this.viewer.navigation.setPosition(
+      new THREE.Vector3(pos.x, pos.y - 100, pos.z))
+
+    nav.setLockSettings({
+      pan: true
+    })
+
+    const bounds = new THREE.Box3(
+      new THREE.Vector3(-500, -500, -500),
+      new THREE.Vector3(500, 500, 500))
+
+    nav.fitBounds(true, bounds, true)
   }
 
   /////////////////////////////////////////////////////////
@@ -104,23 +144,19 @@ class SkyboxExtension extends MultiModelExtensionBase {
 
     if (event.model.dbModelId) {
 
-      this.viewer.navigation.toPerspective()
-
       this.loadContainer(this.options.containerURN).then(
         () => {
+
+          this.configureNavigation()
+
           this.options.loader.show(false)
         })
-
-      const pos = this.viewer.navigation.getPosition()
-
-      this.viewer.navigation.setPosition(
-        new THREE.Vector3(pos.x, pos.y - 100, pos.z))
 
       this.stopwatch.getElapsedMs()
 
       this.eventTool.activate()
 
-      this.runAnimation()
+      //this.runAnimation()
     }
   }
 
@@ -153,6 +189,10 @@ class SkyboxExtension extends MultiModelExtensionBase {
 
     window.cancelAnimationFrame(this.animId)
 
+    this.viewer.removeEventListener(
+      Autodesk.Viewing.CAMERA_CHANGE_EVENT,
+      this.onCameraChanged)
+
     this.userInteraction = true
 
     this.eventTool.off()
@@ -165,6 +205,46 @@ class SkyboxExtension extends MultiModelExtensionBase {
   onUserInteraction () {
 
     console.log('onUserInteraction')
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  clampLength(vector, min, max ) {
+
+    const length = vector.length()
+
+    vector.divideScalar(length || 1)
+
+    vector.multiplyScalar(
+      Math.max(min, Math.min(max, length)))
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onCameraChanged () {
+
+    const nav = this.viewer.navigation
+
+    const pos = nav.getPosition()
+
+    const target = nav.getTarget()
+
+    if (target.length() > 10.0) {
+
+      nav.setTarget(
+        new THREE.Vector3(0,0,0))
+    }
+
+    if (pos.length() > 700.0) {
+
+      this.clampLength(pos, 0, 700)
+
+      nav.setPosition(pos)
+    }
   }
 
   /////////////////////////////////////////////////////////

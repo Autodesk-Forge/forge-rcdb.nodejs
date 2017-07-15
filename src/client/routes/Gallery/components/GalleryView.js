@@ -36,6 +36,9 @@ class GalleryView extends BaseComponent {
     this.dialogSvc = ServiceManager.getService(
       'DialogSvc')
 
+    this.storageSvc = ServiceManager.getService(
+      'StorageSvc')
+
     this.state = {
       search: '',
       items: []
@@ -47,6 +50,8 @@ class GalleryView extends BaseComponent {
   //
   /////////////////////////////////////////////////////////
   componentWillMount () {
+
+    this.settings = this.storageSvc.load('gallery')
 
     this.props.setNavbarState({
       links: {
@@ -105,30 +110,60 @@ class GalleryView extends BaseComponent {
   @autobind
   async onDropFiles (files) {
 
-    return Promise.resolve(true)
+    if (this.settings.agreement) {
 
-    //return new Promise((resolve) => {
-    //
-    //  const onClose = (result) => {
-    //
-    //    resolve(result === 'OK')
-    //
-    //    this.dialogSvc.off('dialog.close', onClose)
-    //  }
-    //
-    //  this.dialogSvc.on('dialog.close', onClose)
-    //
-    //  this.dialogSvc.setState({
-    //    className: 'agreement-dlg',
-    //    title: 'Gallery Terms & Conditions',
-    //    captionOK: 'I Approve',
-    //    content:
-    //      <div>
-    //        dude
-    //      </div>,
-    //    open: true
-    //  })
-    //})
+      return Promise.resolve(true)
+    }
+
+    return new Promise((resolve) => {
+
+      const onClose = (result) => {
+
+        this.settings.agreement = true
+
+        this.storageSvc.save(
+          'gallery', this.settings)
+
+        resolve(result === 'OK')
+
+        this.dialogSvc.off('dialog.close', onClose)
+      }
+
+      this.dialogSvc.on('dialog.close', onClose)
+
+      this.dialogSvc.setState({
+        className: 'agreement-dlg',
+        title: 'Gallery Terms & Conditions',
+        captionOK: 'I Approve',
+        content:
+          <div>
+            <p>
+              By uploading your model to Forge
+              RCDB Gallery, you agree to make the
+              viewable content available publicly.
+              The seed file however remains
+              your property.
+            </p>
+
+            <p>
+              The viewable content will remain on
+              the Gallery 30 days by default.
+              The author reserves the right to
+              maintain permanently models
+              that he finds interesting.
+            </p>
+
+            <p>
+              That website is purely a demo and the
+              author makes no guarrantee that uploaded
+              models will remain available even
+              during the 30 days default period.
+            </p>
+
+          </div>,
+        open: true
+      })
+    })
   }
 
   /////////////////////////////////////////////////////////
