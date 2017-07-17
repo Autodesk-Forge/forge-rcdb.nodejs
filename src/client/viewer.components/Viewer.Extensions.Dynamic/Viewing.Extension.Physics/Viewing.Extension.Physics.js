@@ -56,7 +56,10 @@ class PhysicsExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   load () {
 
-    this.options.loader.show(false)
+    this.viewer.setQualityLevel(false, false)
+    this.viewer.setProgressiveRendering(false)
+    this.viewer.setGroundReflection(false)
+    this.viewer.setGroundShadow(false)
 
     this.react.setState({
 
@@ -130,6 +133,17 @@ class PhysicsExtension extends MultiModelExtensionBase {
     this.react.setState({
       showLoader: false
     })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onModelRootLoaded (event) {
+
+    super.onModelRootLoaded()
+
+    this.options.loader.show(false)
   }
 
   /////////////////////////////////////////////////////////

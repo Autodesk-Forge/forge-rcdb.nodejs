@@ -82,7 +82,7 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
       const mass = (idx < dbIds.length - 1) ? 1.0 : 0
 
       return this.createRigidBody(dbId, {
-        vLinear: parseArray(vLinear.displayValue, 3),
+        vLinear: parseArray(vLinear.displayValue, 5),
         vAngular: [0,0,0],
         mass
       })
@@ -292,7 +292,7 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
         props.vAngular[1],
         props.vAngular[2]))
 
-    body.offset = compTransform.position
+    body.grounded = (props.mass === 0.0)
 
     body.dbId = dbId
 
@@ -309,62 +309,41 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
 
     const rotation = transform.getRotation()
 
-    const position = transform.getOrigin()
+    const origin = transform.getOrigin()
 
     const offset = rigidBody.offset
 
     const fragIds = Toolkit.getLeafFragIds(
       this.viewer.model, dbId)
 
-    //const quaternion = new THREE.Quaternion(
-    //  rotation.x(),
-    //  rotation.y(),
-    //  rotation.z(),
-    //  rotation.w())
+    const position = new THREE.Vector3(
+      origin.x(),
+      origin.y(),
+      origin.z())
 
-    //quaternion.normalize()
+    const quaternion = new THREE.Quaternion(
+      rotation.x(),
+      rotation.y(),
+      rotation.z(),
+      rotation.w())
 
-    //const center = this.getComponentPosition(fragIds)
+    this.rotateComponent(fragIds, quaternion, position)
 
-    //this.rotateComponent(fragIds, quaternion, center)
-
-    const fragList = this.viewer.model.getFragmentList()
+    const center = this.getComponentPosition(fragIds)
 
     fragIds.forEach((fragId) => {
 
-      const translation = new THREE.Vector3(
-        position.x() - offset.x,
-        position.y() - offset.y,
-        position.z() - offset.z)
+      const fragProxy =
+        this.viewer.impl.getFragmentProxy(
+          this.viewer.model, fragId)
 
-      const rotationQ = new THREE.Quaternion(
-        rotation.x(),
-        rotation.y(),
-        rotation.z(),
-        rotation.w())
+      fragProxy.getAnimTransform()
 
-      const scale = new THREE.Vector3(1,1,1)
+      fragProxy.position.x += (position.x - center.x)
+      fragProxy.position.y += (position.y - center.y)
+      fragProxy.position.z += (position.z - center.z)
 
-      fragList.updateAnimTransform(
-        fragId, scale, rotationQ, translation)
-
-      //FragmentList.prototype.getAnimTransform = function (fragId, scale, rotationQ, translation)
-
-      //const fragProxy =
-      //  this.viewer.impl.getFragmentProxy(
-      //    this.viewer.model, fragId)
-      //
-      //fragProxy.getAnimTransform()
-
-      //fragProxy.position.x = position.x() - offset.x
-      //fragProxy.position.y = position.y() - offset.y
-      //fragProxy.position.z = position.z() - offset.z
-
-      //fragProxy.position.x += (position.x() - center.x)
-      //fragProxy.position.y += (position.y() - center.y)
-      //fragProxy.position.z += (position.z() - center.z)
-      //
-      //fragProxy.updateAnimTransform()
+      fragProxy.updateAnimTransform()
     })
   }
 
@@ -384,32 +363,6 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
     })
 
     return nodebBox
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  getOffsetQuaternion(q, qNext) {
-
-    const euler = new THREE.Euler()
-
-    euler.setFromQuaternion(q)
-
-    const eulerNext = new THREE.Euler()
-
-    eulerNext.setFromQuaternion(qNext)
-
-    const eulerOffset = new THREE.Euler(
-      (eulerNext.x - euler.x)%(2 * Math.PI),
-      (eulerNext.y - euler.y)%(2 * Math.PI),
-      (eulerNext.z - euler.z)%(2 * Math.PI))
-
-    const qOffset = new THREE.Quaternion()
-
-    qOffset.setFromEuler(eulerOffset)
-
-    return qOffset
   }
 
   /////////////////////////////////////////////////////////
@@ -443,23 +396,18 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
 
       fragProxy.getAnimTransform()
 
-      const qOoffset = this.getOffsetQuaternion(
-        fragProxy.quaternion,
-        quaternion)
-
       const position = new THREE.Vector3(
-        fragProxy.position.x - center.x,
-        fragProxy.position.y - center.y,
-        fragProxy.position.z - center.z)
+        - center.x,
+        - center.y,
+        - center.z)
 
-      position.applyQuaternion(qOoffset)
+      position.applyQuaternion(quaternion)
 
       position.add(center)
 
       fragProxy.position = position
 
-      fragProxy.quaternion.multiplyQuaternions(
-        qOoffset, fragProxy.quaternion)
+      fragProxy.quaternion = quaternion
 
       fragProxy.updateAnimTransform()
     })
@@ -489,13 +437,16 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
 
       const dt = this.stopwatch.getElapsedMs()
 
-      this.world.stepSimulation(dt * 0.001, 10)
+      this.world.stepSimulation(dt, 10)
 
       this.rigidBodies.forEach((rigidBody) => {
 
-        this.updateComponentTransform(
-          rigidBody.dbId,
-          rigidBody)
+        if (!rigidBody.grounded) {
+
+          this.updateComponentTransform(
+            rigidBody.dbId,
+            rigidBody)
+        }
       })
 
       this.viewer.impl.sceneUpdated(true)
