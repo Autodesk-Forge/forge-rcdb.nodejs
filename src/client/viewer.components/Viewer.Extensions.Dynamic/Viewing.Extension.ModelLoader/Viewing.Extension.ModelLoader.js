@@ -117,7 +117,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
           modelTransformer
         })
 
-        if (activeModel ) {
+        if (activeModel) {
 
           modelTransformer.setModel(
             activeModel)

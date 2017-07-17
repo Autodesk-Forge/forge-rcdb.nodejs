@@ -56,8 +56,13 @@ class PhysicsExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   load () {
 
+    this.options.loader.show(false)
+
     this.react.setState({
 
+      activateControls: false,
+      modelTransformer: null,
+      showLoader: true
 
     }).then (() => {
 
@@ -117,9 +122,48 @@ class PhysicsExtension extends MultiModelExtensionBase {
 
     this.physicsCore =
       await this.viewer.loadExtension(
-        PhysicsCoreExtensionId, {
+        PhysicsCoreExtensionId)
 
-        })
+    await this.physicsCore.loadPhysicModel(
+      this.viewer.model)
+
+    this.react.setState({
+      showLoader: false
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async onModelCompletedLoad (event) {
+
+    const transformerReactOptions = {
+      pushRenderExtension: () => {
+        return Promise.resolve()
+      },
+      popRenderExtension: () => {
+        return Promise.resolve()
+      }
+    }
+
+    const transformerOptions = Object.assign({}, {
+      react: transformerReactOptions,
+      fullTransform : false,
+      hideControls : true
+    })
+
+    const modelTransformer =
+      await this.viewer.loadDynamicExtension(
+        'Viewing.Extension.ModelTransformer',
+        transformerOptions)
+
+    modelTransformer.setModel(this.viewer.model)
+
+    this.react.setState({
+      activateControls: true,
+      modelTransformer
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -153,17 +197,37 @@ class PhysicsExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderControls () {
 
-    const showLoader = true
+    const {
+      activateControls,
+      showLoader
+    } = this.react.getState()
 
     return (
       <div>
         <ReactLoader show={showLoader}/>
-        <ScriptLoader onLoaded={this.onScriptLoaded}
-          url={[
-            '/resources/libs/ammo/ammo.js'
-          ]}/>
+        {
+          activateControls &&
+          <ScriptLoader onLoaded={this.onScriptLoaded}
+            url={['/resources/libs/ammo/ammo.js']}
+          />
+        }
+        <button onClick={()=> this.physicsCore.toggeAnimation()}/>
+        <button onClick={()=> this.physicsCore.test()}/>
       </div>
     )
+  }
+
+  /////////////////////////////////////////////////////////
+  // React method - render transformer extension UI
+  //
+  /////////////////////////////////////////////////////////
+  renderTransformer () {
+
+    const {modelTransformer} = this.react.getState()
+
+    return modelTransformer
+      ? modelTransformer.render({showTitle: false})
+      : false
   }
 
   /////////////////////////////////////////////////////////
@@ -172,16 +236,13 @@ class PhysicsExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   render (opts) {
 
-    const {user} = this.react.getState()
-
     return (
       <WidgetContainer
         renderTitle={() => this.renderTitle(opts.docked)}
         showTitle={opts.showTitle}
         className={this.className}>
-        {
-          user && this.renderControls()
-        }
+        { this.renderControls() }
+        { this.renderTransformer() }
       </WidgetContainer>
     )
   }

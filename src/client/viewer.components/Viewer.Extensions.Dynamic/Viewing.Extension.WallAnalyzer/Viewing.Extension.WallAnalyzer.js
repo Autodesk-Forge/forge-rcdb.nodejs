@@ -283,6 +283,8 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
       dismissAfter: 0,
       position: 'tl'
     })
+
+    this.options.loader.show(false)
   }
 
   /////////////////////////////////////////////////////////
