@@ -339,3 +339,5 @@ class DualViewerExtension extends ExtensionBase {
 Autodesk.Viewing.theExtensionManager.registerExtension(
   DualViewerExtension.ExtensionId,
   DualViewerExtension)
+
+

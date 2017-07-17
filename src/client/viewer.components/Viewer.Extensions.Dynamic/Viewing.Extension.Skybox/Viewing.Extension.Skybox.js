@@ -73,8 +73,11 @@ class SkyboxExtension extends MultiModelExtensionBase {
 
       this.timeoutId = window.setTimeout(() => {
         this.stopwatch.getElapsedMs()
+        this.userInteraction = false
         this.runAnimation()
       }, 3500)
+
+      this.userInteraction = true
 
       return false
     })
@@ -115,8 +118,6 @@ class SkyboxExtension extends MultiModelExtensionBase {
 
     const nav = this.viewer.navigation
 
-    nav.toPerspective()
-
     nav.setLockSettings({
       pan: true
     })
@@ -129,6 +130,10 @@ class SkyboxExtension extends MultiModelExtensionBase {
 
     //this.viewer.navigation.setPosition(
     //  new THREE.Vector3(150, 0, 150))
+
+    this.viewer.setViewCube('front')
+
+    nav.toPerspective()
   }
 
   /////////////////////////////////////////////////////////
@@ -219,16 +224,16 @@ class SkyboxExtension extends MultiModelExtensionBase {
 
     const target = nav.getTarget()
 
-    if (target.length() > 10.0) {
+    //if (target.length() > 10.0) {
+    //
+    //  nav.setTarget(new THREE.Vector3(0,0,0))
+    //}
 
-      nav.setTarget(new THREE.Vector3(0,0,0))
-    }
+    if (pos.length() > 700.0 || pos.length() < 100.0) {
 
-    if (pos.length() > 700.0) {
+      this.clampLength(pos, 100.0, 700.0)
 
-      this.clampLength(pos, 0, 700)
-
-      nav.setPosition(pos)
+      nav.setView(pos, new THREE.Vector3(0,0,0))
     }
   }
 
