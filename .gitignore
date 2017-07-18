@@ -5,13 +5,8 @@ dist
 coverage
 .idea
 .vscode
-resources/models/210 King
-resources/models/engine
-resources/models/office
-resources/models/seat
-resources/models/tmp
-resources/models/V8
 resources/libs/lmv
+resources/models
 bin/static
 push-to-prod.sh
 TMP

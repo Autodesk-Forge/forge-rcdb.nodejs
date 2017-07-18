@@ -78,6 +78,95 @@
   float: left;
 }
 
+.physics .control-element:first-child {
+  margin-top: 16px;
+}
+
+.physics .control-element {
+  width: calc(100% - 46px);
+  margin: 0 0 0 16px;
+  text-align: left;
+  float: left;
+
+  .switch-container {
+    border: 1px solid #cdcdcd;
+    border-radius: 10px;
+    position: relative;
+    margin-right: 6px;
+    float: left;
+    top: 4px;
+  }
+
+  input[type="checkbox"].switch + div {
+    width: 34px;
+    height: 16px;
+  }
+
+  input[type="checkbox"].switch:checked + div {
+    width: 34px;
+  }
+
+  input[type="checkbox"].switch:checked + div > div {
+    transform: translate3d(18px, 0, 0);
+  }
+
+  input[type="checkbox"].switch + div > div {
+    height: 16px;
+    width: 16px;
+    margin: 0;
+  }
+
+  input[type="checkbox"].switch:checked + div {
+    background-color: #FF9800;
+  }
+
+  label:first-child {
+    margin: 0 0 10px 0;
+    color: #000000;
+  }
+
+  .reset {
+    background: whitesmoke;
+    position: relative;
+    border-radius: 4px;
+    margin-left: 20px;
+    height: 26px;
+    top: 2px;
+  }
+
+  button > span {
+    position: relative;
+    font-size: 16px;
+    color: #9b9b9b;
+    top: -1px;
+  }
+
+  button:hover > span {
+    color: #FF9800;
+  }
+
+  button > label {
+    position: relative;
+    margin: 0 0 0 6px;
+    top: -2px;
+  }
+
+  .rc-slider-handle {
+    border: solid 2px #FF9800;
+  }
+
+  .rc-slider-track {
+    background-color: #FF9800;
+  }
+}
+
+.physics hr {
+  border-top: 1px solid #cdcdcd;
+  margin: 16px 10px 16px 45px;
+  width: calc(100% - 120px);
+  float: left;
+}
+
 /////////////////////////////////////////////////////////
 // title controls
 //

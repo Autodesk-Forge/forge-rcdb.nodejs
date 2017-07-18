@@ -18,13 +18,15 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
 
     super (viewer, options)
 
-    this.runAnimation = this.runAnimation.bind(this)
+    this.update = this.update.bind(this)
 
     this.stopwatch = new Stopwatch()
 
-    this.world = this.createWorld()
+    this.timeSkew = options.timeSkew || 1.0
 
-    this.timeSkew = 5.0
+    this.gravity = options.gravity || -9.8
+
+    this.world = this.createWorld(this.gravity)
   }
 
   /////////////////////////////////////////////////////////
@@ -88,7 +90,7 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  createWorld () {
+  createWorld (gravity) {
 
     const collisionConfiguration =
       new Ammo.btDefaultCollisionConfiguration
@@ -99,9 +101,33 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
       new Ammo.btSequentialImpulseConstraintSolver,
       collisionConfiguration)
 
-    world.setGravity(new Ammo.btVector3(0, 0, -9.8))
+    world.setGravity(
+      new Ammo.btVector3(
+        0, 0, gravity))
 
     return world
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  setGravity (gravity) {
+
+    this.gravity = gravity
+
+    this.world.setGravity(
+      new Ammo.btVector3(
+        0, 0, this.gravity))
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  setTimeSkew (timeSkew) {
+
+    this.timeSkew = timeSkew
   }
 
   /////////////////////////////////////////////////////////
@@ -442,13 +468,13 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  toggeAnimation () {
+  runAnimation (run) {
 
-    this.running = !this.running
+    this.running = run
 
-    if (this.running) {
+    if (run) {
 
-      this.runAnimation ()
+      this.update()
     }
   }
 
@@ -456,13 +482,17 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  runAnimation () {
+  update () {
 
     if (this.running) {
 
       const dt = this.stopwatch.getElapsedMs()
 
-      this.world.stepSimulation(dt * this.timeSkew, 10)
+      const skew = this.timeSkew * 500
+
+      this.world.stepSimulation(
+        dt * Math.sqrt(skew),
+        Math.sqrt(skew))
 
       this.rigidBodies.forEach((body) => {
 
@@ -478,7 +508,7 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
       this.viewer.impl.sceneUpdated(true)
 
       this.animId = window.requestAnimationFrame(
-        this.runAnimation)
+        this.update)
     }
   }
 

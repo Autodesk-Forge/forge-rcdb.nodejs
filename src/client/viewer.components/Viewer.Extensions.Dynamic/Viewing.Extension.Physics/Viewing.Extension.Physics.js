@@ -7,13 +7,17 @@ import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import PhysicsCoreExtensionId from './Viewing.Extension.Physics.Core'
 import WidgetContainer from 'WidgetContainer'
 import './Viewing.Extension.Physics.scss'
+import 'rc-tooltip/assets/bootstrap.css'
 import ScriptLoader from 'ScriptLoader'
 import ServiceManager from 'SvcManager'
 import { ReactLoader } from 'Loader'
 import Toolkit from 'Viewer.Toolkit'
+import 'rc-slider/assets/index.css'
 import ReactDOM from 'react-dom'
+import Tooltip from 'rc-tooltip'
+import Slider from 'rc-slider'
 import FPS from './FPSMeter'
-import Label from 'Label'
+import Switch from 'Switch'
 import React from 'react'
 
 class PhysicsExtension extends MultiModelExtensionBase {
@@ -66,6 +70,7 @@ class PhysicsExtension extends MultiModelExtensionBase {
 
       activateControls: false,
       modelTransformer: null,
+      physicsCore: null,
       showLoader: true
 
     }).then (() => {
@@ -155,17 +160,18 @@ class PhysicsExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   async onScriptLoaded () {
 
-    this.physicsCore =
+    const physicsCore =
       await this.viewer.loadExtension(
         PhysicsCoreExtensionId, {
           fps: this.fps
         })
 
-    await this.physicsCore.loadPhysicModel(
+    await physicsCore.loadPhysicModel(
       this.viewer.model)
 
     this.react.setState({
-      showLoader: false
+      showLoader: false,
+      physicsCore
     })
   }
 
@@ -244,6 +250,65 @@ class PhysicsExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onEnablePhysics (run) {
+
+    const { physicsCore } = this.react.getState()
+
+    physicsCore.runAnimation(run)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onGravitySliderChanged (props) {
+
+    const { value, dragging, offset } = props
+
+    const { physicsCore } = this.react.getState()
+
+    physicsCore.setGravity(value)
+
+    return (
+      <Tooltip
+        prefixCls="rc-slider-tooltip"
+        visible={dragging}
+        overlay={value}
+        placement="top">
+        <Slider.Handle className="rc-slider-handle"
+          offset={offset}/>
+      </Tooltip>
+    )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onTimeSkewSliderChanged (props) {
+
+    const { value, dragging, offset } = props
+
+    const { physicsCore } = this.react.getState()
+
+    physicsCore.setTimeSkew(value/500)
+
+    return (
+      <Tooltip
+        prefixCls="rc-slider-tooltip"
+        visible={dragging}
+        overlay={value}
+        placement="top">
+        <Slider.Handle className="rc-slider-handle"
+          offset={offset}/>
+      </Tooltip>
+    )
+  }
+
+  /////////////////////////////////////////////////////////
   // React method - render panel controls
   //
   /////////////////////////////////////////////////////////
@@ -251,6 +316,7 @@ class PhysicsExtension extends MultiModelExtensionBase {
 
     const {
       activateControls,
+      physicsCore,
       showLoader
     } = this.react.getState()
 
@@ -263,8 +329,87 @@ class PhysicsExtension extends MultiModelExtensionBase {
             url={['/resources/libs/ammo/ammo.js']}
           />
         }
-        <button onClick={()=> this.physicsCore.toggeAnimation()}/>
-        <button onClick={()=> this.physicsCore.reset()}/>
+
+        {
+          physicsCore &&
+          <div className="controls">
+            <div className="control-element">
+              <label>
+                Simulation controls:
+              </label>
+              <div>
+                <Switch
+                  onChange={(checked) => this.onEnablePhysics(checked)}
+                  checked={false}
+                />
+                <label>
+                  Run
+                </label>
+                <button className="reset"
+                  onClick={()=> physicsCore.reset()}>
+                  <span className="fa fa-refresh"/>
+                  <label>
+                    Reset
+                  </label>
+                </button>
+              </div>
+            </div>
+
+            <br/><hr/>
+
+            <div className="control-element">
+              <label>
+                Gravity:
+              </label>
+
+              <Slider
+                handle={(props) => this.onGravitySliderChanged(props)}
+                defaultValue={physicsCore.gravity}
+                step={0.01}
+                min={-9.8}
+                max={0.0}
+              />
+            </div>
+
+            <br/><hr/>
+
+            <div className="control-element">
+              <label>
+                Time Skew: <br/> (Runs simulation slower or faster)
+              </label>
+
+              <Slider
+                handle={(props) => this.onTimeSkewSliderChanged(props)}
+                defaultValue={physicsCore.timeSkew * 500}
+                max={1000}
+                step={1}
+                min={1}
+              />
+            </div>
+
+            <br/><hr/>
+
+            <div className="control-element">
+
+              <label>
+                Components velocity:
+              </label>
+            </div>
+
+            <br/><hr/>
+
+            <div className="control-element" style={{height:'120px'}}>
+
+              <label>
+                Components transform:
+              </label>
+
+              { this.renderTransformer() }
+            </div>
+
+          </div>
+        }
+
       </div>
     )
   }
@@ -293,8 +438,7 @@ class PhysicsExtension extends MultiModelExtensionBase {
         renderTitle={() => this.renderTitle(opts.docked)}
         showTitle={opts.showTitle}
         className={this.className}>
-        { this.renderControls() }
-        { this.renderTransformer() }
+        {this.renderControls()}
       </WidgetContainer>
     )
   }
