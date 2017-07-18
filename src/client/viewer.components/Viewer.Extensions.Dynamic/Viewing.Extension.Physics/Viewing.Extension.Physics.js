@@ -12,6 +12,7 @@ import ServiceManager from 'SvcManager'
 import { ReactLoader } from 'Loader'
 import Toolkit from 'Viewer.Toolkit'
 import ReactDOM from 'react-dom'
+import FPS from './FPSMeter'
 import Label from 'Label'
 import React from 'react'
 
@@ -96,6 +97,37 @@ class PhysicsExtension extends MultiModelExtensionBase {
   // Panel docking mode
   //
   /////////////////////////////////////////////////////////
+  createFPS () {
+
+    $(this.viewer.container).append(
+      '<div id="physics-fps"> </div>')
+
+    $('#physics-fps').css({
+      position: 'absolute',
+      left: '10px',
+      top: '90px'
+    })
+
+    return new FPSMeter(
+      document.getElementById('physics-fps'), {
+        maxFps:    20, //expected
+        smoothing: 10,
+        show: 'fps',
+        decimals: 1,
+        left: '0px',
+        top: '-80px',
+        theme: 'transparent',
+        heat: 1,
+        graph: 1,
+        toggleOn: null,
+        history: 32
+      })
+  }
+
+  /////////////////////////////////////////////////////////
+  // Panel docking mode
+  //
+  /////////////////////////////////////////////////////////
   async setDocking (docked) {
 
     const id = PhysicsExtension.ExtensionId
@@ -125,7 +157,9 @@ class PhysicsExtension extends MultiModelExtensionBase {
 
     this.physicsCore =
       await this.viewer.loadExtension(
-        PhysicsCoreExtensionId)
+        PhysicsCoreExtensionId, {
+          fps: this.fps
+        })
 
     await this.physicsCore.loadPhysicModel(
       this.viewer.model)
@@ -144,6 +178,8 @@ class PhysicsExtension extends MultiModelExtensionBase {
     super.onModelRootLoaded()
 
     this.options.loader.show(false)
+
+    this.viewer.navigation.toPerspective()
   }
 
   /////////////////////////////////////////////////////////
@@ -178,6 +214,8 @@ class PhysicsExtension extends MultiModelExtensionBase {
       activateControls: true,
       modelTransformer
     })
+
+    this.fps = this.createFPS()
   }
 
   /////////////////////////////////////////////////////////
@@ -226,7 +264,7 @@ class PhysicsExtension extends MultiModelExtensionBase {
           />
         }
         <button onClick={()=> this.physicsCore.toggeAnimation()}/>
-        <button onClick={()=> this.physicsCore.test()}/>
+        <button onClick={()=> this.physicsCore.reset()}/>
       </div>
     )
   }

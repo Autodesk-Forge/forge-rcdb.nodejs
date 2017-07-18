@@ -23,6 +23,8 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
     this.stopwatch = new Stopwatch()
 
     this.world = this.createWorld()
+
+    this.timeSkew = 5.0
   }
 
   /////////////////////////////////////////////////////////
@@ -64,31 +66,17 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   async loadPhysicModel (model) {
 
-    const dbIds = await Toolkit.getLeafNodes(model)
+    this.initialState =
+      await this.createInitialState(model)
 
-    const parseArray = (str, factor, separator = ';') => {
+    this.rigidBodies = this.initialState.map((entry) => {
 
-      return str.split(separator).map((element) => {
+      const body = this.createRigidBody(entry)
 
-        return parseFloat(element) * factor
-      })
-    }
+      this.setRigidBodyState(body, entry)
 
-    const tasks = dbIds.map(async(dbId, idx) => {
-
-      const vLinear = await Toolkit.getProperty (
-        model, dbId, 'vInit', '0;0;0')
-
-      const mass = (idx < dbIds.length - 1) ? 1.0 : 0
-
-      return this.createRigidBody(dbId, {
-        vLinear: parseArray(vLinear.displayValue, 5),
-        vAngular: [0,0,0],
-        mass
-      })
+      return body
     })
-
-    this.rigidBodies = await Promise.all(tasks)
 
     this.rigidBodies.forEach((rigidBody) => {
 
@@ -236,16 +224,55 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  createRigidBody (dbId, props) {
+  async createInitialState (model) {
 
-    const compTransform = this.getComponentTransform(dbId)
+    const parseArray = (str, factor, separator = ';') => {
 
-    const {position, quaternion, scale } = compTransform
+      return str.split(separator).map((element) => {
+
+        return parseFloat(element) * factor
+      })
+    }
+
+    const dbIds = await Toolkit.getLeafNodes(model)
+
+    const tasks = dbIds.map(async(dbId, idx) => {
+
+      const vLinear = await Toolkit.getProperty (
+        model, dbId, 'vInit', '0;0;0')
+
+      const mass = (idx < dbIds.length - 1) ? 1.0 : 0
+
+      const compTransform =
+        this.getComponentTransform(dbId)
+
+      const {position, quaternion, scale } =
+        compTransform
+
+      return {
+        vLinear: parseArray(vLinear.displayValue, 3.5),
+        vAngular: [0,0,0],
+        quaternion,
+        position,
+        scale,
+        dbId,
+        mass
+      }
+    })
+
+    return await Promise.all(tasks)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  createRigidBody (props) {
 
     const localInertia = new Ammo.btVector3(0, 0, 0)
 
     const shape = this.createCollisionShape(
-      dbId, compTransform.scale)
+      props.dbId, props.scale)
 
     shape.calculateLocalInertia(
       props.mass, localInertia)
@@ -253,19 +280,6 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
     const transform = new Ammo.btTransform
 
     transform.setIdentity()
-
-    transform.setOrigin(
-      new Ammo.btVector3(
-        position.x,
-        position.y,
-        position.z))
-
-    transform.setRotation(
-      new Ammo.btQuaternion(
-        quaternion.x,
-        quaternion.y,
-        quaternion.z,
-        quaternion.w))
 
     const motionState =
       new Ammo.btDefaultMotionState(
@@ -280,21 +294,12 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
 
     const body = new Ammo.btRigidBody(rbInfo)
 
-    body.setLinearVelocity(
-      new Ammo.btVector3(
-        props.vLinear[0],
-        props.vLinear[1],
-        props.vLinear[2]))
-
-    body.setAngularVelocity(
-      new Ammo.btVector3(
-        props.vAngular[0],
-        props.vAngular[1],
-        props.vAngular[2]))
-
     body.grounded = (props.mass === 0.0)
 
-    body.dbId = dbId
+    body.fragIds = Toolkit.getLeafFragIds(
+      this.viewer.model, props.dbId)
+
+    body.dbId = props.dbId
 
     return body
   }
@@ -303,7 +308,53 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  updateComponentTransform (dbId, rigidBody) {
+  setRigidBodyState (body, state) {
+
+    //setMassProps (btScalar mass, const btVector3 &inertia)
+
+    const transform = new Ammo.btTransform
+
+    transform.setIdentity()
+
+    transform.setOrigin(
+      new Ammo.btVector3(
+        state.position.x,
+        state.position.y,
+        state.position.z))
+
+    transform.setRotation(
+      new Ammo.btQuaternion(
+        state.quaternion.x,
+        state.quaternion.y,
+        state.quaternion.z,
+        state.quaternion.w))
+
+    const motionState =
+      new Ammo.btDefaultMotionState(
+        transform)
+
+    body.setMotionState(motionState)
+
+    body.setLinearVelocity(
+      new Ammo.btVector3(
+        state.vLinear[0],
+        state.vLinear[1],
+        state.vLinear[2]))
+
+    body.setAngularVelocity(
+      new Ammo.btVector3(
+        state.vAngular[0],
+        state.vAngular[1],
+        state.vAngular[2]))
+
+    return body
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  updateComponentTransform (fragIds, rigidBody) {
 
     const transform = rigidBody.getCenterOfMassTransform()
 
@@ -311,23 +362,28 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
 
     const origin = transform.getOrigin()
 
-    const offset = rigidBody.offset
-
-    const fragIds = Toolkit.getLeafFragIds(
-      this.viewer.model, dbId)
-
     const position = new THREE.Vector3(
       origin.x(),
       origin.y(),
       origin.z())
 
-    const quaternion = new THREE.Quaternion(
-      rotation.x(),
-      rotation.y(),
-      rotation.z(),
-      rotation.w())
+    fragIds.forEach((fragId) => {
 
-    this.rotateComponent(fragIds, quaternion, position)
+      const fragProxy =
+        this.viewer.impl.getFragmentProxy(
+          this.viewer.model, fragId)
+
+      fragProxy.getAnimTransform()
+
+      fragProxy.quaternion =
+        new THREE.Quaternion(
+          rotation.x(),
+          rotation.y(),
+          rotation.z(),
+          rotation.w())
+
+      fragProxy.updateAnimTransform()
+    })
 
     const center = this.getComponentPosition(fragIds)
 
@@ -386,37 +442,6 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  rotateComponent (fragIds, quaternion, center) {
-
-    fragIds.forEach((fragId) => {
-
-      const fragProxy =
-        this.viewer.impl.getFragmentProxy(
-          this.viewer.model, fragId)
-
-      fragProxy.getAnimTransform()
-
-      const position = new THREE.Vector3(
-        - center.x,
-        - center.y,
-        - center.z)
-
-      position.applyQuaternion(quaternion)
-
-      position.add(center)
-
-      fragProxy.position = position
-
-      fragProxy.quaternion = quaternion
-
-      fragProxy.updateAnimTransform()
-    })
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
   toggeAnimation () {
 
     this.running = !this.running
@@ -437,17 +462,18 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
 
       const dt = this.stopwatch.getElapsedMs()
 
-      this.world.stepSimulation(dt, 10)
+      this.world.stepSimulation(dt * this.timeSkew, 10)
 
-      this.rigidBodies.forEach((rigidBody) => {
+      this.rigidBodies.forEach((body) => {
 
-        if (!rigidBody.grounded) {
+        if (!body.grounded) {
 
           this.updateComponentTransform(
-            rigidBody.dbId,
-            rigidBody)
+            body.fragIds, body)
         }
       })
+
+      this.options.fps.tick()
 
       this.viewer.impl.sceneUpdated(true)
 
@@ -460,19 +486,19 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  async test () {
+  async reset () {
 
-    const dbIds = await Toolkit.getLeafNodes(this.viewer.model)
+    this.rigidBodies.forEach((body, idx) => {
 
-    const q = new THREE.Quaternion()
+      if (!body.grounded) {
 
-    q.setFromAxisAngle(
-      new THREE.Vector3(1, 0, 0),
-      10 * Math.PI / 180)
+        const state = this.initialState[idx]
 
-    this.rotateComponent(dbIds[0], q)
+        this.setRigidBodyState(body, state)
 
-    this.viewer.impl.sceneUpdated(true)
+        body.setActivationState(4)
+      }
+    })
   }
 }
 
