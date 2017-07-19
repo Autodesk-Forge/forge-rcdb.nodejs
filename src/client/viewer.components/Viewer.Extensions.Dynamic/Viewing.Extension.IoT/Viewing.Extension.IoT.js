@@ -416,6 +416,21 @@ class IoTExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////////////
+  renderTitle () {
+
+    return (
+      <div className="title">
+        <label>
+          Incidents
+        </label>
+      </div>
+    )
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
   render () {
 
     const state = this.react.getState()
@@ -445,7 +460,11 @@ class IoTExtension extends ExtensionBase {
     })
 
     return (
-      <WidgetContainer title="Incidents" className={this.className}>
+      <WidgetContainer
+        renderTitle={() => this.renderTitle()}
+        className={this.className}
+        showTitle={true}>
+
         <ReflexContainer key="incidents" orientation='horizontal'>
           <ReflexElement flex={0.35}>
             <div className="item-list-container">
