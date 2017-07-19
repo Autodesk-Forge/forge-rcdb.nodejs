@@ -2,7 +2,7 @@ import { browserHistory } from 'react-router'
 import autobind from 'autobind-decorator'
 import NotificationsSystem from 'reapop'
 import ServiceManager from 'SvcManager'
-import theme from 'reapop-theme-wybo'
+import theme from 'reapop-theme-custom'
 import PropTypes from 'prop-types'
 import 'react-reflex/styles.css'
 import 'Dialogs/dialogs.scss'
@@ -33,7 +33,7 @@ class CoreLayout extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  async componentWillMount () {
+  componentWillMount () {
 
     this.notifySvc =
       ServiceManager.getService(
@@ -75,9 +75,14 @@ class CoreLayout extends React.Component {
       ServiceManager.getService(
         'ForgeSvc')
 
-    const user = await this.forgeSvc.getUser()
+    this.forgeSvc.getUser().then((user) => {
 
-    this.props.setUser(user)
+      this.props.setUser(user)
+
+    }, () => {
+
+      this.props.setUser(null)
+    })
   }
 
   /////////////////////////////////////////////////////////

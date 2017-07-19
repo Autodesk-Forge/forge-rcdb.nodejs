@@ -15,12 +15,6 @@ class ConfiguratorView extends React.Component {
     super (props)
 
     this.onError = this.onError.bind(this)
-
-    this.notify = {
-      remove: this.props.removeNotifications,
-      update: this.props.updateNotification,
-      add: this.props.addNotification
-    }
   }
 
   /////////////////////////////////////////////////////////

@@ -83,9 +83,17 @@ export default class ForgeSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   getUser () {
 
-    const url = '/user'
+    return new Promise((resolve, reject) => {
 
-    return this.api.ajax(url)
+      this.api.ajax('/user').then((user) => {
+
+        resolve(user)
+
+      }, (error) => {
+
+        reject(error)
+      })
+    })
   }
 
   /////////////////////////////////////////////////////////////////

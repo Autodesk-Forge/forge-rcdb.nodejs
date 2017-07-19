@@ -138,7 +138,6 @@
     "react-select": "^1.0.0-rc.3",
     "react-spinkit": "2.1.2",
     "reapop": "1.0.0",
-    "reapop-theme-wybo": "0.4.1",
     "redux": "^3.6.0",
     "redux-thunk": "^2.2.0",
     "resolve-url-loader": "^2.0.0",

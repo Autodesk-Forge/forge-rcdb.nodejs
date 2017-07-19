@@ -34,9 +34,14 @@ class ViewerConfigurator extends BaseComponent {
 
     super (props)
 
-    this.eventSvc = ServiceManager.getService('EventSvc')
+    this.notifySvc = ServiceManager.getService(
+      'NotifySvc')
 
-    this.modelSvc = ServiceManager.getService('ModelSvc')
+    this.eventSvc = ServiceManager.getService(
+      'EventSvc')
+
+    this.modelSvc = ServiceManager.getService(
+      'ModelSvc')
 
     this.state = {
       dataExtension: null,
@@ -403,8 +408,8 @@ class ViewerConfigurator extends BaseComponent {
       location: this.props.location,
       appState: this.props.appState,
       dbModel: this.state.dbModel,
-      notify: this.props.notify,
       parentControl: ctrlGroup,
+      notify: this.notifySvc,
       loader: this.loader,
       apiUrl: '/api'
     }

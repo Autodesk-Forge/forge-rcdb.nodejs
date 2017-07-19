@@ -1,0 +1,657 @@
+@charset "UTF-8";
+/**
+ * Mixin to create a keyframes for a notification
+ * @param $direction (left|top|right|bottom) Translation direction
+ * @param $margin-bottom Initial `margin-bottom` value
+ */
+/*
+ * Mixin to create an animation for a notification
+ * @param $direction (left|top|right|bottom) Translation direction
+ * @param $margin-bottom Initial `margin-bottom` value
+ */
+@keyframes :local(top20px-enter) {
+  0% {
+    top: -360px;
+    opacity: 0; }
+  100% {
+    top: 0;
+    opacity: 1; } }
+
+@keyframes :local(top20px-leave) {
+  0% {
+    -webkit-transform: translateY(0%);
+    transform: translateY(0%);
+    opacity: 1;
+    max-height: 200px;
+    margin-bottom: 20px; }
+  40% {
+    margin-bottom: 20px;
+    max-height: 200px; }
+  50% {
+    -webkit-transform: translateY(-100%);
+    transform: translateY(-100%);
+    opacity: 0; }
+  100% {
+    -webkit-transform: translateY(-100%);
+    transform: translateY(-100%);
+    opacity: 0;
+    max-height: 0;
+    margin-bottom: 0; } }
+
+@keyframes :local(bottom20px-enter) {
+  0% {
+    bottom: -360px;
+    opacity: 0; }
+  100% {
+    bottom: 0;
+    opacity: 1; } }
+
+@keyframes :local(bottom20px-leave) {
+  0% {
+    -webkit-transform: translateY(0%);
+    transform: translateY(0%);
+    opacity: 1;
+    max-height: 200px;
+    margin-bottom: 20px; }
+  40% {
+    margin-bottom: 20px;
+    max-height: 200px; }
+  50% {
+    -webkit-transform: translateY(100%);
+    transform: translateY(100%);
+    opacity: 0; }
+  100% {
+    -webkit-transform: translateY(100%);
+    transform: translateY(100%);
+    opacity: 0;
+    max-height: 0;
+    margin-bottom: 0; } }
+
+@keyframes :local(left20px-enter) {
+  0% {
+    left: -360px;
+    opacity: 0; }
+  100% {
+    left: 0;
+    opacity: 1; } }
+
+@keyframes :local(left20px-leave) {
+  0% {
+    -webkit-transform: translateX(0%);
+    transform: translateX(0%);
+    opacity: 1;
+    max-height: 200px;
+    margin-bottom: 20px; }
+  40% {
+    margin-bottom: 20px;
+    max-height: 200px; }
+  50% {
+    -webkit-transform: translateX(-100%);
+    transform: translateX(-100%);
+    opacity: 0; }
+  100% {
+    -webkit-transform: translateX(-100%);
+    transform: translateX(-100%);
+    opacity: 0;
+    max-height: 0;
+    margin-bottom: 0; } }
+
+@keyframes :local(right20px-enter) {
+  0% {
+    right: -360px;
+    opacity: 0; }
+  100% {
+    right: 0;
+    opacity: 1; } }
+
+@keyframes :local(right20px-leave) {
+  0% {
+    -webkit-transform: translateX(0%);
+    transform: translateX(0%);
+    opacity: 1;
+    max-height: 200px;
+    margin-bottom: 20px; }
+  40% {
+    margin-bottom: 20px;
+    max-height: 200px; }
+  50% {
+    -webkit-transform: translateX(100%);
+    transform: translateX(100%);
+    opacity: 0; }
+  100% {
+    -webkit-transform: translateX(100%);
+    transform: translateX(100%);
+    opacity: 0;
+    max-height: 0;
+    margin-bottom: 0; } }
+
+@keyframes :local(top0-enter) {
+  0% {
+    top: -360px;
+    opacity: 0; }
+  100% {
+    top: 0;
+    opacity: 1; } }
+
+@keyframes :local(top0-leave) {
+  0% {
+    -webkit-transform: translateY(0%);
+    transform: translateY(0%);
+    opacity: 1;
+    max-height: 200px;
+    margin-bottom: 0; }
+  40% {
+    margin-bottom: 0;
+    max-height: 200px; }
+  50% {
+    -webkit-transform: translateY(-100%);
+    transform: translateY(-100%);
+    opacity: 0; }
+  100% {
+    -webkit-transform: translateY(-100%);
+    transform: translateY(-100%);
+    opacity: 0;
+    max-height: 0;
+    margin-bottom: 0; } }
+
+@keyframes :local(rotating) {
+  from {
+    transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg); }
+  to {
+    transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg); } }
+
+:local .notifications-system {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.428571429; }
+
+:local .notifications-container {
+  position: fixed;
+  z-index: 99999; }
+
+:local .notifications-container--tc, :local .notifications-container--tr, :local .notifications-container--tl, :local .notifications-container--bc, :local .notifications-container--br, :local .notifications-container--bl {
+  width: 360px; }
+:local .notifications-container--tc .notification--buttons-1 .notification-button, :local .notifications-container--tr .notification--buttons-1 .notification-button, :local .notifications-container--tl .notification--buttons-1 .notification-button, :local .notifications-container--bc .notification--buttons-1 .notification-button, :local .notifications-container--br .notification--buttons-1 .notification-button, :local .notifications-container--bl .notification--buttons-1 .notification-button {
+  height: 100%; }
+:local .notifications-container--tc .notification--buttons-2 .notification-button, :local .notifications-container--tr .notification--buttons-2 .notification-button, :local .notifications-container--tl .notification--buttons-2 .notification-button, :local .notifications-container--bc .notification--buttons-2 .notification-button, :local .notifications-container--br .notification--buttons-2 .notification-button, :local .notifications-container--bl .notification--buttons-2 .notification-button {
+  height: 50%; }
+:local .notifications-container--tc .notification-buttons, :local .notifications-container--tr .notification-buttons, :local .notifications-container--tl .notification-buttons, :local .notifications-container--bc .notification-buttons, :local .notifications-container--br .notification-buttons, :local .notifications-container--bl .notification-buttons {
+  width: 90px; }
+:local .notifications-container--tc .notification-buttons .notification-button, :local .notifications-container--tr .notification-buttons .notification-button, :local .notifications-container--tl .notification-buttons .notification-button, :local .notifications-container--bc .notification-buttons .notification-button, :local .notifications-container--br .notification-buttons .notification-button, :local .notifications-container--bl .notification-buttons .notification-button {
+  display: block;
+  width: 90px; }
+:local .notifications-container--tc .notification-buttons .notification-button:nth-child(2), :local .notifications-container--tr .notification-buttons .notification-button:nth-child(2), :local .notifications-container--tl .notification-buttons .notification-button:nth-child(2), :local .notifications-container--bc .notification-buttons .notification-button:nth-child(2), :local .notifications-container--br .notification-buttons .notification-button:nth-child(2), :local .notifications-container--bl .notification-buttons .notification-button:nth-child(2) {
+  border-top: 1px solid rgba(0, 0, 0, 0.09); }
+
+:local .notifications-container--b .notification--buttons-1 .notification-buttons, :local .notifications-container--t .notification--buttons-1 .notification-buttons {
+  width: 90px; }
+
+:local .notifications-container--b .notification--buttons-2 .notification-meta, :local .notifications-container--t .notification--buttons-2 .notification-meta {
+  width: calc(100% - 90px * 2); }
+
+:local .notifications-container--b .notification--buttons-2 .notification-buttons, :local .notifications-container--t .notification--buttons-2 .notification-buttons {
+  width: calc(90px * 2); }
+
+:local .notifications-container--b .notification-buttons .notification-button, :local .notifications-container--t .notification-buttons .notification-button {
+  float: left;
+  width: 90px;
+  height: 100%; }
+
+:local .notifications-container--t {
+  width: calc(100% - 40px);
+  top: 20px;
+  left: 20px; }
+:local .notifications-container--t .notification-wrapper {
+  position: relative;
+  top: 0; }
+:local .notifications-container--t .notification-wrapper-enter {
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  -webkit-animation-name: top20px-enter;
+  animation-name: top20px-enter;
+  -webkit-animation-duration: .4s;
+  animation-duration: .4s; }
+:local .notifications-container--t .notification-wrapper-leave {
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  -webkit-animation-name: top20px-leave;
+  animation-name: top20px-leave;
+  -webkit-animation-duration: .8s;
+  animation-duration: .8s; }
+
+:local .notifications-container--tc {
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+:local .notifications-container--tc .notification-wrapper {
+  position: relative;
+  top: 0;
+}
+
+:local .notifications-container--tc .notification-wrapper-enter {
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  -webkit-animation-name: top20px-enter;
+  animation-name: top20px-enter;
+  -webkit-animation-duration: .4s;
+  animation-duration: .4s;
+}
+
+:local .notifications-container--tc .notification-wrapper-leave {
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  -webkit-animation-name: top20px-leave;
+  animation-name: top20px-leave;
+  -webkit-animation-duration: .8s;
+  animation-duration: .8s;
+}
+
+:local .notifications-container--tr {
+  top: 20px;
+  right: 20px;
+}
+
+:local .notifications-container--tr .notification-wrapper {
+  position: relative;
+  right: 0;
+}
+
+:local .notifications-container--tr .notification-wrapper-enter {
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  -webkit-animation-name: right20px-enter;
+  animation-name: right20px-enter;
+  -webkit-animation-duration: .4s;
+  animation-duration: .4s;
+}
+
+:local .notifications-container--tr .notification-wrapper-leave {
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  -webkit-animation-name: right20px-leave;
+  animation-name: right20px-leave;
+  -webkit-animation-duration: .8s;
+  animation-duration: .8s; }
+
+:local .notifications-container--tl {
+  top: 20px;
+  left: 20px;
+}
+
+:local .notifications-container--tl .notification-wrapper {
+  position: relative;
+  left: 0;
+}
+
+:local .notifications-container--tl .notification-wrapper-enter {
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  -webkit-animation-name: left20px-enter;
+  animation-name: left20px-enter;
+  -webkit-animation-duration: .4s;
+  animation-duration: .4s;
+}
+
+:local .notifications-container--tl .notification-wrapper-leave {
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  -webkit-animation-name: left20px-leave;
+  animation-name: left20px-leave;
+  -webkit-animation-duration: .8s;
+  animation-duration: .8s;
+}
+
+:local .notifications-container--b {
+  width: calc(100% - 40px);
+  bottom: 0;
+  left: 20px;
+}
+
+:local .notifications-container--b .notification-wrapper {
+  position: relative;
+  bottom: 0;
+}
+
+:local .notifications-container--b .notification-wrapper-enter {
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  -webkit-animation-name: bottom20px-enter;
+  animation-name: bottom20px-enter;
+  -webkit-animation-duration: .4s;
+  animation-duration: .4s;
+}
+
+:local .notifications-container--b .notification-wrapper-leave {
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  -webkit-animation-name: bottom20px-leave;
+  animation-name: bottom20px-leave;
+  -webkit-animation-duration: .8s;
+  animation-duration: .8s;
+}
+
+:local .notifications-container--bc {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+:local .notifications-container--bc .notification-wrapper {
+  position: relative;
+  bottom: 0;
+}
+
+:local .notifications-container--bc .notification-wrapper-enter {
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  -webkit-animation-name: bottom20px-enter;
+  animation-name: bottom20px-enter;
+  -webkit-animation-duration: .4s;
+  animation-duration: .4s;
+}
+
+:local .notifications-container--bc .notification-wrapper-leave {
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  -webkit-animation-name: bottom20px-leave;
+  animation-name: bottom20px-leave;
+  -webkit-animation-duration: .8s;
+  animation-duration: .8s;
+}
+
+:local .notifications-container--br {
+  bottom: 0;
+  right: 20px;
+}
+
+:local .notifications-container--br .notification-wrapper {
+  position: relative;
+  right: 0;
+}
+
+:local .notifications-container--br .notification-wrapper-enter {
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  -webkit-animation-name: right20px-enter;
+  animation-name: right20px-enter;
+  -webkit-animation-duration: .4s;
+  animation-duration: .4s;
+}
+
+:local .notifications-container--br .notification-wrapper-leave {
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  -webkit-animation-name: right20px-leave;
+  animation-name: right20px-leave;
+  -webkit-animation-duration: .8s;
+  animation-duration: .8s;
+}
+
+:local .notifications-container--bl {
+  bottom: 0;
+  left: 20px;
+}
+
+:local .notifications-container--bl .notification-wrapper {
+  position: relative;
+  left: 0;
+}
+
+:local .notifications-container--bl .notification-wrapper-enter {
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  -webkit-animation-name: left20px-enter;
+  animation-name: left20px-enter;
+  -webkit-animation-duration: .4s;
+  animation-duration: .4s;
+}
+
+:local .notifications-container--bl .notification-wrapper-leave {
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  -webkit-animation-name: left20px-leave;
+  animation-name: left20px-leave;
+  -webkit-animation-duration: .8s;
+  animation-duration: .8s;
+}
+
+@media (max-width: 767px) {
+
+  :local .notifications-container--t {
+    width: 100%;
+    top: 0;
+    left: 0;
+  }
+
+  :local .notifications-container--t .notification-wrapper {
+    position: relative;
+    top: 0;
+  }
+
+  :local .notifications-container--t .notification-wrapper-enter {
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    -webkit-animation-name: top0-enter;
+    animation-name: top0-enter;
+    -webkit-animation-duration: .4s;
+    animation-duration: .4s;
+  }
+
+  :local .notifications-container--t .notification-wrapper-leave {
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    -webkit-animation-name: top0-leave;
+    animation-name: top0-leave;
+    -webkit-animation-duration: .8s;
+    animation-duration: .8s;
+  }
+
+  :local .notifications-container--t .notification-wrapper {
+    margin: 0;
+  }
+}
+
+:local .notification {
+  display: table;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  min-height: 40px;
+  border: none;
+  -webkit-box-shadow: 0 1px 3px -1px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 3px -1px rgba(0, 0, 0, 0.3);
+  z-index: 999;
+}
+
+:local .notification-wrapper {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin-bottom: 20px;
+}
+
+:local .notification-image-container {
+  display: table-cell;
+  box-sizing: border-box;
+  padding: 10px 0 10px 15px;
+}
+
+:local .notification-image {
+  display: inline-block;
+  vertical-align: top;
+  border-radius: 40px;
+  width: 40px;
+  height: 40px;
+  background-size: cover;
+}
+
+:local .notification-icon {
+  display: inline-block;
+  box-sizing: border-box;
+  margin: 10px 0 10px 15px;
+  font-size: 20px !important;
+}
+
+:local .notification-meta {
+  display: table-cell;
+  vertical-align: top;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px 20px; }
+
+:local .notification-close-button-container {
+  display: table-cell;
+  padding: 10px 15px;
+  box-sizing: border-box;
+}
+
+:local .notification-close-button {
+  font-size: 14px !important;
+  color: #524c4c;
+  cursor: pointer;
+}
+
+:local .notification-close-button:before {
+  content: "";
+}
+
+:local .notification-close-button:hover {
+  color: #6c6565;
+}
+
+:local .notification-buttons {
+  display: table-cell;
+  box-sizing: border-box;
+  height: 100%;
+  vertical-align: top;
+}
+
+:local .notification-buttons .notification-button {
+  min-height: 40px;
+  box-sizing: border-box;
+  padding: 0;
+  background: none;
+  border: none;
+  border-left: 1px solid rgba(0, 0, 0, 0.09);
+  outline: none;
+  text-align: center;
+  color: #524c4c;
+  cursor: pointer;
+}
+
+:local .notification-buttons .notification-button-text {
+  display: block;
+  height: 25px;
+  width: 70px;
+  white-space: nowrap;
+  overflow: hidden;
+  margin: 0 auto;
+  text-overflow: ellipsis;
+  text-align: center;
+  font-size: 14px;
+  line-height: 25px;
+}
+
+:local .notification-buttons .notification-button:hover {
+  color: #349ef3;
+}
+
+:local .notification-buttons .notification-button:active {
+  color: #0e86e6;
+}
+
+:local .notification-title {
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.428571429;
+}
+
+:local .notification-message {
+  margin: 0;
+}
+
+:local .notification--dismissible {
+  cursor: pointer;
+}
+
+:local .notification--default {
+  background-color: #ffffff;
+  border-left: 2px solid #ffffff;
+  color: #524c4c;
+}
+
+:local .notification--default .notification-icon {
+  display: none;
+}
+
+:local .notification--success {
+  background-color: #ffffff;
+  border: 2px solid #4dc657;
+  border-left: 4px solid #4dc657;
+  color: #524c4c;
+}
+
+:local .notification--success .notification-icon:before {
+  content: "";
+  color: #4dc657;
+}
+
+:local .notification--info {
+  background-color: #ffffff;
+  border: 2px solid #349ef3;
+  border-left: 4px solid #349ef3;
+  color: #524c4c;
+}
+
+:local .notification--info .notification-icon:before {
+  content: "";
+  color: #349ef3;
+}
+
+:local .notification--warning {
+  background-color: #ffffff;
+  border: 2px solid #f5aa0a;
+  border-left: 4px solid #f5aa0a;
+  color: #524c4c;
+}
+
+:local .notification--warning .notification-icon:before {
+  content: "";
+  color: #f5aa0a;
+}
+
+:local .notification--error {
+  background-color: #ffffff;
+  border: 2px solid #f5311d;
+  border-left: 4px solid #f5311d;
+  color: #524c4c;
+}
+
+:local .notification--error .notification-icon:before {
+  content: "";
+  color: #f5311d;
+}
+
+:local .notification--loading {
+  background-color: #ffffff;
+  border: 2px solid #FF9800;
+  border-left: 4px solid #FF9800;
+  color: #524c4c;
+}
+
+:local .notification--loading .notification-icon {
+  -webkit-animation: rotating 2s infinite linear;
+  animation: rotating 2s infinite linear;
+}
+
+:local .notification--loading .notification-icon:before {
+  content: "";
+  color: #FF9800;
+}

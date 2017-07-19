@@ -476,6 +476,11 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
       origin.y(),
       origin.z())
 
+    const offset = new THREE.Vector3(
+      rigidBody.initialState.position.x,
+      rigidBody.initialState.position.y,
+      rigidBody.initialState.position.z)
+
     const fragIds = rigidBody.initialState.fragIds
 
     fragIds.forEach((fragId) => {
@@ -493,60 +498,14 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
           rotation.z(),
           rotation.w())
 
-      fragProxy.updateAnimTransform()
-    })
+      offset.applyQuaternion(fragProxy.quaternion)
 
-    const center = this.getComponentPosition(fragIds)
-
-    fragIds.forEach((fragId) => {
-
-      const fragProxy =
-        this.viewer.impl.getFragmentProxy(
-          this.viewer.model, fragId)
-
-      fragProxy.getAnimTransform()
-
-      fragProxy.position.x += (position.x - center.x)
-      fragProxy.position.y += (position.y - center.y)
-      fragProxy.position.z += (position.z - center.z)
+      fragProxy.position.x = position.x - offset.x
+      fragProxy.position.y = position.y - offset.y
+      fragProxy.position.z = position.z - offset.z
 
       fragProxy.updateAnimTransform()
     })
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  geWorldBoundingBox (fragIds, fragList) {
-
-    const fragbBox = new THREE.Box3()
-    const nodebBox = new THREE.Box3()
-
-    fragIds.forEach((fragId) => {
-
-      fragList.getWorldBounds(fragId, fragbBox)
-      nodebBox.union(fragbBox)
-    })
-
-    return nodebBox
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  getComponentPosition (fragIds) {
-
-    const bBox = this.geWorldBoundingBox(
-      fragIds, this.viewer.model.getFragmentList())
-
-    const center = new THREE.Vector3(
-      (bBox.min.x + bBox.max.x) / 2,
-      (bBox.min.y + bBox.max.y) / 2,
-      (bBox.min.z + bBox.max.z) / 2)
-
-    return center
   }
 
   /////////////////////////////////////////////////////////
