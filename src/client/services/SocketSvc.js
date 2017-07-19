@@ -55,18 +55,24 @@ export default class SocketSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////
-  on (msgId, handler) {
+  on (msgIds, handler) {
 
-    this.socket.on(msgId, handler)
+    msgIds.split(' ').forEach((msgId) => {
+
+      this.socket.on(msgId, handler)
+    })
   }
 
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  off (msgId, handler) {
+  off (msgIds, handler) {
 
-    this.socket.off(msgId, handler)
+    msgIds.split(' ').forEach((msgId) => {
+
+      this.socket.off(msgId, handler)
+    })
   }
 
   /////////////////////////////////////////////////////////

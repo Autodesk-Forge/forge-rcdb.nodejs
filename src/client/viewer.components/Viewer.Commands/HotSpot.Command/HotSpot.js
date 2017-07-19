@@ -146,6 +146,8 @@ export default class HotSpot extends GraphicMarker {
   /////////////////////////////////////////////////////////
   setData (data) {
 
+    this.data = Object.assign({}, this.data, data)
+
     this.circle.attr({
       stroke: data.strokeColor || "#FF0000",
       fill: data.fillColor || "#FF8888",

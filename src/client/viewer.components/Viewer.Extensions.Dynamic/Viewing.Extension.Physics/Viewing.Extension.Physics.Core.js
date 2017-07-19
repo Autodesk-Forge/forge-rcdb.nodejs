@@ -7,6 +7,7 @@ import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import EventsEmitter from 'EventsEmitter'
 import Toolkit from 'Viewer.Toolkit'
 import Stopwatch from 'Stopwatch'
+import _ from 'lodash'
 
 class PhysicsCoreExtension extends MultiModelExtensionBase {
 
@@ -57,6 +58,8 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
 
     console.log('Viewing.Extension.Physics.Core unloaded')
 
+    this.runAnimation(false)
+
     super.unload ()
 
     return true
@@ -68,14 +71,14 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   async loadPhysicModel (model) {
 
-    this.initialState =
+    const initialState =
       await this.createInitialState(model)
 
-    this.rigidBodies = this.initialState.map((entry) => {
+    this.rigidBodies = initialState.map((state) => {
 
-      const body = this.createRigidBody(entry)
+      const body = this.createRigidBody(state)
 
-      this.setRigidBodyState(body, entry)
+      this.setRigidBodyState(body, state)
 
       return body
     })
@@ -83,6 +86,18 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
     this.rigidBodies.forEach((rigidBody) => {
 
       this.world.addRigidBody(rigidBody)
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  getRigidBody (dbId) {
+
+    return _.find(this.rigidBodies, (body) => {
+
+      return dbId === body.initialState.dbId
     })
   }
 
@@ -275,11 +290,15 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
       const {position, quaternion, scale } =
         compTransform
 
+      const fragIds = Toolkit.getLeafFragIds(
+        this.viewer.model, dbId)
+
       return {
         vLinear: parseArray(vLinear.displayValue, 3.5),
         vAngular: [0,0,0],
         quaternion,
         position,
+        fragIds,
         scale,
         dbId,
         mass
@@ -293,15 +312,15 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  createRigidBody (props) {
+  createRigidBody (state) {
 
-    const localInertia = new Ammo.btVector3(0, 0, 0)
+    const inertia = new Ammo.btVector3(0, 0, 0)
 
     const shape = this.createCollisionShape(
-      props.dbId, props.scale)
+      state.dbId, state.scale)
 
     shape.calculateLocalInertia(
-      props.mass, localInertia)
+      state.mass, inertia)
 
     const transform = new Ammo.btTransform
 
@@ -313,19 +332,18 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
 
     const rbInfo =
       new Ammo.btRigidBodyConstructionInfo(
-        props.mass,
+        state.mass,
         motionState,
         shape,
-        localInertia)
+        inertia)
 
     const body = new Ammo.btRigidBody(rbInfo)
 
-    body.grounded = (props.mass === 0.0)
+    body.grounded = (state.mass === 0.0)
 
-    body.fragIds = Toolkit.getLeafFragIds(
-      this.viewer.model, props.dbId)
+    body.initialState = state
 
-    body.dbId = props.dbId
+    body.dbId = state.dbId
 
     return body
   }
@@ -335,8 +353,6 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
   //
   /////////////////////////////////////////////////////////
   setRigidBodyState (body, state) {
-
-    //setMassProps (btScalar mass, const btVector3 &inertia)
 
     const transform = new Ammo.btTransform
 
@@ -380,7 +396,74 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  updateComponentTransform (fragIds, rigidBody) {
+  groundRigidBody (body, grounded) {
+
+    const inertia = new Ammo.btVector3(0, 0, 0)
+
+    if (grounded) {
+
+      body.setMassProps (0.0, inertia)
+
+      body.grounded = true
+
+    } else {
+
+      const mass = body.initialState.mass
+
+      body.setMassProps (mass, inertia)
+
+      body.grounded = (mass === 0)
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  getVelocity (rigidBody) {
+
+    const vAngular = rigidBody.getAngularVelocity()
+
+    const vLinear = rigidBody.getLinearVelocity()
+
+    return {
+      angular: {
+        x: vAngular.x(),
+        y: vAngular.y(),
+        z: vAngular.z()
+      },
+      linear: {
+        x: vLinear.x(),
+        y: vLinear.y(),
+        z: vLinear.z()
+      }
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  setVelocity (rigidBody, velocity) {
+
+    rigidBody.setAngularVelocity(
+      new Ammo.btVector3(
+        velocity.angular.x,
+        velocity.angular.y,
+        velocity.angular.z))
+
+    rigidBody.setLinearVelocity(
+      new Ammo.btVector3(
+        velocity.linear.x,
+        velocity.linear.y,
+        velocity.linear.z))
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  updateComponentTransform (rigidBody) {
 
     const transform = rigidBody.getCenterOfMassTransform()
 
@@ -392,6 +475,8 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
       origin.x(),
       origin.y(),
       origin.z())
+
+    const fragIds = rigidBody.initialState.fragIds
 
     fragIds.forEach((fragId) => {
 
@@ -470,6 +555,8 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   runAnimation (run) {
 
+    window.cancelAnimationFrame(this.animId)
+
     this.running = run
 
     if (run) {
@@ -499,7 +586,7 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
         if (!body.grounded) {
 
           this.updateComponentTransform(
-            body.fragIds, body)
+            body, body.initialState)
         }
       })
 
@@ -518,17 +605,24 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   async reset () {
 
-    this.rigidBodies.forEach((body, idx) => {
+    this.rigidBodies.forEach((body) => {
 
       if (!body.grounded) {
 
-        const state = this.initialState[idx]
+        this.setRigidBodyState(
+          body, body.initialState)
 
-        this.setRigidBodyState(body, state)
+        if (!this.running) {
+
+          this.updateComponentTransform(
+            body, body.initialState)
+        }
 
         body.setActivationState(4)
       }
     })
+
+    this.viewer.impl.sceneUpdated(true)
   }
 }
 

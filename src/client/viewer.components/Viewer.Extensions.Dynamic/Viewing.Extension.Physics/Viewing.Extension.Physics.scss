@@ -131,7 +131,29 @@
     border-radius: 4px;
     margin-left: 20px;
     height: 26px;
+    float: none;
+    width: 80px;
     top: 2px;
+  }
+
+  .row {
+    width: 100%;
+    margin: 0;
+  }
+
+  .row > .label-container {
+    margin: 2px 0 0 9px;
+    width: 78px;
+  }
+
+  button {
+    background: whitesmoke;
+    border-radius: 4px;
+    margin-left: 4px;
+    outline: none;
+    height: 26px;
+    width: 30px;
+    float: left;
   }
 
   button > span {
@@ -158,11 +180,25 @@
   .rc-slider-track {
     background-color: #FF9800;
   }
+
+  .input-vel {
+    border: 1px solid #dedede;
+    width: calc(33% - 48px);
+    padding: 2px 0 0 4px;
+    background: #eaeaea;
+    border-radius: 4px;
+    margin: 0 0 6px 5px;
+    overflow: hidden;
+    text-align: left;
+    color: #000000;
+    height: 26px;
+    float: left;
+  }
 }
 
 .physics hr {
   border-top: 1px solid #cdcdcd;
-  margin: 16px 10px 16px 45px;
+  margin: 20px 10px 16px 45px;
   width: calc(100% - 120px);
   float: left;
 }

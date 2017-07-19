@@ -3,8 +3,9 @@
 // by Philippe Leefsma, July 2017
 //
 /////////////////////////////////////////////////////////
-import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import PhysicsCoreExtensionId from './Viewing.Extension.Physics.Core'
+import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
+import ContentEditable from 'react-contenteditable'
 import WidgetContainer from 'WidgetContainer'
 import './Viewing.Extension.Physics.scss'
 import 'rc-tooltip/assets/bootstrap.css'
@@ -18,6 +19,7 @@ import Tooltip from 'rc-tooltip'
 import Slider from 'rc-slider'
 import FPS from './FPSMeter'
 import Switch from 'Switch'
+import Label from 'Label'
 import React from 'react'
 
 class PhysicsExtension extends MultiModelExtensionBase {
@@ -70,8 +72,12 @@ class PhysicsExtension extends MultiModelExtensionBase {
 
       activateControls: false,
       modelTransformer: null,
+      selectedDbId: null,
       physicsCore: null,
-      showLoader: true
+      showLoader: true,
+
+      Vx:'', Vy:'', Vz:'',
+      Ax:'', Ay:'', Az:''
 
     }).then (() => {
 
@@ -225,6 +231,47 @@ class PhysicsExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onSelection (event) {
+
+    const { physicsCore } = this.react.getState()
+
+    if (!event.selections.length) {
+
+      return this.react.setState({
+        Ax: '', Ay: '', Az: '',
+        Vx: '', Vy: '', Vz: '',
+        selectedDbId: null
+      })
+    }
+
+    const selection = event.selections[0]
+
+    const dbId = selection.dbIdArray[0]
+
+    const body = physicsCore.getRigidBody(dbId)
+
+    const velocity = physicsCore.getVelocity(body)
+
+    this.react.setState({
+
+      Ax: this.toFixedStr(velocity.angular.x),
+      Ay: this.toFixedStr(velocity.angular.y),
+      Az: this.toFixedStr(velocity.angular.z),
+
+      Vx: this.toFixedStr(velocity.linear.x),
+      Vy: this.toFixedStr(velocity.linear.y),
+      Vz: this.toFixedStr(velocity.linear.z),
+
+      selectedDbId: dbId
+    })
+
+    this.selectedBody = body
+  }
+
+  /////////////////////////////////////////////////////////
   // React method - render panel title
   //
   /////////////////////////////////////////////////////////
@@ -309,6 +356,193 @@ class PhysicsExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onKeyDownNumeric (e) {
+
+    //backspace, ENTER, ->, <-, delete, '.', ',',
+    const allowed = [8, 13, 37, 39, 46, 188, 190]
+
+    if (allowed.indexOf(e.keyCode) > -1 ||
+      (e.keyCode > 47 && e.keyCode < 58)) {
+
+      return
+    }
+
+    e.stopPropagation()
+    e.preventDefault()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  toFloat (value) {
+
+    const floatValue = parseFloat(value)
+
+    return isNaN(floatValue) ? 0 : floatValue
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  toFixedStr (float, digits = 2) {
+
+    return float.toFixed(digits).toString()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async onInputChanged (e, key) {
+
+    const state = this.react.getState()
+
+    state[key] = e.target.value
+
+    const value = e.target.value
+
+    const velocity = state.physicsCore.getVelocity(
+      this.selectedBody)
+
+    switch (key) {
+
+      case 'Vx':
+        velocity.linear.x = this.toFloat(value)
+        break
+      case 'Vy':
+        velocity.linear.y = this.toFloat(value)
+        break
+      case 'Vz':
+        velocity.linear.z = this.toFloat(value)
+        break
+
+      case 'Ax':
+        velocity.angular.x = this.toFloat(value)
+        break
+      case 'Ay':
+        velocity.angular.y = this.toFloat(value)
+        break
+      case 'Az':
+        velocity.angular.z = this.toFloat(value)
+        break
+    }
+
+  state.physicsCore.setVelocity(
+    this.selectedBody, velocity)
+
+    this.react.setState(state)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  clearVelocity () {
+
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  renderVelocity () {
+
+    const state = this.react.getState()
+
+    const disabled = !state.selectedDbId
+
+    return (
+      <div className="velocity">
+
+        <div className="row">
+
+          <Label text={'Angular:'}/>
+
+          <ContentEditable
+            onChange={(e) => this.onInputChanged(e, 'Ax')}
+            onKeyDown={(e) => this.onKeyDownNumeric(e)}
+            className="input-vel"
+            data-placeholder="Ax"
+            disabled={disabled}
+            html={state.Ax}
+          />
+
+          <ContentEditable
+            onChange={(e) => this.onInputChanged(e, 'Ay')}
+            onKeyDown={(e) => this.onKeyDownNumeric(e)}
+            className="input-vel"
+            data-placeholder="Ay"
+            disabled={disabled}
+            html={state.Ay}
+          />
+
+          <ContentEditable
+            onChange={(e) => this.onInputChanged(e, 'Az')}
+            onKeyDown={(e) => this.onKeyDownNumeric(e)}
+            className="input-vel"
+            data-placeholder="Az"
+            html={state.Az}
+          />
+
+          <button className={state.rotate ? 'active':''}
+            onClick={() => this.clearVelocity(['Ax','Ay','Az'])}
+            disabled={disabled}
+            title="Clear">
+            <span className="fa fa-times"/>
+          </button>
+
+        </div>
+
+        <div className="row">
+
+          <Label text={'Linear:'}/>
+
+          <ContentEditable
+            onChange={(e) => this.onInputChanged(e, 'Vx')}
+            onKeyDown={(e) => this.onKeyDownNumeric(e)}
+            className="input-vel"
+            data-placeholder="Vx"
+            disabled={disabled}
+            html={state.Vx}
+          />
+
+          <ContentEditable
+            onChange={(e) => this.onInputChanged(e, 'Vy')}
+            onKeyDown={(e) => this.onKeyDownNumeric(e)}
+            className="input-vel"
+            data-placeholder="Vy"
+            disabled={disabled}
+            html={state.Vy}
+          />
+
+          <ContentEditable
+            onChange={(e) => this.onInputChanged(e, 'Vz')}
+            onKeyDown={(e) => this.onKeyDownNumeric(e)}
+            className="input-vel"
+            data-placeholder="Vz"
+            disabled={disabled}
+            html={state.Vz}
+          />
+
+          <button className={state.translate ? 'active':''}
+            onClick={() => this.clearVelocity(['Vx','Vy','Vz'])}
+            disabled={disabled}
+            title="Clear">
+            <span className="fa fa-times"/>
+          </button>
+
+        </div>
+
+      </div>
+    )
+  }
+
+  /////////////////////////////////////////////////////////
   // React method - render panel controls
   //
   /////////////////////////////////////////////////////////
@@ -321,7 +555,7 @@ class PhysicsExtension extends MultiModelExtensionBase {
     } = this.react.getState()
 
     return (
-      <div>
+      <div style={{overflow: 'scroll', height: '100%'}}>
         <ReactLoader show={showLoader}/>
         {
           activateControls &&
@@ -394,6 +628,8 @@ class PhysicsExtension extends MultiModelExtensionBase {
               <label>
                 Components velocity:
               </label>
+
+              { this.renderVelocity() }
             </div>
 
             <br/><hr/>

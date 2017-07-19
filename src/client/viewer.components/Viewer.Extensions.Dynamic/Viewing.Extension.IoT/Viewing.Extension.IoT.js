@@ -29,6 +29,7 @@ class IoTExtension extends ExtensionBase {
 
     super (viewer, options)
 
+    this.onSensorEvent = this.onSensorEvent.bind(this)
     this.onSelection = this.onSelection.bind(this)
 
     this.react = this.options.react
@@ -44,13 +45,13 @@ class IoTExtension extends ExtensionBase {
       this.guid(),
       'Hotspot Data')
 
-    var controlledHotspot = null
+    this.controlledHotspot = null
 
     this.hotSpotCommand.on('hotspot.created', (hotspot) => {
 
       if (hotspot.data.controlled) {
 
-        controlledHotspot = hotspot
+        this.controlledHotspot = hotspot
 
         hotspot.hide()
       }
@@ -98,6 +99,18 @@ class IoTExtension extends ExtensionBase {
       'sensor.lux'
     ]
 
+    this.socketSvc.on(sensorEvents.join(' '),
+      this.onSensorEvent)
+
+    this.timeout = null
+  }
+
+  /////////////////////////////////////////////////////////////////
+  // Sensor event
+  //
+  /////////////////////////////////////////////////////////////////
+  onSensorEvent(data) {
+
     const passThreshold = (data) => {
 
       for(const key of Object.keys(data) ) {
@@ -111,98 +124,93 @@ class IoTExtension extends ExtensionBase {
       return false
     }
 
-    this.socketSvc.on(sensorEvents.join(' '), (data) => {
+    if (!this.controlledHotspot) {
 
-      if (!controlledHotspot) {
+      return
+    }
 
-        return
+    const state = this.react.getState()
+
+    const activeItem = state.activeItem
+
+    if (activeItem && (activeItem.id === this.controlledHotspot.id)) {
+
+      this.react.setState({
+        graphData: data
+      })
+    }
+
+    if (passThreshold(data)) {
+
+      clearTimeout(this.timeout)
+
+      this.timeout = null
+
+      this.controlledHotspot.setData({
+        strokeColor: "#FF0000",
+        fillColor: '#FF8888'
+      })
+
+      if (this.controlledHotspot) {
+
+        this.controlledHotspot.show()
       }
 
-      const state = this.react.getState()
+      const stateHostSpots = state.hotspots.filter((hotspot) => {
+        return !hotspot.controlled
+      })
 
-      const activeItem = state.activeItem
+      this.react.setState({
+        hotspots: [
+          ...stateHostSpots,
+          this.controlledHotspot.data
+        ]
+      })
 
-      if (activeItem && (activeItem.id === controlledHotspot.id)) {
+    } else {
 
-        this.react.setState({
-          graphData: data
+      this.controlledHotspot.setData({
+        strokeColor: "#4CAF50",
+        fillColor: '#4CAF50'
+      })
+
+      this.react.setState({
+        hotspots: state.hotspots.map((hotspot) => {
+
+          if (hotspot.id === this.controlledHotspot.id) {
+
+            hotspot.strokeColor = '#4CAF50'
+            hotspot.fillColor = '#4CAF50'
+          }
+
+          return hotspot
         })
-      }
+      })
 
-      if (passThreshold(data)) {
+      if (!this.timeout) {
 
-        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
 
-        this.timeout = null
+          this.timeout = null
 
-        controlledHotspot.setData({
-          strokeColor: "#FF0000",
-          fillColor: '#FF8888'
-        })
+          this.controlledHotspot.hide()
 
-        if (controlledHotspot) {
-
-          controlledHotspot.show()
-        }
-
-        const stateHostSpots = state.hotspots.filter((hotspot) => {
-          return !hotspot.controlled
-        })
-
-        this.react.setState({
-          hotspots: [
-            ...stateHostSpots,
-            controlledHotspot.data
-          ]
-        })
-
-      } else {
-
-        controlledHotspot.setData({
-          strokeColor: "#4CAF50",
-          fillColor: '#4CAF50'
-        })
-
-        this.react.setState({
-          hotspots: state.hotspots.map((hotspot) => {
-
-            if (hotspot.id === controlledHotspot.id) {
-
-              hotspot.strokeColor = '#4CAF50'
-              hotspot.fillColor = '#4CAF50'
-            }
-
-            return hotspot
+          this.react.setState({
+            hotspots: state.hotspots.filter((hotspot) => {
+              return !hotspot.controlled
+            })
           })
-        })
 
-        if (!this.timeout) {
-
-          this.timeout = setTimeout(() => {
-
-            this.timeout = null
-
-            controlledHotspot.hide()
+          if (activeItem && (activeItem.id === this.controlledHotspot.id)) {
 
             this.react.setState({
-              hotspots: state.hotspots.filter((hotspot) => {
-                return !hotspot.controlled
-              })
+              activeItem: null,
+              graphData: null
             })
-
-            if (activeItem && (activeItem.id === controlledHotspot.id)) {
-
-              this.react.setState({
-                activeItem: null,
-                graphData: null
-              })
-            }
-          }, 20 * 1000)
-        }
+          }
+        }, 20 * 1000)
       }
-    })
-
-    this.timeout = null
+    }
   }
 
   /////////////////////////////////////////////////////////////////

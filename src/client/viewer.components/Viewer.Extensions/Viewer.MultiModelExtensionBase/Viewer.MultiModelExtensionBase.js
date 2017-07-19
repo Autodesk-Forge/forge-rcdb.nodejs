@@ -24,6 +24,10 @@ export default class MultiModelExtensionBase extends
     this.onModelUnloaded      = this.onModelUnloaded.bind(this)
     this.onSelection          = this.onSelection.bind(this)
 
+    this.__onModelActivated   = this.__onModelActivated.bind(this)
+    this.__onModelUnloaded    = this.__onModelUnloaded.bind(this)
+    this.__onModelLoaded      = this.__onModelLoaded.bind(this)
+
     this.options = Object.assign({},
       defaultOptions,
       options)
@@ -73,6 +77,18 @@ export default class MultiModelExtensionBase extends
       this.viewer.removeEventListener(
         event.id, this[event.handler])
     })
+
+    if (this.eventSink) {
+
+      this.eventSink.off('model.loaded',
+        this.__onModelLoaded)
+
+      this.eventSink.off('model.activated',
+        this.__onModelActivated)
+
+      this.eventSink.off('model.unloaded',
+        this.__onModelUnloaded)
+    }
 
     return true
   }
@@ -202,6 +218,32 @@ export default class MultiModelExtensionBase extends
   }
 
   /////////////////////////////////////////////////////////
+  //Sink Events
+  //
+  /////////////////////////////////////////////////////////
+  __onModelLoaded (event) {
+
+    this.models = [...this.models, event.model]
+
+    this.onModelBeginLoad (event)
+  }
+
+  __onModelActivated (event) {
+
+    this.onModelActivated (event)
+  }
+
+  __onModelUnloaded (event) {
+
+    this.models = this.models.filter((model) => {
+
+      return model.guid !== event.model.guid
+    })
+
+    this.onModelUnloaded(event)
+  }
+
+  /////////////////////////////////////////////////////////
   // Initialize all events for the extension
   // Each event will invoke a predefined handler
   // implemented of not by the derived extension
@@ -214,29 +256,15 @@ export default class MultiModelExtensionBase extends
       // event object passed in options
       this.eventSink = this.options.eventSink
 
-      this.eventSink.on('model.loaded', (event) => {
+      this.eventSink.on('model.loaded',
+        this.__onModelLoaded)
 
-        this.models = [...this.models, event.model]
+      this.eventSink.on('model.activated',
+        this.__onModelActivated)
 
-        this.onModelBeginLoad (event)
-      })
-
-      this.eventSink.on('model.activated', (event) => {
-
-        this.onModelActivated (event)
-      })
-
-      this.eventSink.on('model.unloaded', (event) => {
-
-        this.models = this.models.filter((model) => {
-
-          return model.guid !== event.model.guid
-        })
-
-        this.onModelUnloaded(event)
-      })
+      this.eventSink.on('model.unloaded',
+        this.__onModelUnloaded)
     }
-
 
     this.viewerEvents = [
       {
