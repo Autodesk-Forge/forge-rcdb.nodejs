@@ -137,6 +137,14 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
 		return true
 	}
 
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onModelRootLoaded () {
+
+    this.options.loader.show(false)
+  }
+
   /////////////////////////////////////////////////////////
   //
   //
