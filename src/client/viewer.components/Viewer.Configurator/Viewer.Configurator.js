@@ -839,7 +839,7 @@ class ViewerConfigurator extends BaseComponent {
   //
   /////////////////////////////////////////////////////////
   @autobind
-  onResize () {
+  onResize (event) {
 
     if (this.state.renderExtension) {
 

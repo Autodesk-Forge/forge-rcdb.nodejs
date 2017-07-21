@@ -24,6 +24,8 @@ class DatabaseView extends React.Component {
 
     super()
 
+    this.onUpdatedDbItem = this.onUpdatedDbItem.bind(this)
+
     this.state = {
       selectedDbItem: null,
       filteredDbItems:[],
@@ -65,10 +67,7 @@ class DatabaseView extends React.Component {
       this.mounted = true
 
       this.socketSvc.on('update.dbItem',
-        (updatedDbItem) => {
-
-          this.updateDbItem(updatedDbItem)
-        })
+        this.onUpdatedDbItem)
 
       this.materialSvc.getMaterials(
         'rcdb').then((materials) => {
@@ -86,11 +85,21 @@ class DatabaseView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  onUpdatedDbItem (dbItem) {
+
+    this.updateDbItem(dbItem)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   componentWillUnmount () {
 
-    this.materialSvc.off()
+    this.socketSvc.off('update.dbItem',
+      this.onUpdatedDbItem)
 
-    this.socketSvc.off()
+    this.materialSvc.off()
 
     this.mounted = false
   }

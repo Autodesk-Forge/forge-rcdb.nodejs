@@ -32,9 +32,13 @@ class PhysicsExtension extends MultiModelExtensionBase {
 
     super (viewer, options)
 
+    this.onTransformSelection = this.onTransformSelection.bind(this)
+    this.onSimulationStep = this.onSimulationStep.bind(this)
+    this.onEnablePhysics = this.onEnablePhysics.bind(this)
     this.onScriptLoaded = this.onScriptLoaded.bind(this)
-
     this.renderTitle = this.renderTitle.bind(this)
+    this.onTransform = this.onTransform.bind(this)
+    this.onReset = this.onReset.bind(this)
 
     this.react = options.react
   }
@@ -72,9 +76,10 @@ class PhysicsExtension extends MultiModelExtensionBase {
 
       activateControls: false,
       modelTransformer: null,
-      selectedDbId: null,
+      selectedBody: null,
       physicsCore: null,
       showLoader: true,
+      transform: null,
 
       Vx:'', Vy:'', Vz:'',
       Ax:'', Ay:'', Az:''
@@ -168,12 +173,13 @@ class PhysicsExtension extends MultiModelExtensionBase {
 
     const physicsCore =
       await this.viewer.loadExtension(
-        PhysicsCoreExtensionId, {
-          fps: this.fps
-        })
+        PhysicsCoreExtensionId)
 
     await physicsCore.loadPhysicModel(
       this.viewer.model)
+
+    physicsCore.on('simulation.step',
+      this.onSimulationStep)
 
     this.react.setState({
       showLoader: false,
@@ -234,66 +240,100 @@ class PhysicsExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  onExtensionLoaded (event) {
+
+    const transformExtensionId =
+      'Viewing.Extension.Transform'
+
+    if (event.extensionId === transformExtensionId) {
+
+      const transform = this.viewer.getExtension(
+        transformExtensionId)
+
+      transform.on('selection',
+        this.onTransformSelection)
+
+      transform.on('transform',
+        this.onTransform)
+
+      this.react.setState({
+        transform
+      })
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onTransformSelection (selection) {
+
+    console.log(selection)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onTransform (data) {
+
+    console.log(data)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  setSelectedBody (body) {
+
+    if (!body) {
+
+      return this.react.setState({
+
+        Ax: '', Ay: '', Az: '',
+        Vx: '', Vy: '', Vz: '',
+
+        selectedBody: null
+      })
+    }
+
+    const { physicsCore } = this.react.getState()
+
+    const velocity = physicsCore.getVelocity(body)
+
+    this.react.setState({
+
+      Ax: this.toFixedStr(velocity.angular.x * 180/Math.PI),
+      Ay: this.toFixedStr(velocity.angular.y * 180/Math.PI),
+      Az: this.toFixedStr(velocity.angular.z * 180/Math.PI),
+
+      Vx: this.toFixedStr(velocity.linear.x),
+      Vy: this.toFixedStr(velocity.linear.y),
+      Vz: this.toFixedStr(velocity.linear.z),
+
+      selectedBody: body
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   onSelection (event) {
 
     const { physicsCore } = this.react.getState()
 
     if (!event.selections.length) {
 
-      return this.react.setState({
-        Ax: '', Ay: '', Az: '',
-        Vx: '', Vy: '', Vz: '',
-        selectedDbId: null
-      })
+      return this.setSelectedBody(null)
     }
 
     const selection = event.selections[0]
 
-    const dbId = selection.dbIdArray[0]
+    const body = physicsCore.getRigidBody(
+      selection.dbIdArray[0])
 
-    const body = physicsCore.getRigidBody(dbId)
-
-    const velocity = physicsCore.getVelocity(body)
-
-    this.react.setState({
-
-      Ax: this.toFixedStr(velocity.angular.x),
-      Ay: this.toFixedStr(velocity.angular.y),
-      Az: this.toFixedStr(velocity.angular.z),
-
-      Vx: this.toFixedStr(velocity.linear.x),
-      Vy: this.toFixedStr(velocity.linear.y),
-      Vz: this.toFixedStr(velocity.linear.z),
-
-      selectedDbId: dbId
-    })
-
-    this.selectedBody = body
-  }
-
-  /////////////////////////////////////////////////////////
-  // React method - render panel title
-  //
-  /////////////////////////////////////////////////////////
-  renderTitle (docked) {
-
-    const spanClass = docked
-      ? 'fa fa-chain-broken'
-      : 'fa fa-chain'
-
-    return (
-      <div className="title">
-        <label>
-          Physics
-        </label>
-        <div className="physics-controls">
-          <button onClick={() => this.setDocking(docked)}
-            title="Toggle docking mode">
-            <span className={spanClass}/>
-          </button>
-        </div>
-      </div>
-    )
+    this.setSelectedBody(body)
   }
 
   /////////////////////////////////////////////////////////
@@ -305,6 +345,38 @@ class PhysicsExtension extends MultiModelExtensionBase {
     const { physicsCore } = this.react.getState()
 
     physicsCore.runAnimation(run)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onReset () {
+
+    const { physicsCore, selectedBody} =
+      this.react.getState()
+
+    physicsCore.reset ()
+
+    this.setSelectedBody(
+      selectedBody)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onSimulationStep () {
+
+    const { selectedBody} = this.react.getState()
+
+    if (selectedBody) {
+
+      this.setSelectedBody(
+        selectedBody)
+    }
+
+    this.fps.tick()
   }
 
   /////////////////////////////////////////////////////////
@@ -361,8 +433,8 @@ class PhysicsExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   onKeyDownNumeric (e) {
 
-    //backspace, ENTER, ->, <-, delete, '.', ',',
-    const allowed = [8, 13, 37, 39, 46, 188, 190]
+    //backspace, ENTER, ->, <-, delete, '.', '-', ',',
+    const allowed = [8, 13, 37, 39, 46, 188, 189, 190]
 
     if (allowed.indexOf(e.keyCode) > -1 ||
       (e.keyCode > 47 && e.keyCode < 58)) {
@@ -398,16 +470,7 @@ class PhysicsExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  async onInputChanged (e, key) {
-
-    const state = this.react.getState()
-
-    state[key] = e.target.value
-
-    const value = e.target.value
-
-    const velocity = state.physicsCore.getVelocity(
-      this.selectedBody)
+  setVelocityByKey (key, value, velocity) {
 
     switch (key) {
 
@@ -422,18 +485,42 @@ class PhysicsExtension extends MultiModelExtensionBase {
         break
 
       case 'Ax':
-        velocity.angular.x = this.toFloat(value)
+        velocity.angular.x =
+          this.toFloat(value) * Math.PI/180
         break
       case 'Ay':
-        velocity.angular.y = this.toFloat(value)
+        velocity.angular.y =
+          this.toFloat(value) * Math.PI/180
         break
       case 'Az':
-        velocity.angular.z = this.toFloat(value)
+        velocity.angular.z =
+          this.toFloat(value) * Math.PI/180
         break
     }
+  }
 
-  state.physicsCore.setVelocity(
-    this.selectedBody, velocity)
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onInputChanged (e, key) {
+
+    const state = this.react.getState()
+
+    const value = e.target.value
+
+    state[key] = value
+
+    const velocity =
+      state.physicsCore.getVelocity(
+        this.selectedBody)
+
+    this.setVelocityByKey(
+      key, value, velocity)
+
+    state.physicsCore.setVelocity(
+      this.selectedBody,
+      velocity)
 
     this.react.setState(state)
   }
@@ -442,8 +529,52 @@ class PhysicsExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  clearVelocity () {
+  clearVelocity (keys) {
 
+    const state = this.react.getState()
+
+    const velocity =
+      state.physicsCore.getVelocity(
+        this.selectedBody)
+
+    keys.forEach((key) => {
+
+      state[key] = this.toFixedStr(0)
+
+      this.setVelocityByKey(
+        key, 0.0, velocity)
+    })
+
+    state.physicsCore.setVelocity(
+      this.selectedBody,
+      velocity)
+
+    this.react.setState(state)
+  }
+
+  /////////////////////////////////////////////////////////
+  // React method - render panel title
+  //
+  /////////////////////////////////////////////////////////
+  renderTitle (docked) {
+
+    const spanClass = docked
+      ? 'fa fa-chain-broken'
+      : 'fa fa-chain'
+
+    return (
+      <div className="title">
+        <label>
+          Physics
+        </label>
+        <div className="physics-controls">
+          <button onClick={() => this.setDocking(docked)}
+            title="Toggle docking mode">
+            <span className={spanClass}/>
+          </button>
+        </div>
+      </div>
+    )
   }
 
   /////////////////////////////////////////////////////////
@@ -454,7 +585,7 @@ class PhysicsExtension extends MultiModelExtensionBase {
 
     const state = this.react.getState()
 
-    const disabled = !state.selectedDbId
+    const disabled = !state.selectedBody
 
     return (
       <div className="velocity">
@@ -573,14 +704,14 @@ class PhysicsExtension extends MultiModelExtensionBase {
               </label>
               <div>
                 <Switch
-                  onChange={(checked) => this.onEnablePhysics(checked)}
+                  onChange={this.onEnablePhysics}
                   checked={false}
                 />
                 <label>
                   Run
                 </label>
                 <button className="reset"
-                  onClick={()=> physicsCore.reset()}>
+                  onClick={this.onReset}>
                   <span className="fa fa-refresh"/>
                   <label>
                     Reset

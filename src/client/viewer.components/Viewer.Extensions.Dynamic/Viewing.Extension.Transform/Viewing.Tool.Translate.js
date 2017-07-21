@@ -154,7 +154,7 @@ export default class TranslateTool extends EventsEmitter {
           return
         }
 
-        if(event.selections && event.selections.length) {
+        if (event.selections.length) {
 
           var selection = event.selections[0]
 
@@ -225,6 +225,8 @@ export default class TranslateTool extends EventsEmitter {
 
     this.initializeSelection(
       this._hitPoint)
+
+    this.emit('selection', selection)
   }
 
   ///////////////////////////////////////////////////////////////////////////
@@ -297,6 +299,8 @@ export default class TranslateTool extends EventsEmitter {
         this.onCameraChanged)
 
       this._viewer.impl.sceneUpdated(true)
+
+      this.emit('selection', null)
     }
   }
 

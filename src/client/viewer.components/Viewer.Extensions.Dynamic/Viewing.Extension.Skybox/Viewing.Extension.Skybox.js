@@ -134,6 +134,11 @@ class SkyboxExtension extends MultiModelExtensionBase {
     this.viewer.setViewCube('front')
 
     nav.toPerspective()
+
+    setTimeout(() => {
+      this.viewer.autocam.setHomeViewFrom(
+        nav.getCamera())
+    }, 2000)
   }
 
   /////////////////////////////////////////////////////////

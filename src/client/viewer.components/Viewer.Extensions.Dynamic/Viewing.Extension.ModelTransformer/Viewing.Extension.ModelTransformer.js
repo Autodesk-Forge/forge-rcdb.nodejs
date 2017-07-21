@@ -391,8 +391,8 @@ class ModelTransformerExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   onKeyDownNumeric (e) {
 
-    //backspace, ENTER, ->, <-, delete, '.', ',',
-    const allowed = [8, 13, 37, 39, 46, 188, 190]
+    //backspace, ENTER, ->, <-, delete, '.', '-', ',',
+    const allowed = [8, 13, 37, 39, 46, 188, 189, 190]
 
     if (allowed.indexOf(e.keyCode) > -1 ||
       (e.keyCode > 47 && e.keyCode < 58)) {

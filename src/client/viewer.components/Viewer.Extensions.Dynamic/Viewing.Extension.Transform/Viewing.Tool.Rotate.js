@@ -109,7 +109,7 @@ export default class RotateTool extends EventsEmitter {
       return
     }
 
-    if (event.selections && event.selections.length) {
+    if (event.selections.length) {
 
       var selection = event.selections[0]
 
@@ -138,7 +138,9 @@ export default class RotateTool extends EventsEmitter {
 
       this.drawControl()
 
-      //this.viewer.fitToView(this.selection.dbIdArray)
+      this.viewer.fitToView(this.selection.dbIdArray)
+
+      this.emit('selection', selection)
 
     } else {
 
@@ -162,6 +164,8 @@ export default class RotateTool extends EventsEmitter {
 
       this.viewer.impl.sceneUpdated(true)
     }
+
+    this.emit('selection', null)
   }
 
   ///////////////////////////////////////////////////////////////////////////
