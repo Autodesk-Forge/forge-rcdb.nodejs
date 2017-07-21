@@ -269,18 +269,19 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
 
       return str.split(separator).map((element) => {
 
-        return parseFloat(element) * 3.5
+        return parseFloat(element)
       })
     }
 
     const dbIds = await Toolkit.getLeafNodes(model)
 
-    const tasks = dbIds.map(async(dbId, idx) => {
+    const tasks = dbIds.map(async(dbId) => {
 
       const vLinear = await Toolkit.getProperty (
         model, dbId, 'vInit', '0;0;0')
 
-      const mass = (idx < dbIds.length - 1) ? 1.0 : 0
+      const mass = await Toolkit.getProperty (
+        model, dbId, 'LMVMass', 1.0)
 
       const fragIds = Toolkit.getLeafFragIds(
         this.viewer.model, dbId)
@@ -293,13 +294,13 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
 
       return {
         vLinear: parseArray(vLinear.displayValue),
+        mass: mass.displayValue,
         vAngular: [0,0,0],
         quaternion,
         position,
         fragIds,
         scale,
-        dbId,
-        mass
+        dbId
       }
     })
 
