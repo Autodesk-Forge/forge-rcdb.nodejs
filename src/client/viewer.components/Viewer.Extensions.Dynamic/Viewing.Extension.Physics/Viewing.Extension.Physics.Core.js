@@ -221,19 +221,38 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
         ? geometry.vb
         : attributes.position.array
 
-      for (var i = 0; i < positions.length; i += stride) {
+      const indices = attributes.index.array || geometry.ib
 
-        const vA = new THREE.Vector3()
-        const vB = new THREE.Vector3()
-        const vC = new THREE.Vector3()
+      const offsets = [{
+        count: indices.length,
+        index: 0,
+        start: 0
+      }]
 
-        vA.fromArray(positions, i)
-        vB.fromArray(positions, i + 1)
-        vC.fromArray(positions, i + 2)
+      for (var oi = 0, ol = offsets.length; oi < ol; ++oi) {
 
-        vertexArray.push(vA)
-        vertexArray.push(vB)
-        vertexArray.push(vC)
+        var start = offsets[oi].start
+        var count = offsets[oi].count
+        var index = offsets[oi].index
+
+        for (var i = start, il = start + count; i < il; i += 3) {
+
+           const a = index + indices[i]
+           const b = index + indices[i + 1]
+           const c = index + indices[i + 2]
+
+           const vA = new THREE.Vector3()
+           const vB = new THREE.Vector3()
+           const vC = new THREE.Vector3()
+
+           vA.fromArray(positions, a * stride)
+           vB.fromArray(positions, b * stride)
+           vC.fromArray(positions, c * stride)
+
+           vertexArray.push(vA)
+           vertexArray.push(vB)
+           vertexArray.push(vC)
+         }
       }
     })
 
