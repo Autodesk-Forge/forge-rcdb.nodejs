@@ -186,6 +186,8 @@ class PhysicsExtension extends MultiModelExtensionBase {
       showLoader: false,
       physicsCore
     })
+
+    this.options.loader.show(false)
   }
 
   /////////////////////////////////////////////////////////
@@ -195,8 +197,6 @@ class PhysicsExtension extends MultiModelExtensionBase {
   onModelRootLoaded (event) {
 
     super.onModelRootLoaded()
-
-    this.options.loader.show(false)
 
     this.viewer.navigation.toPerspective()
   }
