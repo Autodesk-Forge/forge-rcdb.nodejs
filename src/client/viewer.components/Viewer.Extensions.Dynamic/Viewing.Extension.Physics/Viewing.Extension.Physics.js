@@ -174,7 +174,8 @@ class PhysicsExtension extends MultiModelExtensionBase {
 
     const physicsCore =
       await this.viewer.loadExtension(
-        PhysicsCoreExtensionId)
+        PhysicsCoreExtensionId,
+        this.options)
 
     await physicsCore.loadPhysicModel(
       this.viewer.model)
