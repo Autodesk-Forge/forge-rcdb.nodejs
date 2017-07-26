@@ -304,7 +304,7 @@ class PhysicsExtension extends MultiModelExtensionBase {
 
     physicsCore.setRigidBodyTransform(
       selectedBody, transform)
-  
+
     physicsCore.activateAllRigidBodies()
   }
 
