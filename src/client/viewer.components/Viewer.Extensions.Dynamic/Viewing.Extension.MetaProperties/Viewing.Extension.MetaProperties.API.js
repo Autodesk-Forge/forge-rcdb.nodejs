@@ -112,6 +112,20 @@ export default class MetaAPI extends ClientAPI {
   //
   //
   /////////////////////////////////////////////////////////
+  deleteNodeMetaProperties (dbId) {
+
+    const url = `${dbId}/properties`
+
+    return this.ajax({
+      url: url,
+      method: 'DELETE'
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   uploadResource (resourceId, file, opts = {}) {
 
     const url = `/resources/${resourceId}`
@@ -135,5 +149,23 @@ export default class MetaAPI extends ClientAPI {
       url: url,
       method: 'DELETE'
     })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  exportProperties (type) {
+
+    const url = `${this.apiUrl}/properties/export/${type}`
+
+    const a = document.createElement('a')
+
+    a.download = 'MetaProperties.' + type
+    a.setAttribute('href', url)
+
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
   }
 }

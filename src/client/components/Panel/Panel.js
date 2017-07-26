@@ -43,7 +43,7 @@ class Panel extends EventsEmitter {
     super ()
 
     this.props = Object.assign({},
-      props, Panel.defaultProps)
+      Panel.defaultProps, props)
 
     this.onStartDragging = this.onStartDragging.bind(this)
     this.onStartResizing = this.onStartResizing.bind(this)
@@ -73,16 +73,19 @@ class Panel extends EventsEmitter {
     this.id = this.props.id
 
     this.react.setState({
+
       width: props.width || 300,
       left: props.left || 10,
       top: props.top || 10,
       height: 35
+
+    }).then(() => {
+
+      const targetHeight = props.height || 300
+
+      this.runAnimation(
+        35, targetHeight, 1.0)
     })
-
-    const targetHeight = props.height || 300
-
-    this.runAnimation(
-      35, targetHeight, 1.0)
   }
 
   /////////////////////////////////////////////////////////
@@ -378,7 +381,6 @@ class Panel extends EventsEmitter {
       <div className="resizer"
         onTouchStart={this.onStartResizing}
         onMouseDown={this.onStartResizing}>
-
       </div>
     )
   }

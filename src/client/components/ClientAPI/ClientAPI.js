@@ -76,7 +76,9 @@ export default class ClientAPI {
       Object.assign(params, {
         success: (response) => {
 
-          resolve(response)
+          return (params.rawBody && response.body)
+            ? resolve (response.body)
+            : resolve(response)
         },
         error: function (error) {
 

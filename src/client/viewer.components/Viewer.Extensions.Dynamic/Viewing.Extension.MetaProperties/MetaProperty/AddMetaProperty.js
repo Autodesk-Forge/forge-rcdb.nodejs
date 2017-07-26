@@ -37,11 +37,9 @@ export default class CreateMetaProperty
 
     this.onDrop = this.onDrop.bind(this)
 
-    this.state = Object.assign({}, {
-        metaType: 'Text'
-      }, props)
-
-    this.props.onChanged(this.state)
+    this.state = Object.assign({
+      metaType: 'Text'
+    }, props)
   }
 
   /////////////////////////////////////////////////////////
@@ -65,9 +63,7 @@ export default class CreateMetaProperty
         {}, this.state, state)
 
       this.setState(newState, () => {
-
         this.updateOK()
-
         resolve()
       })
 
@@ -85,11 +81,11 @@ export default class CreateMetaProperty
         case 'Link':
 
           return this.props.onChanged({
+            link: newState.link ? newState.link.trim():null,
             displayCategory: newState.displayCategory,
             displayValue: newState.displayValue,
             displayName: newState.displayName,
-            metaType: newState.metaType,
-            link: newState.link.trim()
+            metaType: newState.metaType
           })
 
         case 'File':
@@ -128,13 +124,13 @@ export default class CreateMetaProperty
   /////////////////////////////////////////////////////////
   onInputChanged (e, key) {
 
-    const state = this.state
+    const newState = Object.assign({}, this.state)
 
-    state[key] = !!e.target.value
+    newState[key] = !!e.target.value
       ? e.target.value.replace(/&nbsp;/g, '')
       : e.target.value
 
-    this.assignState(state)
+    this.assignState(newState)
   }
 
   /////////////////////////////////////////////////////////

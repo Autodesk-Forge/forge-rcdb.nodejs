@@ -1,6 +1,5 @@
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table'
 import Toolkit from 'Viewer.Toolkit'
-import BarChart from 'BarChart'
 import React from 'react'
 
 class PropertyList extends React.Component {

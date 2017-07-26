@@ -2,7 +2,7 @@
 import EventsEmitter from 'EventsEmitter'
 import ContextMenu from 'ContextMenu'
 
-export default class MetaContextMenu extends
+export default class DataContextMenu extends
   EventsEmitter.Composer (Autodesk.Viewing.UI.ObjectContextMenu) {
 
   /////////////////////////////////////////////////////////
@@ -22,21 +22,19 @@ export default class MetaContextMenu extends
   /////////////////////////////////////////////////////////
   buildMenu (event, node) {
 
-    const isModelOverride = !!node.props.metaType
-
     const menu = [{
       title: 'Edit property ...',
       className: 'fa fa-edit',
       target: () => {
         this.emit('context.property.edit',
-          node.toMetaProperty(), isModelOverride)
+          node.toMetaProperty())
       }
     },{
       title: 'Delete property',
       className: 'fa fa-times',
       target: () => {
         this.emit('context.property.delete',
-          node.toMetaProperty(), isModelOverride)
+          node.toMetaProperty())
       }
     }]
 

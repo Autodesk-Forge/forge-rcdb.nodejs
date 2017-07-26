@@ -28,7 +28,7 @@
   }
 
   .content {
-    background-color: #fafafb;
+    background-color: #c1c1c1;
     text-align: left;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -45,7 +45,6 @@
   /////////////////////////////////////////////////////////
   .item-list-container {
     height: calc(100% - 10px);
-    background: #fafafb;
     overflow: auto;
     padding: 8px;
 
@@ -297,55 +296,4 @@
 
 .IoT2.popover.left > .arrow {
   transform: translateY(-26px);
-}
-
-/////////////////////////////////////////////////////////
-// Alert dialog
-//
-/////////////////////////////////////////////////////////
-.dematic-dlg {
-
-  .title img:after,
-  .title img {
-    content: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAABJQTFRF/KcAAAAA/KcA/KcA/KcA////xg75iwAAAAR0Uk5TAADeHc8u4tIAAAABYktHRAX4b+nHAAAACXBIWXMAAABIAAAASABGyWs+AAAAF0lEQVQoz2NwAQInA0E4YBgVGBVACAAAlpZFgSNAq4oAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTYtMDktMjNUMTU6MTM6MjctMDQ6MDBfH8e4AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE2LTA5LTIzVDE1OjEzOjI3LTA0OjAwLkJ/BAAAAABJRU5ErkJggg==');
-  }
-}
-
-.alert-details-dlg {
-  left: calc(50% - 200px) !important;
-  top: calc(30% - 100px) !important;
-  width: 400px !important;
-
-  .content {
-    padding: 20px;
-  }
-
-  button.ok {
-    background: #0478da !important;
-    border: 1px solid #0578da;
-    color: #ffffff;
-
-    span {
-      color: #ffffff !important;
-    }
-  }
-
-  button.ok:hover {
-
-    span {
-      color: #FF9800 !important;
-    }
-  }
-
-  .inventory-wrap {
-    border: 1px solid #d2d2d2;
-    margin-top: 16px;
-    padding: 5px;
-
-    .label {
-      font-weight: bold;
-      font-size: 100%;
-      color: #000000;
-    }
-  }
 }

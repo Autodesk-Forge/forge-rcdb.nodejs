@@ -15,13 +15,13 @@
 // DOES NOT WARRANT THAT THE OPERATION OF THE PROGRAM WILL BE
 // UNINTERRUPTED OR ERROR FREE.
 /////////////////////////////////////////////////////////////////////
-import MetaTreeDelegate from './MetaTreeDelegate'
+import DataTreeDelegate from './DataTreeDelegate'
 import { TreeView } from 'TreeView'
 import ReactDOM from 'react-dom'
-import './MetaTreeView.scss'
+import './DataTreeView.scss'
 import React from 'react'
 
-export default class MetaTreeView extends React.Component {
+export default class DataTreeView extends React.Component {
 
   /////////////////////////////////////////////////////////
   //
@@ -35,22 +35,22 @@ export default class MetaTreeView extends React.Component {
       props.menuContainer)
 
     this.delegate.on('property.edit',
-      (metaProperty, isModelOverride) => {
+      (metaProperty) => {
 
         if (this.props.onEditProperty) {
 
           return this.props.onEditProperty (
-            metaProperty, isModelOverride)
+            metaProperty)
         }
       })
 
     this.delegate.on('property.delete',
-      (metaProperty, isModelOverride) => {
+      (metaProperty) => {
 
         if (this.props.onDeleteProperty) {
 
           return this.props.onDeleteProperty (
-            metaProperty, isModelOverride)
+            metaProperty)
         }
       })
 
@@ -88,13 +88,12 @@ export default class MetaTreeView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  loadTree (displayName, properties, dbId) {
+  loadTree (displayName, properties) {
 
     this.delegate.setProperties(properties)
 
     const rootNode = this.delegate.createRootNode({
-      displayName,
-      dbId
+      displayName
     })
 
     this.tree = new TreeView (
@@ -102,7 +101,7 @@ export default class MetaTreeView extends React.Component {
         excludeRoot: false
       })
 
-    rootNode.expand()
+    rootNode.expand ()
   }
 
   /////////////////////////////////////////////////////////
@@ -113,8 +112,7 @@ export default class MetaTreeView extends React.Component {
 
     this.loadTree (
       this.props.displayName,
-      this.props.properties,
-      this.props.dbId)
+      this.props.properties)
   }
 
   /////////////////////////////////////////////////////////
@@ -140,8 +138,7 @@ export default class MetaTreeView extends React.Component {
 
       this.loadTree (
         props.displayName,
-        props.properties,
-        props.dbId)
+        props.properties)
     }
   }
 

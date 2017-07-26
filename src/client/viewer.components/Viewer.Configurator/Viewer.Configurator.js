@@ -77,10 +77,6 @@ class ViewerConfigurator extends BaseComponent {
 
         this.props.setViewerEnv (viewerEnv)
 
-        Autodesk.Viewing.setEndpointAndApi(
-          window.location.origin + '/lmv-proxy-2legged',
-          'modelDerivativeV2')
-
         Autodesk.Viewing.Private.memoryOptimizedSvfLoading = true
       }
 
@@ -303,19 +299,19 @@ class ViewerConfigurator extends BaseComponent {
   @autobind
   pushViewerPanel (viewer) {
 
-    return (extension, opts = {}) => {
+    return (renderable, opts = {}) => {
 
       const nbPanels = this.state.viewerPanels.length
 
-      const panelId = 'panel-' + extension.id
+      const panelId = renderable.id
 
       const props = Object.assign({
           left: 10 + 50 * nbPanels,
           top: 10 + 55 * nbPanels
         }, opts, {
         container: viewer.container,
-        renderable: extension,
         id: panelId,
+        renderable,
         react: {
           setState: (state) => {
 
@@ -363,14 +359,12 @@ class ViewerConfigurator extends BaseComponent {
   //
   /////////////////////////////////////////////////////////
   @autobind
-  popViewerPanel (extensionId) {
-
-    const targetPanelId = 'panel-' + extensionId
+  popViewerPanel (panelId) {
 
     return new Promise ((resolve) => {
 
       const targetPanel = _.find(this.state.viewerPanels, {
-        id: targetPanelId
+        id: panelId
       })
 
       targetPanel
@@ -378,7 +372,7 @@ class ViewerConfigurator extends BaseComponent {
 
         const viewerPanels =
           this.state.viewerPanels.filter((panel) => {
-            return (panel.id !== targetPanelId)
+            return (panel.id !== panelId)
           })
 
           this.assignState({
@@ -656,7 +650,8 @@ class ViewerConfigurator extends BaseComponent {
           case 'Local':
 
             const localOptions = {
-
+              placementTransform: this.buildTransform(
+                modelInfo.transform)
             }
 
             viewer.loadModel(modelInfo.path, localOptions, (model) => {
@@ -677,6 +672,13 @@ class ViewerConfigurator extends BaseComponent {
 
           case 'AutodeskProduction':
 
+            const lmvProxy =
+              modelInfo.proxy || '/lmv-proxy-2legged'
+
+            Autodesk.Viewing.setEndpointAndApi(
+              window.location.origin + lmvProxy,
+              'modelDerivativeV2')
+
             this.viewerDocument =
               await this.loadDocument(modelInfo.urn)
 
@@ -685,13 +687,11 @@ class ViewerConfigurator extends BaseComponent {
               modelInfo.pathIndex || 0,
               modelInfo.role || ['3d', '2d'])
 
-            const placementTransform = this.buildTransform(
-              modelInfo.transform)
-
             const loadOptions = {
               sharedPropertyDbPath:
                 this.viewerDocument.getPropertyDbPath(),
-              placementTransform
+              placementTransform: this.buildTransform(
+                modelInfo.transform)
             }
 
             viewer.loadModel(path, loadOptions, (model) => {
@@ -868,7 +868,7 @@ class ViewerConfigurator extends BaseComponent {
 
     const layout = dbModel.layout
 
-    switch (layout ? layout.type : 'default') {
+    switch (layout ? layout.type : 'none') {
 
       case 'flexLayoutLeft':
         return (
@@ -914,6 +914,7 @@ class ViewerConfigurator extends BaseComponent {
           </ReflexContainer>
         )
 
+      case 'none':
       default:
         return this.renderModel(modelInfo)
     }

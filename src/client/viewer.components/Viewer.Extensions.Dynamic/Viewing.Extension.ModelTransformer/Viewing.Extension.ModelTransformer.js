@@ -25,8 +25,13 @@ class ModelTransformerExtension extends MultiModelExtensionBase {
     super (viewer, options)
 
     this.onDeactivate = this.onDeactivate.bind(this)
+
     this.renderTitle = this.renderTitle.bind(this)
+
     this.onTransform = this.onTransform.bind(this)
+
+    this.onTransformSelection =
+      this.onTransformSelection.bind(this)
 
     this.tooltip = new Tooltip(viewer, {
       stroke: '#00FF00',
@@ -95,6 +100,10 @@ class ModelTransformerExtension extends MultiModelExtensionBase {
           fullTransform)
 
         transformExtension.on(
+          'selection',
+          this.onTransformSelection)
+
+        transformExtension.on(
           'transform',
           this.onTransform)
 
@@ -121,6 +130,10 @@ class ModelTransformerExtension extends MultiModelExtensionBase {
 
     console.log(
       'Viewing.Extension.ModelTransformer unloaded')
+
+    const {transformExtension} = this.react.getState()
+
+    transformExtension.off()
 
     this.viewer.unloadExtension(
       'Viewing.Extension.Transform')
@@ -293,6 +306,8 @@ class ModelTransformerExtension extends MultiModelExtensionBase {
 
       this.setTransformState (transform)
     }
+
+    this.emit('transform', data)
   }
 
   /////////////////////////////////////////////////////////
@@ -383,6 +398,19 @@ class ModelTransformerExtension extends MultiModelExtensionBase {
         this.clearTransformState ()
       }
     }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onTransformSelection (transformSelection) {
+
+    this.react.setState({
+      transformSelection
+    })
+
+    this.emit('transformSelection', transformSelection)
   }
 
   /////////////////////////////////////////////////////////
@@ -656,6 +684,7 @@ class ModelTransformerExtension extends MultiModelExtensionBase {
       await this.react.popRenderExtension(id)
 
       await this.react.pushViewerPanel(this, {
+        className: this.className,
         height: 250,
         width: 300
       })
@@ -706,6 +735,12 @@ class ModelTransformerExtension extends MultiModelExtensionBase {
     const disabled = state.fullTransform
       ? !model
       : !selection
+
+    const pickDisabled =
+      !selection ||
+      !state.translate ||
+      !state.transformSelection ||
+      state.transformSelection.type !== 'translate'
 
     return (
       <div className="controls">
@@ -821,8 +856,8 @@ class ModelTransformerExtension extends MultiModelExtensionBase {
           />
 
           <button className={state.pick ? 'active':''}
-            disabled={!(state.translate && selection)}
             onClick={() => this.pickPosition() }
+            disabled={pickDisabled}
             title="Pick position">
             <span className="fa fa-crosshairs"/>
           </button>

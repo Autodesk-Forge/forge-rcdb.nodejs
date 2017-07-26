@@ -76,6 +76,7 @@ class PhysicsExtension extends MultiModelExtensionBase {
 
       activateControls: false,
       modelTransformer: null,
+      unSelectedBody: null,
       selectedBody: null,
       physicsCore: null,
       showLoader: true,
@@ -266,9 +267,26 @@ class PhysicsExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onTransformSelection (selection) {
+  onTransformSelection () {
 
-    console.log(selection)
+    const { physicsCore, selectedBody, unSelectedBody } =
+      this.react.getState()
+
+    if (selectedBody) {
+
+      physicsCore.groundRigidBody(
+        selectedBody, true)
+
+      selectedBody.setActivationState(4)
+    }
+
+    if (unSelectedBody) {
+
+      physicsCore.groundRigidBody(
+        unSelectedBody, false)
+
+      unSelectedBody.setActivationState(4)
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -277,7 +295,17 @@ class PhysicsExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   onTransform (data) {
 
-    console.log(data)
+    const { physicsCore, selectedBody } =
+      this.react.getState()
+
+    const transform =
+      physicsCore.getFragmentTransform(
+        data.fragIds[0])
+
+    physicsCore.setRigidBodyTransform(
+      selectedBody, transform)
+  
+    physicsCore.activateAllRigidBodies()
   }
 
   /////////////////////////////////////////////////////////
@@ -286,6 +314,9 @@ class PhysicsExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   setSelectedBody (body) {
 
+    const { physicsCore, selectedBody } =
+      this.react.getState()
+
     if (!body) {
 
       return this.react.setState({
@@ -293,13 +324,12 @@ class PhysicsExtension extends MultiModelExtensionBase {
         Ax: '', Ay: '', Az: '',
         Vx: '', Vy: '', Vz: '',
 
+        unSelectedBody: selectedBody,
         selectedBody: null
       })
     }
 
-    const { physicsCore } = this.react.getState()
-
-    const velocity = physicsCore.getVelocity(body)
+    const velocity = physicsCore.getRigidBodyVelocity(body)
 
     this.react.setState({
 
@@ -311,6 +341,7 @@ class PhysicsExtension extends MultiModelExtensionBase {
       Vy: this.toFixedStr(velocity.linear.y),
       Vz: this.toFixedStr(velocity.linear.z),
 
+      unSelectedBody: selectedBody,
       selectedBody: body
     })
   }
@@ -368,12 +399,19 @@ class PhysicsExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   onSimulationStep () {
 
-    const { selectedBody} = this.react.getState()
+    const { modelTransformer, selectedBody } =
+      this.react.getState()
 
     if (selectedBody) {
 
       this.setSelectedBody(
         selectedBody)
+
+      const transform =
+        modelTransformer.getFragmentTransform (
+          selectedBody.initialState.fragIds[0])
+
+      modelTransformer.setTransformState (transform)
     }
 
     this.fps.tick()
@@ -512,14 +550,14 @@ class PhysicsExtension extends MultiModelExtensionBase {
     state[key] = value
 
     const velocity =
-      state.physicsCore.getVelocity(
-        this.selectedBody)
+      state.physicsCore.getRigidBodyVelocity(
+        state.selectedBody)
 
     this.setVelocityByKey(
       key, value, velocity)
 
-    state.physicsCore.setVelocity(
-      this.selectedBody,
+    state.physicsCore.setRigidBodyVelocity(
+      state.selectedBody,
       velocity)
 
     this.react.setState(state)
@@ -534,8 +572,8 @@ class PhysicsExtension extends MultiModelExtensionBase {
     const state = this.react.getState()
 
     const velocity =
-      state.physicsCore.getVelocity(
-        this.selectedBody)
+      state.physicsCore.getRigidBodyVelocity(
+        state.selectedBody)
 
     keys.forEach((key) => {
 
@@ -545,8 +583,8 @@ class PhysicsExtension extends MultiModelExtensionBase {
         key, 0.0, velocity)
     })
 
-    state.physicsCore.setVelocity(
-      this.selectedBody,
+    state.physicsCore.setRigidBodyVelocity(
+      state.selectedBody,
       velocity)
 
     this.react.setState(state)
@@ -757,7 +795,7 @@ class PhysicsExtension extends MultiModelExtensionBase {
             <div className="control-element">
 
               <label>
-                Components velocity:
+                Component velocity:
               </label>
 
               { this.renderVelocity() }
@@ -768,7 +806,7 @@ class PhysicsExtension extends MultiModelExtensionBase {
             <div className="control-element" style={{height:'120px'}}>
 
               <label>
-                Components transform:
+                Component transform:
               </label>
 
               { this.renderTransformer() }

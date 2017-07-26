@@ -1,46 +1,3 @@
-
-const alertDialogMsg =  `
-  <p>
-  Parts required for repairs are currently
-  not available in inventory.Click the
-  <b>Order Replacement</b>
-  button to order the following
-  replacement parts(s).
-  <p>
-  
-  <div class="inventory-wrap">
-    <table>
-        <tr>
-            <td class="label">Source:</td>
-            <td>Dematic</td>
-        </tr>
-        <tr>
-            <td class="label">Part No:</td>
-            <td>000008C20C</td>
-        </tr>
-        <tr>
-            <td class="label">Product Category:</td>
-            <td>Mech-Drive</td>
-        </tr>
-        <tr>
-            <td class="label">Category Code:</td>
-            <td>Reducers</td>
-        </tr>
-        <tr>
-            <td class="label">Horsepower:</td>
-            <td>3 HP</td>
-        </tr>
-        <tr>
-            <td class="label">Size:</td>
-            <td>A350</td>
-        </tr>
-        <tr>
-            <td class="label">Frame Size:</td>
-            <td>180TC</td>
-        </tr>
-    </table>
-  </div>`
-
 const initialState = {
   "viewport":{
     "eye":[87391.15872770472,-52418.6161141303,3808.015826295314],
@@ -253,10 +210,7 @@ const items = [
       }
     },
     alert: {
-      msg: 'Low inventory for replacement parts.',
-      dialog: {
-        msg: alertDialogMsg
-      }
+      msg: 'Low inventory for replacement parts'
     }
   },
 
@@ -326,7 +280,7 @@ const items = [
   },
 
   {
-    status: 'OK',
+    status: 'error',
     name: 'Conveyor',
     type: 'conveyors',
     metadata: [{
@@ -391,7 +345,7 @@ const items = [
   },
 
   {
-    status: 'OK',
+    status: 'error',
     name: 'Conveyor',
     type: 'conveyors',
     metadata: [{
@@ -522,7 +476,7 @@ const items = [
 
   //DRMs
   {
-    status: 'OK',
+    status: 'warning',
     name: 'DRM',
     type: 'DRMs',
     metadata: [{
@@ -539,7 +493,7 @@ const items = [
       value: 'DMS 2'
     }, {
       name: 'Manual',
-      value: 'https://www.dematic.com/en/multishuttle/', 
+      value: 'https://www.dematic.com/en/multishuttle/',
       type: 'link'
     }],
     id: 'drm1',
@@ -581,7 +535,7 @@ const items = [
   },
 
   {
-    status: 'OK',
+    status: 'warning',
     name: 'DRM',
     type: 'DRMs',
     metadata: [{
@@ -818,7 +772,7 @@ const items = [
   },
 
   {
-    status: 'OK',
+    status: 'error',
     name: 'DRM',
     type: 'DRMs',
     metadata: [{

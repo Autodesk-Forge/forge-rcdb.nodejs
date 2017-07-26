@@ -186,7 +186,7 @@ class HFDMExtension extends MultiModelExtensionBase {
     this.dialogSvc.setState({
       onRequestClose: () => {},
       className: 'login-dlg',
-      title: 'Login required ...',
+      title: 'Forge Login required ...',
       content:
         <div>
           Press OK to login ...

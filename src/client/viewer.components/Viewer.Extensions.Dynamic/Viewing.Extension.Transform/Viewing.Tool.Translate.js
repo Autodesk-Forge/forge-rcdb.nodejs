@@ -275,6 +275,8 @@ export default class TranslateTool extends EventsEmitter {
 
       this._selectedFragProxyMap[fragId] = fragProxy
     })
+
+    this._viewer.impl.sceneUpdated(true)
   }
 
   ///////////////////////////////////////////////////////////////////////////
@@ -334,7 +336,8 @@ export default class TranslateTool extends EventsEmitter {
     this.emit('translate', {
       fragIds: Object.keys(this._selectedFragProxyMap),
       model: this._selection.model,
-      translation: translation
+      translation: translation,
+      dbIds: this._dbIds
     })
 
     this._viewer.impl.sceneUpdated(true)

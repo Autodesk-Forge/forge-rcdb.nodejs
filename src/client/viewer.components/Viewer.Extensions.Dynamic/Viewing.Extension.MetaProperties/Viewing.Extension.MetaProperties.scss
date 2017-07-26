@@ -13,7 +13,7 @@
   margin-left: 27px;
   margin-top: 10px;
   select: none;
-  width: 143px;
+  width: 142px;
   float: left;
 }
 
@@ -31,9 +31,13 @@
 //
 /////////////////////////////////////////////////////////
 .meta-properties-controls {
-  margin: auto 0 auto calc(100% - 155px);
+  margin: auto 0 auto calc(100% - 315px);
   position: relative;
   float: left;
+}
+
+.meta-properties-controls > button:first-child {
+  margin: 0 0 0 0;
 }
 
 .meta-properties-controls > button {
@@ -41,6 +45,7 @@
   background-color: #e1e1e1;
   border-radius: 6px;
   position: relative;
+  margin: 0 0 0 4px;
   overflow: hidden;
   outline: none;
   height: 24px;
@@ -68,8 +73,71 @@
 // meta property dialog
 //
 /////////////////////////////////////////////////////////
-.meta-property-dlg .content {
-  padding: 6px 6px 4px 6px;
-  overflow: visible;
-  height: auto;
+.meta-property-dlg {
+  left: calc(50% - 160px) !important;
+  width: 320px !important;
+
+  .content {
+    padding: 6px 6px 4px 6px;
+    overflow: visible;
+    height: auto;
+  }
+}
+
+/////////////////////////////////////////////////////////
+// popover
+//
+/////////////////////////////////////////////////////////
+.meta-properties.exports {
+  width: 222px;
+
+  button {
+    border: 1px solid #d8d8d8;
+    background: #f7f7f7;
+    border-radius: 4px;
+    outline: none;
+    margin: 4px 0;
+    width: 100%;
+
+    &:hover {
+      background: #ffffff;
+    }
+
+    span {
+      pointer-events: none;
+      position: relative;
+      font-size: 24px;
+      color: green;
+      left: -8px;
+      top: 4px;
+    }
+
+    label {
+      pointer-events: none;
+      font-weight: normal;
+    }
+  }
+}
+
+/////////////////////////////////////////////////////////
+// meta search
+//
+/////////////////////////////////////////////////////////
+.meta-search {
+
+  .meta-search-controls {
+    width: calc(100% - 19px);
+  }
+
+  .input-search {
+    width: calc(100% - 50px);
+    border: 1px solid #c6c6c6;
+    padding: 1px 0 0 4px;
+    white-space: nowrap;
+    border-radius: 4px;
+    background: white;
+    margin: 8px 0 0 0;
+    overflow: hidden;
+    height: 24px;
+  }
 }

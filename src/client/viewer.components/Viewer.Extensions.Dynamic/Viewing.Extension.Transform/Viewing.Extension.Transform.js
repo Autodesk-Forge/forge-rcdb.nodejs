@@ -28,10 +28,11 @@ class TransformExtension extends ExtensionBase {
 
     this.translateTool.on('selection', (selection) => {
 
-      const translateSelection =
-        Object.assign({}, selection, {
-          type: 'translate'
-        })
+      const translateSelection = selection
+        ? Object.assign({}, selection, {
+            type: 'translate'
+          })
+        : null
 
       this.emit('selection', translateSelection)
     })
@@ -48,7 +49,8 @@ class TransformExtension extends ExtensionBase {
           translation: data.translation
         },
         fragIds: data.fragIds,
-        model: data.model
+        model: data.model,
+        dbIds: data.dbIds
       })
     })
 
@@ -62,10 +64,11 @@ class TransformExtension extends ExtensionBase {
 
     this.rotateTool.on('selection', (selection) => {
 
-      const rotateSelection =
-        Object.assign({}, selection, {
-          type: 'translate'
-        })
+      const rotateSelection = selection
+        ? Object.assign({}, selection, {
+            type: 'rotate'
+          })
+        : null
 
       this.emit('selection', rotateSelection)
     })
@@ -82,7 +85,8 @@ class TransformExtension extends ExtensionBase {
           rotation: data.rotation
         },
         fragIds: data.fragIds,
-        model: data.model
+        model: data.model,
+        dbIds: data.dbIds
       })
     })
 

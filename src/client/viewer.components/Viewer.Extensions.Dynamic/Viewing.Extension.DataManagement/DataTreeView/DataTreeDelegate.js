@@ -1,12 +1,12 @@
-import ContextMenu from './MetaContextMenu'
-import MetaTreeNode from './MetaTreeNode'
+import ContextMenu from './DataContextMenu'
+import DataTreeNode from './DataTreeNode'
 import { TreeDelegate } from 'TreeView'
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 //
 ///////////////////////////////////////////////////////////////////////////////
-export default class MetaTreeDelegate extends TreeDelegate {
+export default class DataTreeDelegate extends TreeDelegate {
 
   /////////////////////////////////////////////////////////////
   //
@@ -21,32 +21,26 @@ export default class MetaTreeDelegate extends TreeDelegate {
     })
 
     this.contextMenu.on(
-      'context.property.edit',
-      async (metaProperty, isModelOverride) => {
+      'context.property.edit', async (metaProperty) => {
 
-        const newMetaProperty = await this.emit(
-          'property.edit',
-          metaProperty, isModelOverride)
+        const newMetaProperty = await  this.emit(
+          'property.edit', metaProperty)
 
         if (newMetaProperty) {
 
-          this.emit('node.update',
-            newMetaProperty)
+          this.emit('node.update', newMetaProperty)
         }
       })
 
     this.contextMenu.on(
-      'context.property.delete',
-      async (metaProperty, isModelOverride) => {
+      'context.property.delete', async (metaProperty) => {
 
         const deleted = await this.emit(
-          'property.delete',
-          metaProperty, isModelOverride)
+          'property.delete', metaProperty)
 
         if (deleted) {
 
-          this.emit('node.destroy',
-            metaProperty.id)
+          this.emit('node.destroy', metaProperty.id)
         }
       })
   }
@@ -69,7 +63,6 @@ export default class MetaTreeDelegate extends TreeDelegate {
     this.rootNode = new MetaTreeNode({
 
       displayName: data.displayName,
-      dbId: data.dbId.toString(),
       propsMap: this.propsMap,
       delegate: this,
       group: true,
@@ -127,7 +120,10 @@ export default class MetaTreeDelegate extends TreeDelegate {
 
     if (node.type === 'property') {
 
-      this.contextMenu.show(event, node)
+      if (node.props.metaType !== undefined) {
+
+        this.contextMenu.show(event, node)
+      }
     }
   }
 
@@ -162,15 +158,5 @@ export default class MetaTreeDelegate extends TreeDelegate {
         this.propsMap[category].push(prop)
       }
     })
-
-    // sort props by displayName in each category
-
-    for (let category in this.propsMap) {
-
-      this.propsMap[category] = _.sortBy(
-        this.propsMap[category], (prop) => {
-          return prop.displayName
-        })
-    }
   }
 }

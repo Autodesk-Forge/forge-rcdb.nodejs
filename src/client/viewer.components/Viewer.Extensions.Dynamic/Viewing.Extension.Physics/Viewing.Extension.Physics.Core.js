@@ -173,7 +173,7 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  getTransform (fragId) {
+  getFragmentTransform (fragId) {
 
     const renderProxy = this.viewer.impl.getRenderProxy(
       this.viewer.model, fragId)
@@ -266,9 +266,7 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
   async createInitialState (model) {
 
     const parseArray = (str, separator = ';') => {
-
       return str.split(separator).map((element) => {
-
         return parseFloat(element)
       })
     }
@@ -287,7 +285,7 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
         this.viewer.model, dbId)
 
       const transform =
-        this.getTransform(fragIds[0])
+        this.getFragmentTransform(fragIds[0])
 
       const {position, quaternion, scale } =
         transform
@@ -336,9 +334,22 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
         shape,
         inertia)
 
+    const fragProxies = state.fragIds.map((fragId) => {
+
+      const fragProxy =
+        this.viewer.impl.getFragmentProxy(
+          this.viewer.model, fragId)
+
+      fragProxy.getAnimTransform()
+
+      return fragProxy
+    })
+
     const body = new Ammo.btRigidBody(rbInfo)
 
     body.grounded = (state.mass === 0.0)
+
+    body.fragProxies = fragProxies
 
     body.initialState = state
 
@@ -387,8 +398,38 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
         state.vAngular[0],
         state.vAngular[1],
         state.vAngular[2]))
+  }
 
-    return body
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  setRigidBodyTransform (body, state) {
+
+    const transform = new Ammo.btTransform
+
+    transform.setIdentity()
+
+    transform.setOrigin(
+      new Ammo.btVector3(
+        state.position.x,
+        state.position.y,
+        state.position.z))
+
+    transform.setRotation(
+      new Ammo.btQuaternion(
+        state.quaternion.x,
+        state.quaternion.y,
+        state.quaternion.z,
+        state.quaternion.w))
+
+    const motionState =
+      new Ammo.btDefaultMotionState(
+        transform)
+
+    body.setMotionState(motionState)
+
+    body.setActivationState(4)
   }
 
   /////////////////////////////////////////////////////////
@@ -419,7 +460,7 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  getVelocity (body) {
+  getRigidBodyVelocity (body) {
 
     const vAngular = body.getAngularVelocity()
 
@@ -443,7 +484,7 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  setVelocity (body, velocity) {
+  setRigidBodyVelocity (body, velocity) {
 
     body.setAngularVelocity(
       new Ammo.btVector3(
@@ -482,15 +523,7 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
       body.initialState.position.y,
       body.initialState.position.z)
 
-    const fragIds = body.initialState.fragIds
-
-    fragIds.forEach((fragId) => {
-
-      const fragProxy =
-        this.viewer.impl.getFragmentProxy(
-          this.viewer.model, fragId)
-
-      fragProxy.getAnimTransform()
+    body.fragProxies.forEach((fragProxy) => {
 
       fragProxy.quaternion =
         new THREE.Quaternion(
@@ -584,6 +617,18 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
     })
 
     this.viewer.impl.sceneUpdated(true)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  activateAllRigidBodies () {
+
+    this.rigidBodies.forEach((body) => {
+
+      body.setActivationState(4)
+    })
   }
 }
 

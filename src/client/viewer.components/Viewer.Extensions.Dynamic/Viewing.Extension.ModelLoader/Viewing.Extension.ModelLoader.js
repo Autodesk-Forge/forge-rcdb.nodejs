@@ -222,6 +222,13 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
 
           if (items.length) {
 
+            const lmvProxy =
+              dbModel.model.proxy || '/lmv-proxy-2legged'
+
+            Autodesk.Viewing.setEndpointAndApi(
+              window.location.origin + lmvProxy,
+              'modelDerivativeV2')
+
             const path = doc.getViewablePath(items[0])
 
             this.viewer.loadModel(path, loadOptions,

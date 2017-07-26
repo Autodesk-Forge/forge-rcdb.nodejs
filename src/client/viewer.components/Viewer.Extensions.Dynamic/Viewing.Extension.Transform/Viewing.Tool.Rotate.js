@@ -394,6 +394,7 @@ export default class RotateTool extends EventsEmitter {
           fragProxy.quaternion, 0)
 
         this.emit('rotate', {
+          dbIds: this.selection.dbIdArray,
           fragIds: fragIdsArray,
           rotation: euler,
           model

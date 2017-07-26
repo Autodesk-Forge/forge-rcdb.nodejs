@@ -322,7 +322,7 @@ export default class ViewerToolkit {
 
         } else {
 
-          model.getProperties(dbIdInt, function(result) {
+          model.getProperties(dbIdInt, (result) => {
 
             if (result.properties) {
 

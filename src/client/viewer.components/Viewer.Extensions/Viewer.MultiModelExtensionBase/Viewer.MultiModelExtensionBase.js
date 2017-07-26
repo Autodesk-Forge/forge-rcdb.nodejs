@@ -28,6 +28,8 @@ export default class MultiModelExtensionBase extends
     this.__onModelUnloaded    = this.__onModelUnloaded.bind(this)
     this.__onModelLoaded      = this.__onModelLoaded.bind(this)
 
+    this.defaultOptions = defaultOptions
+
     this.options = Object.assign({},
       defaultOptions,
       options)
@@ -101,7 +103,7 @@ export default class MultiModelExtensionBase extends
   reload (options = {}) {
 
     this.options = Object.assign({},
-      defaultOptions,
+      this.defaultOptions,
       this.options,
       options)
 

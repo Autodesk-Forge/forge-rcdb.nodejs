@@ -11,11 +11,11 @@ module.exports = function() {
   const uploadSvc = ServiceManager.getService(
     'UploadSvc')
 
-  const ossSvc = ServiceManager.getService(
-    'OssSvc')
-
   const forgeSvc = ServiceManager.getService(
     'ForgeSvc')
+
+  const ossSvc = ServiceManager.getService(
+    'OssSvc')
 
   const bucket = config.meta.bucket
 
@@ -141,9 +141,14 @@ module.exports = function() {
       const token = await forgeSvc.get2LeggedToken()
 
       const object = await ossSvc.getObject(token,
-        config.meta.bucketKey,
+        bucket.bucketKey,
         req.params.fileId)
 
+      const details = await ossSvc.getObjectDetails(token,
+        bucket.bucketKey,
+        req.params.fileId)
+
+      res.set('Content-Lenght', details.body.size)
       res.end(object)
 
     } catch (error) {
@@ -170,7 +175,7 @@ module.exports = function() {
       const file = req.file
 
       const response = await ossSvc.uploadObject (
-        token, config.meta.bucketKey,
+        token, bucket.bucketKey,
         req.params.resourceId,
         file)
 
@@ -197,7 +202,7 @@ module.exports = function() {
       const token = await forgeSvc.get2LeggedToken()
 
       const response = await ossSvc.deleteObject (
-        token, config.meta.bucketKey,
+        token, bucket.bucketKey,
         req.params.resourceId)
 
       res.json(response)
@@ -292,7 +297,7 @@ module.exports = function() {
         const token = await forgeSvc.get2LeggedToken()
 
         ossSvc.deleteObject(token,
-          config.meta.bucketKey,
+          bucket.bucketKey,
           metaProperty.fileId)
       }
 
@@ -301,6 +306,96 @@ module.exports = function() {
           modelId, metaId)
 
       res.json(response)
+
+    } catch (error) {
+
+      res.status(error.statusCode || 500)
+      res.json(error)
+    }
+  })
+
+  /////////////////////////////////////////////////////////
+  // delete all meta properties on node
+  //
+  /////////////////////////////////////////////////////////
+  router.delete('/:db/:modelId/:dbId/properties',
+    async(req, res) => {
+
+    try {
+
+      const modelId = req.params.modelId
+      const dbId = req.params.dbId
+      const db = req.params.db
+
+      const modelSvc = ServiceManager.getService(
+        db + '-ModelSvc')
+
+      const metaProperties =
+        await modelSvc.getNodeMetaProperties (
+        modelId, dbId)
+
+      const tasks = metaProperties.map((metaProperty) => {
+
+        if (metaProperty.metaType === 'File') {
+
+          forgeSvc.get2LeggedToken().then((token) => {
+
+            ossSvc.deleteObject(token,
+              bucket.bucketKey,
+              metaProperty.fileId)
+          })
+        }
+
+        return modelSvc.deleteNodeMetaProperty(
+          modelId, metaProperty.id)
+      })
+
+      const response = await Promise.all(tasks)
+
+      res.json(response)
+
+    } catch (error) {
+
+      res.status(error.statusCode || 500)
+      res.json(error)
+    }
+  })
+
+  /////////////////////////////////////////////////////////
+  // Export all meta properties for model
+  //
+  /////////////////////////////////////////////////////////
+  router.get('/:db/:modelId/properties/export/:format',
+    async(req, res) => {
+
+    try {
+
+      const modelId = req.params.modelId
+      const format = req.params.format
+      const db = req.params.db
+
+      const modelSvc = ServiceManager.getService(
+        db + '-ModelSvc')
+
+      const response =
+        await modelSvc.getModelMetaProperties(
+          modelId)
+
+      switch (format){
+
+        case 'json':
+          res.header('Content-Type','application/json')
+          res.send(JSON.stringify(response, null, 2))
+          break
+
+        case 'csv':
+          res.send(data)
+          break
+
+        default:
+          res.status(400)
+          res.json('Invalid format: ' + format)
+      }
 
     } catch (error) {
 

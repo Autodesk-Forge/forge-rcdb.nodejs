@@ -1,4 +1,4 @@
-.metatree-container {
+.datatree-container {
 
   overflow-x: hidden;
   overflow-y: scroll;
@@ -36,7 +36,6 @@
 
   .treeview group > lmvheader.category {
     background-color: #e6e6e6 !important;
-    padding: 6px;
   }
 
   .treeview group > lmvheader > icon {
@@ -54,25 +53,13 @@
     float: left;
   }
 
-  .treeview lmvheader.property {
-    padding: 0px;
-  }
-
   .treeview lmvheader.property .treenode {
     width: 100%;
   }
 
-  .treeview lmvheader.property .treenode .separator {
-    background: white;
-    height: 30px;
-    float: left;
-    width: 1px;
-  }
-
   .treeview lmvheader.property .treenode .meta-value,
   .treeview lmvheader.property .treenode .meta-name {
-    padding: 6px;
-    width: 49%;
+    width: 50%;
   }
 
   .treeview lmvheader.property .treenode .meta-link,
@@ -90,22 +77,20 @@
   }
 
   .treeview lmvheader.property .treenode span {
-    transition-timing-function: ease;
     transition-property: color;
+    transition-timing-function: ease;
     transition-duration: 1.0s;
     transition-delay: 0.0s;
 
-    position: relative;
-    margin: 0 8px 0 0;
+    margin-right: 8px;
     font-size: 20px;
     color: #fafafa;
     display: none;
-    top: 4px;
   }
 
   .treeview lmvheader.property .treenode span.fa-edit {
     position: relative;
-    top: 6px;
+    top: 1px;
   }
 
   .treeview lmvheader:hover.property .treenode span {

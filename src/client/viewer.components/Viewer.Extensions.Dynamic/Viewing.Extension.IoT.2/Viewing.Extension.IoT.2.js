@@ -385,52 +385,6 @@ class IoTExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onAlertDetails (item) {
-
-    const onClose = (result) => {
-
-      this.dialogSvc.off('dialog.close', onClose)
-
-      if (result === 'OK') {
-
-        this.dialogSvc.setState({
-          className: 'dematic-dlg',
-          title: 'Part Ordered',
-          showCancel: false,
-          captionOK:'Done',
-          content:
-            <div dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(
-                `Your requested parts have been
-                ordered and will arrive within
-                <b>12 hours.</b>`)
-            }}>
-            </div>,
-          open: true
-        })
-      }
-    }
-
-    this.dialogSvc.on('dialog.close', onClose)
-
-    this.dialogSvc.setState({
-      className: 'dematic-dlg alert-details-dlg',
-      captionOK:'Order Replacement',
-      title: 'Low Inventory',
-      content:
-        <div dangerouslySetInnerHTML={{
-          __html: DOMPurify.sanitize(
-            item.alert.dialog.msg)
-        }}>
-        </div>,
-      open: true
-    })
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
   onToggleHotspotCmd () {
 
     const {hotspotCmdActive} = this.react.getState()
@@ -481,6 +435,13 @@ class IoTExtension extends MultiModelExtensionBase {
     return items.map((item) => {
 
       const active = item.active ? ' active' : ''
+
+      const colors = this.getHotspotStatusColors(item.status)
+
+      const style = {
+        backgroundColor: this.hexToRgbA(colors.fill, 0.3),
+        border: `2px solid ${colors.stroke}`
+      }
 
       return (
         <div className={`list-item ${item.status}` + active}
@@ -600,14 +561,6 @@ class IoTExtension extends MultiModelExtensionBase {
         <label className="item-alert-msg">
           {item.alert.msg}
         </label>
-        &nbsp;
-        {
-          false &
-          <div className="item-alert-more"
-            onClick={() => this.onAlertDetails(item)}>
-            More ...
-          </div>
-        }
       </div>
     )
   }
