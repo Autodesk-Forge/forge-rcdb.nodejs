@@ -980,4 +980,59 @@ export default class ModelSvc extends BaseSvc {
       }
     })
   }
+
+  /////////////////////////////////////////////////////////
+  // search meta properties
+  //
+  /////////////////////////////////////////////////////////
+  searchMetaProperties (modelId, searchParams) {
+
+    return new Promise(async(resolve, reject) => {
+
+      try {
+
+        const dbSvc = ServiceManager.getService(
+          this._config.dbName)
+
+        const collection = await dbSvc.getCollection(
+          this._config.models)
+
+        collection.aggregate([
+
+          {
+            $match: {
+              '_id': new mongo.ObjectId(modelId)
+            }
+          },
+          {
+            $project: {
+              metaProperties: 1
+            }
+          },
+          {
+            "$unwind": "$metaProperties"
+          }
+          //{
+          //  $match: {
+          //    'metaProperties.dbId': dbId
+          //  }
+          //},
+
+        ], (err, result) => {
+
+          const properties = result
+            ? result.map((e) => { return e.metaProperties})
+            : []
+
+          return err
+            ? reject(err)
+            : resolve(properties)
+        })
+
+      } catch (ex) {
+
+        return reject(ex)
+      }
+    })
+  }
 }

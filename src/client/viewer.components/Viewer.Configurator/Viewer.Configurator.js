@@ -673,10 +673,10 @@ class ViewerConfigurator extends BaseComponent {
           case 'AutodeskProduction':
 
             const lmvProxy =
-              modelInfo.proxy || '/lmv-proxy-2legged'
+              modelInfo.proxy || 'lmv-proxy-2legged'
 
             Autodesk.Viewing.setEndpointAndApi(
-              window.location.origin + lmvProxy,
+              `${window.location.origin}/${lmvProxy}`,
               'modelDerivativeV2')
 
             this.viewerDocument =

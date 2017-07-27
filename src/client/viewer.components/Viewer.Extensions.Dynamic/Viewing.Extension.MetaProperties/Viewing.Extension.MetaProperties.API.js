@@ -61,13 +61,9 @@ export default class MetaAPI extends ClientAPI {
     const url = '/properties'
 
     return this.ajax({
-      url: url,
+      data: JSON.stringify(payload),
       method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      data: JSON.stringify(payload)
+      url: url
     })
   }
 
@@ -167,5 +163,24 @@ export default class MetaAPI extends ClientAPI {
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  search (text) {
+
+    const payload = {
+      text
+    }
+
+    const url = '/search'
+
+    return this.ajax({
+      data: JSON.stringify(payload),
+      method: 'POST',
+      url: url
+    })
   }
 }

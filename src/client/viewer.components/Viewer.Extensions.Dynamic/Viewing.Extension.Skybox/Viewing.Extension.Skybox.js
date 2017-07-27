@@ -138,6 +138,7 @@ class SkyboxExtension extends MultiModelExtensionBase {
     setTimeout(() => {
       this.viewer.autocam.setHomeViewFrom(
         nav.getCamera())
+      this.options.loader.show(false)
     }, 2000)
   }
 
@@ -151,10 +152,7 @@ class SkyboxExtension extends MultiModelExtensionBase {
 
       this.loadContainer(this.options.containerURN).then(
         () => {
-
           this.configureNavigation()
-
-          this.options.loader.show(false)
         })
 
       this.stopwatch.getElapsedMs()

@@ -203,10 +203,6 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   async setModel (model) {
 
-    await this.react.setState({
-      model
-    })
-
     const modelId = model.dbModelId ||
       this.options.dbModel._id
 
@@ -217,6 +213,11 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
 
     this.api = new MetaAPI(
       `${apiUrl}/meta/${database}/${modelId}`)
+
+    await this.react.setState({
+      api: this.api,
+      model
+    })
 
     const instanceTree = model.getData().instanceTree
 
@@ -861,7 +862,8 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderContent () {
 
-    const {properties, search} = this.react.getState()
+    const {api, model, properties, search} =
+      this.react.getState()
 
     return (
       <div className="content">
@@ -880,7 +882,7 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
             {
               search &&
               <ReflexElement minSize={40}>
-                <Search/>
+                <Search api={api} model={model}/>
               </ReflexElement>
             }
           </ReflexContainer>

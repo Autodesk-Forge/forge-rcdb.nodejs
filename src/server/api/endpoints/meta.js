@@ -1,4 +1,5 @@
 import ServiceManager from '../services/SvcManager'
+import json2csv from 'json2csv'
 import express from 'express'
 import config from 'c0nfig'
 
@@ -377,7 +378,7 @@ module.exports = function() {
       const modelSvc = ServiceManager.getService(
         db + '-ModelSvc')
 
-      const response =
+      const properties =
         await modelSvc.getModelMetaProperties(
           modelId)
 
@@ -385,17 +386,50 @@ module.exports = function() {
 
         case 'json':
           res.header('Content-Type','application/json')
-          res.send(JSON.stringify(response, null, 2))
+          res.send(JSON.stringify(properties, null, 2))
           break
 
         case 'csv':
-          res.send(data)
+          const csv = json2csv(properties)
+          res.header('Content-Type','application/text')
+          res.send(csv)
           break
 
         default:
           res.status(400)
-          res.json('Invalid format: ' + format)
+          res.send('Invalid format: ' + format)
       }
+
+    } catch (error) {
+
+      res.status(error.statusCode || 500)
+      res.json(error)
+    }
+  })
+
+  /////////////////////////////////////////////////////////
+  // search meta properties
+  //
+  /////////////////////////////////////////////////////////
+  router.post('/:db/:modelId/search',
+    async(req, res) => {
+
+    try {
+
+      const db = req.params.db
+
+      const modelSvc = ServiceManager.getService (
+        db + '-ModelSvc')
+
+      const text = req.body.text
+
+      const response =
+        await modelSvc.searchMetaProperties (
+        req.params.modelId, {
+          text
+        })
+
+      res.json(response)
 
     } catch (error) {
 

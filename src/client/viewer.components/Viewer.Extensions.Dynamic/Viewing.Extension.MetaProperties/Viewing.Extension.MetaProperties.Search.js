@@ -56,8 +56,38 @@ export default class Search extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  onSearch () {
+  search (text, attributeNames) {
 
+    return new Promise((resolve, reject) => {
+
+      this.props.model.search(text, (result) => {
+
+        resolve(result)
+
+      }, (error) => {
+
+        reject(error)
+
+      }, attributeNames)
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async onSearch () {
+
+    const {search} = this.state
+
+    const dbIds = await this.search(`"${search}"`)
+
+    console.log(dbIds)
+
+    const metaProperties =
+      await this.props.api.search(search)
+
+    console.log(metaProperties)
   }
 
   /////////////////////////////////////////////////////////

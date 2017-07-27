@@ -215,19 +215,19 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
 
         case 'AutodeskProduction':
 
+          const lmvProxy =
+            dbModel.model.proxy || 'lmv-proxy-2legged'
+  
+          Autodesk.Viewing.setEndpointAndApi(
+            `${window.location.origin}/${lmvProxy}`,
+            'modelDerivativeV2')
+
           const doc = await Toolkit.loadDocument(
             dbModel.model.urn)
 
           const items = Toolkit.getViewableItems(doc)
 
           if (items.length) {
-
-            const lmvProxy =
-              dbModel.model.proxy || '/lmv-proxy-2legged'
-
-            Autodesk.Viewing.setEndpointAndApi(
-              window.location.origin + lmvProxy,
-              'modelDerivativeV2')
 
             const path = doc.getViewablePath(items[0])
 
