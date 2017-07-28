@@ -1,9 +1,11 @@
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table'
 import ContentEditable from 'react-contenteditable'
 import WidgetContainer from 'WidgetContainer'
+import BaseComponent from 'BaseComponent'
+import Toolkit from 'Viewer.Toolkit'
 import React from 'react'
 
-export default class Search extends React.Component {
+export default class Search extends BaseComponent {
 
   /////////////////////////////////////////////////////////
   //
@@ -14,11 +16,13 @@ export default class Search extends React.Component {
     super (props)
 
     this.onInputChanged = this.onInputChanged.bind(this)
+    this.onRowClicked = this.onRowClicked.bind(this)
     this.onKeyDown = this.onKeyDown.bind(this)
     this.onSearch = this.onSearch.bind(this)
 
     this.state = {
-      search: ''
+      search: '',
+      rows: []
     }
   }
 
@@ -28,7 +32,7 @@ export default class Search extends React.Component {
   /////////////////////////////////////////////////////////
   onInputChanged (e) {
 
-    this.setState({
+    this.assignState({
       search: e.target.value
     })
   }
@@ -39,24 +43,18 @@ export default class Search extends React.Component {
   /////////////////////////////////////////////////////////
   onKeyDown (e) {
 
-    //backspace, ENTER, ->, <-, delete, '.', '-', ',',
-    //const allowed = [8, 13, 37, 39, 46, 188, 189, 190]
-    //
-    //if (allowed.indexOf(e.keyCode) > -1 ||
-    //  (e.keyCode > 47 && e.keyCode < 58)) {
-    //
-    //  return
-    //}
-    //
-    //e.stopPropagation()
-    //e.preventDefault()
+    if (e.keyCode === 13) {
+
+      e.stopPropagation()
+      e.preventDefault()
+    }
   }
 
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  search (text, attributeNames) {
+  getModelProperties (text, attributeNames) {
 
     return new Promise((resolve, reject) => {
 
@@ -76,18 +74,102 @@ export default class Search extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  getBulkProperties (dbIds) {
+
+    return new Promise((resolve, reject) => {
+
+      this.props.model.getBulkProperties(
+        dbIds, null, (result) => {
+
+        resolve(result)
+
+      }, (error) => {
+
+        reject(error)
+
+      })
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async searchModel (text, attributeNames) {
+
+    try {
+
+      const dbIds = await this.getModelProperties(
+        `"${text}"`, attributeNames)
+
+      const results = await this.getBulkProperties(dbIds)
+
+      const rows = []
+
+      results.forEach((result) => {
+
+          result.properties.forEach((prop) => {
+
+            const value = prop.displayValue.toString()
+
+            if (value.indexOf(text) > -1 && !!result.name) {
+
+              rows.push({
+                displayCategory: prop.displayCategory,
+                displayValue: prop.displayValue,
+                displayName: prop.displayName,
+                component: result.name,
+                dbId: result.dbId
+              })
+            }
+          })
+      })
+
+      return rows
+
+    } catch (ex) {
+
+      return ex
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async searchDatabase (text) {
+
+    try {
+
+      const metaProperties =
+        await this.props.api.search(text)
+
+      return metaProperties
+
+    } catch (ex) {
+
+      return ex
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   async onSearch () {
 
     const {search} = this.state
 
-    const dbIds = await this.search(`"${search}"`)
+    const results = await Promise.all([
+      this.searchModel(search),
+      this.searchDatabase(search)
+    ])
 
-    console.log(dbIds)
+    const rows = _.flatten(results)
 
-    const metaProperties =
-      await this.props.api.search(search)
-
-    console.log(metaProperties)
+    this.assignState({
+      rows
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -122,12 +204,71 @@ export default class Search extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  onRowClicked (row) {
+
+    console.log(row)
+
+    const {model, viewer} = this.props
+
+    const dbId = parseInt(row.dbId)
+
+    Toolkit.isolateFull(
+      viewer, dbId, model)
+
+    viewer.fitToView(dbId)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   renderContent () {
 
+    const width = this.props.dimensions.width
+
+    const columnWidth = !isNaN(width)
+      ? (width * 0.25).toString()
+      : '20'
+
+    const options = {
+      onRowClick: this.onRowClicked
+    }
+
     return (
-      <div>
-       Search
-      </div>
+      <BootstrapTable
+        data={this.state.rows}
+        options={options}
+        striped={true}
+        hover={true}>
+        <TableHeaderColumn
+          dataField="component"
+          width={columnWidth}
+          headerAlign='left'
+          dataAlign='left'>
+          Component
+        </TableHeaderColumn>
+        <TableHeaderColumn
+          dataField="displayName"
+          width={columnWidth}
+          headerAlign='left'
+          dataAlign='left'
+          isKey={true}>
+          Property
+        </TableHeaderColumn>
+        <TableHeaderColumn
+          dataField="displayCategory"
+          width={columnWidth}
+          headerAlign='left'
+          dataAlign='left'>
+          Category
+        </TableHeaderColumn>
+        <TableHeaderColumn
+          dataField="displayValue"
+          headerAlign='left'
+          dataAlign='left'>
+          Value
+        </TableHeaderColumn>
+      </BootstrapTable>
     )
   }
 

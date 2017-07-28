@@ -68,7 +68,7 @@ class ContextMenuExtension extends ExtensionBase {
 
       this.handlers.forEach((handler) => {
 
-        menu = handler (menuArgs)
+        handler (menuArgs)
       })
 
       return this.options.buildMenu

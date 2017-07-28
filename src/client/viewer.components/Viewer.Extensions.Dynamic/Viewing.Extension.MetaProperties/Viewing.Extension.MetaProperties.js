@@ -76,7 +76,8 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
 
       this.react.pushRenderExtension(this)
 
-      const model = this.viewer.activeModel
+      const model = this.viewer.activeModel ||
+        this.viewer.model
 
       if (model) {
 
@@ -87,7 +88,6 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
     this.viewer.loadDynamicExtension(
       'Viewing.Extension.ContextMenu').then(
         (ctxMenuExtension) => {
-
           ctxMenuExtension.addHandler(
             this.onContextMenu)
         })
@@ -257,7 +257,7 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  getComponentData (dbId) {
+  getNodeData (dbId) {
 
     return new Promise((resolve, reject) => {
 
@@ -266,7 +266,8 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
       model.getProperties(dbId, (result) => {
 
         resolve ({
-          externalId: result.externalId
+          externalId: result.externalId,
+          component: result.name
         })
 
       }, (error) => {
@@ -295,6 +296,8 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
       })
     }
 
+    const data = await this.getNodeData(dbId)
+
     const {model} = this.react.getState()
 
     const modelProperties =
@@ -308,6 +311,7 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
       modelProperties, metaProperties)
 
     await this.react.setState({
+      externalId: data.externalId,
       guid: this.guid(),
       properties,
       dbId
@@ -367,6 +371,20 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
     if (!model) {
       return
     }
+
+    event.menu.forEach((entry) => {
+
+      const title = entry.title.toLowerCase()
+
+      if (title === 'show all objects') {
+
+        entry.target = () => {
+          Toolkit.isolateFull(
+            this.viewer, [], model)
+          this.viewer.fitToView()
+        }
+      }
+    })
 
     const instanceTree = model.getData().instanceTree
 
@@ -480,8 +498,10 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
 
       if (result === 'OK') {
 
+        const nodeData = await this.getNodeData(dbId)
+
         const metaProperty = Object.assign({},
-          this.metaPropertyEdits, {
+          this.metaPropertyEdits, nodeData, {
             dbId: dbId.toString(),
             id: this.guid()
           })
@@ -798,7 +818,8 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderTreeView (properties) {
 
-    const {guid, model, dbId} = this.react.getState()
+    const {guid, model, dbId, externalId} =
+      this.react.getState()
 
     const instanceTree = model.getData().instanceTree
 
@@ -812,6 +833,7 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
         onDeleteProperty={this.onDeleteProperty}
         onEditProperty={this.onEditProperty}
         properties={properties}
+        externalId={externalId}
         displayName={rootName}
         model={model}
         dbId={dbId}
@@ -825,8 +847,6 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
   //
   /////////////////////////////////////////////////////////
   renderPopover () {
-
-    const {dbId} = this.react.getState()
 
     return (
       <Popover  className={`${this.className} exports`}
@@ -881,8 +901,14 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
             }
             {
               search &&
-              <ReflexElement minSize={40}>
-                <Search api={api} model={model}/>
+              <ReflexElement
+                propagateDimensions={true}
+                renderOnResize={true}
+                minSize={40}>
+                <Search viewer={this.viewer}
+                  model={model}
+                  api={api}
+                />
               </ReflexElement>
             }
           </ReflexContainer>

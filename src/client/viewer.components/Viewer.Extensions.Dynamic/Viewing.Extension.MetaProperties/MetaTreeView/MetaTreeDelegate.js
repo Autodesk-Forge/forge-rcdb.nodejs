@@ -55,26 +55,18 @@ export default class MetaTreeDelegate extends TreeDelegate {
   //
   //
   /////////////////////////////////////////////////////////////
-  setProperties (properties) {
-
-    this.mapByCategory(properties)
-  }
-
-  /////////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////////
   createRootNode (data) {
 
     this.rootNode = new MetaTreeNode({
-
       displayName: data.displayName,
+      externalId: data.externalId,
       dbId: data.dbId.toString(),
-      propsMap: this.propsMap,
+      component: data.component,
+      propsMap: data.propsMap,
       delegate: this,
-      group: true,
       parent: null,
       type: 'root',
+      group: true,
       id: 'root'
     })
 
@@ -144,9 +136,9 @@ export default class MetaTreeDelegate extends TreeDelegate {
   //
   //
   /////////////////////////////////////////////////////////////
-  mapByCategory (properties) {
+  mapPropsByCategory (properties) {
 
-    this.propsMap = {}
+    const propsMap = {}
 
     properties.forEach((prop) => {
 
@@ -156,21 +148,22 @@ export default class MetaTreeDelegate extends TreeDelegate {
 
       if (category.indexOf('__') !== 0) {
 
-        this.propsMap[category] =
-          this.propsMap[category] || []
+        propsMap[category] = propsMap[category] || []
 
-        this.propsMap[category].push(prop)
+        propsMap[category].push(prop)
       }
     })
 
     // sort props by displayName in each category
 
-    for (let category in this.propsMap) {
+    for (let category in propsMap) {
 
-      this.propsMap[category] = _.sortBy(
-        this.propsMap[category], (prop) => {
+      propsMap[category] = _.sortBy(
+        propsMap[category], (prop) => {
           return prop.displayName
         })
     }
+
+    return propsMap
   }
 }

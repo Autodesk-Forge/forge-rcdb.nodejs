@@ -162,4 +162,42 @@
       top: -1px;
     }
   }
+
+  .table {
+    margin-bottom: 0px;
+    border: none;
+  }
+
+  .table-bordered > thead > tr > th,
+  .table-bordered > thead > tr > td {
+    border-bottom: none;
+  }
+
+  .table > thead > tr > th {
+    cursor: default;
+  }
+
+  .table > thead > tr > th,
+  .table > tbody > tr > th,
+  .table > tfoot > tr > th,
+  .table > thead > tr > td,
+  .table > tbody > tr > td,
+  .table > tfoot > tr > td {
+    outline: none;
+    padding: 4px;
+  }
+
+  .table > tbody > tr > td {
+    cursor: pointer;
+  }
+
+  .react-bs-table-container,
+  .react-bs-table {
+    height: 100%;
+  }
+
+  .react-bs-container-body {
+    height: calc(100% - 28px);
+    overflow: scroll;
+  }
 }

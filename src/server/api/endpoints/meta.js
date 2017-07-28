@@ -385,12 +385,41 @@ module.exports = function() {
       switch (format){
 
         case 'json':
+
+          const exportedProps = properties.map((prop) => {
+            return {
+              displayCategory: prop.displayCategory,
+              displayValue: prop.displayValue,
+              displayName: prop.displayName,
+              externalId: prop.externalId,
+              component: prop.component,
+              metaType: prop.metaType,
+              filelink: prop.filelink,
+              filename: prop.filename,
+              link: prop.link
+            }
+          })
+
           res.header('Content-Type','application/json')
-          res.send(JSON.stringify(properties, null, 2))
+          res.send(JSON.stringify(exportedProps, null, 2))
           break
 
         case 'csv':
-          const csv = json2csv(properties)
+
+          const csv = json2csv({
+            fields: [
+              'externalId',
+              'component',
+              'displayCategory',
+              'displayName',
+              'displayValue',
+              'metaType',
+              'filelink',
+              'filename',
+              'link'
+            ],
+            data: properties
+          })
           res.header('Content-Type','application/text')
           res.send(csv)
           break
@@ -401,6 +430,9 @@ module.exports = function() {
       }
 
     } catch (error) {
+
+
+      console.log(error)
 
       res.status(error.statusCode || 500)
       res.json(error)

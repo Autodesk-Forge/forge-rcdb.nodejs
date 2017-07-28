@@ -23,12 +23,14 @@ export default class MetaTreeNode extends EventsEmitter {
 
     this.on('expand', this.onExpand)
 
-    this.delegate = props.delegate
-    this.parent   = props.parent
-    this.group    = props.group
-    this.type     = props.type
-    this.dbId     = props.dbId
-    this.id       = props.id
+    this.externalId = props.externalId
+    this.component  = props.component
+    this.delegate   = props.delegate
+    this.parent     = props.parent
+    this.group      = props.group
+    this.type       = props.type
+    this.dbId       = props.dbId
+    this.id         = props.id
 
     this.children = []
 
@@ -136,57 +138,46 @@ export default class MetaTreeNode extends EventsEmitter {
   /////////////////////////////////////////////////////////
   toMetaProperty (props = this.props) {
 
+    const baseProperty = {
+      displayCategory: props.displayCategory,
+      displayValue: props.displayValue,
+      displayName: props.displayName,
+      externalId: props.externalId,
+      component: props.component,
+      metaType: props.metaType,
+      dbId: props.dbId,
+      id: props.id
+    }
+
     switch (props.metaType) {
 
       case 'Link':
 
-        return {
-          displayCategory: props.displayCategory,
-          displayValue: props.displayValue,
-          displayName: props.displayName,
-          metaType: props.metaType,
-          link: props.link,
-          dbId: props.dbId,
-          id: props.id
-        }
+        return Object.assign({}, baseProperty, {
+          link: props.link
+        })
 
       case 'File':
 
-        return {
-          displayCategory: props.displayCategory,
-          displayValue: props.displayValue,
-          displayName: props.displayName,
-          metaType: props.metaType,
+        return Object.assign({}, baseProperty, {
           filelink: props.filelink,
           filename: props.filename,
           filesize: props.filesize,
-          fileId:  props.fileId,
-          dbId: props.dbId,
-          id: props.id
-        }
+          fileId:  props.fileId
+        })
 
       case 'Text':
 
-        return {
-          displayCategory: props.displayCategory,
-          displayValue: props.displayValue,
-          displayName: props.displayName,
-          metaType: props.metaType,
-          dbId: props.dbId,
-          id: props.id
-        }
+        return baseProperty
 
       default:
 
-        return {
-          displayCategory: props.displayCategory || 'Other',
-          displayValue: props.displayValue.toString(),
-          displayName: props.displayName,
+        return Object.assign({}, baseProperty, {
+          displayCategory:
+            props.displayCategory || 'Other',
           isOverride: true,
-          metaType: 'Text',
-          dbId: props.dbId,
-          id: props.id
-        }
+          metaType: 'Text'
+        })
     }
   }
 
@@ -281,6 +272,8 @@ export default class MetaTreeNode extends EventsEmitter {
 
           const childNode = new MetaTreeNode({
             properties: this.props.propsMap[category],
+            externalId: this.externalId,
+            component: this.component,
             delegate: this.delegate,
             displayName: category,
             type: 'category',
@@ -307,7 +300,9 @@ export default class MetaTreeNode extends EventsEmitter {
             const fullProp = Object.assign({}, prop, {
               onModelDelete: this.onModelDelete,
               onModelEdit: this.onModelEdit,
+              externalId: this.externalId,
               id: prop.id || this.guid(),
+              component: this.component,
               delegate: this.delegate,
               onDelete: this.onDelete,
               onEdit: this.onEdit,

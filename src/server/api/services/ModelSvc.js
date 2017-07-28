@@ -997,6 +997,8 @@ export default class ModelSvc extends BaseSvc {
         const collection = await dbSvc.getCollection(
           this._config.models)
 
+        const text = searchParams.text
+
         collection.aggregate([
 
           {
@@ -1011,12 +1013,14 @@ export default class ModelSvc extends BaseSvc {
           },
           {
             "$unwind": "$metaProperties"
-          }
-          //{
-          //  $match: {
-          //    'metaProperties.dbId': dbId
-          //  }
-          //},
+          },
+          {
+            $match: {
+              'metaProperties.displayValue': {
+                $regex: new RegExp(text)
+              }
+            }
+          },
 
         ], (err, result) => {
 

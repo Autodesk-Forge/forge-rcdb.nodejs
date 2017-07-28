@@ -88,13 +88,17 @@ export default class MetaTreeView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  loadTree (displayName, properties, dbId) {
+  loadTree (data) {
 
-    this.delegate.setProperties(properties)
+    const propsMap = this.delegate.mapPropsByCategory(
+      data.properties)
 
     const rootNode = this.delegate.createRootNode({
-      displayName,
-      dbId
+      displayName: data.displayName,
+      component: data.displayName,
+      externalId: data.externalId,
+      dbId: data.dbId,
+      propsMap
     })
 
     this.tree = new TreeView (
@@ -111,10 +115,13 @@ export default class MetaTreeView extends React.Component {
   /////////////////////////////////////////////////////////
   componentDidMount () {
 
-    this.loadTree (
-      this.props.displayName,
-      this.props.properties,
-      this.props.dbId)
+    this.loadTree ({
+      displayName: this.props.displayName,
+      properties: this.props.properties,
+      externalId: this.props.externalId,
+      component: this.props.displayName,
+      dbId: this.props.dbId
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -138,10 +145,13 @@ export default class MetaTreeView extends React.Component {
 
       this.tree.destroy()
 
-      this.loadTree (
-        props.displayName,
-        props.properties,
-        props.dbId)
+      this.loadTree ({
+        displayName: props.displayName,
+        properties: props.properties,
+        externalId: props.externalId,
+        component: props.displayName,
+        dbId: props.dbId
+      })
     }
   }
 
