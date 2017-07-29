@@ -155,6 +155,18 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   onObjectTreeCreated (event) {
 
+    const selectors = [
+      '#toolbar-propertiesTool',
+      '#toolbar-zoomTool',
+      '#toolbar-panTool'
+    ]
+
+    selectors.forEach((selector) => {
+      $(selector).css({
+        display: 'none'
+      })
+    })
+
     this.setModel(event.model)
   }
 

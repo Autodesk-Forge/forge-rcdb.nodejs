@@ -233,6 +233,8 @@ class HFDMExtension extends MultiModelExtensionBase {
       console.log('------- inspectorURL -------')
       console.log(inspectorURL)
     })
+
+    this.options.loader.show(false)
   }
 
   /////////////////////////////////////////////////////////
