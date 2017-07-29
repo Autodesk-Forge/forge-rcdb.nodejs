@@ -122,14 +122,11 @@ class SkyboxExtension extends MultiModelExtensionBase {
       pan: true
     })
 
-    const bounds = new THREE.Box3(
+    this.bounds = new THREE.Box3(
       new THREE.Vector3(-100, -100, -100),
       new THREE.Vector3(100, 100, 100))
 
-    nav.fitBounds(true, bounds)
-
-    //this.viewer.navigation.setPosition(
-    //  new THREE.Vector3(150, 0, 150))
+    nav.fitBounds(true, this.bounds)
 
     this.viewer.setViewCube('front')
 
@@ -225,16 +222,11 @@ class SkyboxExtension extends MultiModelExtensionBase {
 
     const pos = nav.getPosition()
 
-    const target = nav.getTarget()
-
-    //if (target.length() > 10.0) {
-    //
-    //  nav.setTarget(new THREE.Vector3(0,0,0))
-    //}
-
     if (pos.length() > 700.0 || pos.length() < 100.0) {
 
       this.clampLength(pos, 100.0, 700.0)
+
+      nav.fitBounds(true, this.bounds)
 
       nav.setView(pos, new THREE.Vector3(0,0,0))
     }
@@ -248,14 +240,18 @@ class SkyboxExtension extends MultiModelExtensionBase {
 
     const nav = this.viewer.navigation
 
+    const up = nav.getCameraUpVector()
+
     const pos = nav.getPosition()
 
     const matrix = new THREE.Matrix4().makeRotationAxis(
       axis, speed * dt);
 
     pos.applyMatrix4(matrix)
+    up.applyMatrix4(matrix)
 
-    nav.setPosition(pos)
+    nav.setView(pos, new THREE.Vector3(0,0,0))
+    nav.setCameraUpVector(up)
   }
 
   /////////////////////////////////////////////////////////

@@ -645,6 +645,13 @@ class ViewerConfigurator extends BaseComponent {
 
       if (modelInfo) {
 
+        const lmvProxy =
+          modelInfo.proxy || 'lmv-proxy-2legged'
+
+        Autodesk.Viewing.setEndpointAndApi(
+          `${window.location.origin}/${lmvProxy}`,
+          'modelDerivativeV2')
+
         switch (this.state.dbModel.env) {
 
           case 'Local':
@@ -671,13 +678,6 @@ class ViewerConfigurator extends BaseComponent {
             break
 
           case 'AutodeskProduction':
-
-            const lmvProxy =
-              modelInfo.proxy || 'lmv-proxy-2legged'
-
-            Autodesk.Viewing.setEndpointAndApi(
-              `${window.location.origin}/${lmvProxy}`,
-              'modelDerivativeV2')
 
             this.viewerDocument =
               await this.loadDocument(modelInfo.urn)
