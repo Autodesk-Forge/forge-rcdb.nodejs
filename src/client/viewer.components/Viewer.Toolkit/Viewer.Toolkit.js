@@ -207,14 +207,18 @@ export default class ViewerToolkit {
 
       try {
 
-        const dbIdArray = Array.isArray(dbIds) ? dbIds : [dbIds]
-
         const instanceTree = model.getData().instanceTree
 
-        const leafIds = await ViewerToolkit.getLeafNodes(
-          model, dbIdArray)
+        dbIds = dbIds || instanceTree.getRootId()
 
-        let fragIds = []
+        const dbIdArray = Array.isArray(dbIds)
+          ? dbIds : [dbIds]
+
+        const leafIds =
+          await ViewerToolkit.getLeafNodes(
+            model, dbIdArray)
+
+        const fragIds = []
 
         for(var i=0; i< leafIds.length; ++i) {
 
@@ -671,7 +675,8 @@ export default class ViewerToolkit {
   /////////////////////////////////////////////////////////
   static async setMaterial(model, dbId, material) {
 
-    const fragIds = await ViewerToolkit.getFragIds(model, dbId)
+    const fragIds = await ViewerToolkit.getFragIds(
+      model, dbId)
 
     const fragList = model.getFragmentList()
 
@@ -708,26 +713,26 @@ export default class ViewerToolkit {
               name: instanceTree.getNodeName(childId)
             }
 
-            node.children.push(childNode);
+            node.children.push(childNode)
           }
 
-          _buildModelTreeRec(childNode);
-        });
+          _buildModelTreeRec(childNode)
+        })
     }
 
     //get model instance tree and root component
-    var instanceTree = model.getData().instanceTree;
+    var instanceTree = model.getData().instanceTree
 
-    var rootId = instanceTree.getRootId();
+    var rootId = instanceTree.getRootId()
 
     var rootNode = {
       dbId: rootId,
       name: instanceTree.getNodeName(rootId)
     }
 
-    _buildModelTreeRec(rootNode);
+    _buildModelTreeRec(rootNode)
 
-    return rootNode;
+    return rootNode
   }
 
   /////////////////////////////////////////////////////////

@@ -1,6 +1,6 @@
-import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import './background.scss'
+import React from 'react'
 import FSS from './fss'
 
 /////////////////////////////////////////////////////////////////////

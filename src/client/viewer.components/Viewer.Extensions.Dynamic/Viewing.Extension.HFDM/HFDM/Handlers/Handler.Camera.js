@@ -15,6 +15,13 @@ export default class CameraPositionHandler extends BaseHandler {
 
     this.onCameraChanged = _.throttle(
       this.onCameraChanged.bind(this), 500)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  activate () {
 
     this.viewer.addEventListener(
       Autodesk.Viewing.CAMERA_CHANGE_EVENT,

@@ -21,8 +21,15 @@
     height: 30px;
   }
 
-  .treeview lmvheader.property,
+  .treeview lmvheader.root {
+    width: calc(100% - 2px);
+  }
+
   .treeview lmvheader.category {
+    width: calc(100% - 2px);
+  }
+
+  .treeview lmvheader.property {
     width: calc(100% - 25px);
   }
 
@@ -41,6 +48,12 @@
 
   .treeview group > lmvheader > icon {
     height: 20px;
+    float: left;
+  }
+
+  .treeview lmvheader.root .treenode-container {
+    width: calc(100% - 22px);
+    overflow: hidden;
     float: left;
   }
 

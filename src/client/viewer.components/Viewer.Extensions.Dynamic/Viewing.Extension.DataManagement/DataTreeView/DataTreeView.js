@@ -31,55 +31,22 @@ export default class DataTreeView extends React.Component {
 
     super (props)
 
-    this.delegate = new MetaTreeDelegate(
+    this.delegate = new DataTreeDelegate(
       props.menuContainer)
 
-    this.delegate.on('property.edit',
-      (metaProperty) => {
+    this.delegate.on('item.created', (node) => {
 
-        if (this.props.onEditProperty) {
+      if (this.props.onItemNodeCreated) {
 
-          return this.props.onEditProperty (
-            metaProperty)
-        }
-      })
-
-    this.delegate.on('property.delete',
-      (metaProperty) => {
-
-        if (this.props.onDeleteProperty) {
-
-          return this.props.onDeleteProperty (
-            metaProperty)
-        }
-      })
-
-    this.delegate.on('node.update', (metaProperty) => {
-
-      const nodeId = metaProperty.id
-
-      const node = this.tree.nodeIdToNode[nodeId]
-
-      if (node) {
-
-        node.update(metaProperty)
+        this.props.onItemNodeCreated(node)
       }
     })
 
-    this.delegate.on('node.destroy', (nodeId) => {
+    this.delegate.on('item.load', (node) => {
 
-      const node = this.tree.nodeIdToNode[nodeId]
+      if (this.props.onLoadItem) {
 
-      if (node && node.parent) {
-
-        node.parent.children =
-          node.parent.children.filter((child) => {
-            return child.id !== nodeId
-          })
-
-        node.parent.children.length
-          ? this.tree.destroyNode(nodeId)
-          : node.parent.destroy()
+        this.props.onLoadItem(node)
       }
     })
   }
@@ -88,20 +55,24 @@ export default class DataTreeView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  loadTree (displayName, properties) {
-
-    this.delegate.setProperties(properties)
+  loadHub (hub) {
 
     const rootNode = this.delegate.createRootNode({
-      displayName
+      name: hub.attributes.name,
+      delegate: this.delegate,
+      api: this.props.api,
+      type: hub.type,
+      hubId: hub.id,
+      details: hub,
+      group: true,
+      id: hub.id,
+      level: 0
     })
 
     this.tree = new TreeView (
       this.delegate, rootNode, this.treeContainer, {
         excludeRoot: false
       })
-
-    rootNode.expand ()
   }
 
   /////////////////////////////////////////////////////////
@@ -110,47 +81,7 @@ export default class DataTreeView extends React.Component {
   /////////////////////////////////////////////////////////
   componentDidMount () {
 
-    this.loadTree (
-      this.props.displayName,
-      this.props.properties)
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  shouldComponentUpdate (nextProps) {
-
-    return false
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  componentWillReceiveProps (props) {
-
-    if (props.guid  !== this.props.guid) {
-
-      this.delegate.destroy()
-
-      this.tree.destroy()
-
-      this.loadTree (
-        props.displayName,
-        props.properties)
-    }
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  componentDidUpdate () {
-
-    this.delegate.destroy()
-
-    this.tree.destroy()
+    this.loadHub (this.props.hub)
   }
 
   /////////////////////////////////////////////////////////
@@ -168,10 +99,19 @@ export default class DataTreeView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  shouldComponentUpdate () {
+
+    return false
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   render() {
 
     return (
-      <div className="metatree-container" ref={
+      <div className="datatree-container" ref={
         (div) => this.treeContainer = div
         }
       />

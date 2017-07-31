@@ -34,10 +34,12 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
     this.hfdmFactory =
       this.options.HFDM_SDK.PropertyFactory
 
+    this.CameraHandler = new CameraHandler(viewer)
+
     this.handlerManager = new HandlerManager()
 
     this.handlerManager.registerHandler(
-      'camera', new CameraHandler(viewer))
+      'camera', this.CameraHandler)
 
     this.registerType(Vector3d)
     this.registerType(Camera)
@@ -72,10 +74,6 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
   unload () {
 
     console.log('Viewing.Extension.HFDM.Core unloaded')
-
-    viewer.removeEventListener(
-      Autodesk.Viewing.CAMERA_CHANGE_EVENT,
-      this.onCameraChanged)
 
     super.unload ()
 
@@ -178,6 +176,8 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
         this.initializeAsParticipant()
       }
 
+      this.CameraHandler.activate()
+
     } catch (ex) {
 
       console.log(ex)
@@ -191,8 +191,6 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
   //
   /////////////////////////////////////////////////////////
   initializeAsHost () {
-
-    console.log('Initialize as HOST')
 
     const position =
       this.viewer.navigation.getPosition()
@@ -246,7 +244,7 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   initializeAsParticipant () {
 
-    console.log('Initialize as PARTICIPANT')
+
   }
 }
 

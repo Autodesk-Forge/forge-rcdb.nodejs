@@ -199,7 +199,12 @@ class PhysicsExtension extends MultiModelExtensionBase {
 
     super.onModelRootLoaded()
 
-    this.viewer.navigation.toPerspective()
+    const nav = this.viewer.navigation
+
+    nav.toPerspective()
+
+    this.viewer.autocam.setHomeViewFrom(
+      nav.getCamera())
   }
 
   /////////////////////////////////////////////////////////
@@ -229,6 +234,10 @@ class PhysicsExtension extends MultiModelExtensionBase {
         transformerOptions)
 
     modelTransformer.setModel(this.viewer.model)
+
+    this.bounds =
+      await Toolkit.getWorldBoundingBox(
+        this.viewer.model)
 
     this.react.setState({
       activateControls: true,
@@ -392,6 +401,10 @@ class PhysicsExtension extends MultiModelExtensionBase {
 
     this.setSelectedBody(
       selectedBody)
+
+    const nav = this.viewer.navigation
+
+    nav.fitBounds(true, this.bounds)
   }
 
   /////////////////////////////////////////////////////////
@@ -779,7 +792,7 @@ class PhysicsExtension extends MultiModelExtensionBase {
 
             <div className="control-element">
               <label>
-                Time Skew: <br/> (Runs simulation slower or faster)
+                Time Skew: <br/> (Runs simulation slower > faster)
               </label>
 
               <Slider

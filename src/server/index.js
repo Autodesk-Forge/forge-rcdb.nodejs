@@ -14,6 +14,7 @@ import util from 'util'
 import path from 'path'
 
 //Endpoints
+import DerivativesAPI from './api/endpoints/derivatives'
 import MaterialAPI from './api/endpoints/materials'
 import ExtractAPI from './api/endpoints/extract'
 import SocketAPI from './api/endpoints/socket'
@@ -144,9 +145,24 @@ ServiceManager.registerService(ossSvc)
 ServiceManager.registerService(dmSvc)
 
 /////////////////////////////////////////////////////////////////////
+// Token getters
+//
+/////////////////////////////////////////////////////////////////////
+const get2LeggedToken = () => {
+
+  return forgeSvc.get2LeggedToken()
+}
+
+const get3LeggedToken = (session) => {
+
+  return forgeSvc.get3LeggedTokenMaster(session)
+}
+
+/////////////////////////////////////////////////////////////////////
 // API Routes setup
 //
 /////////////////////////////////////////////////////////////////////
+app.use('/api/derivatives/3legged', DerivativesAPI(get3LeggedToken))
 app.use('/api/materials', MaterialAPI())
 app.use('/api/extract',   ExtractAPI())
 app.use('/api/socket',    SocketAPI())
@@ -168,7 +184,7 @@ app.get('/lmv-proxy-2legged/*', proxy2legged)
 
 const proxy3legged = lmvProxySvc.generateProxy(
   'lmv-proxy-3legged',
-  (session) => forgeSvc.get3LeggedToken(session))
+  (session) => forgeSvc.get3LeggedTokenMaster(session))
 
 app.get('/lmv-proxy-3legged/*', proxy3legged)
 

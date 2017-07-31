@@ -47,6 +47,8 @@ export default class Search extends BaseComponent {
 
       e.stopPropagation()
       e.preventDefault()
+
+      this.onSearch()
     }
   }
 
@@ -205,8 +207,6 @@ export default class Search extends BaseComponent {
   //
   /////////////////////////////////////////////////////////
   onRowClicked (row) {
-
-    console.log(row)
 
     const {model, viewer} = this.props
 

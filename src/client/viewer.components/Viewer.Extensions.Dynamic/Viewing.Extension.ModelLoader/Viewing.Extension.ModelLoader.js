@@ -204,7 +204,9 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
 
       this.options.loader.show(true)
 
-      const fileType = this.getFileType(dbModel.model.urn)
+      const fileType =
+        dbModel.fileType ||
+        this.getFileType(dbModel.model.urn)
 
       const loadOptions = {
         placementTransform:
@@ -234,11 +236,16 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
             this.viewer.loadModel(path, loadOptions,
               (model) => {
 
-                model.database = this.options.database
+                model.database =
+                  dbModel.database || this.options.database
                 model.dbModelId = dbModel._id
                 model.urn = dbModel.model.urn
                 model.name = dbModel.name
                 model.guid = this.guid()
+
+                this.eventSink.emit('model.loaded', {
+                  model
+                })
 
                 resolve (model)
               })
@@ -256,6 +263,10 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
               model.urn = dbModel.model.urn
               model.name = dbModel.name
               model.guid = this.guid()
+
+              this.eventSink.emit('model.loaded', {
+                model
+              })
 
               resolve (model)
             })
@@ -385,6 +396,8 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   //
   /////////////////////////////////////////////////////////
   onModelBeginLoad (event) {
+
+    console.log('onModelBeginLoad')
 
     const {models} = this.react.getState()
 
@@ -541,12 +554,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
         <div key={dbModel._id} className="model-item"
           onClick={() => {
 
-            this.loadModel(dbModel).then((model) => {
-
-              this.eventSink.emit('model.loaded', {
-                model
-              })
-            })
+            this.loadModel(dbModel)
 
             this.dialogSvc.setState({
               open: false

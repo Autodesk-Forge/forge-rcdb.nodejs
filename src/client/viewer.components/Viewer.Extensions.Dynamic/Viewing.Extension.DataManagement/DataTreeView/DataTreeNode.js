@@ -19,16 +19,17 @@ export default class DataTreeNode extends EventsEmitter {
 
     super ()
 
+    this.onLoadItem = this.onLoadItem.bind(this)
     this.onExpand = this.onExpand.bind(this)
-    this.onDelete = this.onDelete.bind(this)
-    this.onEdit = this.onEdit.bind(this)
 
     this.on('expand', this.onExpand)
 
     this.delegate     = props.delegate
     this.parent       = props.parent
+    this.level        = props.level
     this.group        = props.group
     this.type         = props.type
+    this.api          = props.api
     this.id           = props.id
 
     this.children = []
@@ -58,23 +59,13 @@ export default class DataTreeNode extends EventsEmitter {
     this.domContainer = domContainer
 
     this.reactNode = ReactDOM.render(
-      <ReactTreeNode {...this.props}/>,
+      <ReactTreeNode
+        onLoadItem={this.onLoadItem}
+        {...this.props}
+      />,
       this.domContainer)
 
     this.collapse()
-  }
-
-  /////////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////////
-  update (metaProperty) {
-
-    this.props = Object.assign({}, this.props, metaProperty)
-
-    this.reactNode = ReactDOM.render(
-      <ReactTreeNode {...this.props}/>,
-      this.domContainer)
   }
 
   /////////////////////////////////////////////////////////////
@@ -134,140 +125,269 @@ export default class DataTreeNode extends EventsEmitter {
   //
   //
   /////////////////////////////////////////////////////////
-  toMetaProperty (props = this.props) {
-
-    switch (props.metaType) {
-
-      case 'Text':
-
-        return {
-          displayCategory: props.displayCategory,
-          displayValue: props.displayValue,
-          displayName: props.displayName,
-          metaType: props.metaType,
-          dbId: props.dbId,
-          id: props.id
-        }
-
-      case 'Link':
-
-        return {
-          displayCategory: props.displayCategory,
-          displayValue: props.displayValue,
-          displayName: props.displayName,
-          metaType: props.metaType,
-          link: props.link,
-          dbId: props.dbId,
-          id: props.id
-        }
-
-      case 'File':
-
-        return {
-          displayCategory: props.displayCategory,
-          displayValue: props.displayValue,
-          displayName: props.displayName,
-          metaType: props.metaType,
-          filelink: props.filelink,
-          filename: props.filename,
-          filesize: props.filesize,
-          fileId:  props.fileId,
-          dbId: props.dbId,
-          id: props.id
-        }
-    }
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  async onEdit (props) {
-
-    const newMetaProperty = await this.delegate.emit(
-      'property.edit',
-      this.toMetaProperty(props))
-
-    if (newMetaProperty) {
-
-      this.delegate.emit(
-        'node.update', newMetaProperty)
-    }
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  async onDelete (props) {
-
-    const deleted = await this.delegate.emit(
-      'property.delete',
-      this.toMetaProperty(props))
-
-    if (deleted) {
-
-      this.delegate.emit('node.destroy', props.id)
-    }
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
   loadChildren () {
 
     switch (this.type) {
 
-      case 'root':
+      case 'hubs':
+        return this.loadHubChildren()
 
-        const categories = _.sortBy(
-          Object.keys(this.props.propsMap), (item) => {
-            return item
+      case 'projects':
+        return this.loadProjectChildren()
+
+      case 'folders':
+        return this.loadFolderChildren()
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async loadHubChildren () {
+
+    const projectsRes =
+      await this.api.getProjects(this.props.hubId)
+
+    const projects = _.sortBy(projectsRes.data,
+      (project) => {
+        return project.attributes.name.toLowerCase()
+      })
+
+    const hubType =
+      this.props.details.attributes.extension.type
+
+    const showProjects =
+      (hubType === 'hubs:autodesk.bim360:Account')
+
+    if (showProjects) {
+
+      const projectTasks = projects.map((project) => {
+
+        return new Promise((resolve) => {
+
+          const rootId = project.relationships.rootFolder.data.id
+
+          const childProps = Object.assign({}, this.props, {
+            name: project.attributes.name,
+            projectId: project.id,
+            level: this.level + 1,
+            type: project.type,
+            details: project,
+            folderId: rootId,
+            id: project.id,
+            parent: this
           })
 
-        this.children = categories.map((category) => {
+          const childNode = new DataTreeNode(childProps)
 
-          const childNode = new MetaTreeNode({
-            properties: this.props.propsMap[category],
-            delegate: this.delegate,
-            displayName: category,
-            type: 'category',
-            id: this.guid(),
-            parent: this,
-            group: true
-          })
+          this.children.push(childNode)
 
           this.addChild(childNode)
+        })
+      })
 
-          childNode.expand()
+    } else {
 
-          return childNode
+      const projectTasks = projects.map((project) => {
+
+        return new Promise(async(resolve) => {
+
+          const folderItemsRes =
+            await this.api.getProjectTopFolders(
+              this.props.hubId, project.id)
+
+          folderItemsRes.data.forEach((folder) => {
+            folder.projectId = project.id
+          })
+
+          return resolve(folderItemsRes.data)
+        })
+      })
+
+      const folderArrays = await Promise.all(projectTasks)
+
+      const folders = _.sortBy(_.flatten(folderArrays),
+        (folderItem) => {
+          return folderItem.attributes.displayName.toLowerCase()
         })
 
-        break
+      const foldersTasks = folders.map((folder) => {
 
-      case 'category':
+        return new Promise((resolve) => {
 
-        this.children =
-          this.props.properties.map((prop) => {
+          const childProps = Object.assign({}, this.props, {
+            name: folder.attributes.displayName,
+            projectId: folder.projectId,
+            level: this.level + 1,
+            folderId: folder.id,
+            type: folder.type,
+            details: folder,
+            id: folder.id,
+            parent: this
+          })
 
-            const fullProp = Object.assign({}, prop, {
-              delegate: this.delegate,
-              onDelete: this.onDelete,
-              onEdit: this.onEdit,
-              type: 'property',
-              parent: this,
-              group: false
-            })
+          const childNode = new DataTreeNode(childProps)
 
-            const childNode = new MetaTreeNode(fullProp)
+          this.children.push(childNode)
 
-            this.addChild(childNode)
-
-            return childNode
+          this.addChild(childNode)
         })
+      })
     }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async loadProjectChildren () {
+
+    const folderItemsRes =
+      await this.api.getProjectTopFolders(
+        this.props.hubId, this.props.projectId)
+
+    const folderItems = _.sortBy(folderItemsRes.data,
+      (folderItem) => {
+        return folderItem.attributes.displayName.toLowerCase()
+      })
+
+    const folders = folderItems.filter((folderItem) => {
+
+      return (folderItem.type === 'folders')
+    })
+
+    const items = folderItems.filter((folderItem) => {
+
+      return (folderItem.type === 'items')
+    })
+
+    const folderTasks = folders.map((folder) => {
+
+      return new Promise((resolve) => {
+
+        const childProps = Object.assign({}, this.props, {
+          name: folder.attributes.displayName,
+          level: this.level + 1,
+          folderId: folder.id,
+          type: folder.type,
+          details: folder,
+          id: folder.id,
+          parent: this
+        })
+
+        const childNode = new DataTreeNode(childProps)
+
+        this.children.push(childNode)
+
+        this.addChild(childNode)
+      })
+    })
+
+    const itemTasks = items.map((item) => {
+
+      return new Promise((resolve) => {
+
+        const childProps = Object.assign({}, this.props, {
+          name: item.attributes.displayName,
+          level: this.level + 1,
+          type: item.type,
+          itemId: item.id,
+          details: item,
+          parent: this,
+          id: item.id
+        })
+
+        const childNode = new DataTreeNode(childProps)
+
+        this.delegate.emit('item.created', childNode)
+
+        this.children.push(childNode)
+
+        this.addChild(childNode)
+      })
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async loadFolderChildren () {
+
+    const folderItemsRes =
+      await this.api.getFolderContent(
+        this.props.projectId, this.props.folderId)
+
+    const folderItems = _.sortBy(folderItemsRes.data,
+      (folderItem) => {
+        return folderItem.attributes.displayName.toLowerCase()
+      })
+
+    const folders = folderItems.filter((folderItem) => {
+
+      return (folderItem.type === 'folders')
+    })
+
+    const items = folderItems.filter((folderItem) => {
+
+      return (folderItem.type === 'items')
+    })
+
+    const folderTasks = folders.map((folder) => {
+
+      return new Promise((resolve) => {
+
+        const childProps = Object.assign({}, this.props, {
+          name: folder.attributes.displayName,
+          level: this.level + 1,
+          folderId: folder.id,
+          type: folder.type,
+          details: folder,
+          id: folder.id,
+          parent: this
+        })
+
+        const childNode = new DataTreeNode(childProps)
+
+        this.children.push(childNode)
+
+        this.addChild(childNode)
+      })
+    })
+
+    const itemTasks = items.map((item) => {
+
+      return new Promise((resolve) => {
+
+        const childProps = Object.assign({}, this.props, {
+          name: item.attributes.displayName,
+          level: this.level + 1,
+          type: item.type,
+          itemId: item.id,
+          details: item,
+          parent: this,
+          id: item.id
+        })
+
+        const childNode = new DataTreeNode(childProps)
+
+        this.delegate.emit('item.created', childNode)
+
+        this.children.push(childNode)
+
+        this.addChild(childNode)
+      })
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onLoadItem () {
+
+    this.delegate.emit('item.load', this)
   }
 }
 
@@ -277,150 +397,15 @@ class ReactTreeNode extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  renderNativeProperty () {
+  constructor (props) {
 
-    return (
-      <div className="treenode">
-        <Label className="meta-name"
-          text={this.props.displayName}
-        />
-        <Label className="meta-value"
-          text={this.props.displayValue.toString()}
-        />
-      </div>
-    )
-  }
+    super (props)
 
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  renderTextProperty () {
-
-    return (
-      <div className="treenode">
-        <Label className="meta-name"
-          text={this.props.displayName}
-        />
-        <Label className="meta-value editable"
-          text={this.props.displayValue.toString()}
-        />
-        <span className="fa fa-edit"
-          onClick={() => this.props.onEdit(this.props)}
-        />
-        <span className="fa fa-times"
-          onClick={() => this.props.onDelete(this.props)}
-        />
-      </div>
-    )
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  renderLinkProperty () {
-
-    return (
-      <div className="treenode">
-        <Label className="meta-name"
-          text={this.props.displayName}
-        />
-        <div className="meta-value meta-link editable">
-          <a target="_blank" href={this.props.link}
-            onClick={() => this.onGoToLink (this.props.link)}>
-            {this.props.displayValue}
-          </a>
-        </div>
-        <span className="fa fa-edit"
-          onClick={() => this.props.onEdit(this.props)}
-        />
-        <span className="fa fa-times"
-          onClick={() =>this.props.onDelete(this.props)}
-        />
-      </div>
-    )
-  }
-
-  onGoToLink (href) {
-
-    let a = document.createElement('a')
-
-    a.target = '_blank'
-    a.href = href
-
-    a.click()
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  renderFileProperty () {
-
-    const displayLink = this.props.displayCategory +
-      '/' + this.props.displayName +
-      '/' + this.props.displayValue +
-      '/' + this.props.filename
-
-    const spinnerStyle = {
-      display: 'none'
-    }
-
-    return (
-      <div className="treenode">
-        <Label className="meta-name"
-          text={this.props.displayName}
-        />
-        <div className="meta-value meta-file editable">
-          <Spinner spinnerName='cube-grid'
-            style={spinnerStyle}/>
-          <a target="_blank" href={displayLink}
-            onClick={() => this.onDownloadFile (
-              this.props.filename,
-              this.props.filelink)}>
-            {this.props.displayValue}
-          </a>
-        </div>
-        <span className="fa fa-edit"
-          onClick={() => this.props.onEdit(this.props)}
-        />
-        <span className="fa fa-times"
-          onClick={() =>this.props.onDelete(this.props)}
-        />
-      </div>
-    )
-  }
-
-  onDownloadFile (filename, href) {
-
-    let a = document.createElement('a')
-
-    a.download = filename
-    a.href = href
-
-    a.click()
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  renderPropertyTreeNode () {
-
-    switch (this.props.metaType) {
-
-      case 'File':
-        return this.renderFileProperty ()
-
-      case 'Link':
-        return this.renderLinkProperty ()
-
-      case 'Text':
-        return this.renderTextProperty ()
-
-      default:
-        return this.renderNativeProperty ()
+    this.renderers = {
+      projects: this.renderProjectNode.bind(this),
+      folders: this.renderFolderNode.bind(this),
+      items: this.renderItemNode.bind(this),
+      hubs: this.renderHubNode.bind(this)
     }
   }
 
@@ -428,11 +413,61 @@ class ReactTreeNode extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  renderDefaultTreeNode () {
+  renderHubNode() {
 
     return (
       <div className="treenode">
-        <Label text={this.props.displayName}/>
+        <Label className="name"
+          text={this.props.name}
+        />
+      </div>
+    )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  renderProjectNode() {
+
+    return (
+      <div className="treenode">
+        <Label className="name"
+          text={this.props.name}
+        />
+      </div>
+    )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  renderFolderNode() {
+
+    return (
+      <div className="treenode">
+        <Label className="name"
+          text={this.props.name}
+        />
+      </div>
+    )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  renderItemNode() {
+
+    return (
+      <div className="treenode">
+        <Label className="name"
+          text={this.props.name}
+        />
+        <span className="fa fa-caret-square-o-right"
+          onClick={this.props.onLoadItem}
+        />
       </div>
     )
   }
@@ -443,13 +478,6 @@ class ReactTreeNode extends React.Component {
   /////////////////////////////////////////////////////////
   render() {
 
-    switch (this.props.type) {
-
-      case 'property':
-        return this.renderPropertyTreeNode()
-
-      default:
-        return this.renderDefaultTreeNode()
-    }
+    return this.renderers[this.props.type]()
   }
 }

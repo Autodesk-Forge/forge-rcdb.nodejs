@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import HFDMCoreExtensionId from './Viewing.Extension.HFDM.Core'
+import Clipboard from 'react-copy-to-clipboard'
 import { browserHistory } from 'react-router'
 import WidgetContainer from 'WidgetContainer'
 import ScriptLoader from 'ScriptLoader'
@@ -284,9 +285,18 @@ class HFDMExtension extends MultiModelExtensionBase {
         <br/>
         {
           colaborateURL &&
-          <a href={colaborateURL} target='_blank'>
-            Collaborate URL
-          </a>
+          <div>
+            <a href={colaborateURL} target='_blank'>
+              Collaborate URL
+            </a>
+            <Clipboard
+              text={colaborateURL}>
+              <button className="clipboard-btn"
+                title="Copy to clipboard">
+              <span className="fa fa-clipboard"/>
+              </button>
+            </Clipboard>
+          </div>
         }
       </div>
     )

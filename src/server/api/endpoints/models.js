@@ -135,6 +135,7 @@ module.exports = function() {
         timestamp: new Date(),
         name : data.name,
         model : {
+          objectKey,
           fileId,
           urn
         }

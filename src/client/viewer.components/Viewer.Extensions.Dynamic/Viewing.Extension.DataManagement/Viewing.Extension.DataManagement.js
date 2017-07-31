@@ -4,7 +4,7 @@
 //
 ///////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
-import DMAPI from './Viewing.Extension.DataManagement.API'
+import DerivativesAPI from './Derivatives.API'
 import WidgetContainer from 'WidgetContainer'
 import { browserHistory } from 'react-router'
 import { Tabs, Tab } from 'react-bootstrap'
@@ -13,6 +13,7 @@ import ServiceManager from 'SvcManager'
 import { ReactLoader } from 'Loader'
 import DOMPurify from 'dompurify'
 import ReactDOM from 'react-dom'
+import DMAPI from './DM.API'
 import Label from 'Label'
 import React from 'react'
 
@@ -26,7 +27,9 @@ class DataManagementExtension extends MultiModelExtensionBase {
 
 		super (viewer, options)
 
+    this.onItemNodeCreated = this.onItemNodeCreated.bind(this)
     this.onTabSelected = this.onTabSelected.bind(this)
+    this.onLoadItem = this.onLoadItem.bind(this)
 
     this.dialogSvc =
       ServiceManager.getService(
@@ -35,6 +38,10 @@ class DataManagementExtension extends MultiModelExtensionBase {
     this.forgeSvc =
       ServiceManager.getService(
         'ForgeSvc')
+
+    this.derivativesAPI = new DerivativesAPI({
+      apiUrl: '/api/derivatives/3legged'
+    })
 
     this.dmAPI = new DMAPI({
       apiUrl: '/api/dm'
@@ -48,6 +55,11 @@ class DataManagementExtension extends MultiModelExtensionBase {
   //
   /////////////////////////////////////////////////////////
 	load () {
+
+    if (!this.viewer.model) {
+
+      this.viewer.container.classList.add('empty')
+    }
 
     this.react.setState({
 
@@ -72,9 +84,11 @@ class DataManagementExtension extends MultiModelExtensionBase {
 
         } catch (ex) {
 
-          this.showLogin()
+          return this.showLogin()
         }
       }
+
+      this.options.loader.show(false)
 
       const hubsRes = await this.dmAPI.getHubs()
 
@@ -126,6 +140,63 @@ class DataManagementExtension extends MultiModelExtensionBase {
 
 		return true
 	}
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async onItemNodeCreated (node) {
+
+    const versionsRes =
+      await this.dmAPI.getItemVersions(
+        node.props.projectId, node.props.itemId)
+
+    node.versions = versionsRes.data
+
+    if (node.versions.length) {
+
+      node.activeVersion = node.versions[0]
+
+      const urn = this.dmAPI.getVersionURN(
+        node.activeVersion)
+
+      const manifest =
+        await this.derivativesAPI.getManifest(urn)
+
+
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async onLoadItem (node) {
+
+    const extId = 'Viewing.Extension.ModelLoader'
+
+    const loader = this.viewer.getExtension(extId)
+
+    console.log(node)
+    //.split(".").pop(-1)
+
+    const version = node.activeVersion
+
+    const urn = this.dmAPI.getVersionURN(
+      version)
+
+    loader.loadModel({
+      fileType: version.attributes.fileType,
+      _id : this.options.dbModel._id,
+      env: 'AutodeskProduction',
+      database: 'configurator',
+      name: node.props.name,
+      model: {
+        proxy: 'lmv-proxy-3legged',
+        urn
+      }
+    })
+  }
 
   /////////////////////////////////////////////////////////
   //
@@ -214,20 +285,6 @@ class DataManagementExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  renderTreeView () {
-
-    return (
-      <DataTreeView
-        menuContainer={this.options.appContainer}
-        api={this.dmAPI}
-      />
-    )
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
   onTabSelected (tabKey) {
 
     this.react.setState({
@@ -247,14 +304,23 @@ class DataManagementExtension extends MultiModelExtensionBase {
 
       const hubHeader = this.dmAPI.getHubHeader(hub)
 
-      const title = `${hubHeader}: ${hub.attributes.name}`
+      const title =
+        <label>
+          {`${hubHeader}: ${hub.attributes.name}`}
+        </label>
 
       return (
-        <Tab  className="tab-container"
+        <Tab className="tab-container"
           eventKey={hub.id}
           title={title}
           key={hub.id}>
-          stuff
+          <DataTreeView
+            onItemNodeCreated={this.onItemNodeCreated}
+            menuContainer={this.options.appContainer}
+            onLoadItem={this.onLoadItem}
+            api={this.dmAPI}
+            hub={hub}
+          />
         </Tab>
       )
     })

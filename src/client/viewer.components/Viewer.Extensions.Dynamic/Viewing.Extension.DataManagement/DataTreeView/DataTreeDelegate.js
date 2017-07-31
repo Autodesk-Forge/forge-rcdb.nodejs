@@ -19,57 +19,15 @@ export default class DataTreeDelegate extends TreeDelegate {
     this.contextMenu = new ContextMenu({
       container: menuContainer
     })
-
-    this.contextMenu.on(
-      'context.property.edit', async (metaProperty) => {
-
-        const newMetaProperty = await  this.emit(
-          'property.edit', metaProperty)
-
-        if (newMetaProperty) {
-
-          this.emit('node.update', newMetaProperty)
-        }
-      })
-
-    this.contextMenu.on(
-      'context.property.delete', async (metaProperty) => {
-
-        const deleted = await this.emit(
-          'property.delete', metaProperty)
-
-        if (deleted) {
-
-          this.emit('node.destroy', metaProperty.id)
-        }
-      })
   }
 
   /////////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////////
-  setProperties (properties) {
+  createRootNode (props) {
 
-    this.mapByCategory(properties)
-  }
-
-  /////////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////////
-  createRootNode (data) {
-
-    this.rootNode = new MetaTreeNode({
-
-      displayName: data.displayName,
-      propsMap: this.propsMap,
-      delegate: this,
-      group: true,
-      parent: null,
-      type: 'root',
-      id: 'root'
-    })
+    this.rootNode = new DataTreeNode(props)
 
     return this.rootNode
   }
@@ -97,6 +55,9 @@ export default class DataTreeDelegate extends TreeDelegate {
 
       parentDomElement.classList.add(cls)
     })
+
+    parentDomElement.style.width =
+      `calc(100% - ${node.level * 25 + 5}px)`
 
     node.mount(container)
   }
@@ -134,29 +95,5 @@ export default class DataTreeDelegate extends TreeDelegate {
   forEachChild (node, addChild) {
 
     node.addChild = addChild
-  }
-
-  /////////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////////
-  mapByCategory (properties) {
-
-    this.propsMap = {}
-
-    properties.forEach((prop) => {
-
-      const category = !!prop.displayCategory
-        ? prop.displayCategory
-        : 'Other'
-
-      if (category.indexOf('__') !== 0) {
-
-        this.propsMap[category] =
-          this.propsMap[category] || []
-
-        this.propsMap[category].push(prop)
-      }
-    })
   }
 }

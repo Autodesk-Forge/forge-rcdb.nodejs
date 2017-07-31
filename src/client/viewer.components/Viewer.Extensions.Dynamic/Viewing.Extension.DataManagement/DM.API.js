@@ -339,5 +339,29 @@ export default class DataManagementAPI extends ClientAPI {
     link.href = uri
     link.click()
   }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  getVersionURN (version, useStorage = false) {
+
+    if (!useStorage) {
+
+      return version.relationships.derivatives.data.id
+    }
+
+    if (version.relationships.storage) {
+
+      const urn = window.btoa(
+        version.relationships.storage.data.id)
+
+      return urn.replace(new RegExp('=', 'g'), '')
+
+    } else {
+
+      return null
+    }
+  }
 }
 

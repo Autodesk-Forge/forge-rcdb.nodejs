@@ -189,9 +189,14 @@ module.exports = function() {
 
     try {
 
+      const scope = [
+        'viewables:read',
+        'data:write'
+      ]
+
       const token =
         await forgeSvc.get3LeggedTokenClient(
-          req.session, 'data:write')
+          req.session, scope)
 
       res.json({
         expires_in: forgeSvc.getExpiry(token),
