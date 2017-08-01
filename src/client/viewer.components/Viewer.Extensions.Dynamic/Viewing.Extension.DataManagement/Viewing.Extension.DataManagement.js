@@ -11,6 +11,7 @@ import { Tabs, Tab } from 'react-bootstrap'
 import DataTreeView from './DataTreeView'
 import ServiceManager from 'SvcManager'
 import { ReactLoader } from 'Loader'
+import Measure from 'react-measure'
 import DOMPurify from 'dompurify'
 import ReactDOM from 'react-dom'
 import DMAPI from './DM.API'
@@ -66,7 +67,8 @@ class DataManagementExtension extends MultiModelExtensionBase {
       user: this.options.appState.user,
       activeTabKey: null,
       showTitle: false,
-      hubs: null
+      hubs: null,
+      width: 0
 
     }).then (async() => {
 
@@ -163,7 +165,20 @@ class DataManagementExtension extends MultiModelExtensionBase {
       const manifest =
         await this.derivativesAPI.getManifest(urn)
 
+      if (this.derivativesAPI.hasDerivative (
+          manifest, { type: 'geometry'})) {
 
+        node.setViewerUrn(urn)
+      }
+
+      const thumbnail =
+        await this.derivativesAPI.getThumbnail(urn, {
+          size: 200, base64: true
+        })
+
+      node.setThumbnail(`data:image/png;base64,${thumbnail}`)
+
+      node.showLoader(false)
     }
   }
 
@@ -177,25 +192,23 @@ class DataManagementExtension extends MultiModelExtensionBase {
 
     const loader = this.viewer.getExtension(extId)
 
-    console.log(node)
-    //.split(".").pop(-1)
-
     const version = node.activeVersion
 
-    const urn = this.dmAPI.getVersionURN(
-      version)
+    node.showLoader(true)
 
-    loader.loadModel({
+    await loader.loadModel({
       fileType: version.attributes.fileType,
+      name: node.props.name.split('.')[0],
       _id : this.options.dbModel._id,
       env: 'AutodeskProduction',
       database: 'configurator',
-      name: node.props.name,
       model: {
         proxy: 'lmv-proxy-3legged',
-        urn
+        urn: node.viewerUrn
       }
     })
+
+    node.showLoader(false)
   }
 
   /////////////////////////////////////////////////////////
@@ -304,8 +317,14 @@ class DataManagementExtension extends MultiModelExtensionBase {
 
       const hubHeader = this.dmAPI.getHubHeader(hub)
 
+
+      const style = {
+        width:
+          `${Math.floor((state.width-6)/hubs.length-14)}px`
+      }
+
       const title =
-        <label>
+        <label style={style}>
           {`${hubHeader}: ${hub.attributes.name}`}
         </label>
 
@@ -328,12 +347,21 @@ class DataManagementExtension extends MultiModelExtensionBase {
     const activeTabKey = state.activeTabKey || hubs[0].id
 
     return (
-      <Tabs onSelect={this.onTabSelected}
-        className="tabs-container"
-        activeKey={activeTabKey}
-        id="hubs-tab">
-      { tabs }
-      </Tabs>
+      <Measure bounds onResize={(rect) => {
+        this.react.setState({ width: rect.bounds.width })
+      }}>
+        {
+          ({ measureRef }) =>
+          <div ref={measureRef} className="tabs-container">
+            <Tabs onSelect={this.onTabSelected}
+              activeKey={activeTabKey}
+              className="tabs"
+              id="hubs-tab">
+              { tabs }
+            </Tabs>
+          </div>
+        }
+      </Measure>
     )
   }
 

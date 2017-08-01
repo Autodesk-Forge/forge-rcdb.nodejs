@@ -59,6 +59,8 @@ export default class DataTreeDelegate extends TreeDelegate {
     parentDomElement.style.width =
       `calc(100% - ${node.level * 25 + 5}px)`
 
+    node.parentDomElement = parentDomElement
+
     node.mount(container)
   }
 

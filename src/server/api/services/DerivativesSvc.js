@@ -211,7 +211,7 @@ export default class DerivativeSvc extends BaseSvc {
   //
   /////////////////////////////////////////////////////////
   async getThumbnail (getToken, urn, options = {
-    width: 100, height: 100
+    width: 100, height: 100, base64: false
   }) {
 
     const token = ((typeof getToken == 'function')
@@ -253,8 +253,9 @@ export default class DerivativeSvc extends BaseSvc {
             return reject(response.statusMessage)
           }
 
-          //resolve(bufferToBase64(body))
-          resolve (body)
+          options.base64
+            ? resolve(bufferToBase64(body))
+            : resolve (body)
 
         } catch(ex){
 

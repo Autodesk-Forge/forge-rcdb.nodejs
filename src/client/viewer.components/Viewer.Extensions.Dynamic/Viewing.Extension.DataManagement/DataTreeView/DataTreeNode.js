@@ -1,5 +1,5 @@
 import EventsEmitter from 'EventsEmitter'
-import Spinner from 'react-spinkit'
+import ReactTooltip from 'react-tooltip'
 import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 import Label from 'Label'
@@ -52,20 +52,68 @@ export default class DataTreeNode extends EventsEmitter {
   //
   //
   /////////////////////////////////////////////////////////////
+  setViewerUrn (urn) {
+
+    this.parentDomElement.classList.add('derivated')
+
+    this.viewerUrn = urn
+
+    this.render({
+      viewerUrn: urn
+    })
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  setThumbnail (thumbnail) {
+
+    this.render({
+      thumbnail
+    })
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  showLoader (show) {
+
+    this.render({
+      showLoader: show
+    })
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  render (props = {}) {
+
+    this.renderProps = Object.assign(
+      this.renderProps || {}, this.props, props)
+
+    this.reactNode = ReactDOM.render(
+      <ReactTreeNode {...this.renderProps}/>,
+      this.domContainer)
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
   mount (domContainer) {
 
     domContainer.className = 'treenode-container'
 
     this.domContainer = domContainer
 
-    this.reactNode = ReactDOM.render(
-      <ReactTreeNode
-        onLoadItem={this.onLoadItem}
-        {...this.props}
-      />,
-      this.domContainer)
-
     this.collapse()
+
+    this.render({
+      onLoadItem: this.onLoadItem
+    })
   }
 
   /////////////////////////////////////////////////////////////
@@ -125,19 +173,28 @@ export default class DataTreeNode extends EventsEmitter {
   //
   //
   /////////////////////////////////////////////////////////
-  loadChildren () {
+  async loadChildren () {
+
+    this.showLoader(true)
 
     switch (this.type) {
 
       case 'hubs':
-        return this.loadHubChildren()
+        await this.loadHubChildren()
+        break
 
       case 'projects':
-        return this.loadProjectChildren()
+        await this.loadProjectChildren()
+        break
 
       case 'folders':
-        return this.loadFolderChildren()
+        await this.loadFolderChildren()
+        break
+
+      default: break
     }
+
+    this.showLoader(false)
   }
 
   /////////////////////////////////////////////////////////
@@ -175,7 +232,7 @@ export default class DataTreeNode extends EventsEmitter {
             type: project.type,
             details: project,
             folderId: rootId,
-            id: project.id,
+            id: this.guid(),
             parent: this
           })
 
@@ -223,7 +280,7 @@ export default class DataTreeNode extends EventsEmitter {
             folderId: folder.id,
             type: folder.type,
             details: folder,
-            id: folder.id,
+            id: this.guid(),
             parent: this
           })
 
@@ -272,7 +329,7 @@ export default class DataTreeNode extends EventsEmitter {
           folderId: folder.id,
           type: folder.type,
           details: folder,
-          id: folder.id,
+          id: this.guid(),
           parent: this
         })
 
@@ -293,9 +350,9 @@ export default class DataTreeNode extends EventsEmitter {
           level: this.level + 1,
           type: item.type,
           itemId: item.id,
+          id: this.guid(),
           details: item,
-          parent: this,
-          id: item.id
+          parent: this
         })
 
         const childNode = new DataTreeNode(childProps)
@@ -344,7 +401,7 @@ export default class DataTreeNode extends EventsEmitter {
           folderId: folder.id,
           type: folder.type,
           details: folder,
-          id: folder.id,
+          id: this.guid(),
           parent: this
         })
 
@@ -365,9 +422,9 @@ export default class DataTreeNode extends EventsEmitter {
           level: this.level + 1,
           type: item.type,
           itemId: item.id,
+          id: this.guid(),
           details: item,
-          parent: this,
-          id: item.id
+          parent: this
         })
 
         const childNode = new DataTreeNode(childProps)
@@ -377,6 +434,8 @@ export default class DataTreeNode extends EventsEmitter {
         this.children.push(childNode)
 
         this.addChild(childNode)
+
+        childNode.showLoader(true)
       })
     })
   }
@@ -420,6 +479,12 @@ class ReactTreeNode extends React.Component {
         <Label className="name"
           text={this.props.name}
         />
+        {
+          this.props.showLoader &&
+          <div className="node-loader">
+            <span/>
+          </div>
+        }
       </div>
     )
   }
@@ -435,6 +500,12 @@ class ReactTreeNode extends React.Component {
         <Label className="name"
           text={this.props.name}
         />
+        {
+          this.props.showLoader &&
+          <div className="node-loader">
+            <span/>
+          </div>
+        }
       </div>
     )
   }
@@ -450,6 +521,12 @@ class ReactTreeNode extends React.Component {
         <Label className="name"
           text={this.props.name}
         />
+        {
+          this.props.showLoader &&
+          <div className="node-loader">
+            <span/>
+          </div>
+        }
       </div>
     )
   }
@@ -465,9 +542,47 @@ class ReactTreeNode extends React.Component {
         <Label className="name"
           text={this.props.name}
         />
-        <span className="fa fa-caret-square-o-right"
-          onClick={this.props.onLoadItem}
-        />
+        {
+          this.props.showLoader &&
+          <div className="node-loader">
+            <span/>
+          </div>
+        }
+        {
+          this.props.viewerUrn &&
+          <div>
+            <span className="fa fa-eye"
+              data-for={`load-${this.props.id}`}
+              data-tip
+              onClick={this.props.onLoadItem}
+            />
+            <ReactTooltip id={`load-${this.props.id}`}
+              className="tooltip-load"
+              effect="solid">
+              <div>
+                  {`Load ${this.props.name} in viewer ...`}
+              </div>
+            </ReactTooltip>
+          </div>
+        }
+        {
+          this.props.thumbnail &&
+          <div>
+            <span className="fa fa-file-image-o"
+              data-for={`thumbnail-${this.props.id}`}
+              data-tip
+            />
+            <ReactTooltip id={`thumbnail-${this.props.id}`}
+              className="tooltip-thumbnail"
+              effect="solid">
+              <div>
+                <img src={this.props.thumbnail}
+                  height="120"
+                />
+              </div>
+            </ReactTooltip>
+          </div>
+        }
       </div>
     )
   }

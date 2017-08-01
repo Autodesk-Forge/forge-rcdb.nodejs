@@ -451,10 +451,12 @@ class ExtensionManager extends ExtensionBase {
         return ext.options.displayIndex || 0
       })
 
+    const nbExt = renderExtensions.length
+
     const extensionPanes = renderExtensions.map (
       (extension) => {
 
-        const flexProp = extension.options.flex
+        const flexProp = nbExt > 1 && extension.options.flex
           ? {flex: extension.options.flex }
           : {}
 

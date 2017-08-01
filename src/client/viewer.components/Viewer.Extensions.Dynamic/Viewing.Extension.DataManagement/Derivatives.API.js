@@ -39,15 +39,34 @@ export default class DerivativesSvc extends ClientAPI {
   //
   //
   /////////////////////////////////////////////////////////
-  getThumbnail(urn, options = { width:100, height:100 }) {
+  getThumbnailUrl(urn, options = { size:200 }) {
 
-    const query = `width=${options.width}&height=${options.height}`
+    const query = `width=${options.size}&height=${options.size}`
+
+    const url = `${this.apiUrl}/thumbnails/${urn}?${query}`
+
+    return url
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  getThumbnail(urn, options = {
+    base64: false,
+    size:200
+  }) {
+
+    let query = `width=${options.size}&height=${options.size}`
+
+    if (options.base64) {
+
+      query += '&base64=true'
+    }
 
     const url = `/thumbnails/${urn}?${query}`
 
-    return this.ajax({
-      rawBody: true,
-      url})
+    return this.ajax(url)
   }
 
   /////////////////////////////////////////////////////////

@@ -261,20 +261,30 @@ module.exports = function (getToken) {
 
       const urn = req.params.urn
 
-      const options = {
-        width: req.query.width || 100,
-        height: req.query.height || 100
-      }
-
       const token = await getToken(req.session)
+
+      const options = {
+        height: req.query.size || 400,
+        width: req.query.size || 400,
+        base64: req.query.base64
+      }
 
       const derivativesSvc = ServiceManager.getService(
         'DerivativesSvc')
 
-      const response = await derivativesSvc.getThumbnail(
-        token, urn, options)
+      const response =
+        await derivativesSvc.getThumbnail(
+          token, urn, options)
 
-      res.end(response)
+      if (req.query.base64) {
+
+        res.end(response)
+
+      } else {
+
+        res.contentType('image/png')
+        res.end(response, 'binary')
+      }
 
     } catch (ex) {
 

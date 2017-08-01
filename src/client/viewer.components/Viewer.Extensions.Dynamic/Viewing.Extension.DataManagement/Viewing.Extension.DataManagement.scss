@@ -15,7 +15,7 @@
     margin-left: 27px;
     margin-top: 10px;
     select: none;
-    width: 104px;
+    width: 142px;
     float: left;
   }
 
@@ -41,17 +41,26 @@
     height: calc(100% - 8px);
     width: calc(100% - 8px);
     margin: 4px;
+
+    .tabs {
+      height: 100%;
+    }
   }
 
-  .nav-tabs > li {
+  .nav-tabs {
+    border-bottom: 1px solid #ddd;
     overflow: hidden;
     height: 30px;
-    float: left;
-    width: 33%;
 
-    &.active > a {
-      background-color: #ffffff;
-      border-bottom: none;
+    li {
+      overflow: hidden;
+      height: 30px;
+      float: left;
+
+      &.active > a {
+        background-color: #ffffff;
+        border-bottom: none;
+      }
     }
   }
 
@@ -75,7 +84,7 @@
 //
 /////////////////////////////////////////////////////////
 .data-management-controls {
-  margin: auto 0 auto calc(100% - 155px);
+  margin: auto 0 auto calc(100% - 173px);
   position: relative;
   float: left;
 }
