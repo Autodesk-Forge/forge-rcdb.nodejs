@@ -320,7 +320,7 @@ class DataManagementExtension extends MultiModelExtensionBase {
 
       const style = {
         width:
-          `${Math.floor((state.width-6)/hubs.length-14)}px`
+          `${Math.floor((state.width-8)/hubs.length-14)}px`
       }
 
       const title =
