@@ -15,13 +15,15 @@
 // DOES NOT WARRANT THAT THE OPERATION OF THE PROGRAM WILL BE
 // UNINTERRUPTED OR ERROR FREE.
 /////////////////////////////////////////////////////////////////////
+import ContentEditable from 'react-contenteditable'
 import DataTreeDelegate from './DataTreeDelegate'
+import BaseComponent from 'BaseComponent'
 import { TreeView } from 'TreeView'
 import ReactDOM from 'react-dom'
 import './DataTreeView.scss'
 import React from 'react'
 
-export default class DataTreeView extends React.Component {
+export default class DataTreeView extends BaseComponent {
 
   /////////////////////////////////////////////////////////
   //
@@ -30,6 +32,10 @@ export default class DataTreeView extends React.Component {
   constructor (props) {
 
     super (props)
+
+    this.onInputChanged = this.onInputChanged.bind(this)
+    this.onKeyDown = this.onKeyDown.bind(this)
+    this.onSearch = this.onSearch.bind(this)
 
     this.delegate = new DataTreeDelegate(
       props.menuContainer)
@@ -49,6 +55,10 @@ export default class DataTreeView extends React.Component {
         this.props.onLoadItem(node)
       }
     })
+
+    this.state = {
+      search: ''
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -108,13 +118,63 @@ export default class DataTreeView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  async onInputChanged (e) {
+
+    await this.assignState({
+      search: e.target.value
+    })
+
+    this.onSearch()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onKeyDown (e) {
+
+    if (e.keyCode === 13) {
+
+      e.stopPropagation()
+      e.preventDefault()
+
+      this.onSearch()
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onSearch () {
+
+    const {search} = this.state
+
+    this.delegate.filterNodes(search)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   render() {
+
+    const {search} = this.state
 
     return (
       <div className="datatree-container" ref={
         (div) => this.treeContainer = div
-        }
-      />
+        }>
+        <div className="search">
+          <ContentEditable
+            onChange={this.onInputChanged}
+            onKeyDown={this.onKeyDown}
+            data-placeholder="Search ..."
+            className="input-search"
+            html={search}
+          />
+        </div>
+      </div>
     )
   }
 }

@@ -28,11 +28,12 @@ export default class DataTreeNode extends EventsEmitter {
     this.parent       = props.parent
     this.level        = props.level
     this.group        = props.group
+    this.name         = props.name
     this.type         = props.type
     this.api          = props.api
     this.id           = props.id
 
-    this.children = []
+    this.children = null
 
     this.props = props
   }
@@ -176,6 +177,8 @@ export default class DataTreeNode extends EventsEmitter {
   async loadChildren () {
 
     this.showLoader(true)
+
+    this.children = []
 
     switch (this.type) {
 

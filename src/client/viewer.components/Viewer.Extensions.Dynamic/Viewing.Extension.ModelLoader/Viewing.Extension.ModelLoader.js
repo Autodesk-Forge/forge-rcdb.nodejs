@@ -397,8 +397,6 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   onModelBeginLoad (event) {
 
-    console.log('onModelBeginLoad')
-
     const {models} = this.react.getState()
 
     const model = event.model

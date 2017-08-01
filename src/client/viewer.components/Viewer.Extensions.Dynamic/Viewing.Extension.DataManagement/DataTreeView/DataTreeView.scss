@@ -5,6 +5,22 @@
   text-align: left;
   height: 100%;
 
+  .search {
+    border: 1px solid #888888;
+    background: #fafafa;
+    border-radius: 4px;
+    position: absolute;
+    padding: 0 4px;
+    width: 180px;
+    right: 17px;
+    z-index: 10;
+    top: 38px;
+
+    .search-input {
+
+    }
+  }
+
   .treeview group {
     width: 100%;
   }

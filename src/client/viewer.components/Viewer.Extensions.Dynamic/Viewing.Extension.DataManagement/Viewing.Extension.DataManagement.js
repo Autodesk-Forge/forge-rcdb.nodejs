@@ -147,6 +147,75 @@ class DataManagementExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  async setViewerUrn (node, urn) {
+
+    try {
+
+      const manifest =
+        await this.derivativesAPI.getManifest(urn)
+
+      if (this.derivativesAPI.hasDerivative (
+          manifest, { type: 'geometry'})) {
+
+        node.setViewerUrn(urn)
+      }
+
+    } catch (ex) {
+
+      console.log(ex)
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async setNodeViewerUrn (node, urn) {
+
+    try {
+
+      const manifest =
+        await this.derivativesAPI.getManifest(urn)
+
+      if (this.derivativesAPI.hasDerivative (
+          manifest, { type: 'geometry'})) {
+
+        node.setViewerUrn(urn)
+      }
+
+    } catch (ex) {
+
+      console.log(ex)
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async setNodeThumbnail (node, urn) {
+
+    try {
+
+      const thumbnail =
+        await this.derivativesAPI.getThumbnail(urn, {
+        size: 200, base64: true
+      })
+
+      const base64 = `data:image/png;base64,${thumbnail}`
+
+      node.setThumbnail(base64)
+
+    } catch (ex) {
+
+      console.log(ex)
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   async onItemNodeCreated (node) {
 
     const versionsRes =
@@ -162,21 +231,9 @@ class DataManagementExtension extends MultiModelExtensionBase {
       const urn = this.dmAPI.getVersionURN(
         node.activeVersion)
 
-      const manifest =
-        await this.derivativesAPI.getManifest(urn)
+      await this.setNodeViewerUrn(node, urn)
 
-      if (this.derivativesAPI.hasDerivative (
-          manifest, { type: 'geometry'})) {
-
-        node.setViewerUrn(urn)
-      }
-
-      const thumbnail =
-        await this.derivativesAPI.getThumbnail(urn, {
-          size: 200, base64: true
-        })
-
-      node.setThumbnail(`data:image/png;base64,${thumbnail}`)
+      await this.setNodeThumbnail(node, urn)
 
       node.showLoader(false)
     }
@@ -186,27 +243,60 @@ class DataManagementExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  getVersionFileType (version) {
+
+    if (version.attributes.fileType) {
+
+      return version.attributes.fileType
+
+    } else if (version.relationships.storage) {
+
+      const fileId = version.relationships.storage.data.id
+
+      return fileId.split('.').pop(-1)
+
+    } else if (version.attributes.name) {
+
+      return version.attributes.name.split('.').pop(-1)
+    }
+
+    return 'unknown'
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   async onLoadItem (node) {
 
-    const extId = 'Viewing.Extension.ModelLoader'
-
-    const loader = this.viewer.getExtension(extId)
-
-    const version = node.activeVersion
+    console.log(node)
 
     node.showLoader(true)
 
-    await loader.loadModel({
-      fileType: version.attributes.fileType,
-      name: node.props.name.split('.')[0],
-      _id : this.options.dbModel._id,
-      env: 'AutodeskProduction',
-      database: 'configurator',
-      model: {
-        proxy: 'lmv-proxy-3legged',
-        urn: node.viewerUrn
-      }
-    })
+    try {
+
+      const extId = 'Viewing.Extension.ModelLoader'
+
+      const loader = this.viewer.getExtension(extId)
+
+      const version = node.activeVersion
+
+      await loader.loadModel({
+        fileType: this.getVersionFileType(version),
+        name: node.props.name.split('.')[0],
+        _id : this.options.dbModel._id,
+        env: 'AutodeskProduction',
+        database: 'configurator',
+        model: {
+          proxy: 'lmv-proxy-3legged',
+          urn: node.viewerUrn
+        }
+      })
+
+    } catch (ex) {
+
+      console.log(ex)
+    }
 
     node.showLoader(false)
   }
@@ -316,7 +406,6 @@ class DataManagementExtension extends MultiModelExtensionBase {
     const tabs = hubs.map((hub) => {
 
       const hubHeader = this.dmAPI.getHubHeader(hub)
-
 
       const style = {
         width:
