@@ -2,8 +2,8 @@
 // ForgeFader signal attenuation calculator Forge viewer extension
 // By Jeremy Tammik, Autodesk Inc, 2017-03-28
 /////////////////////////////////////////////////////////////////
+import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import FaderCoreExtension from './Viewing.Extension.Fader.Core'
-import ExtensionBase from 'Viewer.ExtensionBase'
 import WidgetContainer from 'WidgetContainer'
 import HotSpotCommand from 'HotSpot.Command'
 import ViewerTooltip from 'Viewer.Tooltip'
@@ -16,16 +16,14 @@ import Slider from 'rc-slider'
 import Switch from 'Switch'
 import React from 'react'
 
-class FaderExtension extends ExtensionBase
-{
+class FaderExtension extends MultiModelExtensionBase {
+
   /////////////////////////////////////////////////////////////////
   // Class constructor
   /////////////////////////////////////////////////////////////////
   constructor (viewer, options) {
 
     super (viewer, options)
-
-    this.onSelection = this.onSelection.bind(this)
   }
 
   /////////////////////////////////////////////////////////////////
@@ -33,17 +31,23 @@ class FaderExtension extends ExtensionBase
   /////////////////////////////////////////////////////////////////
   load () {
 
+    this.viewer.setGroundReflection (false)
+    this.viewer.setGroundShadow (false)
+
     this.react = this.options.react
 
-    this.react.pushRenderExtension(this)
+    this.react.setState({
 
-    this.viewer.addEventListener(
-      Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT, (e) => {
+      fader: null
 
-        this.options.loader.show(false)
-      })
+    }).then(async() => {
 
-    this.viewer.loadExtension(FaderCoreExtension)
+      this.react.pushRenderExtension(this)
+
+      this.viewer.loadExtension(FaderCoreExtension)
+
+      this.onEnableFader(true)
+    })
 
     this.hotSpotCommand = new HotSpotCommand (this.viewer, {
       animate: true
@@ -60,6 +64,24 @@ class FaderExtension extends ExtensionBase
       </div>`, '#fader-tooltipId')
 
     this.eventTool = new EventTool(this.viewer)
+
+    this.eventTool.on ('singleclick', (event) => {
+
+      const hitTest = this.viewer.clientToWorld(
+        event.canvasX, event.canvasY, true)
+
+      if (hitTest) {
+
+        const it = this.viewer.model.getData().instanceTree
+
+        const nodeName = it.getNodeName(hitTest.dbId)
+
+        if ((/^.*(floor).*$/gi).test(nodeName)) {
+
+          this.faderCore.computeAttenuationAt(hitTest)
+        }
+      }
+    })
 
     this.eventTool.on('mousemove', (event) => {
 
@@ -81,8 +103,6 @@ class FaderExtension extends ExtensionBase
         this.tooltip.deactivate()
       }
     })
-
-    this.onEnableFader(true)
 
     console.log('Viewing.Extension.Fader loaded')
 
@@ -117,7 +137,18 @@ class FaderExtension extends ExtensionBase
 
     this.tooltip.deactivate()
 
+    this.eventTool.off()
+
     return true
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onModelRootLoaded () {
+
+    this.options.loader.show(false)
   }
 
   /////////////////////////////////////////////////////////
@@ -149,10 +180,6 @@ class FaderExtension extends ExtensionBase
   onEnableFader (checked) {
 
     if (checked) {
-
-      this.viewer.addEventListener(
-        Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
-        this.onSelection)
 
       this.eventTool.activate()
 
@@ -199,10 +226,6 @@ class FaderExtension extends ExtensionBase
       })
 
     } else {
-
-      this.viewer.removeEventListener(
-        Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
-        this.onSelection)
 
       this.hotSpotCommand.removeHotSpots ()
 

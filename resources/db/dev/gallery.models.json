@@ -221,3 +221,14 @@
         "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1kZXYvMmQxMy0zMzI4LTQ5YWEuZHdm"
     }
 }
+{ 
+    "_id" : ObjectId("596f2a89824ad21eff5fc560"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-07-19T09:46:49.251+0000"), 
+    "name" : "Engine", 
+    "model" : {
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-dev/bdf8-abd0-4f37.dwf", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1kZXYvYmRmOC1hYmQwLTRmMzcuZHdm"
+    }
+}

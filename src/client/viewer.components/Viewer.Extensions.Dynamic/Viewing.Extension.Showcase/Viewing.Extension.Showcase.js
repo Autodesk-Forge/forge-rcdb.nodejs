@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////
-// Viewing.Extension.Skybox
+// Viewing.Extension.Showcase
 // by Philippe Leefsma, July 2017
 //
 /////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@ import EventTool from 'Viewer.EventTool'
 import Skybox from 'Viewer.Skybox'
 import Stopwatch from 'Stopwatch'
 
-class SkyboxExtension extends MultiModelExtensionBase {
+class ShowcaseExtension extends MultiModelExtensionBase {
 
   /////////////////////////////////////////////////////////
   // Class constructor
@@ -56,7 +56,7 @@ class SkyboxExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   static get ExtensionId() {
 
-    return 'Viewing.Extension.Skybox'
+    return 'Viewing.Extension.Showcase'
   }
 
   /////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ class SkyboxExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   load() {
 
-    console.log('Viewing.Extension.Skybox loaded')
+    console.log('Viewing.Extension.Showcase loaded')
 
     this.eventTool.on('mousewheel', (e) => {
 
@@ -185,7 +185,7 @@ class SkyboxExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   unload() {
 
-    console.log('Viewing.Extension.Skybox unloaded')
+    console.log('Viewing.Extension.Showcase unloaded')
 
     window.cancelAnimationFrame(this.animId)
 
@@ -276,5 +276,5 @@ class SkyboxExtension extends MultiModelExtensionBase {
 }
 
 Autodesk.Viewing.theExtensionManager.registerExtension(
-  SkyboxExtension.ExtensionId,
-  SkyboxExtension)
+  ShowcaseExtension.ExtensionId,
+  ShowcaseExtension)

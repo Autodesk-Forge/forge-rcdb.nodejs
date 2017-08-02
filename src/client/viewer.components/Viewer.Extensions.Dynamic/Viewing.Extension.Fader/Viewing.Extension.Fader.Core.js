@@ -2,8 +2,7 @@
 // ForgeFader signal attenuation calculator Forge viewer extension
 // By Jeremy Tammik, Autodesk Inc, 2017-03-28
 /////////////////////////////////////////////////////////////////
-import ExtensionBase from 'Viewer.ExtensionBase'
-import EventTool from 'Viewer.EventTool'
+import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import Toolkit from 'Viewer.Toolkit'
 
 const attenuationVertexShader = `
@@ -76,7 +75,7 @@ const attenuationFragmentShader = `
   }
 `
 
-class FaderExtension extends ExtensionBase {
+class FaderExtension extends MultiModelExtensionBase {
 
   /////////////////////////////////////////////////////////////////
   // Class constructor
@@ -84,8 +83,6 @@ class FaderExtension extends ExtensionBase {
   constructor (viewer, options) {
 
     super( viewer, options )
-
-    this.onModelLoaded = this.onModelLoaded.bind(this)
 
     this._lineMaterial = this.createLineMaterial ()
     this._vertexMaterial = this.createVertexMaterial ()
@@ -111,10 +108,6 @@ class FaderExtension extends ExtensionBase {
     this._materials = {}
     this._floorMeshes ={}
     this._wallMeshes = []
-    this._overlayName = 'fader-material-shader'
-    this.viewer.impl.createOverlayScene( this._overlayName )
-
-    this.onModelLoaded(null)
   }
 
   /////////////////////////////////////////////////////////////////
@@ -171,14 +164,17 @@ class FaderExtension extends ExtensionBase {
     this.viewer.impl.invalidate (true)
   }
 
-  set debugRaycastRays( a ) {
-    let f = a
-      ? this.viewer.impl.scene.add
-      : this.viewer.impl.scene.remove
-    this._raycastRays.forEach( (obj) => {
-      f.apply(this.viewer.impl.scene, [obj])
+  set debugRaycastRays(show) {
+
+    this._raycastRays.forEach((obj) => {
+
+      show
+        ? this.viewer.impl.scene.add(obj)
+        : this.viewer.impl.scene.remove(obj)
     })
-    this._debug_raycast_rays = a
+
+    this._debug_raycast_rays = show
+
     this.viewer.impl.invalidate (true)
   }
 
@@ -186,6 +182,7 @@ class FaderExtension extends ExtensionBase {
   // Extension Id
   /////////////////////////////////////////////////////////////////
   static get ExtensionId () {
+
     return 'Viewing.Extension.Fader.Core'
   }
 
@@ -194,60 +191,9 @@ class FaderExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////////////
   load () {
 
-    this.eventTool = new EventTool (this.viewer)
-
-    this.eventTool.activate ()
-
-    this.eventTool.on ('singleclick', (event) => {
-
-      const hitTest = this.viewer.clientToWorld(
-        event.canvasX, event.canvasY, true)
-
-      if (hitTest) {
-
-        const it = this.viewer.model.getData().instanceTree
-
-        const nodeName = it.getNodeName(hitTest.dbId)
-
-        if (!(/^.*(floor).*$/gi).test(nodeName))
-          return
-
-        this.computeAttenuationAt(hitTest)
-      }
-    })
-
-    const loadEvents = [
-      Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT, // Revit
-      Autodesk.Viewing.GEOMETRY_LOADED_EVENT // non-Revit
-    ]
-
-    const eventResults = loadEvents.map((event) => {
-      return this.viewerEvent(event)
-    })
-
-    Promise.all(eventResults).then(this.onModelLoaded)
-
-    this.viewer.setGroundReflection (false)
-    this.viewer.setGroundShadow (false)
-
     console.log('Viewing.Extension.Fader.Core loaded')
 
     return true
-  }
-
-  /////////////////////////////////////////////////////////
-  // Async viewer event
-  /////////////////////////////////////////////////////////
-  viewerEvent(eventName) {
-    return new Promise ((resolve) => {
-      const handler = (args) => {
-        this.viewer.removeEventListener (
-          eventName, handler )
-        resolve (args)
-      }
-      this.viewer.addEventListener (
-        eventName, handler )
-    })
   }
 
   /////////////////////////////////////////////////////////////////
@@ -275,44 +221,17 @@ class FaderExtension extends ExtensionBase {
   }
 
   /////////////////////////////////////////////////////////////////
-  // getBounds
-  /////////////////////////////////////////////////////////////////
-  getBounds( id ) {
-    let bounds = new THREE.Box3()
-      , box = new THREE.Box3()
-      , instanceTree = this.viewer.impl.model.getData().instanceTree
-      , fragList = this.viewer.impl.model.getFragmentList()
-
-    instanceTree.enumNodeFragments( id, function (fragId) {
-      fragList.getWorldBounds( fragId, box )
-      bounds.union( box )
-    }, true)
-
-    return bounds
-  }
-
-  /////////////////////////////////////////////////////////////////
   // onModelLoaded - retrieve all wall meshes
   /////////////////////////////////////////////////////////////////
-  onModelLoaded( event ) {
-    if (   this.viewer.model === undefined || this.viewer.model === null
-      || this.viewer.model.getData() === undefined || this.viewer.model.getData() === null
-    )
-      return
-    const instanceTree = this.viewer.model.getData().instanceTree
-    let rootId = instanceTree.getRootId()
-    instanceTree.enumNodeChildren( rootId, async (childId ) => {
-      const nodeName = instanceTree.getNodeName( childId )
-      if( nodeName === 'Walls' ) {
-        const fragIds = await Toolkit.getFragIds (
-          this.viewer.model, childId )
-        this._wallMeshes = fragIds.map( (fragId) => {
-          return this.getMeshFromRenderProxy(
-            childId,
-            this.viewer.impl.getRenderProxy( this.viewer.model, fragId ),
-            null, null, null )
-        })
-      }
+  async onModelCompletedLoad (event) {
+
+    const wallIds =
+      await this.getComponentsByParentName(
+        'Walls', this.viewer.model)
+
+    this._wallMeshes = wallIds.map((dbId) => {
+
+      return this.buildComponentMesh(dbId)
     })
   }
 
@@ -345,37 +264,8 @@ class FaderExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////////////
   // calculateUVsGeo
   /////////////////////////////////////////////////////////////////
-  calculateUVsGeo1( geometry ) {
-
-    geometry.computeBoundingBox ()
-
-    let bbox = geometry.boundingBox
-      , max = bbox.max
-      , min = bbox.min
-      , offset = new THREE.Vector2( 0 - min.x, 0 - min.y )
-      , range = new THREE.Vector2( max.x - min.x, max.y - min.y )
-      , faces = geometry.faces
-      , uvs = geometry.faceVertexUvs[0]
-      , vertices = geometry.vertices
-
-    for ( let i = 0 ; i < faces.length ; ++i ) {
-      let v1 = vertices [faces [i].a]
-      let v2 = vertices [faces [i].b]
-      let v3 = vertices [faces [i].c]
-
-      uvs.push ([
-        new THREE.Vector2( (v1.x + offset.x) / range.x,
-          (v1.y + offset.y) / range.y ),
-        new THREE.Vector2( (v2.x + offset.x) / range.x,
-          (v2.y + offset.y) / range.y ),
-        new THREE.Vector2( (v3.x + offset.x) / range.x,
-          (v3.y + offset.y) / range.y )
-      ])
-    }
-    geometry.uvsNeedUpdate = true
-  }
-
   calculateUVsGeo( geometry ) {
+
     geometry.computeBoundingBox ()
 
     let bbox = geometry.boundingBox
@@ -392,6 +282,7 @@ class FaderExtension extends ExtensionBase {
       , incy =range.y / this._rayTraceGrid
 
     uvs.splice( 0, uvs.length )
+
     for ( let i = 0 ; i < faces.length ; ++i ) {
       let v1 = vertices [faces [i].a]
       let v2 = vertices [faces [i].b]
@@ -409,6 +300,7 @@ class FaderExtension extends ExtensionBase {
           Math.abs((offy + v3.y + offset.y - incy) / range.y) )
       ])
     }
+
     geometry.uvsNeedUpdate = true
   }
 
@@ -418,7 +310,7 @@ class FaderExtension extends ExtensionBase {
   // floor_normal: skip all triangles whose normal differs from that
   // top_face_z: use for the face Z coordinates unless null
   /////////////////////////////////////////////////////////////////
-  getMeshFromRenderProxy( dbId, render_proxy, floor_normal, top_face_z ) {
+  getMeshFromRenderProxy(dbId, render_proxy, floor_normal, top_face_z) {
 
     let matrix = render_proxy.matrixWorld
     let geometry = render_proxy.geometry
@@ -483,10 +375,10 @@ class FaderExtension extends ExtensionBase {
       }
     }
 
-    this.calculateUVsGeo( geo )
+    this.calculateUVsGeo(geo)
+
     geo.computeFaceNormals()
     geo.computeVertexNormals()
-    geo.computeBoundingBox()
 
     let mat = new THREE.MeshBasicMaterial( { color: 0xffff00 } )
     let shaderMat = this.createShaderMaterial( dbId )
@@ -590,8 +482,10 @@ class FaderExtension extends ExtensionBase {
   // ray trace to count walls between source and target points
   /////////////////////////////////////////////////////////////////
   getWallCountBetween( psource, ptarget, max_dist ) {
+
     this.drawLine( psource, ptarget, this._raycastRays,
       this._debug_raycast_rays )
+
     this.drawVertex( ptarget, this._raycastRays,
       this._debug_raycast_rays )
 
@@ -611,6 +505,7 @@ class FaderExtension extends ExtensionBase {
   // return 2D array mapping (u,v) to signal attenuation in dB.
   /////////////////////////////////////////////////////////////////
   rayTraceToFindWalls (mesh, psource) {
+
     // set up the result map
     let n = this._rayTraceGrid
     let map_uv_to_color = new Array (n)
@@ -654,6 +549,7 @@ class FaderExtension extends ExtensionBase {
   // create attenuation shader material
   /////////////////////////////////////////////////////////////////
   createTexture( data, attenuation_max ) {
+
     let pixelData = []
     for ( let i = 0 ; i < data.length ; ++i ) {
       for ( let j = 0 ; j < data [i].length ; ++j ) {
@@ -679,6 +575,7 @@ class FaderExtension extends ExtensionBase {
   }
 
   createShaderMaterial( dbId ) {
+
     if( this._materials [dbId] !== undefined )
       return this._materials[dbId]
 
@@ -732,16 +629,6 @@ class FaderExtension extends ExtensionBase {
     this.viewer.impl.matman().addMaterial( 'shaderMaterial', material, true )
     this._materials [dbId] = material
     return material
-  }
-
-  /////////////////////////////////////////////////////////////////
-  // apply material to specific fragments
-  /////////////////////////////////////////////////////////////////
-  setMaterial( fragIds, material ) {
-    const fragList = this.viewer.model.getFragmentList()
-    fragIds.forEach ((fragId) => {
-      fragList.setMaterial( fragId, material )
-    })
   }
 
   ///////////////////////////////////////////////////////////////////////////
@@ -855,6 +742,140 @@ class FaderExtension extends ExtensionBase {
         this.arrayMinW( arr[len] ) )
     }
     return min
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  getComponentsByParentName (name, model) {
+
+    const instanceTree = model.getData().instanceTree
+
+    const rootId = instanceTree.getRootId()
+
+    let parentId = 0
+
+    instanceTree.enumNodeChildren(rootId,
+      (childId) => {
+
+        const nodeName = instanceTree.getNodeName(childId)
+
+        if (nodeName.indexOf(name) > -1) {
+
+          parentId = childId
+        }
+      })
+
+    return parentId > 0
+      ? Toolkit.getLeafNodes(model, parentId)
+      : []
+  }
+
+  /////////////////////////////////////////////////////////
+  // Creates a standard THREE.Mesh out of a Viewer
+  // component
+  //
+  /////////////////////////////////////////////////////////
+  buildComponentMesh (dbId, material) {
+
+    const vertexArray = []
+
+    // first we assume the component dbId is a leaf
+    // component: ie has no child so contains
+    // geometry. This util method will return all fragIds
+    // associated with that specific dbId
+    const fragIds = Toolkit.getLeafFragIds(
+      this.viewer.model, dbId)
+
+    let matrixWorld = null
+
+    fragIds.forEach((fragId) => {
+
+      // for each fragId, get the proxy in order to access
+      // THREE geometry
+      const renderProxy = this.viewer.impl.getRenderProxy(
+        this.viewer.model,
+        fragId)
+
+      matrixWorld = matrixWorld ||
+      renderProxy.matrixWorld
+
+      const geometry = renderProxy.geometry
+
+      const attributes = geometry.attributes
+
+      const positions = geometry.vb
+        ? geometry.vb
+        : attributes.position.array
+
+      const indices = attributes.index.array || geometry.ib
+
+      const stride = geometry.vb ? geometry.vbstride : 3
+
+      const offsets = [{
+        count: indices.length,
+        index: 0,
+        start: 0
+      }]
+
+      for (var oi = 0, ol = offsets.length; oi < ol; ++oi) {
+
+        var start = offsets[oi].start
+        var count = offsets[oi].count
+        var index = offsets[oi].index
+
+        for (var i = start, il = start + count; i < il; i += 3) {
+
+          const a = index + indices[i]
+          const b = index + indices[i + 1]
+          const c = index + indices[i + 2]
+
+          const vA = new THREE.Vector3()
+          const vB = new THREE.Vector3()
+          const vC = new THREE.Vector3()
+
+          vA.fromArray(positions, a * stride)
+          vB.fromArray(positions, b * stride)
+          vC.fromArray(positions, c * stride)
+
+          vertexArray.push(vA)
+          vertexArray.push(vB)
+          vertexArray.push(vC)
+        }
+      }
+    })
+
+    // builds a standard THREE.Geometry
+    const geometry = new THREE.Geometry()
+
+    for (var i = 0; i < vertexArray.length; i += 3) {
+
+      geometry.vertices.push(vertexArray[i])
+      geometry.vertices.push(vertexArray[i + 1])
+      geometry.vertices.push(vertexArray[i + 2])
+
+      const face = new THREE.Face3(i, i + 1, i + 2)
+
+      geometry.faces.push(face)
+    }
+
+    // auto compute normals
+    geometry.computeFaceNormals()
+
+    // creates THREE.Mesh
+    const mesh = new THREE.Mesh(
+      geometry, material)
+
+    // transform
+    mesh.applyMatrix(matrixWorld)
+
+    // store associated dbId in case we want to invoke
+    // viewer.model.getProperties (dbId, ...) on that
+    // mesh
+    mesh.dbId = dbId
+
+    return mesh
   }
 }
 

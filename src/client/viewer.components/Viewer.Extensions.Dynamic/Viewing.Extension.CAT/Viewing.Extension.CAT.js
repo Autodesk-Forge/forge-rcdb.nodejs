@@ -179,6 +179,7 @@ class CATExtension extends ExtensionBase {
 
     this.hotSpotCommand = new HotSpotCommand (viewer, {
       parentControl: options.parentControl,
+      animate: true,
       hotspots
     })
 
