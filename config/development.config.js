@@ -54,13 +54,13 @@ const config = {
     },
 
     viewer: {
-      //viewer3D: 'https://developer.api.autodesk.com/viewingservice/v1/viewers/viewer3D.js?v=2.15',
-      //threeJS:  'https://developer.api.autodesk.com/viewingservice/v1/viewers/three.js?v=2.15',
-      //style:    'https://developer.api.autodesk.com/viewingservice/v1/viewers/style.css?v=2.15'
+      //viewer3D: 'https://developer.api.autodesk.com/viewingservice/v1/viewers/viewer3D.js?v=2.16',
+      //threeJS:  'https://developer.api.autodesk.com/viewingservice/v1/viewers/three.js?v=2.16',
+      //style:    'https://developer.api.autodesk.com/viewingservice/v1/viewers/style.css?v=2.16'
 
-      viewer3D: '/resources/libs/lmv/2.15/viewer3D.js',
-      threeJS:  '/resources/libs/lmv/2.15/three.js',
-      style:    '/resources/libs/lmv/2.15/style.css'
+      viewer3D: '/resources/libs/lmv/2.16/viewer3D.js',
+      threeJS:  '/resources/libs/lmv/2.16/three.js',
+      style:    '/resources/libs/lmv/2.16/style.css'
     }
   },
   databases: [

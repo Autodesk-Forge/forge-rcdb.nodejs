@@ -637,12 +637,6 @@ class ViewerConfigurator extends BaseComponent {
           viewer, this.loader)
       }
 
-      viewer.start()
-
-      viewer.prefs.tag('ignore-producer')
-
-      await this.setupDynamicExtensions (viewer)
-
       if (modelInfo) {
 
         const lmvProxy =
@@ -655,6 +649,12 @@ class ViewerConfigurator extends BaseComponent {
         switch (this.state.dbModel.env) {
 
           case 'Local':
+
+            viewer.start()
+
+            viewer.prefs.tag('ignore-producer')
+
+            await this.setupDynamicExtensions (viewer)
 
             const localOptions = {
               placementTransform: this.buildTransform(
@@ -678,6 +678,12 @@ class ViewerConfigurator extends BaseComponent {
             break
 
           case 'AutodeskProduction':
+
+            viewer.start()
+
+            viewer.prefs.tag('ignore-producer')
+
+            await this.setupDynamicExtensions (viewer)
 
             this.viewerDocument =
               await this.loadDocument(modelInfo.urn)

@@ -94,10 +94,12 @@
 
   .item {
     box-shadow: 20px 20px 33px 0px rgba(0, 0, 0, 0.21);
+    display: inline-block;
     margin: 0 0 16px 0;
     min-height: 246px;
     text-align: left;
     color: black;
+    width: 100%;
     padding: 0;
 
     .content {
@@ -107,9 +109,10 @@
       transition-delay: 0.0s;
 
       background: rgba(245, 245, 245, 0.8);
+      display: inline-block;
+      min-height: 216px;
       cursor: pointer;
-      display: block;
-      height: 216px;
+      width: 100%;
     }
 
     .content:hover {
@@ -117,32 +120,61 @@
       text-decoration: none;
     }
 
-    .image-container {
-      box-shadow: 15px 15px 33px 0px rgba(0, 0, 0, 0.21);
-      border: 1px solid #cccccc;
-      height: 200px;
-      width: 200px;
-      float: left;
-      margin: 8px;
+    @media only screen and (max-width: 549px) {
+
+      .image-container {
+        box-shadow: 15px 15px 33px 0px rgba(0, 0, 0, 0.21);
+        border: 1px solid #cccccc;
+        height: 200px;
+        width: 200px;
+        float: left;
+        margin: 8px;
+      }
+
+      .title {
+        margin: 4px 0 0 22px;
+        font-size: 18px;
+        color: black;
+      }
+
+      .description {
+        width: calc(100% - 220px);
+        padding: 10px 20px 0 25px;
+        color: #545454;
+        float: left;
+      }
     }
+
+    @media only screen and (min-width: 550px) {
+
+      .image-container {
+        box-shadow: 15px 15px 33px 0px rgba(0, 0, 0, 0.21);
+        border: 1px solid #cccccc;
+        height: 200px;
+        width: 200px;
+        float: left;
+        margin: 8px;
+      }
+
+      .title {
+        margin: 4px 0 0 22px;
+        font-size: 18px;
+        color: black;
+      }
+
+      .description {
+        width: calc(100% - 220px);
+        padding: 10px 20px 0 25px;
+        color: #545454;
+        float: left;
+      }
+    }
+
 
     .image-container img {
       object-position: center;
       height: 100%;
       width: 100%;
-    }
-
-    .title {
-      margin: 4px 0 0 22px;
-      font-size: 18px;
-      color: black;
-    }
-
-    .description {
-      width: calc(100% - 220px);
-      padding: 10px 20px 0 25px;
-      color: #545454;
-      float: left;
     }
 
     .footer {

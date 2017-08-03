@@ -166,8 +166,6 @@ module.exports = function() {
 
     models.forEach((modelInfo) => {
 
-      const urn = modelInfo.model.urn
-
       if (modelInfo.lifetime) {
 
         const now = new Date()
@@ -176,7 +174,7 @@ module.exports = function() {
 
         if (age > modelInfo.lifetime) {
 
-          deleteModel(urn, modelInfo._id)
+          deleteModel(modelSvc, modelInfo)
         }
       }
     })
@@ -222,14 +220,26 @@ module.exports = function() {
   // delete a model
   //
   /////////////////////////////////////////////////////////
-  const deleteModel = async(urn, modelId) => {
+  const deleteModel = async(modelSvc, modelInfo) => {
 
     const token = await forgeSvc.get2LeggedToken()
 
+    const modelId = modelInfo._id
+
     modelSvc.deleteModel(modelId)
+
+    const urn = modelInfo.model.urn
 
     derivativesSvc.deleteManifest(
       token, urn)
+
+    const fileId = atob(urn)
+
+    const objectId = ossSvc.parseObjectId(fileId)
+
+    ossSvc.deleteObject(token,
+      objectId.bucketKey,
+      objectId.objectKey)
 
     const socketSvc = ServiceManager.getService(
       'SocketSvc')

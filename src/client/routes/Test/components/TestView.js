@@ -344,19 +344,15 @@ class TestView extends React.Component {
   /////////////////////////////////////////////////////////
   onViewingApplicationCreated (viewingApp) {
 
+    const lmvProxy = 'lmv-proxy-2legged'
 
-  }
+    Autodesk.Viewing.setEndpointAndApi(
+      `${window.location.origin}/${lmvProxy}`,
+      'modelDerivativeV2')
 
-  /////////////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////////////
-  render() {
-
-    return (
-      <Viewer onViewerCreated={(data) => this.onViewerCreated(data)}
-        style={{height:"calc(100vh - 65px)"}}/>
-    )
+    this.assignState({
+      urn: 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LWRldi9vZmZpY2UucnZ0'
+    })
   }
 
   /////////////////////////////////////////////////////////////////
@@ -365,20 +361,32 @@ class TestView extends React.Component {
   /////////////////////////////////////////////////////////////////
   //render() {
   //
-  //  const viewStyle = {
-  //    height: 'calc(100vh - 65px)'
-  //  }
-  //
   //  return (
-  //    <div className="test" style={viewStyle}>
-  //      <ViewingApp
-  //        onViewingApplicationCreated={this.onViewingApplicationCreated}
-  //        onViewerCreated={this.onViewerCreated}
-  //        urn={this.state.urn}
-  //      />
-  //    </div>
+  //    <Viewer onViewerCreated={(data) => this.onViewerCreated(data)}
+  //      style={{height:"calc(100vh - 65px)"}}/>
   //  )
   //}
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  render() {
+
+    const viewStyle = {
+      height: 'calc(100vh - 65px)'
+    }
+
+    return (
+      <div className="test" style={viewStyle}>
+        <ViewingApp
+          onViewingApplicationCreated={this.onViewingApplicationCreated}
+          onViewerCreated={this.onViewerCreated}
+          urn={this.state.urn}
+        />
+      </div>
+    )
+  }
 }
 
 export default TestView
