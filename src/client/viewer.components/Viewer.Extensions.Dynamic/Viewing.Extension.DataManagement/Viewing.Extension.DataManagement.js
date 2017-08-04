@@ -174,13 +174,16 @@ class DataManagementExtension extends MultiModelExtensionBase {
 
     try {
 
-      const manifest =
-        await this.derivativesAPI.getManifest(urn)
+      if (urn) {
 
-      if (this.derivativesAPI.hasDerivative (
-          manifest, { type: 'geometry'})) {
+        const manifest =
+          await this.derivativesAPI.getManifest(urn)
 
-        node.setViewerUrn(urn)
+        if (this.derivativesAPI.hasDerivative (
+            manifest, { type: 'geometry'})) {
+
+          node.setViewerUrn(urn)
+        }
       }
 
     } catch (ex) {
@@ -230,6 +233,12 @@ class DataManagementExtension extends MultiModelExtensionBase {
 
       const urn = this.dmAPI.getVersionURN(
         node.activeVersion)
+
+      if (!node.name.length) {
+
+        // fix for BIM Docs - displayName doesn't appear in item
+        node.setName(node.activeVersion.attributes.displayName)
+      }
 
       await this.setNodeViewerUrn(node, urn)
 

@@ -348,7 +348,9 @@ export default class DataManagementAPI extends ClientAPI {
 
     if (!useStorage) {
 
-      return version.relationships.derivatives.data.id
+      if (version.relationships.derivatives) {
+        return version.relationships.derivatives.data.id
+      }
     }
 
     if (version.relationships.storage) {
@@ -357,11 +359,9 @@ export default class DataManagementAPI extends ClientAPI {
         version.relationships.storage.data.id)
 
       return urn.replace(new RegExp('=', 'g'), '')
-
-    } else {
-
-      return null
     }
+
+    return null
   }
 }
 

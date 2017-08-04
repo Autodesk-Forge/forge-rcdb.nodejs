@@ -79,11 +79,35 @@ export default class DataTreeNode extends EventsEmitter {
   //
   //
   /////////////////////////////////////////////////////////////
+  setName (name) {
+
+    this.name = name
+
+    this.render({
+      name
+    })
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
   showLoader (show) {
 
     this.render({
       showLoader: show
     })
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  getNodeName(node) {
+
+    return node.attributes.displayName
+      || node.attributes.name
+      || ''
   }
 
   /////////////////////////////////////////////////////////////
@@ -211,7 +235,7 @@ export default class DataTreeNode extends EventsEmitter {
 
     const projects = _.sortBy(projectsRes.data,
       (project) => {
-        return project.attributes.name.toLowerCase()
+        return this.getNodeName(project).toLowerCase()
       })
 
     const hubType =
@@ -229,7 +253,7 @@ export default class DataTreeNode extends EventsEmitter {
           const rootId = project.relationships.rootFolder.data.id
 
           const childProps = Object.assign({}, this.props, {
-            name: project.attributes.name,
+            name: this.getNodeName(project),
             projectId: project.id,
             level: this.level + 1,
             type: project.type,
@@ -269,7 +293,7 @@ export default class DataTreeNode extends EventsEmitter {
 
       const folders = _.sortBy(_.flatten(folderArrays),
         (folderItem) => {
-          return folderItem.attributes.displayName.toLowerCase()
+          return this.getNodeName(folderItem).toLowerCase()
         })
 
       const foldersTasks = folders.map((folder) => {
@@ -277,7 +301,7 @@ export default class DataTreeNode extends EventsEmitter {
         return new Promise((resolve) => {
 
           const childProps = Object.assign({}, this.props, {
-            name: folder.attributes.displayName,
+            name: this.getNodeName(folder),
             projectId: folder.projectId,
             level: this.level + 1,
             folderId: folder.id,
@@ -309,7 +333,7 @@ export default class DataTreeNode extends EventsEmitter {
 
     const folderItems = _.sortBy(folderItemsRes.data,
       (folderItem) => {
-        return folderItem.attributes.displayName.toLowerCase()
+        return this.getNodeName(folderItem).toLowerCase()
       })
 
     const folders = folderItems.filter((folderItem) => {
@@ -327,7 +351,7 @@ export default class DataTreeNode extends EventsEmitter {
       return new Promise((resolve) => {
 
         const childProps = Object.assign({}, this.props, {
-          name: folder.attributes.displayName,
+          name: this.getNodeName(folder),
           level: this.level + 1,
           folderId: folder.id,
           type: folder.type,
@@ -349,7 +373,7 @@ export default class DataTreeNode extends EventsEmitter {
       return new Promise((resolve) => {
 
         const childProps = Object.assign({}, this.props, {
-          name: item.attributes.displayName,
+          name: this.getNodeName(item),
           level: this.level + 1,
           type: item.type,
           itemId: item.id,
@@ -381,7 +405,7 @@ export default class DataTreeNode extends EventsEmitter {
 
     const folderItems = _.sortBy(folderItemsRes.data,
       (folderItem) => {
-        return folderItem.attributes.displayName.toLowerCase()
+        return this.getNodeName(folderItem).toLowerCase()
       })
 
     const folders = folderItems.filter((folderItem) => {
@@ -399,7 +423,7 @@ export default class DataTreeNode extends EventsEmitter {
       return new Promise((resolve) => {
 
         const childProps = Object.assign({}, this.props, {
-          name: folder.attributes.displayName,
+          name: this.getNodeName(folder),
           level: this.level + 1,
           folderId: folder.id,
           type: folder.type,
@@ -421,7 +445,7 @@ export default class DataTreeNode extends EventsEmitter {
       return new Promise((resolve) => {
 
         const childProps = Object.assign({}, this.props, {
-          name: item.attributes.displayName,
+          name: this.getNodeName(item),
           level: this.level + 1,
           type: item.type,
           itemId: item.id,
