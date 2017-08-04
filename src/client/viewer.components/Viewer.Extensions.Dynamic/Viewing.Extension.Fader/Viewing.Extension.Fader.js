@@ -78,7 +78,9 @@ class FaderExtension extends MultiModelExtensionBase {
 
         if ((/^.*(floor).*$/gi).test(nodeName)) {
 
-          this.faderCore.computeAttenuationAt(hitTest)
+          this.faderCore.hitTest = hitTest
+
+          this.update()
         }
       }
     })
@@ -92,8 +94,9 @@ class FaderExtension extends MultiModelExtensionBase {
 
         if (this.dynamic) {
 
-          this.faderCore.computeAttenuationAt(
-            hitTest, true)
+          this.faderCore.hitTest = hitTest
+
+          this.update(true)
         }
 
         this.tooltip.activate()
@@ -147,6 +150,13 @@ class FaderExtension extends MultiModelExtensionBase {
   //
   /////////////////////////////////////////////////////////
   onModelRootLoaded () {
+
+    const nav = this.viewer.navigation
+
+    nav.toPerspective()
+
+    this.viewer.autocam.setHomeViewFrom(
+      nav.getCamera())
 
     this.options.loader.show(false)
   }
@@ -209,18 +219,6 @@ class FaderExtension extends MultiModelExtensionBase {
           this.selectedDbId = data.dbId
       })
 
-      this.faderCore.on('attenuation.bounds',
-        (bounds) => {
-
-          this.react.setState({
-            data: [
-              {value: bounds.min},
-              {value: bounds.max}
-            ],
-            guid: this.guid()
-          })
-      })
-
       this.react.setState({
         fader: true
       })
@@ -280,13 +278,33 @@ class FaderExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  update () {
+
+    const attenuation = this.faderCore.update()
+
+    if (attenuation) {
+
+      this.react.setState({
+        data: [
+          {value: attenuation.min},
+          {value: attenuation.max}
+        ],
+        guid: this.guid()
+      })
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   async setDocking (docked) {
 
     const id = FaderExtension.ExtensionId
 
     if (docked) {
 
-    await this.react.popRenderExtension(id)
+      await this.react.popRenderExtension(id)
 
       this.react.pushViewerPanel(this, {
         height: 615,
@@ -334,7 +352,12 @@ class FaderExtension extends MultiModelExtensionBase {
 
     const { value, dragging, offset } = props
 
-    this.faderCore.attenuationPerMeterInAir = value
+    if (value != this.faderCore.attenuationPerMeterInAir) {
+
+      this.faderCore.attenuationPerMeterInAir = value
+
+      const attenuation = this.update()
+    }
 
     return (
       <Tooltip
@@ -356,7 +379,12 @@ class FaderExtension extends MultiModelExtensionBase {
 
     const { value, dragging, offset } = props
 
-    this.faderCore.attenuationPerWall = value
+    if (value != this.faderCore.attenuationPerWall) {
+
+      this.faderCore.attenuationPerWall = value
+
+      this.update()
+    }
 
     return (
       <Tooltip
@@ -378,7 +406,12 @@ class FaderExtension extends MultiModelExtensionBase {
 
     const { value, dragging, offset } = props
 
-    this.faderCore.gridDensity = value
+    if (value != this.faderCore.gridDensity) {
+
+      this.faderCore.gridDensity = value
+
+      this.update()
+    }
 
     return (
       <Tooltip
@@ -428,7 +461,11 @@ class FaderExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderContent () {
 
-    const { fader, guid } = this.react.getState()
+    const {
+      attenuationPerMeterInAir,
+      fader,
+      guid
+      } = this.react.getState()
 
     return (
       <div className="settings">

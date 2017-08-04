@@ -1,6 +1,6 @@
 
 
-export default class ViewerToolkit {
+export default class Toolkit {
 
   ///////////////////////////////////////////////////////////
   //
@@ -215,7 +215,7 @@ export default class ViewerToolkit {
           ? dbIds : [dbIds]
 
         const leafIds =
-          await ViewerToolkit.getLeafNodes(
+          await Toolkit.getLeafNodes(
             model, dbIdArray)
 
         const fragIds = []
@@ -266,7 +266,7 @@ export default class ViewerToolkit {
       try {
 
         var fragIds =
-          await ViewerToolkit.getFragIds(
+          await Toolkit.getFragIds(
             model, dbId)
 
         if (!fragIds.length) {
@@ -315,7 +315,7 @@ export default class ViewerToolkit {
 
           const propTasks = requestedProps.map((displayName) => {
 
-            return ViewerToolkit.getProperty(
+            return Toolkit.getProperty(
               model, dbIdInt, displayName, 'Not Available')
           })
 
@@ -414,7 +414,7 @@ export default class ViewerToolkit {
 
         var propertyTasks = dbIds.map((dbId) => {
 
-          return ViewerToolkit.getProperties(model, dbId)
+          return Toolkit.getProperties(model, dbId)
         })
 
         var propertyResults = await Promise.all(
@@ -501,7 +501,7 @@ export default class ViewerToolkit {
 
       try {
 
-        const results = await ViewerToolkit.getBulkPropertiesAsync(
+        const results = await Toolkit.getBulkPropertiesAsync(
           model, components, propFilter)
 
         const propertyResults = results.map((result) => {
@@ -675,7 +675,7 @@ export default class ViewerToolkit {
   /////////////////////////////////////////////////////////
   static async setMaterial(model, dbId, material) {
 
-    const fragIds = await ViewerToolkit.getFragIds(
+    const fragIds = await Toolkit.getFragIds(
       model, dbId)
 
     const fragList = model.getFragmentList()
@@ -839,10 +839,10 @@ export default class ViewerToolkit {
 
       const targetIds = Array.isArray(dbIds) ? dbIds : [dbIds]
 
-      const targetLeafIds = await ViewerToolkit.getLeafNodes(
+      const targetLeafIds = await Toolkit.getLeafNodes(
         model, targetIds)
 
-      const leafIds = await ViewerToolkit.getLeafNodes (model)
+      const leafIds = await Toolkit.getLeafNodes (model)
 
       const leafTasks = leafIds.map((dbId) => {
 
@@ -932,6 +932,133 @@ export default class ViewerToolkit {
       onStateRestored)
 
     viewer.restoreState(state, filter, immediate)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  static getComponentsByParentName (name, model) {
+
+    const instanceTree = model.getData().instanceTree
+
+    const rootId = instanceTree.getRootId()
+
+    let parentId = 0
+
+    instanceTree.enumNodeChildren(rootId,
+      (childId) => {
+
+        const nodeName = instanceTree.getNodeName(childId)
+
+        if (nodeName.indexOf(name) > -1) {
+
+          parentId = childId
+        }
+      })
+
+    return parentId > 0
+      ? Toolkit.getLeafNodes(model, parentId)
+      : []
+  }
+
+  /////////////////////////////////////////////////////////
+  // Creates a standard THREE.Mesh out of a Viewer
+  // component
+  //
+  /////////////////////////////////////////////////////////
+  static buildComponentMesh (
+    viewer, model, dbId, faceFilter, material) {
+
+    const vertexArray = []
+
+    // first we assume the component dbId is a leaf
+    // component: ie has no child so contains
+    // geometry. This util method will return all fragIds
+    // associated with that specific dbId
+    const fragIds = Toolkit.getLeafFragIds(model, dbId)
+
+    let matrixWorld = null
+
+    const meshGeometry = new THREE.Geometry()
+
+    fragIds.forEach((fragId) => {
+
+      // for each fragId, get the proxy in order to access
+      // THREE geometry
+      const renderProxy =
+        viewer.impl.getRenderProxy(
+          model, fragId)
+
+      matrixWorld = matrixWorld ||
+      renderProxy.matrixWorld
+
+      const geometry = renderProxy.geometry
+
+      const attributes = geometry.attributes
+
+      const positions = geometry.vb
+        ? geometry.vb
+        : attributes.position.array
+
+      const indices = attributes.index.array || geometry.ib
+
+      const stride = geometry.vb ? geometry.vbstride : 3
+
+      const offsets = [{
+        count: indices.length,
+        index: 0,
+        start: 0
+      }]
+
+      for (var oi = 0, ol = offsets.length; oi < ol; ++oi) {
+
+        var start = offsets[oi].start
+        var count = offsets[oi].count
+        var index = offsets[oi].index
+
+        for (var i = start, il = start + count; i < il; i += 3) {
+
+          const a = index + indices[i]
+          const b = index + indices[i + 1]
+          const c = index + indices[i + 2]
+
+          const vA = new THREE.Vector3()
+          const vB = new THREE.Vector3()
+          const vC = new THREE.Vector3()
+
+          vA.fromArray(positions, a * stride)
+          vB.fromArray(positions, b * stride)
+          vC.fromArray(positions, c * stride)
+
+          if (!faceFilter || faceFilter(vA, vB, vC)) {
+
+            const faceIdx = meshGeometry.vertices.length
+
+            meshGeometry.vertices.push(vA)
+            meshGeometry.vertices.push(vB)
+            meshGeometry.vertices.push(vC)
+
+            const face = new THREE.Face3(
+              faceIdx, faceIdx + 1, faceIdx + 2)
+
+            meshGeometry.faces.push(face)
+          }
+        }
+      }
+    })
+
+    meshGeometry.applyMatrix(matrixWorld)
+    meshGeometry.computeFaceNormals()
+    meshGeometry.computeVertexNormals()
+
+    // creates THREE.Mesh
+    const mesh = new THREE.Mesh(
+      meshGeometry, material)
+
+    mesh.dbId = dbId
+
+    return mesh
   }
 
   /////////////////////////////////////////////////////////

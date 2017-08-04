@@ -1,70 +1,73 @@
-.fader .title {
-  display: inline-flex;
-  float: left;
-}
+.fader {
 
-.fader .title > label {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  white-space: nowrap;
-  font-weight: normal;
-  user-select: none;
-  margin-left: 27px;
-  margin-top: 10px;
-  select: none;
-  width: 144px;
-  float: left;
-}
+  .title {
+    display: inline-flex;
+    float: left;
+  }
 
-.fader .content > .controls {
-  margin: 10px 10px 0px 10px;
-  display: inline-block;
-  white-space: nowrap;
-  height: 54px;
-  width: 100%;
-}
+  .title > label {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    white-space: nowrap;
+    font-weight: normal;
+    user-select: none;
+    margin-left: 27px;
+    margin-top: 10px;
+    select: none;
+    width: 144px;
+    float: left;
+  }
 
-.fader .content > .controls > .row {
-  width: 100%;
-  margin: 0;
-}
+  .content > .controls {
+    margin: 10px 10px 0px 10px;
+    display: inline-block;
+    white-space: nowrap;
+    height: 54px;
+    width: 100%;
+  }
 
-.fader .content > .settings {
-  margin: 10px 0 0 0;
-  overflow: scroll;
-  height: 100%;
-}
+  .content > .controls > .row {
+    width: 100%;
+    margin: 0;
+  }
 
-.fader .content > .settings .row {
-  width: calc(100% - 20px);
-  margin: 5px 0 5px 10px;
-}
+  .content > .settings {
+    margin: 10px 0 0 0;
+    overflow: scroll;
+    height: 100%;
+  }
 
-.fader .content > .settings .control-element {
-  float:left;
-}
+  .content > .settings .row {
+    width: calc(100% - 20px);
+    margin: 5px 0 5px 10px;
+  }
 
-.rc-slider.control-element {
-  width: calc(100% - 30px);
-  margin: 10px 0 0 6px;
-}
+  .content > .settings .control-element {
+    float:left;
+  }
 
-.rc-slider-track {
-  background-color: #33bd08;
-}
+  .rc-slider.control-element {
+    width: calc(100% - 30px);
+    margin: 10px 0 0 6px;
+  }
 
-.rc-slider-handle {
-  transition-timing-function: ease;
-  transition-property: border;
-  transition-duration: 1.5s;
-  transition-delay: 0.0s;
+  .rc-slider-track {
+    background-color: #33bd08;
+  }
 
-  border: solid 2px #33bd08;
-}
+  .rc-slider-handle {
+    transition-timing-function: ease;
+    transition-property: border;
+    transition-duration: 1.5s;
+    transition-delay: 0.0s;
 
-.rc-slider-handle:hover {
-  border: solid 2px #44eb08;
+    border: solid 2px #33bd08;
+  }
+
+  .rc-slider-handle:hover {
+    border: solid 2px #44eb08;
+  }
 }
 
 .fader-tooltip {

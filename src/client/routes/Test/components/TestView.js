@@ -220,6 +220,8 @@ class TestView extends React.Component {
   /////////////////////////////////////////////////////////
   onSelectionChanged (event) {
 
+    return console.log(event)
+
     if (event.dbIdArray.length) {
 
       const dbId = event.dbIdArray[0]
@@ -245,99 +247,6 @@ class TestView extends React.Component {
     this.viewer.impl.invalidate(true)
   }
 
-  buildComponentMesh (dbId, material) {
-
-    const vertexArray = []
-
-    const fragIds = Toolkit.getLeafFragIds(
-      this.viewer.model, dbId)
-
-    let matrixWorld = null
-
-    fragIds.forEach((fragId) => {
-
-      const renderProxy = this.viewer.impl.getRenderProxy(
-        this.viewer.model,
-        fragId)
-
-      matrixWorld = matrixWorld ||
-      renderProxy.matrixWorld
-
-      const geometry = renderProxy.geometry
-
-      console.log(geometry)
-
-      const attributes = geometry.attributes
-
-      const positions = geometry.vb
-        ? geometry.vb
-        : attributes.position.array
-
-      const indices = attributes.index.array || geometry.ib
-
-      const stride = geometry.vb ? geometry.vbstride : 3
-
-      const offsets = [{
-        count: indices.length,
-        index: 0,
-        start: 0
-      }]
-
-      for (var oi = 0, ol = offsets.length; oi < ol; ++oi) {
-
-        var start = offsets[oi].start
-        var count = offsets[oi].count
-        var index = offsets[oi].index
-
-        for (var i = start, il = start + count; i < il; i += 3) {
-
-          const a = index + indices[i]
-          const b = index + indices[i + 1]
-          const c = index + indices[i + 2]
-
-          const vA = new THREE.Vector3()
-          const vB = new THREE.Vector3()
-          const vC = new THREE.Vector3()
-
-          vA.fromArray(positions, a * stride)
-          vB.fromArray(positions, b * stride)
-          vC.fromArray(positions, c * stride)
-
-          vertexArray.push(vA)
-          vertexArray.push(vB)
-          vertexArray.push(vC)
-        }
-      }
-    })
-
-    const geometry = new THREE.Geometry()
-
-    for (var i = 0; i < vertexArray.length; i += 3) {
-
-      geometry.vertices.push(vertexArray[i])
-      geometry.vertices.push(vertexArray[i + 1])
-      geometry.vertices.push(vertexArray[i + 2])
-
-      const face = new THREE.Face3(i, i + 1, i + 2)
-
-      geometry.faces.push(face)
-    }
-
-    geometry.applyMatrix(matrixWorld)
-
-    geometry.computeFaceNormals()
-    geometry.computeVertexNormals()
-
-    const mesh = new THREE.Mesh(
-      geometry, material)
-
-    mesh.matrixWorld = matrixWorld
-
-    mesh.dbId = dbId
-
-    return mesh
-  }
-
   ////////////////////////////////////////////////////////
   //
   //
@@ -359,34 +268,34 @@ class TestView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////////////
-  //render() {
-  //
-  //  return (
-  //    <Viewer onViewerCreated={(data) => this.onViewerCreated(data)}
-  //      style={{height:"calc(100vh - 65px)"}}/>
-  //  )
-  //}
-
-  /////////////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////////////
   render() {
 
-    const viewStyle = {
-      height: 'calc(100vh - 65px)'
-    }
-
     return (
-      <div className="test" style={viewStyle}>
-        <ViewingApp
-          onViewingApplicationCreated={this.onViewingApplicationCreated}
-          onViewerCreated={this.onViewerCreated}
-          urn={this.state.urn}
-        />
-      </div>
+      <Viewer onViewerCreated={(data) => this.onViewerCreated(data)}
+        style={{height:"calc(100vh - 65px)"}}/>
     )
   }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  //render() {
+  //
+  //  const viewStyle = {
+  //    height: 'calc(100vh - 65px)'
+  //  }
+  //
+  //  return (
+  //    <div className="test" style={viewStyle}>
+  //      <ViewingApp
+  //        onViewingApplicationCreated={this.onViewingApplicationCreated}
+  //        onViewerCreated={this.onViewerCreated}
+  //        urn={this.state.urn}
+  //      />
+  //    </div>
+  //  )
+  //}
 }
 
 export default TestView
