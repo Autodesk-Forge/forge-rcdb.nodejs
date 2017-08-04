@@ -159,8 +159,9 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
         },
         floor: {
           meshes: data.floorDbIds.map((dbId) => {
-              return this.buildComponentMesh(
-                dbId, material)
+              return Toolkit.buildComponentMesh(
+                this.viewer, this.viewer.model,
+                dbId, null, material)
           }),
           name: `Floor [Level #${data.level+1}]`,
           dbIds: data.floorDbIds,
@@ -517,112 +518,6 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
       matrixWorld,
       meshes
     }
-  }
-
-  /////////////////////////////////////////////////////////
-  // Creates a standard THREE.Mesh out of a Viewer
-  // component
-  //
-  /////////////////////////////////////////////////////////
-  buildComponentMesh (dbId, material) {
-
-    const vertexArray = []
-
-    // first we assume the component dbId is a leaf
-    // component: ie has no child so contains
-    // geometry. This util method will return all fragIds
-    // associated with that specific dbId
-    const fragIds = Toolkit.getLeafFragIds(
-      this.viewer.model, dbId)
-
-    let matrixWorld = null
-
-    fragIds.forEach((fragId) => {
-
-      // for each fragId, get the proxy in order to access
-      // THREE geometry
-      const renderProxy = this.viewer.impl.getRenderProxy(
-        this.viewer.model,
-        fragId)
-
-      matrixWorld = matrixWorld ||
-        renderProxy.matrixWorld
-
-      const geometry = renderProxy.geometry
-
-      const attributes = geometry.attributes
-
-      const positions = geometry.vb
-        ? geometry.vb
-        : attributes.position.array
-
-      const indices = attributes.index.array || geometry.ib
-
-      const stride = geometry.vb ? geometry.vbstride : 3
-
-      const offsets = [{
-        count: indices.length,
-        index: 0,
-        start: 0
-      }]
-
-      for (var oi = 0, ol = offsets.length; oi < ol; ++oi) {
-
-        var start = offsets[oi].start
-        var count = offsets[oi].count
-        var index = offsets[oi].index
-
-        for (var i = start, il = start + count; i < il; i += 3) {
-
-          const a = index + indices[i]
-          const b = index + indices[i + 1]
-          const c = index + indices[i + 2]
-
-          const vA = new THREE.Vector3()
-          const vB = new THREE.Vector3()
-          const vC = new THREE.Vector3()
-
-          vA.fromArray(positions, a * stride)
-          vB.fromArray(positions, b * stride)
-          vC.fromArray(positions, c * stride)
-
-          vertexArray.push(vA)
-          vertexArray.push(vB)
-          vertexArray.push(vC)
-        }
-      }
-    })
-
-    // builds a standard THREE.Geometry
-    const geometry = new THREE.Geometry()
-
-    for (var i = 0; i < vertexArray.length; i += 3) {
-
-      geometry.vertices.push(vertexArray[i])
-      geometry.vertices.push(vertexArray[i + 1])
-      geometry.vertices.push(vertexArray[i + 2])
-
-      const face = new THREE.Face3(i, i + 1, i + 2)
-
-      geometry.faces.push(face)
-    }
-
-    // auto compute normals
-    geometry.computeFaceNormals()
-
-    // creates THREE.Mesh
-    const mesh = new THREE.Mesh(
-      geometry, material)
-
-    // transform
-    mesh.applyMatrix(matrixWorld)
-
-    // store associated dbId in case we want to invoke
-    // viewer.model.getProperties (dbId, ...) on that
-    // mesh
-    mesh.dbId = dbId
-
-    return mesh
   }
 
   /////////////////////////////////////////////////////////
