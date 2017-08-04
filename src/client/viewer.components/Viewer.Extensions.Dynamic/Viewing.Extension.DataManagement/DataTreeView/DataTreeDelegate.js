@@ -16,6 +16,11 @@ export default class DataTreeDelegate extends TreeDelegate {
     this.contextMenu = new ContextMenu({
       container: menuContainer
     })
+
+    this.on('node.dblClick', (node) => {
+
+      console.log(node)
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -53,6 +58,8 @@ export default class DataTreeDelegate extends TreeDelegate {
       parentDomElement.classList.add(cls)
     })
 
+    parentDomElement.classList.add('click-trigger')
+
     parentDomElement.style.width =
       `calc(100% - ${node.level * 25 + 5}px)`
 
@@ -67,9 +74,11 @@ export default class DataTreeDelegate extends TreeDelegate {
   /////////////////////////////////////////////////////////
   nodeClickSelector (event) {
 
-    const selector = ['HEADER', 'LABEL']
+    const className = event.target.className
 
-    return (selector.indexOf(event.target.nodeName) > -1)
+    return (
+      className.toLowerCase().indexOf('click-trigger') > -1
+    )
   }
 
   /////////////////////////////////////////////////////////
@@ -115,32 +124,25 @@ export default class DataTreeDelegate extends TreeDelegate {
 
       if (visibleItems) {
 
-        $(node.parentDomElement).css({
-          display: 'inline-block'
-        })
+        node.parentDomElement.style.display ='inline-block'
 
       } else {
 
-        $(node.parentDomElement).css({
-          display: name.indexOf(filter) < 0
+        node.parentDomElement.style.display =
+          name.indexOf(filter) < 0
             ? 'none'
             : 'inline-block'
-        })
       }
 
     } else {
 
       if (name.indexOf(filter) < 0) {
 
-        $(node.parentDomElement).css({
-          display: 'none'
-        })
+        node.parentDomElement.style.display = 'none'
 
       } else {
 
-        $(node.parentDomElement).css({
-          display: 'inline-block'
-        })
+        node.parentDomElement.style.display ='inline-block'
 
         ++visibleItems
       }

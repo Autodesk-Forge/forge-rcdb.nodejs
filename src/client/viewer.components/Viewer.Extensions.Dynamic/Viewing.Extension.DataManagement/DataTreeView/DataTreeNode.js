@@ -1,3 +1,4 @@
+import {OverlayTrigger, Popover} from 'react-bootstrap'
 import EventsEmitter from 'EventsEmitter'
 import ReactTooltip from 'react-tooltip'
 import PropTypes from 'prop-types'
@@ -5,16 +6,12 @@ import ReactDOM from 'react-dom'
 import Label from 'Label'
 import React from 'react'
 
-///////////////////////////////////////////////////////////////////////////////
-//
-//
-///////////////////////////////////////////////////////////////////////////////
 export default class DataTreeNode extends EventsEmitter {
 
-  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   constructor (props) {
 
     super ()
@@ -60,6 +57,7 @@ export default class DataTreeNode extends EventsEmitter {
     this.viewerUrn = urn
 
     this.render({
+      onLoadItem: this.onLoadItem,
       viewerUrn: urn
     })
   }
@@ -85,6 +83,32 @@ export default class DataTreeNode extends EventsEmitter {
 
     this.render({
       name
+    })
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  setActiveVersion (activeVersion) {
+
+    this.activeVersion = activeVersion
+
+    this.render({
+      activeVersion
+    })
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  setVersions (versions) {
+
+    this.versions = versions
+
+    this.render({
+      versions
     })
   }
 
@@ -130,15 +154,13 @@ export default class DataTreeNode extends EventsEmitter {
   /////////////////////////////////////////////////////////////
   mount (domContainer) {
 
-    domContainer.className = 'treenode-container'
+    domContainer.className = 'treenode click-trigger-container'
 
     this.domContainer = domContainer
 
     this.collapse()
 
-    this.render({
-      onLoadItem: this.onLoadItem
-    })
+    this.render()
   }
 
   /////////////////////////////////////////////////////////////
@@ -502,7 +524,7 @@ class ReactTreeNode extends React.Component {
   renderHubNode() {
 
     return (
-      <div className="treenode">
+      <div className="treenode click-trigger">
         <Label className="name"
           text={this.props.name}
         />
@@ -523,7 +545,7 @@ class ReactTreeNode extends React.Component {
   renderProjectNode() {
 
     return (
-      <div className="treenode">
+      <div className="treenode click-trigger">
         <Label className="name"
           text={this.props.name}
         />
@@ -544,7 +566,7 @@ class ReactTreeNode extends React.Component {
   renderFolderNode() {
 
     return (
-      <div className="treenode">
+      <div className="treenode click-trigger">
         <Label className="name"
           text={this.props.name}
         />
@@ -565,7 +587,7 @@ class ReactTreeNode extends React.Component {
   renderItemNode() {
 
     return (
-      <div className="treenode">
+      <div className="treenode click-trigger">
         <Label className="name"
           text={this.props.name}
         />
@@ -580,14 +602,35 @@ class ReactTreeNode extends React.Component {
           <div>
             <span className="fa fa-eye"
               data-for={`load-${this.props.id}`}
-              data-tip
               onClick={this.props.onLoadItem}
+              data-tip
             />
             <ReactTooltip id={`load-${this.props.id}`}
-              className="tooltip-load"
+              className="tooltip-text"
               effect="solid">
               <div>
                   {`Load ${this.props.name} in viewer ...`}
+              </div>
+            </ReactTooltip>
+          </div>
+        }
+        {
+          this.props.versions &&
+          <div>
+            <OverlayTrigger trigger="click"
+              overlay={this.renderVersionsControl()}
+              placement="right"
+              rootClose>
+              <span className="fa fa-clock-o"
+                data-for={`versions-${this.props.id}`}
+                data-tip
+              />
+            </OverlayTrigger>
+            <ReactTooltip id={`versions-${this.props.id}`}
+              className="tooltip-text"
+              effect="solid">
+              <div>
+                Versions control
               </div>
             </ReactTooltip>
           </div>
@@ -611,6 +654,25 @@ class ReactTreeNode extends React.Component {
           </div>
         }
       </div>
+    )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  renderVersionsControl () {
+
+    return (
+      <Popover className="data-management"
+        title="Versions Control"
+        id="versions-ctrl">
+
+        <label>
+          Select active version:
+        </label>
+
+      </Popover>
     )
   }
 

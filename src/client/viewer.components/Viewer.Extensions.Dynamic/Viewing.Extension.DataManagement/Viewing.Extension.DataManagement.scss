@@ -77,6 +77,14 @@
       overflow: hidden;
     }
   }
+
+  &.popover {
+
+    .popover-content {
+      height: 200px;
+      width: 250px;
+    }
+  }
 }
 
 /////////////////////////////////////////////////////////

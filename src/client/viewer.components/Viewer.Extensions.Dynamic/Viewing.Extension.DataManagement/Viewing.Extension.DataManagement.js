@@ -67,8 +67,8 @@ class DataManagementExtension extends MultiModelExtensionBase {
       user: this.options.appState.user,
       activeTabKey: null,
       showTitle: false,
-      hubs: null,
-      width: 0
+      tabsWidth: 0,
+      hubs: null
 
     }).then (async() => {
 
@@ -225,11 +225,11 @@ class DataManagementExtension extends MultiModelExtensionBase {
       await this.dmAPI.getItemVersions(
         node.props.projectId, node.props.itemId)
 
-    node.versions = versionsRes.data
+    const versions = versionsRes.data
 
-    if (node.versions.length) {
+    if (versions.length) {
 
-      node.activeVersion = node.versions[0]
+      node.setActiveVersion(versions[0])
 
       const urn = this.dmAPI.getVersionURN(
         node.activeVersion)
@@ -241,6 +241,8 @@ class DataManagementExtension extends MultiModelExtensionBase {
       }
 
       await this.setNodeViewerUrn(node, urn)
+
+      //node.setVersions(versions)
 
       await this.setNodeThumbnail(node, urn)
 
@@ -410,7 +412,7 @@ class DataManagementExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderHubs (hubs) {
 
-    const state = this.react.getState()
+    const {activeTabKey, tabsWidth} = this.react.getState()
 
     const tabs = hubs.map((hub) => {
 
@@ -418,7 +420,7 @@ class DataManagementExtension extends MultiModelExtensionBase {
 
       const style = {
         width:
-          `${Math.floor((state.width-8)/hubs.length-14)}px`
+          `${Math.floor((tabsWidth-8)/hubs.length-14)}px`
       }
 
       const title =
@@ -442,17 +444,17 @@ class DataManagementExtension extends MultiModelExtensionBase {
       )
     })
 
-    const activeTabKey = state.activeTabKey || hubs[0].id
-
     return (
       <Measure bounds onResize={(rect) => {
-        this.react.setState({ width: rect.bounds.width })
+        this.react.setState({
+          tabsWidth: rect.bounds.width
+        })
       }}>
         {
           ({ measureRef }) =>
           <div ref={measureRef} className="tabs-container">
-            <Tabs onSelect={this.onTabSelected}
-              activeKey={activeTabKey}
+            <Tabs activeKey={activeTabKey || hubs[0].id}
+              onSelect={this.onTabSelected}
               className="tabs"
               id="hubs-tab">
               { tabs }
