@@ -81,7 +81,7 @@ export default class DataTreeNode extends EventsEmitter {
   /////////////////////////////////////////////////////////////
   setName (name) {
 
-    this.name = name
+    this.props.name = this.name = name
 
     this.render({
       name
