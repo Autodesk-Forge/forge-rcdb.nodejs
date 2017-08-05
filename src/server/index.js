@@ -200,7 +200,7 @@ app.use(require('connect-history-api-fallback')())
 // Static routes
 //
 /////////////////////////////////////////////////////////////////////
-if (process.env.NODE_ENV === 'development') {
+if (process.env.HOT_RELOADING) {
 
   // dynamically require webpack dependencies
   // to keep them in devDependencies (package.json)

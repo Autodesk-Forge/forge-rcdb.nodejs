@@ -68,16 +68,6 @@
     }
 }
 { 
-    "_id" : ObjectId("595d05bcb015b92b16952ce0"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-07-05T15:29:00.400+0000"), 
-    "name" : "IFC-Modell I_NovaAva", 
-    "model" : {
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzU4MDItZTZjZi1mMDE2LmlmYw"
-    }
-}
-{ 
     "_id" : ObjectId("595f013b5bff25311cea426e"), 
     "env" : "AutodeskProduction", 
     "timestamp" : ISODate("2017-07-07T03:34:19.990+0000"), 
@@ -563,5 +553,101 @@
         "objectKey" : "4fe1-05d6-1f68.dwfx", 
         "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/4fe1-05d6-1f68.dwfx", 
         "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzRmZTEtMDVkNi0xZjY4LmR3Zng"
+    }
+}
+{ 
+    "_id" : ObjectId("59832aeead5850359881b9ca"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-08-03T13:53:50.121+0000"), 
+    "name" : "3000044424 LEV-CO DF4", 
+    "model" : {
+        "objectKey" : "f84e-ea54-fac5.dwf", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/f84e-ea54-fac5.dwf", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2Y4NGUtZWE1NC1mYWM1LmR3Zg"
+    }
+}
+{ 
+    "_id" : ObjectId("5983f7237cc7ca62f5e561f8"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-08-04T04:25:07.064+0000"), 
+    "name" : "than_tai", 
+    "model" : {
+        "objectKey" : "9829-65dc-f742.STL", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/9829-65dc-f742.STL", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzk4MjktNjVkYy1mNzQyLlNUTA"
+    }
+}
+{ 
+    "_id" : ObjectId("59841f467cc7ca62f5e561f9"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-08-04T07:16:22.825+0000"), 
+    "name" : "SimpleWallRev1", 
+    "model" : {
+        "objectKey" : "9fe0-9ec9-27e9.ifc", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/9fe0-9ec9-27e9.ifc", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzlmZTAtOWVjOS0yN2U5LmlmYw"
+    }
+}
+{ 
+    "_id" : ObjectId("5984abfd53fc65678595d871"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-08-04T17:16:45.016+0000"), 
+    "name" : "xyccs", 
+    "model" : {
+        "objectKey" : "e90f-fcd7-b9ec.skp", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/e90f-fcd7-b9ec.skp", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2U5MGYtZmNkNy1iOWVjLnNrcA"
+    }
+}
+{ 
+    "_id" : ObjectId("5984afc453fc65678595d872"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-08-04T17:32:52.434+0000"), 
+    "name" : "SSW", 
+    "model" : {
+        "objectKey" : "02b5-bda3-178e.skp", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/02b5-bda3-178e.skp", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzAyYjUtYmRhMy0xNzhlLnNrcA"
+    }
+}
+{ 
+    "_id" : ObjectId("5984b0a553fc65678595d873"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-08-04T17:36:37.549+0000"), 
+    "name" : "SSW", 
+    "model" : {
+        "objectKey" : "84b0-178f-5b1c.skp", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/84b0-178f-5b1c.skp", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzg0YjAtMTc4Zi01YjFjLnNrcA"
+    }
+}
+{ 
+    "_id" : ObjectId("5984b0b353fc65678595d874"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-08-04T17:36:51.126+0000"), 
+    "name" : "SSW", 
+    "model" : {
+        "objectKey" : "257f-638d-f034.skp", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/257f-638d-f034.skp", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzI1N2YtNjM4ZC1mMDM0LnNrcA"
+    }
+}
+{ 
+    "_id" : ObjectId("5984b18753fc65678595d875"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-08-04T17:40:23.612+0000"), 
+    "name" : "SSW", 
+    "model" : {
+        "objectKey" : "06a1-accb-0f64.dxf", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/06a1-accb-0f64.dxf", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzA2YTEtYWNjYi0wZjY0LmR4Zg"
     }
 }

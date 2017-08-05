@@ -301,15 +301,12 @@ module.exports = function() {
         }
       }
 
-      // Hide private models if not in DEV
-      if (config.env !== 'development') {
-
-        opts.fieldQuery = {
-          $or: [
-            { private: false },
-            { private: null }
-          ]
-        }
+      // Hide private models
+      opts.fieldQuery = {
+        $or: [
+          { private: false },
+          { private: null }
+        ]
       }
 
       if (req.query.skip) {
@@ -658,3 +655,7 @@ module.exports = function() {
 
   return router
 }
+
+
+
+
