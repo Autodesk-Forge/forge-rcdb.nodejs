@@ -16,7 +16,9 @@ export default class DataTreeNode extends EventsEmitter {
 
     super ()
 
+    this.onVersionSelected = this.onVersionSelected.bind(this)
     this.onLoadItem = this.onLoadItem.bind(this)
+    this.onReload = this.onReload.bind(this)
     this.onExpand = this.onExpand.bind(this)
 
     this.on('expand', this.onExpand)
@@ -108,6 +110,7 @@ export default class DataTreeNode extends EventsEmitter {
     this.versions = versions
 
     this.render({
+      onVersionSelected: this.onVersionSelected,
       versions
     })
   }
@@ -120,6 +123,18 @@ export default class DataTreeNode extends EventsEmitter {
 
     this.render({
       showLoader: show
+    })
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  setLoaded (loaded) {
+
+    this.render({
+      onReload: this.onReload,
+      loaded
     })
   }
 
@@ -188,6 +203,23 @@ export default class DataTreeNode extends EventsEmitter {
   //
   //
   /////////////////////////////////////////////////////////////
+  onReload () {
+
+    if (this.children) {
+
+      this.children.forEach((child) => {
+
+        child.destroy ()
+      })
+
+      this.loadChildren()
+    }
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
   expand () {
 
     const target =
@@ -244,6 +276,8 @@ export default class DataTreeNode extends EventsEmitter {
     }
 
     this.showLoader(false)
+
+    this.setLoaded(true)
   }
 
   /////////////////////////////////////////////////////////
@@ -497,6 +531,15 @@ export default class DataTreeNode extends EventsEmitter {
 
     this.delegate.emit('item.load', this)
   }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onVersionSelected (version) {
+
+    this.setActiveVersion(version)
+  }
 }
 
 class ReactTreeNode extends React.Component {
@@ -534,6 +577,24 @@ class ReactTreeNode extends React.Component {
             <span/>
           </div>
         }
+        {
+          this.props.loaded &&
+          <div>
+            <span className="fa fa-refresh"
+              data-for={`reload-${this.props.id}`}
+              style={{marginRight:'162px'}}
+              onClick={this.props.onReload}
+              data-tip
+            />
+            <ReactTooltip id={`reload-${this.props.id}`}
+              className="tooltip-text"
+              effect="solid">
+              <div>
+                  {`Reload child nodes ...`}
+              </div>
+            </ReactTooltip>
+          </div>
+        }
       </div>
     )
   }
@@ -555,6 +616,23 @@ class ReactTreeNode extends React.Component {
             <span/>
           </div>
         }
+        {
+          this.props.loaded &&
+          <div>
+            <span className="fa fa-refresh"
+              data-for={`reload-${this.props.id}`}
+              onClick={this.props.onReload}
+              data-tip
+            />
+            <ReactTooltip id={`reload-${this.props.id}`}
+              className="tooltip-text"
+              effect="solid">
+              <div>
+                  {`Reload child nodes ...`}
+              </div>
+            </ReactTooltip>
+          </div>
+        }
       </div>
     )
   }
@@ -574,6 +652,23 @@ class ReactTreeNode extends React.Component {
           this.props.showLoader &&
           <div className="node-loader">
             <span/>
+          </div>
+        }
+        {
+          this.props.loaded &&
+          <div>
+            <span className="fa fa-refresh"
+              data-for={`reload-${this.props.id}`}
+              onClick={this.props.onReload}
+              data-tip
+            />
+            <ReactTooltip id={`reload-${this.props.id}`}
+              className="tooltip-text"
+              effect="solid">
+              <div>
+                {`Reload child nodes ...`}
+              </div>
+            </ReactTooltip>
           </div>
         }
       </div>
@@ -663,6 +758,33 @@ class ReactTreeNode extends React.Component {
   /////////////////////////////////////////////////////////
   renderVersionsControl () {
 
+    const activeVersionId = this.props.activeVersion.id
+
+    const versions = this.props.versions.map(
+      (version, idx) => {
+
+        const isActive = (version.id === activeVersionId)
+
+        const verNum = this.props.versions.length - idx
+
+        const name = version.attributes.displayName
+
+        return (
+          <div
+            className={`version ${isActive ? 'active':''}`}
+            onClick={() => this.props.onVersionSelected(version)}
+            key={version.id}>
+            {
+              isActive &&
+              <span className="fa fa-check"/>
+            }
+            <label>
+              {`v${verNum} - ${name}`}
+            </label>
+          </div>
+        )
+      })
+
     return (
       <Popover className="data-management"
         title="Versions Control"
@@ -671,6 +793,10 @@ class ReactTreeNode extends React.Component {
         <label>
           Select active version:
         </label>
+
+        <div className="versions">
+          { versions }
+        </div>
 
       </Popover>
     )

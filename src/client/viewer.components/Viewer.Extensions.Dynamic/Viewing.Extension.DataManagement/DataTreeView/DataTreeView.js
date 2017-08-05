@@ -40,6 +40,11 @@ export default class DataTreeView extends BaseComponent {
     this.delegate = new DataTreeDelegate(
       props.menuContainer)
 
+    this.delegate.on('node.destroy', (nodeId) => {
+
+      this.tree.destroyNode(nodeId)
+    })
+
     this.delegate.on('item.created', (node) => {
 
       if (this.props.onItemNodeCreated) {

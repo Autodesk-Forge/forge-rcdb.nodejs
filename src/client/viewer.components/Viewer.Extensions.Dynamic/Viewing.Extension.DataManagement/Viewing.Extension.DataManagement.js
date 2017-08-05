@@ -242,7 +242,7 @@ class DataManagementExtension extends MultiModelExtensionBase {
 
       await this.setNodeViewerUrn(node, urn)
 
-      //node.setVersions(versions)
+      node.setVersions(versions)
 
       await this.setNodeThumbnail(node, urn)
 

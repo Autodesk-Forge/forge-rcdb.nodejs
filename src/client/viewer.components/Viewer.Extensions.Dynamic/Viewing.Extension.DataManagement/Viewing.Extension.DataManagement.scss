@@ -79,10 +79,52 @@
   }
 
   &.popover {
+    max-width: max-content;
 
     .popover-content {
-      height: 200px;
-      width: 250px;
+
+      .versions {
+        max-height: 205px;
+        overflow: scroll;
+
+        .version {
+          transition-property: background, border;
+          transition-timing-function: ease;
+          transition-duration: 1.5s;
+          transition-delay: 0.0s;
+
+          background: #f7f7f7;
+          margin-bottom: 4px;
+          cursor: pointer;
+          padding: 6px;
+
+          &:hover {
+            background: #bcdaff;
+          }
+
+          &.active {
+
+            label {
+              margin-left: 0px;
+            }
+          }
+
+          label {
+            pointer-events: none;
+            font-weight: normal;
+            margin-left: 22px;
+          }
+
+          span {
+            pointer-events: none;
+            position: relative;
+            margin-right: 4px;
+            font-size: 18px;
+            color: green;
+            top: 2px;
+          }
+        }
+      }
     }
   }
 }
