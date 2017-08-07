@@ -190,7 +190,6 @@ module.exports = function() {
     try {
 
       const scope = [
-        'viewables:read',
         'data:write'
       ]
 

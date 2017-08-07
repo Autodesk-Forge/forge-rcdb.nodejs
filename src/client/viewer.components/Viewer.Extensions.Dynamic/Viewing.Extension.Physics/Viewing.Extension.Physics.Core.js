@@ -630,6 +630,29 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
       body.setActivationState(4)
     })
   }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  createSoftBody (state) {
+
+    //const btVector3	h=s*0.5;
+    //const btVector3	c []={	p+h*btVector3(-1,-1,-1),
+    //  p+h*btVector3(+1,-1,-1),
+    //  p+h*btVector3(-1,+1,-1),
+    //  p+h*btVector3(+1,+1,-1),
+    //  p+h*btVector3(-1,-1,+1),
+    //  p+h*btVector3(+1,-1,+1),
+    //  p+h*btVector3(-1,+1,+1),
+    //  p+h*btVector3(+1,+1,+1)};
+
+
+      const btSoftBody = Ammo.btSoftBodyHelpers.CreateFromConvexHull(pdemo->m_softBodyWorldInfo,c,8)
+
+      //psb->generateBendingConstraints(2);
+      //pdemo->getSoftDynamicsWorld()->addSoftBody(psb);
+  }
 }
 
 Autodesk.Viewing.theExtensionManager.registerExtension(
