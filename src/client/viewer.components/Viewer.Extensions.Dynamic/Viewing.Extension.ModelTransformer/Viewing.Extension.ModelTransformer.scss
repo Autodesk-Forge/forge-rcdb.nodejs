@@ -78,7 +78,7 @@
 
 
 .model-transformer .content > .controls label {
-  margin: 4px 10px 0 10px;
+  margin: 4px 10px 0 0px;
   font-weight: normal;
   float: left;
 }
@@ -110,6 +110,35 @@
   color: #000000;
   height: 26px;
   float: left;
+}
+
+.model-transformer {
+
+  .switch-container {
+    border: 1px solid #9c9c9c;
+    border-radius: 12px;
+    margin: 6px 0 0 0px;
+    float: left;
+  }
+
+  input[type="checkbox"].switch + div {
+    width: 34px;
+    height: 16px;
+  }
+
+  input[type="checkbox"].switch:checked + div {
+    width: 34px;
+  }
+
+  input[type="checkbox"].switch:checked + div > div {
+    transform: translate3d(18px, 0, 0);
+  }
+
+  input[type="checkbox"].switch + div > div {
+    height: 16px;
+    width: 16px;
+    margin: 0;
+  }
 }
 
 /////////////////////////////////////////////////////////

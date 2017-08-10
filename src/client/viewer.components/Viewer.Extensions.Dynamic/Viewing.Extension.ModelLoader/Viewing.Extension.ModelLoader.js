@@ -255,7 +255,9 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
 
         case 'Local':
 
-          this.viewer.loadModel(dbModel.path, loadOptions,
+          const path = dbModel.model.path
+
+          this.viewer.loadModel(path, loadOptions,
             (model) => {
 
               model.database = this.options.database

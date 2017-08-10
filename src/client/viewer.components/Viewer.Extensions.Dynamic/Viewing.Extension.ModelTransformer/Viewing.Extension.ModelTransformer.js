@@ -11,6 +11,7 @@ import WidgetContainer from 'WidgetContainer'
 import Toolkit from 'Viewer.Toolkit'
 import Tooltip from 'Viewer.Tooltip'
 import ReactDOM from 'react-dom'
+import Switch from 'Switch'
 import Label from 'Label'
 import React from 'react'
 
@@ -701,6 +702,22 @@ class ModelTransformerExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  onFullModelTransformChecked (fullTransform) {
+
+    const {transformExtension} =  this.react.getState()
+
+    transformExtension.setFullTransform (
+      fullTransform)
+
+    this.react.setState({
+      fullTransform
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   renderTitle (docked) {
 
     const spanClass = docked
@@ -864,7 +881,20 @@ class ModelTransformerExtension extends MultiModelExtensionBase {
 
         </div>
 
-      </div>
+        {
+          this.options.showFullModelTransform &&
+          <div className="row">
+            <label>
+              Full Model Transform:
+            </label>
+            <Switch onChange={(checked) => {
+                this.onFullModelTransformChecked(checked)
+              }}
+            />
+          </div>
+        }
+
+        </div>
     )
   }
 

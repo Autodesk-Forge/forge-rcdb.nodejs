@@ -174,7 +174,7 @@ export default class RotateTool extends EventsEmitter {
   ///////////////////////////////////////////////////////////////////////////
   drawControl () {
 
-    var bBox = this.geWorldBoundingBox(
+    var bBox = this.getWorldBoundingBox(
       this.selection.fragIdsArray,
       this.selection.model.getFragmentList())
 
@@ -410,7 +410,7 @@ export default class RotateTool extends EventsEmitter {
   // (transformations could be applied)
   //
   ///////////////////////////////////////////////////////////////////////////
-  geWorldBoundingBox (fragIds, fragList) {
+  getWorldBoundingBox (fragIds, fragList) {
 
     var fragbBox = new THREE.Box3()
     var nodebBox = new THREE.Box3()
