@@ -187,17 +187,20 @@ class FaderExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onEnableFader (checked) {
+  async onEnableFader (checked) {
 
     if (checked) {
 
       this.eventTool.activate()
 
-      this.viewer.loadExtension(
-        FaderCoreExtension)
+      this.faderCore =
+        await this.viewer.loadExtension(
+          FaderCoreExtension)
 
-      this.faderCore = this.viewer.getExtension(
-        FaderCoreExtension)
+      if (this.reloadFader) {
+
+        await this.faderCore.onModelCompletedLoad()
+      }
 
       this.faderCore.on('attenuation.source',
         (data) => {
@@ -235,6 +238,8 @@ class FaderExtension extends MultiModelExtensionBase {
       this.react.setState({
         fader: false
       })
+
+      this.reloadFader = true
     }
   }
 
@@ -469,7 +474,17 @@ class FaderExtension extends MultiModelExtensionBase {
 
     return (
       <div className="settings">
-        
+        <div className="row">
+          <div className="control-element">
+            Enable Fader
+          </div>
+        </div>
+        <div className="row" style={{marginBottom: '18px'}}>
+          <Switch className="control-element"
+          onChange={(checked) => this.onEnableFader(checked)}
+          checked={true}/>
+        </div>
+
         {
           fader &&
 

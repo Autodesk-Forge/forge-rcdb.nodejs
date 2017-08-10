@@ -519,10 +519,10 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
         const metaPayload = this.buildMetaPayload(
           metaProperty)
 
+        this.addProperty(metaPayload)
+
         await this.api.addNodeMetaProperty(
           metaPayload)
-
-        this.loadNodeProperties(dbId, true)
 
         this.socketSvc.broadcast (
           'meta.propertyAdded',
@@ -549,6 +549,20 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  addProperty (metaProperty) {
+
+    const {properties} = this.react.getState()
+
+    this.react.setState({
+      properties: [...properties, metaProperty],
+      guid: this.guid()
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   onMetaChanged (metaPropertyEdits) {
 
     this.metaPropertyEdits = metaPropertyEdits
@@ -569,10 +583,18 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
         if (result === 'OK') {
 
           const newMetaProperty = Object.assign({},
-            metaProperty, this.metaPropertyEdits)
+            metaProperty, this.metaPropertyEdits,
+            isModelOverride ? {
+              isOverride: true
+            }:{})
 
           const newMetaPayload = this.buildMetaPayload(
             newMetaProperty)
+
+          resolve (newMetaPayload)
+
+          this.editProperty (newMetaPayload,
+            isModelOverride)
 
           if (isModelOverride) {
 
@@ -581,7 +603,9 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
 
           } else {
 
-            if (newMetaProperty.file && metaProperty.fileId) {
+            if ((newMetaProperty.metaType !=='File' ||
+                 newMetaProperty.file) &&
+                 metaProperty.fileId) {
 
               this.api.deleteResource(metaProperty.fileId)
             }
@@ -594,10 +618,10 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
             'meta.propertyUpdated',
             newMetaPayload)
 
-          return resolve (newMetaPayload)
-        }
+        } else {
 
-        resolve (false)
+          resolve (false)
+        }
       }
 
       this.dialogSvc.on('dialog.close', onClose)
@@ -605,13 +629,16 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
       this.metaPropertyEdits = {}
 
       const dlgProps = Object.assign({}, metaProperty, {
+        disableName: metaProperty.isOverride || isModelOverride,
         disableOK: this.dialogSvc.disableOK,
         onChanged: this.onMetaChanged,
-        editMode: true
+        disableCategory: true
       })
 
-      const override = isModelOverride
-        ? '[Override] ' : ''
+      const override =
+        (metaProperty.isOverride || isModelOverride)
+          ? '[Override] '
+          : ''
 
       this.dialogSvc.setState({
         title: `Edit Meta Property ${override}...`,
@@ -621,6 +648,49 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
         open: true
       }, true)
     })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  editProperty (metaProperty, isNewOverride) {
+
+    const {properties} = this.react.getState()
+
+    if (isNewOverride) {
+
+      const entries = properties.entries()
+
+      for (let [idx, prop] of entries) {
+
+        if (prop.displayCategory ===
+            metaProperty.displayCategory &&
+            prop.displayName ===
+            metaProperty.displayName) {
+
+          properties.splice(idx, 1)
+          
+          this.react.setState({
+            properties: [
+              ...properties, metaProperty
+            ]
+          })
+
+          break
+        }
+      }
+
+    } else {
+
+      this.react.setState({
+        properties: [
+            ...properties.filter((prop) => {
+            return prop.id !== metaProperty.id
+          }), metaProperty
+        ]
+      })
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -645,13 +715,35 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
                 isOverride: true
               })
 
+            this.deleteProperty (metaPayload, true)
+
             await this.api.addNodeMetaProperty(
               metaPayload)
 
           } else {
 
-            await this.api.deleteNodeMetaProperty(
-              metaProperty.id)
+            // deleting an override is like creating a
+            // DeleteOverride ...
+
+            if (metaProperty.isOverride) {
+
+              const metaPayload = Object.assign({},
+                metaProperty, {
+                  metaType: 'DeleteOverride'
+                })
+
+              this.deleteProperty (metaPayload)
+
+              await this.api.updateNodeMetaProperty(
+                metaPayload)
+
+            } else {
+
+              this.deleteProperty (metaProperty)
+
+              await this.api.deleteNodeMetaProperty(
+                metaProperty.id)
+            }
           }
 
           this.socketSvc.broadcast (
@@ -659,19 +751,23 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
             metaProperty.dbId)
 
           return resolve (metaProperty)
-        }
 
-        resolve (null)
+        } else {
+
+          resolve (null)
+        }
       }
 
       this.dialogSvc.on('dialog.close', onClose)
 
       const msg = DOMPurify.sanitize(
-        `Are you sure you want to delete`
-        + ` <b>${metaProperty.displayName}</b> ?`)
+        `Are you sure you want to delete ` +
+        `<b>${metaProperty.displayName}</b> ?`)
 
-      const override = isModelOverride
-        ? '[Override] ' : ''
+      const override =
+        (metaProperty.isOverride || isModelOverride)
+          ? '[Override] '
+          : ''
 
       this.dialogSvc.setState({
         content: <div dangerouslySetInnerHTML={{__html: msg}}/>,
@@ -679,6 +775,45 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
         open: true
       })
     })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  deleteProperty (metaProperty, isNewOverride) {
+
+    const {properties} = this.react.getState()
+
+    if (isNewOverride) {
+
+      const entries = properties.entries()
+
+      for (let [idx, prop] of entries) {
+
+        if (prop.displayCategory ===
+            metaProperty.displayCategory &&
+            prop.displayName ===
+            metaProperty.displayName) {
+
+            properties.splice(idx, 1)
+
+            this.react.setState({
+              properties
+            })
+
+            break
+        }
+      }
+
+    } else {
+
+      this.react.setState({
+        properties: properties.filter((prop) => {
+          return prop.id !== metaProperty.id
+        })
+      })
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -695,6 +830,8 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
 
         if (result === 'OK') {
 
+          resolve (true)
+
           await this.api.deleteNodeMetaProperties(dbId)
 
           this.loadNodeProperties(dbId, true)
@@ -702,10 +839,10 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
           this.socketSvc.broadcast (
             'meta.propertyDeleted', dbId)
 
-          return resolve (true)
-        }
+        } else {
 
-        resolve (false)
+          resolve (false)
+        }
       }
 
       this.dialogSvc.on('dialog.close', onClose)
@@ -717,8 +854,9 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
       const nodeName = instanceTree.getNodeName(dbId)
 
       const msg = DOMPurify.sanitize(
-        `Are you sure you want to delete all custom properties on`
-        + ` <br/><b>${nodeName}</b> ?`)
+        'Are you sure you want to delete all ' +
+        'custom properties on ' +
+        `<br/><b>${nodeName}</b> ?`)
 
       this.dialogSvc.setState({
         content: <div dangerouslySetInnerHTML={{__html: msg}}/>,
@@ -727,7 +865,6 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
       })
     })
   }
-
 
   /////////////////////////////////////////////////////////
   //

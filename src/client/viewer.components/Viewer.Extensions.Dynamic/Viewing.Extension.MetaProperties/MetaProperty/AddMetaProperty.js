@@ -322,9 +322,10 @@ export default class CreateMetaProperty
               onChange={(e) => this.onInputChanged(e, 'displayCategory')}
               onKeyDown={(e) => this.onKeyDown(e)}
               data-placeholder="Property category ..."
+              disabled={this.state.disableCategory}
               html={this.state.displayCategory}
               className="input meta-category"
-              disabled={this.state.editMode}
+
             />
         </div>
 
@@ -333,6 +334,7 @@ export default class CreateMetaProperty
             onChange={(e) => this.onInputChanged(e, 'displayName')}
             onKeyDown={(e) => this.onKeyDown(e)}
             data-placeholder="Property name ..."
+            disabled={this.state.disableName}
             html={this.state.displayName}
             className="input meta-name"
           />

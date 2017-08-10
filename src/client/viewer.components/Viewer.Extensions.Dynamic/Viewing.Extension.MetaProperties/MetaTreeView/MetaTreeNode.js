@@ -138,7 +138,7 @@ export default class MetaTreeNode extends EventsEmitter {
   /////////////////////////////////////////////////////////
   toMetaProperty (props = this.props) {
 
-    const baseProperty = {
+    const baseProperty = Object.assign({
       displayCategory: props.displayCategory,
       displayValue: props.displayValue,
       displayName: props.displayName,
@@ -147,7 +147,9 @@ export default class MetaTreeNode extends EventsEmitter {
       metaType: props.metaType,
       dbId: props.dbId,
       id: props.id
-    }
+    }, props.isOverride ? {
+      isOverride: true
+    } : {})
 
     switch (props.metaType) {
 
