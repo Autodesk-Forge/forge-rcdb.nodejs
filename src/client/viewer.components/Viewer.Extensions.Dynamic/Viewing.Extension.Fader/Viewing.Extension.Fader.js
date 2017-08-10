@@ -469,18 +469,7 @@ class FaderExtension extends MultiModelExtensionBase {
 
     return (
       <div className="settings">
-
-        <div className="row">
-          <div className="control-element">
-            Enable Fader
-          </div>
-        </div>
-        <div className="row" style={{marginBottom: '18px'}}>
-          <Switch className="control-element"
-            onChange={(checked) => this.onEnableFader(checked)}
-            checked={true}/>
-        </div>
-
+        
         {
           fader &&
 
