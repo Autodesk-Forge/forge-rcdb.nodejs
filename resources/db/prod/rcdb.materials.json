@@ -9,8 +9,8 @@
     "_id" : ObjectId("583ec501c6bad5f3088806af"), 
     "name" : "Steel", 
     "supplier" : "Autodesk", 
-    "currency" : "JPY", 
-    "price" : NumberInt(7)
+    "currency" : "CAD", 
+    "price" : NumberInt(78)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806b0"), 
@@ -22,9 +22,9 @@
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806b1"), 
     "name" : "Brass, Soft Yellow", 
-    "supplier" : "hjhdfjdh", 
-    "currency" : "EUR", 
-    "price" : NumberInt(34)
+    "supplier" : "Brassinc", 
+    "currency" : "BRL", 
+    "price" : NumberInt(304)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806b2"), 
@@ -44,29 +44,29 @@
     "_id" : ObjectId("583ec501c6bad5f3088806b3"), 
     "name" : "Steel, Mild", 
     "supplier" : "Autodesk", 
-    "currency" : "BRL", 
-    "price" : NumberInt(30)
+    "currency" : "EUR", 
+    "price" : NumberInt(38)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806b5"), 
     "name" : "Acetal Resin, Black", 
     "supplier" : "Autodesk", 
     "currency" : "EUR", 
-    "price" : NumberInt(2000)
+    "price" : NumberInt(200)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806b6"), 
     "name" : "ABS Plastic", 
     "supplier" : "ADSK", 
-    "currency" : "EUR", 
-    "price" : NumberInt(1500)
+    "currency" : "USD", 
+    "price" : NumberInt(10)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806b7"), 
     "name" : "Nylon Composite (Nylon, molybdenum disulphide)", 
-    "supplier" : "abc89+8", 
+    "supplier" : "abc8", 
     "currency" : "EUR", 
-    "price" : NumberInt(10)
+    "price" : NumberInt(200)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806b8"), 
@@ -78,22 +78,22 @@
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806b9"), 
     "name" : "Aluminum-6061", 
-    "supplier" : "Agfuto", 
-    "currency" : "EUR", 
+    "supplier" : "test", 
+    "currency" : "MXN", 
     "price" : NumberInt(38)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806ba"), 
     "name" : "Rubber", 
     "supplier" : "Autodesk", 
-    "currency" : "EUR", 
-    "price" : NumberInt(50)
+    "currency" : "CAD", 
+    "price" : NumberInt(10)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806bb"), 
     "name" : "Cast Steel", 
     "supplier" : "Autodesk", 
-    "currency" : "EUR", 
+    "currency" : "CAD", 
     "price" : NumberInt(2)
 }
 { 
@@ -121,15 +121,15 @@
     "_id" : ObjectId("583ec501c6bad5f3088806bf"), 
     "name" : "Titanium", 
     "supplier" : "abc", 
-    "currency" : "CHF", 
+    "currency" : "EUR", 
     "price" : NumberInt(1)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806c0"), 
     "name" : "Concrete - Cast-in-Place Concrete", 
     "supplier" : "Acme", 
-    "currency" : "USD", 
-    "price" : NumberInt(20)
+    "currency" : "CAD", 
+    "price" : NumberInt(2000)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806c1"), 
@@ -142,8 +142,8 @@
     "_id" : ObjectId("583ec501c6bad5f3088806c2"), 
     "name" : "Glass", 
     "supplier" : "Metro", 
-    "currency" : "ARS", 
-    "price" : NumberInt(10)
+    "currency" : "BRL", 
+    "price" : NumberInt(100)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806c3"), 
@@ -170,14 +170,14 @@
     "_id" : ObjectId("583ec501c6bad5f3088806c6"), 
     "name" : "Wood - Cherry", 
     "supplier" : "Owner", 
-    "currency" : "USD", 
+    "currency" : "CAD", 
     "price" : NumberInt(8)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806c8"), 
     "name" : "Metal - Chrome", 
     "supplier" : "Eastern", 
-    "currency" : "ARS", 
+    "currency" : "PLN", 
     "price" : NumberInt(100)
 }
 { 
@@ -191,7 +191,7 @@
     "_id" : ObjectId("583ec501c6bad5f3088806cd"), 
     "name" : "Metal - Aluminum", 
     "supplier" : "Eastern", 
-    "currency" : "ARS", 
+    "currency" : "BRL", 
     "price" : NumberInt(12)
 }
 { 
@@ -205,7 +205,7 @@
     "_id" : ObjectId("583ec501c6bad5f3088806cf"), 
     "name" : "Copper", 
     "supplier" : "KF Mech", 
-    "currency" : "BRL", 
+    "currency" : "ARS", 
     "price" : NumberInt(2)
 }
 { 
@@ -219,28 +219,28 @@
     "_id" : ObjectId("58470be47ffea21ed80ee8f2"), 
     "name" : "Concrete", 
     "supplier" : "ConcreteGuys", 
-    "currency" : "USD", 
+    "currency" : "DKK", 
     "price" : NumberInt(20)
 }
 { 
     "_id" : ObjectId("58470be47ffea21ed80ee8f1"), 
     "name" : "Brick", 
     "supplier" : "Autodesk", 
-    "currency" : "ARS", 
-    "price" : NumberInt(100)
+    "currency" : "BRL", 
+    "price" : NumberInt(120)
 }
 { 
     "_id" : ObjectId("58470be47ffea21ed80ee8f3"), 
     "name" : "Wood", 
     "supplier" : "Autodesk", 
-    "currency" : "ARS", 
+    "currency" : "CAD", 
     "price" : NumberInt(200)
 }
 { 
     "_id" : ObjectId("58470be47ffea21ed80ee8f4"), 
     "name" : "Aluminum", 
     "supplier" : "Autodesk", 
-    "currency" : "CHF", 
+    "currency" : "DKK", 
     "price" : NumberInt(120)
 }
 { 
@@ -296,7 +296,7 @@
     "_id" : ObjectId("58b1a54bef674eb1b0b1896c"), 
     "name" : "Aluminum 2014-T6", 
     "supplier" : "Autodesk", 
-    "currency" : "CHF", 
+    "currency" : "USD", 
     "price" : NumberInt(35)
 }
 { 
@@ -310,14 +310,14 @@
     "_id" : ObjectId("58b1a54bef674eb1b0b1896e"), 
     "name" : "Aluminum 2014-T4", 
     "supplier" : "Autodesk", 
-    "currency" : "BRL", 
-    "price" : NumberInt(500)
+    "currency" : "USD", 
+    "price" : NumberInt(100)
 }
 { 
     "_id" : ObjectId("58b1a54bef674eb1b0b1896f"), 
     "name" : "Aluminum 6061 T6 0 Cold Formed", 
     "supplier" : "Autodesk", 
-    "currency" : "EUR", 
+    "currency" : "USD", 
     "price" : NumberInt(6)
 }
 { 
@@ -338,20 +338,20 @@
     "_id" : ObjectId("58b1a54cef674eb1b0b18972"), 
     "name" : "Aluminum 1100-H14", 
     "supplier" : "Au70d3s|<", 
-    "currency" : "CAD", 
+    "currency" : "USD", 
     "price" : 2.35
 }
 { 
     "_id" : ObjectId("58b1a54cef674eb1b0b18973"), 
     "name" : "Rubber, Black", 
     "supplier" : "Autodesk", 
-    "currency" : "EUR", 
+    "currency" : "USD", 
     "price" : NumberInt(10)
 }
 { 
     "_id" : ObjectId("58b1a54cef674eb1b0b18974"), 
     "name" : "Aluminum 3003-H14", 
     "supplier" : "Autodesk", 
-    "currency" : "BRL", 
+    "currency" : "USD", 
     "price" : NumberInt(1000)
 }

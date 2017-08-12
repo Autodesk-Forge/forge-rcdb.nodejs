@@ -2,16 +2,13 @@ import ContextMenu from './MetaContextMenu'
 import MetaTreeNode from './MetaTreeNode'
 import { TreeDelegate } from 'TreeView'
 
-///////////////////////////////////////////////////////////////////////////////
-//
-//
-///////////////////////////////////////////////////////////////////////////////
+
 export default class MetaTreeDelegate extends TreeDelegate {
 
-  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   constructor (menuContainer) {
 
     super ()
@@ -21,40 +18,66 @@ export default class MetaTreeDelegate extends TreeDelegate {
     })
 
     this.contextMenu.on(
-      'context.property.edit',
-      async (metaProperty, isModelOverride) => {
+      'context.property.delete', (node) => {
 
-        const newMetaProperty = await this.emit(
-          'property.edit',
-          metaProperty, isModelOverride)
-
-        if (newMetaProperty) {
-
-          this.emit('node.update',
-            newMetaProperty)
-        }
+        this.onDeleteProperty (node)
       })
 
     this.contextMenu.on(
-      'context.property.delete',
-      async (metaProperty, isModelOverride) => {
+      'context.property.edit', (node) => {
 
-        const deleted = await this.emit(
-          'property.delete',
-          metaProperty, isModelOverride)
-
-        if (deleted) {
-
-          this.emit('node.destroy',
-            metaProperty.id)
-        }
+        this.onEditProperty (node)
       })
+
+    this.on('node.dblClick', (node) => {
+
+      this.onEditProperty (node)
+    })
   }
 
-  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
+  async onEditProperty (node) {
+
+    const isModelOverride = !node.props.metaType
+
+    const newMetaProperty = await this.emit(
+      'property.edit',
+      node.toMetaProperty(),
+      isModelOverride)
+
+    if (newMetaProperty) {
+
+      this.emit('node.update',
+        newMetaProperty)
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async onDeleteProperty (node) {
+
+    const isModelOverride = !node.props.metaType
+
+    const deleted = await this.emit(
+      'property.delete',
+      node.toMetaProperty(), isModelOverride)
+
+    if (deleted) {
+
+      this.emit('node.destroy',
+        node.id)
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   createRootNode (data) {
 
     this.rootNode = new MetaTreeNode({
@@ -97,18 +120,23 @@ export default class MetaTreeDelegate extends TreeDelegate {
       parentDomElement.classList.add(cls)
     })
 
+    parentDomElement.classList.add(
+      'click-trigger')
+
     node.mount(container)
   }
 
-  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   nodeClickSelector (event) {
 
-    const selector = ['HEADER', 'LABEL']
+    const className = event.target.className
 
-    return (selector.indexOf(event.target.nodeName) > -1)
+    return (
+    className.toLowerCase().indexOf('click-trigger') > -1
+    )
   }
 
   ///////////////////////////////////////////////////////////////////

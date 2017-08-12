@@ -169,7 +169,7 @@ export default class DataTreeNode extends EventsEmitter {
   /////////////////////////////////////////////////////////////
   mount (domContainer) {
 
-    domContainer.className = 'treenode click-trigger-container'
+    domContainer.className = 'click-trigger'
 
     this.domContainer = domContainer
 

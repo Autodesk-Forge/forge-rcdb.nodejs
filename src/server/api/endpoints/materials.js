@@ -18,10 +18,13 @@
 
 import ServiceManager from '../services/SvcManager'
 import express from 'express'
+import config from 'c0nfig'
 
 module.exports = function () {
 
-    var router = express.Router();
+    const router = express.Router()
+
+    const dbName = config.databases[0].dbName
 
     ///////////////////////////////////////////////////////////////////////////////
     //
@@ -33,7 +36,7 @@ module.exports = function () {
 
         const config = req.params.config
 
-        const dbSvc = ServiceManager.getService('forge-rcdb')
+        const dbSvc = ServiceManager.getService(dbName)
 
         if (!dbSvc) {
 
@@ -68,7 +71,7 @@ module.exports = function () {
 
         const config = req.params.config
 
-        const dbSvc = ServiceManager.getService('forge-rcdb')
+        const dbSvc = ServiceManager.getService(dbName)
 
         if (!dbSvc) {
 
@@ -105,7 +108,7 @@ module.exports = function () {
 
         const config = req.params.config
 
-        const dbSvc = ServiceManager.getService('forge-rcdb')
+        const dbSvc = ServiceManager.getService(dbName)
 
         if (!dbSvc) {
 

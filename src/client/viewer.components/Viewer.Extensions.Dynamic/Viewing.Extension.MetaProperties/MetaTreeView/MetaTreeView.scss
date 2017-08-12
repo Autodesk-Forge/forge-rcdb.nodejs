@@ -59,6 +59,7 @@
 
   .treeview lmvheader.category .treenode-container {
     width: calc(100% - 46px);
+    pointer-events: none;
     overflow: hidden;
     float: left;
   }
@@ -86,6 +87,10 @@
   .treeview lmvheader.property .treenode .meta-name {
     padding: 6px;
     width: 49%;
+
+    p {
+      pointer-events: none;
+    }
   }
 
   .treeview lmvheader.property .treenode .meta-link,

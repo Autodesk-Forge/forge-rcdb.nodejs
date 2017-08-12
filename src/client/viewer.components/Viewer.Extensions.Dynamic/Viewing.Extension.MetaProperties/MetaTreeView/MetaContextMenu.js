@@ -22,21 +22,17 @@ export default class MetaContextMenu extends
   /////////////////////////////////////////////////////////
   buildMenu (event, node) {
 
-    const isModelOverride = !!node.props.metaType
-
     const menu = [{
       title: 'Edit property ...',
       className: 'fa fa-edit',
       target: () => {
-        this.emit('context.property.edit',
-          node.toMetaProperty(), isModelOverride)
+        this.emit('context.property.edit', node)
       }
     },{
       title: 'Delete property',
       className: 'fa fa-times',
       target: () => {
-        this.emit('context.property.delete',
-          node.toMetaProperty(), isModelOverride)
+        this.emit('context.property.delete', node)
       }
     }]
 

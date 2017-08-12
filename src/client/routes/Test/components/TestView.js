@@ -117,13 +117,7 @@ class TestView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  async componentWillMount () {
-
-    const viewerEnv = await this.initialize({
-      env: 'AutodeskProduction'
-    })
-
-    this.props.setViewerEnv (viewerEnv)
+  async componentDidMount () {
 
     //this.assignState({
     //  urn: 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LWRldi9vZmZpY2UucnZ0'
@@ -136,6 +130,12 @@ class TestView extends React.Component {
   /////////////////////////////////////////////////////////
   async onViewerCreated (viewer) {
 
+    const viewerEnv = await this.initialize({
+      env: 'AutodeskProduction'
+    })
+
+    this.props.setViewerEnv (viewerEnv)
+
     this.viewer = viewer
 
     const lmvProxy = 'lmv-proxy-2legged'
@@ -146,22 +146,26 @@ class TestView extends React.Component {
 
     const urn = 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LWRldi9vZmZpY2UucnZ0'
 
-    const doc = await this.loadDocument(urn)
+    //const doc = await this.loadDocument(urn)
 
-    const path = this.getViewablePath(doc)
+    //const path = this.getViewablePath(doc)
 
     viewer.start()
 
+    const path = 'resources/models/dev/office/Resource/3D_View/3D/office.svf'
+
     viewer.loadModel(path)
 
-    this.onSelectionChanged = this.onSelectionChanged.bind(this)
+    //viewer.loadExtension('Autodesk.Viewing.ZoomWindow')
 
-    viewer.addEventListener(
-      Autodesk.Viewing.SELECTION_CHANGED_EVENT,
-      this.onSelectionChanged)
-
-    //this.material = this.addColorMaterial('clr', 0xf571d6)
-    this.material = this.addTexMaterial('tex', '/resources/img/textures/heatmap.png')
+    //this.onSelectionChanged = this.onSelectionChanged.bind(this)
+    //
+    //viewer.addEventListener(
+    //  Autodesk.Viewing.SELECTION_CHANGED_EVENT,
+    //  this.onSelectionChanged)
+    //
+    ////this.material = this.addColorMaterial('clr', 0xf571d6)
+    //this.material = this.addTexMaterial('tex', '/resources/img/textures/heatmap.png')
   }
 
   /////////////////////////////////////////////////////////

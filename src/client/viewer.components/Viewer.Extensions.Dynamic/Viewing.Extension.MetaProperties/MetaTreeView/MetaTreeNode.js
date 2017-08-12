@@ -334,7 +334,7 @@ class ReactTreeNode extends React.Component {
 
     return (
       <div className="treenode">
-        <Label className="meta-name"
+        <Label className="meta-name click-trigger"
           text={this.props.displayName}
         />
 
@@ -365,7 +365,7 @@ class ReactTreeNode extends React.Component {
 
     return (
       <div className="treenode">
-        <Label className="meta-name"
+        <Label className="meta-name click-trigger"
           text={this.props.displayName}
         />
 
@@ -392,7 +392,7 @@ class ReactTreeNode extends React.Component {
 
     return (
       <div className="treenode">
-        <Label className="meta-name"
+        <Label className="meta-name click-trigger"
           text={this.props.displayName}
         />
 
@@ -441,7 +441,7 @@ class ReactTreeNode extends React.Component {
 
     return (
       <div className="treenode">
-        <Label className="meta-name"
+        <Label className="meta-name click-trigger"
           text={this.props.displayName}
         />
 

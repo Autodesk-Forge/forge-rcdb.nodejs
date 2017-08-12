@@ -670,7 +670,7 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
             metaProperty.displayName) {
 
           properties.splice(idx, 1)
-          
+
           this.react.setState({
             properties: [
               ...properties, metaProperty
@@ -770,8 +770,12 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
           : ''
 
       this.dialogSvc.setState({
-        content: <div dangerouslySetInnerHTML={{__html: msg}}/>,
         title: `Delete Property ${override}...`,
+        content:
+          <div dangerouslySetInnerHTML={{
+              __html: msg
+            }}
+          />,
         open: true
       })
     })
@@ -859,8 +863,12 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
         `<br/><b>${nodeName}</b> ?`)
 
       this.dialogSvc.setState({
-        content: <div dangerouslySetInnerHTML={{__html: msg}}/>,
         title: `Delete Component Properties ...`,
+        content:
+          <div dangerouslySetInnerHTML={{
+            __html: msg
+            }}
+          />,
         open: true
       })
     })
