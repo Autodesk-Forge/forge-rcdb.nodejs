@@ -194,13 +194,13 @@ export default class MarqueeSelect extends MultiModelExtensionBase {
     pos.x = event.clientX - this.mousedowncoords.x;
     pos.y = event.clientY - this.mousedowncoords.y;
     if (pos.x < 0 && pos.y < 0) {
-      marquee.css({ left: `${event.clientX}px`, width: `${-pos.x}px`, top: `${event.clientY}px`, height: `${-pos.y}` })
+      this.marquee.css({ left: `${event.clientX}px`, width: `${-pos.x}px`, top: `${event.clientY}px`, height: `${-pos.y}` })
     } else if (pos.x >= 0 && pos.y <= 0) {
-      marquee.css({ left: `${this.mousedowncoords.x}px`, width: `${pos.x}px`, top: `${event.clientY}px`, height: `${-pos.y}px` })
+      this.marquee.css({ left: `${this.mousedowncoords.x}px`, width: `${pos.x}px`, top: `${event.clientY}px`, height: `${-pos.y}px` })
     } else if (pos.x >= 0 && pos.y >= 0) {
-      marquee.css({ left: `${this.mousedowncoords.x}px`, width: `${pos.x}px`, height: `${pos.y}px`, top: `${this.mousedowncoords.y}px` })
+      this.marquee.css({ left: `${this.mousedowncoords.x}px`, width: `${pos.x}px`, height: `${pos.y}px`, top: `${this.mousedowncoords.y}px` })
     } else if (pos.x < 0 && pos.y >= 0) {
-      marquee.css({ left: `${event.clientX}px`, width: `${-pos.x}px`, height: `${pos.y}px`, top: `${this.mousedowncoords.y}px` })
+      this.marquee.css({ left: `${event.clientX}px`, width: `${-pos.x}px`, height: `${pos.y}px`, top: `${this.mousedowncoords.y}px` })
     }
     this.findCubesByVertices({ x: event.clientX, y: event.clientY })
   }
