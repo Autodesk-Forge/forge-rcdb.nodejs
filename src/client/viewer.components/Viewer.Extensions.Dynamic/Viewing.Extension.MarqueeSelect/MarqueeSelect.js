@@ -11,6 +11,7 @@ export default class MarqueeSelect extends MultiModelExtensionBase {
     this.viewer = viewer
     this.options = options || {}
     this.onMouseUp = this.onMouseUp.bind(this)
+    this.onMouseDown = this.onMouseDown.bind(this)
     this.init()
   }
 
@@ -30,7 +31,7 @@ export default class MarqueeSelect extends MultiModelExtensionBase {
     if (!document.getElementById('select-marquee')) {
       $('body').append('<div id="select-marquee"></div>')
     }
-    this.marquee = $('#select-marquee').css({ width: 0, height: 0, display: 'none' })
+    this.marquee = $('#select-marquee').css({ width: 0, height: 0, display: 'none', 'background-color': 'rgba(208, 255, 242, 0.5)', border: 'dotted 1px #9a9a9a', 'z-index': 100, position: 'absolute' })
   }
 
   lockViewport = () => {
@@ -74,6 +75,7 @@ export default class MarqueeSelect extends MultiModelExtensionBase {
     if (!isolateDbIds.length && !hiddenDbIds.length) {
       return Object.values(mappings)
     }
+    // TODO: caculate the shown dbIds
     if (isolateDbIds.length > 0) {
       const isolatedToShowDbIds = this.getIdsByExternalId(mappings, isolateDbIds, true)
       ids = isolatedToShowDbIds
@@ -86,14 +88,15 @@ export default class MarqueeSelect extends MultiModelExtensionBase {
 
   getIdsByExternalId(mappings, dbIds, isExclude) {
     const ids = []
+    const rootId = this.viewer.model.getRootId()
     if (!dbIds.length) {
       return ids
     }
-    if (dbIds[0] === 1 && isExclude === false) {
+    if (dbIds[0] === rootId && isExclude === false) {
       return ids
     }
 
-    if (dbIds[0] === 1 && isExclude) {
+    if (dbIds[0] === rootId && isExclude) {
       return Object.values(mappings)
     }
 
@@ -147,7 +150,7 @@ export default class MarqueeSelect extends MultiModelExtensionBase {
     this.dbIdPP = dbIdPP
   }
 
-  async onMouseUp() { // eslint-disable-line
+  async onMouseUp(event) { // eslint-disable-line
     this.marquee.fadeOut()
     setTimeout(() => {
       this.unlockViewport()
@@ -156,17 +159,20 @@ export default class MarqueeSelect extends MultiModelExtensionBase {
     if (!(event.ctrlKey && event.altKey)) {
       return
     }
+
+    if (!this.mousedown) {
+      return
+    }
+
     const { viewer } = this
-
     const hiddenDbIds = this.viewer.getHiddenNodes()
-
     const showDbIds = await this.getShowIds()
     await this.calcDbidPP(showDbIds)
 
     const dbIds = keys(this.dbIdPP)
     const dbInBounds = []
     dbIds.forEach((dbId) => {
-      if (+dbId === 1) {
+      if (+dbId === this.viewer.model.getRootId()) {
         return
       }
       const { min, max } = this.dbIdPP[dbId]
@@ -183,10 +189,7 @@ export default class MarqueeSelect extends MultiModelExtensionBase {
   }
 
   onMouseMove = (event) => {
-    if (!(event.ctrlKey && event.altKey)) {
-      return
-    }
-    if (!this.mousedown) {
+    if (!(event.ctrlKey && event.altKey && this.mousedown)) {
       return
     }
     this.marquee.show()
@@ -254,7 +257,6 @@ export default class MarqueeSelect extends MultiModelExtensionBase {
 
   load() {
     const { canvas } = this.viewer
-    this.onMouseDown = this.onMouseDown.bind(this)
     canvas.addEventListener('mousedown', this.onMouseDown, true)
     canvas.addEventListener('mouseup', this.onMouseUp, false)
     canvas.addEventListener('mousemove', this.onMouseMove, false)
