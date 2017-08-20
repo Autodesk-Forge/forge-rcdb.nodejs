@@ -150,7 +150,10 @@ class ScreenShotManagerExtension extends ExtensionBase {
 
     link.setAttribute('download', filename)
     link.setAttribute('href', blob)
+
+    document.body.appendChild(link)
     link.click()
+    document.body.removeChild(link)
   }
 
   /////////////////////////////////////////////////////////////////

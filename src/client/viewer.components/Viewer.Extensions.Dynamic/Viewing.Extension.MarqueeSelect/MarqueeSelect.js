@@ -1,5 +1,4 @@
 import { difference, keys, forOwn, findKey, clone, omit, sortBy } from 'lodash'
-import $ from 'jquery'
 
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 
@@ -26,7 +25,7 @@ export default class MarqueeSelect extends MultiModelExtensionBase {
     this.offset = { x: 0, y: 0 }
     this.bounds = {
       origin: { x: 0, y: 0 },
-      delta: { x: 0, y: 0 },
+      delta: { x: 0, y: 0 }
     }
     if (!document.getElementById('select-marquee')) {
       $('body').append('<div id="select-marquee"></div>')

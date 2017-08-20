@@ -69,8 +69,8 @@ export default class ExtractSvc extends BaseSvc {
 
     link.href = this.getDownloadUrl(modelId)
 
-    document.body.appendChild(a)
+    document.body.appendChild(link)
     link.click()
-    document.body.removeChild(a)
+    document.body.removeChild(link)
   }
 }

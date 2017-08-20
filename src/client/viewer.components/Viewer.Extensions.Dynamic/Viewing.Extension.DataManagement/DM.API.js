@@ -337,7 +337,10 @@ export default class DataManagementAPI extends ClientAPI {
 
     link.download = version.attributes.displayName
     link.href = uri
+
+    document.body.appendChild(link)
     link.click()
+    document.body.removeChild(link)
   }
 
   /////////////////////////////////////////////////////////
