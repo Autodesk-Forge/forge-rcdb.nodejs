@@ -33,6 +33,7 @@ class ConfigManagerExtension extends ExtensionBase {
     super (viewer, options)
 
     this.renderTitle = this.renderTitle.bind(this)
+    this.toggleItem = this.toggleItem.bind(this)
 
     this.dialogSvc =
       ServiceManager.getService('DialogSvc')
@@ -40,6 +41,8 @@ class ConfigManagerExtension extends ExtensionBase {
     this.itemsClass = this.guid()
 
     this.react = options.react
+
+    this.restoreEvents = []
 
     this.drake = null
 
@@ -84,8 +87,15 @@ class ConfigManagerExtension extends ExtensionBase {
         }
       })
 
-    this.react.setState({
+    this.itemToggling = this.options.itemToggling
 
+    this.react.setState({
+      emptyStateNameCaption:
+         this.options.emptyStateNameCaption ||
+         'State Name ...',
+      disabled: this.options.disabled,
+      stateSelection: true,
+      stateCreation: true,
       newSequenceName: '',
       newStateName: '',
       sequence: null,
@@ -113,7 +123,9 @@ class ConfigManagerExtension extends ExtensionBase {
               sequences
             })
 
-            this.setActiveSequence (sequence)
+            setTimeout(() => {
+              this.setActiveSequence (sequence)
+            }, 2000)
           }
       })
     })
@@ -171,8 +183,7 @@ class ConfigManagerExtension extends ExtensionBase {
           items: []
         })
 
-        this.setActiveSequence (
-          sequence, false)
+        this.setActiveSequence (sequence)
 
         if (this.api) {
 
@@ -251,7 +262,10 @@ class ConfigManagerExtension extends ExtensionBase {
 
         if (this.api) {
 
-          this.api.addSequence (sequence).then(() => {
+          this.api.addSequence (Object.assign({},
+            sequence, {
+              stateIds: []
+            })).then(() => {
 
             this.api.addState (sequence.id, items)
           })
@@ -295,6 +309,8 @@ class ConfigManagerExtension extends ExtensionBase {
 
           this.api.deleteSequence(state.sequence.id)
         }
+
+        this.emit('sequence.deleted', state.sequence)
 
         const sequences = state.sequences.filter(
           (sequence) => {
@@ -394,13 +410,15 @@ class ConfigManagerExtension extends ExtensionBase {
 
     const state = this.react.getState()
 
-    var viewerState = this.viewer.getState()
+    const name = !state.newStateName.length
+      ? new Date().toString('d/M/yyyy H:mm:ss')
+      : state.newStateName
 
-    viewerState.name = state.newStateName.length
-      ? state.newStateName
-      : new Date().toString('d/M/yyyy H:mm:ss')
-
-    viewerState.id = this.guid()
+    const viewerState = Object.assign({},
+      this.viewer.getState(), {
+        id: this.guid(),
+        name
+      })
 
     if (this.api) {
 
@@ -414,7 +432,11 @@ class ConfigManagerExtension extends ExtensionBase {
       newStateName: ''
     })
 
-    this.on(`restoreState.${viewerState.id}`, () => {
+    const event = `restoreState.${viewerState.id}`
+
+    this.restoreEvents.push(event)
+
+    this.on(event, () => {
 
       this.onRestoreState(viewerState)
     })
@@ -433,7 +455,10 @@ class ConfigManagerExtension extends ExtensionBase {
       'objectSet',
       'explodeScale')
 
-    this.viewer.restoreState(filteredState)
+    this.viewer.restoreState(
+      filteredState,
+      null,
+      this.options.restoreImmediate)
   }
 
   /////////////////////////////////////////////////////////////////
@@ -449,6 +474,8 @@ class ConfigManagerExtension extends ExtensionBase {
         return item.id !== id
       })
     })
+
+    this.emit('state.deleted', id)
 
     if (this.api) {
 
@@ -553,8 +580,9 @@ class ConfigManagerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   activateDrag () {
 
-    const domItems = document.getElementsByClassName(
-      this.itemsClass)[0]
+    const domItems =
+      document.getElementsByClassName(
+        this.itemsClass)[0]
 
     if (this.drake) {
 
@@ -573,7 +601,7 @@ class ConfigManagerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  async setActiveSequence (sequence, fetchStates = true) {
+  async setActiveSequence (sequence) {
 
     clearTimeout(this.playTimeout)
 
@@ -581,7 +609,12 @@ class ConfigManagerExtension extends ExtensionBase {
 
     this.sequenceIdx = 0
 
-    this.off ()
+    this.restoreEvents.forEach((event) => {
+
+      this.off(event)
+    })
+
+    this.events = []
 
     this.react.setState({
       items: [],
@@ -601,7 +634,7 @@ class ConfigManagerExtension extends ExtensionBase {
         this.activateDrag()
       }
 
-      if (this.api && fetchStates) {
+      if (this.api) {
 
         const states =
           await this.api.getStates(
@@ -622,10 +655,10 @@ class ConfigManagerExtension extends ExtensionBase {
     }
   }
 
-  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   playSequence (period) {
 
     // sequence is playing -> stopping it
@@ -653,21 +686,17 @@ class ConfigManagerExtension extends ExtensionBase {
       this.react.setState({
         play: true,
         items: state.items.map((item) => {
-          return Object.assign({}, item, {
-            active: item.id === stateId
-          })
+          if (item.active) {
+            item.active = false
+            this.emit('state.toggled', item)
+          }
+          if (item.id === stateId) {
+            item.active = true
+            this.emit('state.toggled', item)
+          }
+          return item
         })
       })
-
-      setTimeout(() => {
-        this.react.setState({
-          items: state.items.map((item) => {
-            return Object.assign({}, item, {
-              active: false
-            })
-          })
-        })
-      }, period * 0.9)
 
       if ((++this.sequenceIdx) == stateIds.length) {
 
@@ -772,9 +801,12 @@ class ConfigManagerExtension extends ExtensionBase {
 
     const state = this.react.getState()
 
-    const sequences = state.sequences.map((sequence, idx) => {
+    const sequences = state.sequences.map((sequence) => {
+
+      const id = sequence.id
+
       return (
-        <MenuItem eventKey={idx} key={idx} onClick={() => {
+        <MenuItem eventKey={id} key={id} onClick={() => {
 
           this.setActiveSequence(sequence)
         }}>
@@ -789,6 +821,11 @@ class ConfigManagerExtension extends ExtensionBase {
       ? sequence.name +
         (!sequence.readonly ? '' : ' (readonly)')
       : ''
+
+    const stateCreationDisabled =
+      !sequence ||
+      sequence.readonly ||
+      !state.stateCreation
 
     return (
       <div className="controls">
@@ -827,13 +864,13 @@ class ConfigManagerExtension extends ExtensionBase {
 
           <ContentEditable
             onChange={(e) => this.onInputChanged(e, 'newStateName')}
-            disabled={!sequence || sequence.readonly}
+            data-placeholder={state.emptyStateNameCaption}
             onKeyDown={(e) => this.onKeyDown(e)}
-            data-placeholder="State name ..."
+            disabled={stateCreationDisabled}
             className="state-name-input"
             html={state.newStateName}/>
 
-          <button disabled={!sequence || sequence.readonly}
+          <button disabled={stateCreationDisabled}
             onClick={() => this.addItem()}
             title="Save state">
             <span className="fa fa-database"/>
@@ -863,34 +900,71 @@ class ConfigManagerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  toggleItem (selectedItem) {
+
+    const state = this.react.getState()
+
+    const items = state.items.map((item) => {
+
+      if (item.id === selectedItem.id) {
+
+        item.active = !item.active
+
+        if (item.active) {
+
+          this.onRestoreState(selectedItem)
+        }
+      }
+
+      return item
+    })
+
+    this.emit('state.toggled', selectedItem)
+
+    this.react.setState({
+      items
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   renderItems () {
 
     const state = this.react.getState()
 
-    const items = state.items.map((item, idx) => {
+    const items = state.items.map((item) => {
 
       const text = item.name
 
-      const className =
-        "item" + (item.active ? ' active' :'')
+      const className = "item" +
+        (state.stateSelection ? ' selectable' : '') +
+        (this.itemToggling ? ' toggable' : '') +
+        (item.active ? ' active' :'')
 
       return (
         <div data-id={item.id} data-name={text}
           className={className}
           key={item.id}
-          onClick={
-            () => this.onRestoreState (item)
-          }>
+          onClick={() => {
+            if(state.stateSelection) {
+              if (this.itemToggling) {
+                this.toggleItem(item)
+              } else {
+                this.onRestoreState (item)
+              }
+            }
+          }}>
 
           <Label text={text}/>
 
           {
             !state.sequence.readonly &&
-
             <button onClick={(e) => {
-              this.deleteItem(item.id)
-              e.stopPropagation()
-              e.preventDefault()
+                this.deleteItem(item.id)
+                e.stopPropagation()
+                e.preventDefault()
             }}
               title="Delete state">
               <span className="fa fa-times"/>
@@ -914,12 +988,17 @@ class ConfigManagerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   render (opts) {
 
+    const state = this.react.getState()
+
     return (
       <WidgetContainer
         renderTitle={() => this.renderTitle(opts.docked)}
         showTitle={opts.showTitle}
         className={this.className}>
-
+        {
+            state.disabled &&
+            <div className="disabled-overlay"/>
+        }
         { this.renderControls() }
         { this.renderItems() }
 

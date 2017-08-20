@@ -1,142 +1,189 @@
-
+/////////////////////////////////////////////////////////////////
+// SelectionWindow Viewer Extension
+// By Philippe Leefsma, Autodesk Inc, August 2017
+//
+/////////////////////////////////////////////////////////////////
 import SelectionWindowTool from './Viewing.Extension.SelectionWindow.Tool'
+import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
+import WidgetContainer from 'WidgetContainer'
+import { ReactLoader } from 'Loader'
+import ReactDOM from 'react-dom'
+import React from 'react'
 
-function ZoomWindow(viewer, options) {
-  Autodesk.Viewing.Extension.call(this, viewer, options);
-  this.createUIBound = function() {
-    viewer.removeEventListener(av.TOOLBAR_CREATED_EVENT, this.createUIBound);
-    this.createUI(this.viewer.getToolbar(false));
-  }.bind(this);
+class SelectionWindowExtension extends MultiModelExtensionBase {
+
+  /////////////////////////////////////////////////////////////////
+  // Class constructor
+  //
+  /////////////////////////////////////////////////////////////////
+  constructor (viewer, options) {
+
+    super (viewer, options)
+
+    this.renderTitle = this.renderTitle.bind(this)
+
+    this.selectionWindowTool =
+      new SelectionWindowTool(viewer)
+
+    this.react = options.react
+  }
+
+  /////////////////////////////////////////////////////////
+  // Load callback
+  //
+  /////////////////////////////////////////////////////////
+  load () {
+
+    this.react.setState({
+
+
+    }).then (() => {
+
+      this.react.pushRenderExtension(this)
+    })
+
+    this.viewer.toolController.registerTool(
+      this.selectionWindowTool)
+
+    console.log('Viewing.Extension.SelectionWindow loaded')
+
+    return true
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  get className() {
+
+    return 'selection-window'
+  }
+
+  /////////////////////////////////////////////////////////
+  // Extension Id
+  //
+  /////////////////////////////////////////////////////////
+  static get ExtensionId () {
+
+    return 'Viewing.Extension.SelectionWindow'
+  }
+
+  /////////////////////////////////////////////////////////
+  // Unload callback
+  //
+  /////////////////////////////////////////////////////////
+  unload () {
+
+    console.log('Viewing.Extension.SelectionWindow unloaded')
+
+    super.unload ()
+
+    return true
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onModelCompletedLoad (event) {
+
+    this.viewer.setActiveNavigationTool(
+      'selectionWindowTool')
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onModelUnloaded (event) {
+
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async setDocking (docked) {
+
+    const id = SelectionWindowExtension.ExtensionId
+
+    if (docked) {
+
+      await this.react.popRenderExtension(id)
+
+      this.react.pushViewerPanel(this, {
+        height: 250,
+        width: 350
+      })
+
+    } else {
+
+    await this.react.popViewerPanel(id)
+
+      this.react.pushRenderExtension(this)
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  renderTitle (docked) {
+
+    const spanClass = docked
+      ? 'fa fa-chain-broken'
+      : 'fa fa-chain'
+
+    return (
+      <div className="title">
+        <label>
+          Selection Window
+        </label>
+        <div className="selection-window-controls">
+          <button onClick={() => this.setDocking(docked)}
+            title="Toggle docking mode">
+            <span className={spanClass}/>
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  renderContent () {
+
+    return (
+      <div className="content">
+        <ReactLoader show={true}/>
+      </div>
+    )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  render (opts) {
+
+    return (
+      <WidgetContainer
+        renderTitle={() => this.renderTitle(opts.docked)}
+        showTitle={opts.showTitle}
+        className={this.className}>
+
+        { this.renderContent () }
+
+      </WidgetContainer>
+    )
+  }
 }
 
-ZoomWindow.prototype = Object.create(Autodesk.Viewing.Extension.prototype);
-ZoomWindow.prototype.constructor = ZoomWindow;
+Autodesk.Viewing.theExtensionManager.registerExtension (
+  SelectionWindowExtension.ExtensionId,
+  SelectionWindowExtension)
 
-var proto = ZoomWindow.prototype;
+export default 'Viewing.Extension.SelectionWindow'
 
-proto.load = function() {
-  var viewer = this.viewer;
-
-  // Init & Register tool
-  this.tool = new SelectionWindowTool(viewer)
-
-  viewer.toolController.registerTool(this.tool);
-
-  // Add the ui to the viewer.
-  this.createUI(viewer.getToolbar(false));
-  return true;
-};
-
-proto.createUI = function(toolbar) {
-  var navTools;
-  if (!toolbar || !(navTools = toolbar.getControl(Autodesk.Viewing.TOOLBAR.NAVTOOLSID)) || !navTools.dollybutton) {
-    // tool bars aren't built yet, wait until they are
-    this.viewer.addEventListener(av.TOOLBAR_CREATED_EVENT, this.createUIBound);
-    return;
-  }
-
-  var self = this;
-  // remove default zoom tool
-  navTools.removeControl(navTools.dollybutton.getId());
-  this.defaultDollyButton = navTools.dollybutton;
-
-  // add combo button for zoom tool
-  this.zoomWindowToolButton = new Autodesk.Viewing.UI.ComboButton('toolbar-zoomTools');
-  this.zoomWindowToolButton.setIcon('zoomwindowtoolicon-zoom-window');
-  this.createZoomSubmenu(this.zoomWindowToolButton);
-  navTools.addControl(this.zoomWindowToolButton);
-
-  // Escape hotkey to exit tool.
-  //
-  var hotkeys = [{
-    keycodes: [
-      Autodesk.Viewing.theHotkeyManager.KEYCODES.ESCAPE
-    ],
-    onRelease: function () {
-      if (self.zoomWindowToolButton.getState() === Autodesk.Viewing.UI.Button.State.ACTIVE) {
-        self.viewer.setActiveNavigationTool();
-        self.zoomWindowToolButton.setState(Autodesk.Viewing.UI.Button.State.INACTIVE);
-      }
-    }
-  }];
-  Autodesk.Viewing.theHotkeyManager.pushHotkeys(this.escapeHotkeyId, hotkeys);
-};
-
-proto.destroyUI = function() {
-  var viewer = this.viewer;
-  var toolbar = viewer.getToolbar(false);
-  if (toolbar) {
-    var navTools = toolbar.getControl(Autodesk.Viewing.TOOLBAR.NAVTOOLSID);
-    if (navTools) {
-      if (this.zoomWindowToolButton) {
-        this.zoomWindowToolButton.subMenu.removeEventListener(
-          Autodesk.Viewing.UI.RadioButtonGroup.Event.ACTIVE_BUTTON_CHANGED,
-          this.zoomWindowToolButton.subMenuActiveButtonChangedHandler(navTools));
-        navTools.removeControl(this.zoomWindowToolButton.getId());
-      }
-      this.zoomWindowToolButton = null;
-      // set back dolly button
-      if (navTools.panbutton && this.defaultDollyButton) {
-        navTools.addControl(this.defaultDollyButton);
-      }
-      else {
-        this.defaultDollyButton = null;
-      }
-    }
-  }
-  Autodesk.Viewing.theHotkeyManager.popHotkeys(this.escapeHotkeyId);
-};
-
-proto.createNavToggler = function(viewer, button, name) {
-  return function() {
-    var state = button.getState();
-    if (state === Autodesk.Viewing.UI.Button.State.INACTIVE) {
-      viewer.setActiveNavigationTool(name);
-      button.setState(Autodesk.Viewing.UI.Button.State.ACTIVE);
-    } else if (state === Autodesk.Viewing.UI.Button.State.ACTIVE) {
-      viewer.setActiveNavigationTool();
-      button.setState(Autodesk.Viewing.UI.Button.State.INACTIVE);
-    }
-  };
-};
-
-proto.createZoomSubmenu = function(parentButton){
-
-  var viewer = this.viewer;
-  var toolbar = viewer.getToolbar(true);
-  var navTools = toolbar.getControl(Autodesk.Viewing.TOOLBAR.NAVTOOLSID);
-
-  // zoom window
-  var zoomWindowToolBut = new Autodesk.Viewing.UI.Button('toolbar-zoomWindowTool');
-  zoomWindowToolBut.setToolTip(Autodesk.Viewing.i18n.translate("Zoom window"));
-  zoomWindowToolBut.setIcon('zoomwindowtoolicon-zoom-window');
-  zoomWindowToolBut.onClick = this.createNavToggler(viewer, zoomWindowToolBut, 'selectionWindowTool');
-  parentButton.addControl(zoomWindowToolBut);
-  // zoom
-  var dollyBut = new Autodesk.Viewing.UI.Button('toolbar-zoomTool');
-  dollyBut.setToolTip('Zoom');
-  dollyBut.setIcon('adsk-icon-zoom');
-  dollyBut.onClick = this.createNavToggler(viewer, dollyBut, 'dolly');
-  parentButton.addControl(dollyBut);
-  // Set the default click action
-  parentButton.onClick = zoomWindowToolBut.onClick; // default
-};
-
-proto.unload = function() {
-  var viewer = this.viewer;
-  if (viewer.getActiveNavigationTool() === "dolly" ||
-    viewer.getActiveNavigationTool() === "selectionWindowTool") {
-    viewer.setActiveNavigationTool();
-  }
-  // Remove the UI
-  this.destroyUI();
-  // Deregister tool
-  viewer.toolController.deregisterTool(this.tool);
-  this.tool = null;
-
-  return true;
-};
-
-Autodesk.Viewing.theExtensionManager.registerExtension(
-  'Viewing.Extension.SelectionWindow',
-  ZoomWindow)

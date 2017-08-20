@@ -10,7 +10,6 @@ import EventTool from 'Viewer.EventTool'
 import Toolkit from 'Viewer.Toolkit'
 import { ReactLoader } from 'Loader'
 import ReactDOM from 'react-dom'
-import Label from 'Label'
 import React from 'react'
 
 class SelectionFilterExtension extends MultiModelExtensionBase {

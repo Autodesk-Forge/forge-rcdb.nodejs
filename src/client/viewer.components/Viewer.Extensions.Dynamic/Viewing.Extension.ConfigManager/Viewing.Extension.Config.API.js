@@ -101,11 +101,20 @@ export default class ConfigAPI extends ClientAPI {
   //
   //
   /////////////////////////////////////////////////////////
-  getStates (sequenceId) {
+  async getStates (sequenceId) {
 
-    const url = `/sequences/${sequenceId}/states`
+    try {
 
-    return this.ajax(url)
+      const url = `/sequences/${sequenceId}/states`
+
+      const res = await this.ajax(url)
+
+      return res
+
+    } catch (ex) {
+
+      return []
+    }
   }
 
   /////////////////////////////////////////////////////////

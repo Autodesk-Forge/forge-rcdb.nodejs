@@ -31,7 +31,7 @@ class ExtensionManager extends ExtensionBase {
     this.reactOpts = {
       pushRenderExtension: (extension) => {
 
-        return new Promise((resolve) => {
+        return new Promise(async(resolve) => {
 
           const state = this.react.getState()
 
