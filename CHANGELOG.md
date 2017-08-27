@@ -9,3 +9,5 @@ Thanks [ubicleDowns/webgl-code-samples](https://github.com/cubicleDowns/webgl-co
 ```
 
 > press `ctrl` + `alt` key to activate marquee selection.
+
+[Containers] Add i18n support with lib `react-int` && `intl`

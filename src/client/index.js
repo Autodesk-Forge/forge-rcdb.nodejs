@@ -6,6 +6,10 @@ import config from 'c0nfig'
 import 'bootstrap-webpack'
 import React from 'react'
 
+import { Provider } from 'react-redux'
+import LanguageProvider from './translations/LanguageProvider'
+import { translationMessages } from './i18n'
+
 //Services
 import ServiceManager from 'SvcManager'
 import ExtractorSvc from 'ExtractorSvc'
@@ -83,12 +87,16 @@ const store = createStore(initialState)
 // ========================================================
 const MOUNT_NODE = document.getElementById('root')
 
-let render = () => {
+let render = (messages) => {
 
   const routes = require('./routes/index').default(store)
 
   ReactDOM.render(
-    <AppContainer store={store} routes={routes} />,
+    <Provider store={store}>
+      <LanguageProvider messages={messages}>
+        <AppContainer store={store} routes={routes} />
+      </LanguageProvider>
+    </Provider>,
     MOUNT_NODE
   )
 }
@@ -114,7 +122,7 @@ if (config.env === 'development') {
     // Wrap render in try/catch
     render = () => {
       try {
-        renderApp()
+        renderApp(translationMessages)
       } catch (error) {
         renderError(error)
       }
@@ -133,7 +141,24 @@ if (config.env === 'development') {
 // ========================================================
 // Go!
 // ========================================================
-render()
+// render()
+
+// Chunked polyfill for browsers without Intl support
+if (!window.Intl) {
+  (new Promise((resolve) => {
+    resolve(import('intl'));
+  }))
+    .then(() => Promise.all([
+      import('intl/locale-data/jsonp/en.js'),
+      import('intl/locale-data/jsonp/zh.js'),
+    ]))
+    .then(() => render(translationMessages))
+    .catch((err) => {
+      throw err;
+    });
+} else {
+  render(translationMessages);
+}
 
 
 

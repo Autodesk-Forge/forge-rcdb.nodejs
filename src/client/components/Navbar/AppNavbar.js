@@ -19,15 +19,21 @@ import {
   Nav
   } from 'react-bootstrap'
 
+import { intlShape } from 'react-intl'
+import messages from 'translations/messages'
+
 export default class AppNavbar extends React.Component {
 
+  static contextTypes = {
+    intl: intlShape
+  }
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  constructor (props) {
+  constructor (props, context) {
 
-    super(props)
+    super(props, context)
 
     this.state = {
       databaseOpen: false,
@@ -39,6 +45,8 @@ export default class AppNavbar extends React.Component {
 
     this.forgeSvc = ServiceManager.getService(
       'ForgeSvc')
+
+    this.formatMessage = this.context.intl.formatMessage
   }
 
   /////////////////////////////////////////////////////////
@@ -143,7 +151,7 @@ export default class AppNavbar extends React.Component {
               <LinkContainer to={{ pathname: '/', query: { } }}>
                 <NavItem eventKey={1}>
                   <label className="nav-label">
-                  &nbsp; Home
+                    &nbsp; {this.formatMessage(messages.home)}
                   </label>
                 </NavItem>
               </LinkContainer>
@@ -157,7 +165,7 @@ export default class AppNavbar extends React.Component {
               <LinkContainer to={{ pathname: '/configurator'}}>
                 <NavItem eventKey={2}>
                   <label className="nav-label">
-                  &nbsp; Demos
+                    &nbsp; {this.formatMessage(messages.demo)}
                   </label>
                 </NavItem>
               </LinkContainer>
@@ -171,7 +179,7 @@ export default class AppNavbar extends React.Component {
               <LinkContainer to={{ pathname: '/gallery', query: { } }}>
                 <NavItem eventKey={3}>
                   <label className="nav-label">
-                  &nbsp; Gallery
+                    &nbsp; {this.formatMessage(messages.gallery)}
                   </label>
                 </NavItem>
               </LinkContainer>
@@ -194,7 +202,7 @@ export default class AppNavbar extends React.Component {
                     <img className="avatar" src={appState.user.profileImages.sizeX80}/>
                   }
                 <label className="nav-label">
-                &nbsp; { appState.user ? username : "Login"}
+                  &nbsp; { appState.user ? username : this.formatMessage(messages.login)}
                 </label>
               </NavItem>
             }
@@ -239,7 +247,7 @@ export default class AppNavbar extends React.Component {
 
               <NavItem eventKey={6} onClick={() => {this.openAboutDlg()}}>
                 <label className="nav-label">
-                &nbsp; About ...
+                  &nbsp; {this.formatMessage(messages.about)} ...
                 </label>
               </NavItem>
             }
