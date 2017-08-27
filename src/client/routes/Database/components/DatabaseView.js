@@ -270,6 +270,13 @@ class DatabaseView extends React.Component {
       viewer.addEventListener(
         Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT, (e) => {
 
+          const nav = viewer.navigation
+
+          nav.toPerspective()
+
+          this.viewer.autocam.setHomeViewFrom(
+            nav.getCamera())
+
           this.loader.show(false)
         })
 

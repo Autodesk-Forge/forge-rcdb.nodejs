@@ -630,6 +630,27 @@ class ViewerConfigurator extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  @autobind
+  onModelRootLoaded (event) {
+
+    const viewer = event.target
+
+    viewer.removeEventListener(
+      Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT,
+      this.onModelRootLoaded)
+
+    const nav = viewer.navigation
+
+    nav.toPerspective()
+
+    viewer.autocam.setHomeViewFrom(
+      nav.getCamera())
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   async onViewerCreated (viewer, modelInfo) {
 
     try {
@@ -645,6 +666,10 @@ class ViewerConfigurator extends BaseComponent {
       }
 
       viewer.start()
+
+      viewer.addEventListener(
+        Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT,
+        this.onModelRootLoaded)
 
       viewer.prefs.tag('ignore-producer')
 
