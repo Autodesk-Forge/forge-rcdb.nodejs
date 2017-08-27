@@ -13,7 +13,13 @@ import Viewer from 'Viewer'
 import Panel from 'Panel'
 import React from 'react'
 
+import { intlShape } from 'react-intl'
+
 class ViewerConfigurator extends BaseComponent {
+
+  static contextTypes = {
+    intl: intlShape
+  }
 
   /////////////////////////////////////////////////////////
   //
@@ -30,9 +36,9 @@ class ViewerConfigurator extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
-  constructor (props) {
+  constructor(props, context) {
 
-    super (props)
+    super(props, context)
 
     this.notifySvc = ServiceManager.getService(
       'NotifySvc')
@@ -413,6 +419,7 @@ class ViewerConfigurator extends BaseComponent {
       const fullDefaultOptions = Object.assign({},
         defaultOptions, {
           react: {
+            formatMessage: this.context.intl.formatMessage,
 
             pushRenderExtension:
               this.pushRenderExtension,
