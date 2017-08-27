@@ -168,7 +168,9 @@ export default class MetaTreeNode extends EventsEmitter {
           fileId:  props.fileId
         })
 
+      case 'Double':
       case 'Text':
+      case 'Int':
 
         return baseProperty
 
@@ -495,7 +497,9 @@ class ReactTreeNode extends React.Component {
       case 'Link':
         return this.renderLinkProperty()
 
+      case 'Double':
       case 'Text':
+      case 'Int':
         return this.renderTextProperty()
 
       default:

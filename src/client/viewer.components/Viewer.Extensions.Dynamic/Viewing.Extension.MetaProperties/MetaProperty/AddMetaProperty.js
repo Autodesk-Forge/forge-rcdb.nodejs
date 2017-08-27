@@ -69,7 +69,9 @@ export default class CreateMetaProperty
 
       switch (newState.metaType) {
 
+        case 'Double':
         case 'Text':
+        case 'Int':
 
           return this.props.onChanged({
             displayCategory: newState.displayCategory,
@@ -161,7 +163,9 @@ export default class CreateMetaProperty
 
     switch (this.state.metaType) {
 
+      case 'Double':
       case 'Text':
+      case 'Int':
       {
         const disableOK =
           !this.state.displayCategory ||
@@ -209,6 +213,17 @@ export default class CreateMetaProperty
 
     switch (this.state.metaType) {
 
+      case 'Double':
+        return (
+          <ContentEditable
+            onChange={(e) => this.onInputChanged(e, 'displayValue')}
+            data-placeholder="Property value ..."
+            onKeyDown={(e) => this.onKeyDown(e)}
+            html={this.state.displayValue}
+            className="input meta-value"
+          />
+        )
+
       case 'Text':
         return (
             <ContentEditable
@@ -219,6 +234,18 @@ export default class CreateMetaProperty
               className="input meta-value"
             />
         )
+
+      case 'Int':
+        return (
+          <ContentEditable
+            onChange={(e) => this.onInputChanged(e, 'displayValue')}
+            data-placeholder="Property value ..."
+            onKeyDown={(e) => this.onKeyDown(e)}
+            html={this.state.displayValue}
+            className="input meta-value"
+          />
+        )
+
       case 'Link':
         return (
           <div>
@@ -304,12 +331,26 @@ export default class CreateMetaProperty
             </MenuItem>
             <MenuItem eventKey={2} key={2} onClick={() => {
               this.assignState({
+                metaType: 'Double'
+              })
+            }}>
+              Double
+            </MenuItem>
+            <MenuItem eventKey={3} key={3} onClick={() => {
+              this.assignState({
+                metaType: 'Int'
+              })
+            }}>
+              Int
+            </MenuItem>
+            <MenuItem eventKey={4} key={4} onClick={() => {
+              this.assignState({
                 metaType: 'Link'
               })
             }}>
               Link
             </MenuItem>
-            <MenuItem eventKey={3} key={3} onClick={() => {
+            <MenuItem eventKey={5} key={5} onClick={() => {
               this.assignState({
                 metaType: 'File'
               })

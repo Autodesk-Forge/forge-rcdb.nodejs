@@ -13,7 +13,11 @@
   }
 
   .row > .dropdown {
-    width: 110px;
+    width: 130px;
+  }
+
+  .type-dropdown {
+    width: 124px;
   }
 
   .input {
@@ -28,7 +32,7 @@
   }
 
   .meta-category.input {
-    width: calc(100% - 110px);
+    width: calc(100% - 130px);
   }
 
   .meta-name.input {

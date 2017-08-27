@@ -11,9 +11,9 @@
 }
 
 .markups-panel-content button  {
+  background: #cacaca;
   display: inline-block;
   color: #FFFFFF;
-  background: none;
   border-radius: 3px;
   text-align: center;
   vertical-align: middle;
@@ -84,7 +84,7 @@
 
 .markups-panel-content .markup-actions button {
   display: inline-block;
-  width: auto;
+  width: 50px;
   color: gray;
 }
 
@@ -179,6 +179,7 @@
 
 #markup-panel{
   background: rgba(255, 255, 255, 0.7);
+  width: 258px;
 }
 
 #markup-panel:hover{

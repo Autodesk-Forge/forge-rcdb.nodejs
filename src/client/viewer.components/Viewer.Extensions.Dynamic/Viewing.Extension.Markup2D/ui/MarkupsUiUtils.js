@@ -1,12 +1,12 @@
 (function(){
-    
-    var coreNamespace = AutodeskNamespace('Autodesk.Markups.Core');
+
+    var coreNamespace = AutodeskNamespace('Autodesk.Viewing.Extensions.Markups.Core');
     var namespace = AutodeskNamespace('Autodesk.Markups.Ui');
 
     var Utils = {
         updateDropDownOptions: function(element, items){
             if (!(element instanceof HTMLSelectElement)) return;
-            
+
             //clear out the previous options
             element.innerHTML = '';
 
@@ -29,6 +29,7 @@
             return str.charAt(0).toUpperCase() + str.substring(1);
         },
         getMarkupType: function(annotation){
+
             switch(annotation.type) {
                 case coreNamespace.MARKUP_TYPE_ARROW:
                     return "arrow";

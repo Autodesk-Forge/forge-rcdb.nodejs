@@ -135,7 +135,7 @@ export default class MetaTreeDelegate extends TreeDelegate {
     const className = event.target.className
 
     return (
-    className.toLowerCase().indexOf('click-trigger') > -1
+      className.toLowerCase().indexOf('click-trigger') > -1
     )
   }
 
