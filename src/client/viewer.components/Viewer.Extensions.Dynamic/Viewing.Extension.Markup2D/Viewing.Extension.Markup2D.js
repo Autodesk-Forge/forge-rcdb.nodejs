@@ -172,6 +172,10 @@ class Markup2DExtension extends MultiModelExtensionBase {
     const {configManager, markupsCore, markupsUi} =
       this.react.getState()
 
+    await this.react.setState({
+        markupsMode
+      })
+
     switch (markupsMode.id) {
 
       case 'markupsModeDisabled':
@@ -214,10 +218,6 @@ class Markup2DExtension extends MultiModelExtensionBase {
         markupsCore.show()
         break
     }
-
-    this.react.setState({
-      markupsMode
-    })
   }
 
   /////////////////////////////////////////////////////////
@@ -228,7 +228,7 @@ class Markup2DExtension extends MultiModelExtensionBase {
 
     const {markupsMode} = this.react.getState()
 
-    if (markupsMode.id !== 'markupsModeView') {
+    if (markupsMode.id === 'markupsModeEdit') {
 
       this.setMarkupsMode({
         id:'markupsModeView',
