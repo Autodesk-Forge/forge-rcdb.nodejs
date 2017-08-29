@@ -111,12 +111,52 @@ export default class CreateMetaProperty
   //
   //
   /////////////////////////////////////////////////////////
-  onKeyDown (e) {
+  onKeyDown (e, type) {
 
-    if (e.keyCode === 13) {
+    switch(type) {
 
-      e.stopPropagation()
-      e.preventDefault()
+      case 'Double': {
+
+        //backspace, ENTER, ->, <-, delete, '.', '-', ',',
+        const allowed = [8, 13, 37, 39, 46, 188, 189, 190]
+
+        if (allowed.indexOf(e.keyCode) > -1 ||
+          (e.keyCode > 47 && e.keyCode < 58)) {
+
+          return
+        }
+
+        e.stopPropagation()
+        e.preventDefault()
+        break
+      }
+
+      case 'Int': {
+
+        //backspace, ENTER, ->, <-, delete, '-'
+        const allowed = [8, 13, 37, 39, 46, 189]
+
+        if (allowed.indexOf(e.keyCode) > -1 ||
+          (e.keyCode > 47 && e.keyCode < 58)) {
+
+          return
+        }
+
+        e.stopPropagation()
+        e.preventDefault()
+        break
+      }
+
+      case 'Text': {
+
+        if (e.keyCode === 13) {
+
+          e.stopPropagation()
+          e.preventDefault()
+        }
+
+        break
+      }
     }
   }
 
@@ -214,33 +254,13 @@ export default class CreateMetaProperty
     switch (this.state.metaType) {
 
       case 'Double':
-        return (
-          <ContentEditable
-            onChange={(e) => this.onInputChanged(e, 'displayValue')}
-            data-placeholder="Property value ..."
-            onKeyDown={(e) => this.onKeyDown(e)}
-            html={this.state.displayValue}
-            className="input meta-value"
-          />
-        )
-
       case 'Text':
-        return (
-            <ContentEditable
-              onChange={(e) => this.onInputChanged(e, 'displayValue')}
-              data-placeholder="Property value ..."
-              onKeyDown={(e) => this.onKeyDown(e)}
-              html={this.state.displayValue}
-              className="input meta-value"
-            />
-        )
-
       case 'Int':
         return (
           <ContentEditable
+            onKeyDown={(e) => this.onKeyDown(e, this.state.metaType)}
             onChange={(e) => this.onInputChanged(e, 'displayValue')}
             data-placeholder="Property value ..."
-            onKeyDown={(e) => this.onKeyDown(e)}
             html={this.state.displayValue}
             className="input meta-value"
           />
@@ -324,6 +344,7 @@ export default class CreateMetaProperty
             id="type-dropdown">
             <MenuItem eventKey={1} key={1} onClick={() => {
                 this.assignState({
+                  displayValue: '',
                   metaType: 'Text'
                 })
             }}>
@@ -331,6 +352,7 @@ export default class CreateMetaProperty
             </MenuItem>
             <MenuItem eventKey={2} key={2} onClick={() => {
               this.assignState({
+                displayValue: '',
                 metaType: 'Double'
               })
             }}>
@@ -338,6 +360,7 @@ export default class CreateMetaProperty
             </MenuItem>
             <MenuItem eventKey={3} key={3} onClick={() => {
               this.assignState({
+                displayValue: '',
                 metaType: 'Int'
               })
             }}>
@@ -345,6 +368,7 @@ export default class CreateMetaProperty
             </MenuItem>
             <MenuItem eventKey={4} key={4} onClick={() => {
               this.assignState({
+                displayValue: '',
                 metaType: 'Link'
               })
             }}>
@@ -352,6 +376,7 @@ export default class CreateMetaProperty
             </MenuItem>
             <MenuItem eventKey={5} key={5} onClick={() => {
               this.assignState({
+                displayValue: '',
                 metaType: 'File'
               })
             }}>
