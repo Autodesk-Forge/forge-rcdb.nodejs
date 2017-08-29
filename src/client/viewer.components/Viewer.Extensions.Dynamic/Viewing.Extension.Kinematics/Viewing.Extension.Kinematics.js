@@ -250,7 +250,6 @@ class KinematicsExtension extends MultiModelExtensionBase {
     this.react.setState({
       activateControls: true
     })
-
   }
 
   /////////////////////////////////////////////////////////
@@ -486,7 +485,7 @@ class KinematicsExtension extends MultiModelExtensionBase {
     return (
       <div className="title">
         <label>
-          Physics
+          Kinematics
         </label>
         <div className="kinematics-controls">
           <button onClick={() => this.setDocking(docked)}
@@ -524,7 +523,7 @@ class KinematicsExtension extends MultiModelExtensionBase {
           <div className="controls">
             <div className="control-element">
               <label>
-                Test:
+                Angles:
               </label>
 
               <Slider
