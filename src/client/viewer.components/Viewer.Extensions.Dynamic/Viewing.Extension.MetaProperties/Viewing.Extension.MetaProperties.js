@@ -162,7 +162,9 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
     ]
 
     selectors.forEach((selector) => {
-      $(selector).remove()
+      $(selector).css({
+        display: 'none'
+      })
     })
 
     this.setModel(event.model)

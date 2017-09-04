@@ -23,7 +23,7 @@ module.exports = function() {
   const forgeSvc = ServiceManager.getService(
     'ForgeSvc')
 
-  const bucket = config.gallery.bucket
+  const galleryConfig = config.gallery
 
   /////////////////////////////////////////////////////////
   // initialize
@@ -32,14 +32,14 @@ module.exports = function() {
   forgeSvc.get2LeggedToken().then((token) => {
 
     ossSvc.getBucketDetails (
-      token, bucket.bucketKey).then(() => {
+      token, galleryConfig.bucket.bucketKey).then(() => {
 
       }, (error) => {
 
         if (error.statusCode === 404) {
 
           ossSvc.createBucket (
-            token, bucket)
+            token, galleryConfig.bucket)
         }
       })
   })
@@ -130,7 +130,7 @@ module.exports = function() {
     }).then(async() => {
 
       const modelInfo = {
-        lifetime: 60 * 60 * 24 * 30, // 30 days
+        lifetime: galleryConfig.lifetime,
         env: 'AutodeskProduction',
         timestamp: new Date(),
         name : data.name,
@@ -460,7 +460,7 @@ module.exports = function() {
 
     try {
 
-      const bucketKey = bucket.bucketKey
+      const bucketKey = galleryConfig.bucket.bucketKey
 
       const socketId = req.body.socketId
 
@@ -489,6 +489,26 @@ module.exports = function() {
             socketSvc.broadcast (
               'upload.progress', msg, socketId)
           }
+        },
+        onComplete: () => {
+
+          postSVFJob({
+            getToken: () => forgeSvc.get2LeggedToken(),
+            name: path.parse(file.originalname).name,
+            filename: file.originalname,
+            db: req.params.db,
+            bucketKey,
+            objectKey,
+            socketId
+          })
+        },
+        onError: (error) => {
+
+          if (socketId) {
+
+            socketSvc.broadcast (
+              'upload.error', error, socketId)
+          }
         }
       }
 
@@ -498,16 +518,6 @@ module.exports = function() {
         bucketKey,
         objectKey,
         file, opts)
-
-      postSVFJob({
-        getToken: () => forgeSvc.get2LeggedToken(),
-        name: path.parse(file.originalname).name,
-        filename: file.originalname,
-        db: req.params.db,
-        bucketKey,
-        objectKey,
-        socketId
-      })
 
       res.json(response)
 

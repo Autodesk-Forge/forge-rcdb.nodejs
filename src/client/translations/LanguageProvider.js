@@ -18,7 +18,7 @@ export class LanguageProvider extends React.PureComponent {
 
 LanguageProvider.propTypes = {
   messages: React.PropTypes.object,
-  children: React.PropTypes.element.isRequired,
+  children: React.PropTypes.element.isRequired
 };
 
 export default connect()(LanguageProvider)

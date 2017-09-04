@@ -14,7 +14,11 @@ export default class ModelUploader extends React.Component {
 
     super (props)
 
-    this.modelSvc = ServiceManager.getService('ModelSvc')
+    this.dialogSvc = ServiceManager.getService(
+      'DialogSvc')
+
+    this.modelSvc = ServiceManager.getService(
+      'ModelSvc')
 
     this.onDrop = this.onDrop.bind(this)
   }
@@ -36,6 +40,49 @@ export default class ModelUploader extends React.Component {
       })
 
     return guid
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  isComposite (file) {
+
+    return new Promise ((resolve) => {
+
+      const filename = file.name.toLowerCase()
+
+      if (filename.endsWith('.zip')) {
+
+        const onClose = (result) => {
+
+          resolve(result === 'OK')
+
+          this.dialogSvc.off('dialog.close', onClose)
+        }
+
+        this.dialogSvc.on('dialog.close', onClose)
+
+        this.dialogSvc.setState({
+          className: 'composite-dlg',
+          title: 'Composite Model',
+          onRequestClose: () => {},
+          captionCancel: 'NO',
+          captionOK: 'Yes',
+          content:
+            <div>
+              <p>
+                Are you uploading a composite model?
+              </p>
+            </div>,
+          open: true
+        })
+
+      } else {
+
+        resolve(false)
+      }
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -69,6 +116,8 @@ export default class ModelUploader extends React.Component {
           uploadId
         }
       }
+
+      const composite = await this.isComposite(file)
 
       if (this.props.onInitUpload) {
 

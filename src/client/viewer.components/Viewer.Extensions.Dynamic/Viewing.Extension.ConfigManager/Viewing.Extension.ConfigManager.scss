@@ -166,7 +166,7 @@
 .gu-mirror.item {
   transition-property: border, background;
   transition-timing-function: ease;
-  transition-duration: 1.5s;
+  transition-duration: 1.0s;
   transition-delay: 0.0s;
 
   border: 1px solid #aeaeae;
@@ -216,7 +216,7 @@
 .config-manager .items > .item > button,
 .gu-mirror.item > button {
   transition-timing-function: ease;
-  transition-duration: 1.5s;
+  transition-duration: 1.0s;
   transition-property: all;
   transition-delay: 0.0s;
 
@@ -237,7 +237,7 @@
 .config-manager .items > .item > button > span,
 .gu-mirror.item > button > span{
   transition-timing-function: ease;
-  transition-duration: 1.5s;
+  transition-duration: 1.0s;
   transition-property: all;
   transition-delay: 0.0s;
 

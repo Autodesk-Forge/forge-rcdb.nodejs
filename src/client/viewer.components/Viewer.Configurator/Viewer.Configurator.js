@@ -651,6 +651,24 @@ class ViewerConfigurator extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  @autobind
+  onGeometryLoaded (event) {
+
+    const viewer = event.target
+
+    viewer.removeEventListener(
+      Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT,
+      this.onGeometryLoaded)
+
+    setTimeout(() => {
+      viewer.showViewCubeTriad(true)
+    }, 2000)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   async onViewerCreated (viewer, modelInfo) {
 
     try {
@@ -670,6 +688,10 @@ class ViewerConfigurator extends BaseComponent {
       viewer.addEventListener(
         Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT,
         this.onModelRootLoaded)
+
+      viewer.addEventListener(
+        Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
+        this.onGeometryLoaded)
 
       viewer.prefs.tag('ignore-producer')
 

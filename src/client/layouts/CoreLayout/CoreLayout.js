@@ -116,7 +116,10 @@ class CoreLayout extends React.Component {
 
     notification.forgeUpload = true
 
-    const progress = 50.0 + msg.progress * 0.5
+    const progress = 50.0 + (
+      isNaN(msg.progress)
+        ? 0
+        : (msg.progress * 0.5))
 
     notification.message =
       `progress: ${progress.toFixed(2)}%`

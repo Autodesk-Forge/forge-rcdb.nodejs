@@ -21,55 +21,53 @@ import Label from 'Label'
 import React from 'react'
 
 const root = {
+  centreInit: new THREE.Vector3(
+    -1531.7778454323443,
+    -3066.921560568636,
+    103.18552620987555),
+  axisInit: new THREE.Vector3(0, 1, 0),
+  angle: 0,
+  dbId: 12,
   children: [{
     centreInit: new THREE.Vector3(
-      -1531.7778454323443,
-      -3066.921560568636,
-      103.18552620987555),
-    axisInit: new THREE.Vector3(0, 1, 0),
+      -275.46734299564633,
+      -1282.0783844528128,
+      695.3209230147719),
+    axisInit: new THREE.Vector3(0, 0, -1),
     angle: 0,
-    dbId: 12,
+    dbId: 13,
     children: [{
       centreInit: new THREE.Vector3(
-        -275.46734299564633,
-        -1282.0783844528128,
-        695.3209230147719),
+        -274.28775776026066,
+        2544.220316276206,
+        354.98556647844083),
       axisInit: new THREE.Vector3(0, 0, -1),
       angle: 0,
-      dbId: 13,
+      dbId: 9,
       children: [{
         centreInit: new THREE.Vector3(
-          -274.28775776026066,
-          2544.220316276206,
-          354.98556647844083),
-        axisInit: new THREE.Vector3(0, 0, -1),
+          -966.5434561316943,
+          3330.847986354103,
+          79.66191503637081),
+        axisInit: new THREE.Vector3(1, 0, 0),
         angle: 0,
-        dbId: 9,
+        dbId: 14,
         children: [{
           centreInit: new THREE.Vector3(
-            -966.5434561316943,
-            3330.847986354103,
-            79.66191503637081),
-          axisInit: new THREE.Vector3(1, 0, 0),
+            3217.6120336721715,
+            3330.9245884187817,
+            335.48933959375506),
+          axisInit: new THREE.Vector3(0, 0, -1),
           angle: 0,
-          dbId: 14,
+          dbId: 15,
           children: [{
             centreInit: new THREE.Vector3(
-              3217.6120336721715,
-              3330.9245884187817,
-              335.48933959375506),
-            axisInit: new THREE.Vector3(0, 0, -1),
+              3956.6543579385616,
+              3330.6703223388813,
+              79.81803179126203),
+            axisInit: new THREE.Vector3(1, 0, 0),
             angle: 0,
-            dbId: 15,
-            children: [{
-              centreInit: new THREE.Vector3(
-                3956.6543579385616,
-                3330.6703223388813,
-                79.81803179126203),
-              axisInit: new THREE.Vector3(1, 0, 0),
-              angle: 0,
-              dbId: 16
-            }]
+            dbId: 16
           }]
         }]
       }]
@@ -94,9 +92,6 @@ class KinematicsExtension extends MultiModelExtensionBase {
     this.eventTool = new EventTool(this.viewer)
 
     this.react = options.react
-
-    this.p = []
-    this.c = 0
   }
 
   /////////////////////////////////////////////////////////
@@ -160,18 +155,21 @@ class KinematicsExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  getComponent (dbId, parent = root) {
+  getComponent (dbId, compInit = root) {
 
-    if (parent.children) {
+    if (compInit.dbId === dbId) {
 
-      for (let component of parent.children) {
+      return compInit
+    }
 
-        if (component.dbId === dbId) {
+    if (compInit.children) {
 
-          return component
-        }
+      for (let component of compInit.children) {
 
-        const res = this.getComponent(dbId, component)
+        const res = this.getComponent(
+          dbId, component)
+
+        component.parent = compInit
 
         if (res) {
 
@@ -204,7 +202,7 @@ class KinematicsExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   async setDocking (docked) {
 
-    const id = PhysicsExtension.ExtensionId
+    const id = KinematicsExtension.ExtensionId
 
     if (docked) {
 
@@ -292,7 +290,7 @@ class KinematicsExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  getNodeTransform (model, dbId) {
+  getNodeTransform (dbId, model = this.viewer.model) {
 
     const fragIds = Toolkit.getLeafFragIds(model, dbId)
 
@@ -307,6 +305,65 @@ class KinematicsExtension extends MultiModelExtensionBase {
       position: fragProxy.position.clone(),
       scale: fragProxy.scale.clone()
     }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  getComponentTransform (component) {
+
+    const angle = component.angle
+
+    const centre =
+      component.centre ||
+      component.centreInit
+
+    const axis =
+      component.axis ||
+      component.axisInit
+
+    return {
+      centre,
+      angle,
+      axis
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  getParentTransforms (component) {
+
+    let transforms = []
+
+    let comp = component
+
+    while (comp.parent) {
+
+      const parentTransform =
+        this.getComponentTransform(
+          comp.parent)
+
+      transforms = [
+        parentTransform,
+        ...transforms
+      ]
+
+      comp = comp.parent
+    }
+
+    return transforms
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  cloneVector (v) {
+
+    return new THREE.Vector3(v.x, v.y, v.z)
   }
 
   /////////////////////////////////////////////////////////
@@ -396,36 +453,55 @@ class KinematicsExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   rotateComponent (component, transforms) {
 
+    let posRef = new THREE.Vector3
+    let qRef = new THREE.Quaternion
+
     transforms.forEach((transform) => {
 
       this.rotateNode (
         this.viewer.model,
         component.dbId,
-        transform)
+        transform,
+        posRef, qRef)
 
-      //this.rotatePoint(
-      //  component.centre,
-      //  transform.axis,
-      //  transform.angle,
-      //  transform.centre)
-      //
-      //this.rotateAxis(
-      //  component.axis,
-      //  transform.axis,
-      //  transform.angle)
+      const nodeTransform =
+        this.getNodeTransform(
+          component.dbId)
+
+      //posRef = nodeTransform.position
+      //qRef = nodeTransform.quaternion
     })
-
 
     if (component.children) {
 
-      component.children.forEach((child) => {
+        component.children.forEach((child) => {
 
-        transforms.forEach((transform) => {
+          const centre = this.cloneVector(
+            child.centreInit)
 
-        })
+          const axis = this.cloneVector(
+            child.axisInit)
 
-        this.rotateComponent(
-          child, [...transforms])
+          transforms.forEach((transform) => {
+
+            this.rotatePoint(
+              centre, transform)
+
+            this.rotateAxis(
+              axis, transform)
+          })
+
+          child.centre = centre
+          child.axis = axis
+
+          const childTransform =
+            this.getComponentTransform(child)
+
+          this.rotateComponent(
+            child, [
+              childTransform,
+              ...transforms,
+            ])
       })
     }
   }
@@ -450,11 +526,20 @@ class KinematicsExtension extends MultiModelExtensionBase {
       component.axis ||
       component.axisInit
 
-    this.rotateComponent(component, [{
+    const componentTransform = {
       centre,
       angle,
       axis
-    }])
+    }
+
+    const parentTransforms =
+      this.getParentTransforms(
+        component)
+
+    this.rotateComponent(component, [
+      ...parentTransforms,
+      componentTransform
+    ])
 
     component.angle = value
 
