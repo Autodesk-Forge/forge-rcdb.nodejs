@@ -22,9 +22,6 @@ class SelectionWindowExtension extends MultiModelExtensionBase {
 
     this.renderTitle = this.renderTitle.bind(this)
 
-    this.selectionWindowTool =
-      new SelectionWindowTool(viewer)
-
     this.react = options.react
   }
 
@@ -41,9 +38,6 @@ class SelectionWindowExtension extends MultiModelExtensionBase {
 
       this.react.pushRenderExtension(this)
     })
-
-    this.viewer.toolController.registerTool(
-      this.selectionWindowTool)
 
     console.log('Viewing.Extension.SelectionWindow loaded')
 
@@ -85,18 +79,23 @@ class SelectionWindowExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onModelCompletedLoad (event) {
+  onModelRootLoaded () {
 
-    this.viewer.setActiveNavigationTool(
-      'selectionWindowTool')
+    this.selectionWindowTool =
+      new SelectionWindowTool(this.viewer)
+
+    this.viewer.toolController.registerTool(
+      this.selectionWindowTool)
   }
 
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  onModelUnloaded (event) {
+  doSelection () {
 
+    this.viewer.setActiveNavigationTool(
+      'selectionWindowTool')
   }
 
   /////////////////////////////////////////////////////////
@@ -157,7 +156,8 @@ class SelectionWindowExtension extends MultiModelExtensionBase {
 
     return (
       <div className="content">
-        <ReactLoader show={true}/>
+        <ReactLoader show={false}/>
+        <button onClick={() => this.doSelection()}/>
       </div>
     )
   }

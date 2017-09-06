@@ -19,7 +19,7 @@ addLocaleData(zhLocaleData)
 export const appLocales = [
   'en',
   'zh',
-];
+]
 
 export const formatTranslationMessages = (locale, messages) => {
   const defaultFormattedMessages = locale !== DEFAULT_LOCALE
@@ -35,5 +35,5 @@ export const formatTranslationMessages = (locale, messages) => {
 
 export const translationMessages = {
   en: formatTranslationMessages('en', enTranslationMessages),
-  zh: formatTranslationMessages('zh', zhSimpleTranslationMessages),
-};
+  zh: formatTranslationMessages('zh', zhSimpleTranslationMessages)
+}

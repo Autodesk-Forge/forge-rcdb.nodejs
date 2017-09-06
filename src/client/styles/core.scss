@@ -125,6 +125,11 @@ div[disabled] {
   outline: none;
 }
 
+[contenteditable][disabled] {
+  background: #f7f6f6;
+  color: #949494;
+}
+
 ///////////////////////////////////////////////////////////
 //
 //

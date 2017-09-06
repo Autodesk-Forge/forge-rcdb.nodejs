@@ -154,7 +154,7 @@ export default class Toolkit {
   /////////////////////////////////////////////////////////
   static getLeafNodes (model, dbIds) {
 
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
 
       try {
 

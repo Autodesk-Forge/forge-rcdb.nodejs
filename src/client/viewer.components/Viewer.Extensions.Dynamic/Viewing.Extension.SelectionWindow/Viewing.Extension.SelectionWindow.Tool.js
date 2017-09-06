@@ -1,10 +1,22 @@
-import data from './data'
+import cursors from './cursors'
 
 var _CROSS_MAX_WIDTH = 20;
 
 export default class SelectionWindowTool {
 
   constructor(viewer) {
+
+    this.mat = new THREE.LineBasicMaterial({
+      color: new THREE.Color(0xFF0000),
+      transparent: true,
+      depthWrite: false,
+      depthTest: true,
+      linewidth: 10,
+      opacity: 1.0
+    })
+
+    viewer.impl.createOverlayScene (
+      'test', this.mat)
 
     this.onResize = this.onResize.bind(this)
 
@@ -73,7 +85,7 @@ export default class SelectionWindowTool {
     this.isActive = true
   }
 
-  deactivate (name) {
+  deactivate () {
 
     this.mouseStart.set(0,0,-10)
     this.mouseEnd.set(0,0,-10)
@@ -99,13 +111,13 @@ export default class SelectionWindowTool {
     switch (mode) {
 
       case "dolly":
-        return data.cursors.dolly
+        return cursors.dolly
 
       case "pan":
-        return data.cursors.pan
+        return cursors.pan
     }
 
-    return data.cursors.window
+    return cursors.window
   }
 
   handleGesture (event) {
@@ -120,15 +132,19 @@ export default class SelectionWindowTool {
 
   startDrag (event) {
 
-    if(this.isDragging === false){
+    if (this.isDragging === false) {
+
       // begin dragging
       this.isDragging = true;
       this.mouseStart.x = event.canvasX;
       this.mouseStart.y = event.canvasY;
       this.mouseEnd.x = event.canvasX;
       this.mouseEnd.y = event.canvasY;
+
       if(this.rectGroup === null) {
+
         this.lineGeom = new THREE.Geometry();
+
         // rectangle of zoom window
         this.lineGeom.vertices.push(
           this.mouseStart.clone(),
@@ -136,12 +152,16 @@ export default class SelectionWindowTool {
           this.mouseStart.clone(),
           this.mouseStart.clone(),
           this.mouseStart.clone());
+
         // cross for identify zoom window center.
         this.crossGeomX = new THREE.Geometry();
+
         this.crossGeomX.vertices.push(
           this.mouseStart.clone(),
           this.mouseStart.clone());
+
         this.crossGeomY = new THREE.Geometry();
+
         this.crossGeomY.vertices.push(
           this.mouseStart.clone(),
           this.mouseStart.clone());
@@ -155,8 +175,8 @@ export default class SelectionWindowTool {
         this.rectGroup.add(line_mesh);
         this.rectGroup.add(line_cross_x);
         this.rectGroup.add(line_cross_y);
-      }
-      else {
+
+      } else {
 
         this.lineGeom.vertices[0] = this.mouseStart.clone();
         this.lineGeom.vertices[1] = this.mouseStart.clone();
@@ -168,7 +188,6 @@ export default class SelectionWindowTool {
         this.crossGeomX.vertices[1] = this.mouseStart.clone();
         this.crossGeomY.vertices[0] = this.mouseStart.clone();
         this.crossGeomY.vertices[1] = this.mouseStart.clone();
-
 
         this.crossGeomX.verticesNeedUpdate = true;
         this.crossGeomY.verticesNeedUpdate = true;
@@ -226,6 +245,7 @@ export default class SelectionWindowTool {
       return;
 
     if(this.lineGeom && this.isDragging) {
+
       // draw rectangle
       this.lineGeom.vertices[1].x = this.mouseStart.x;
       this.lineGeom.vertices[1].y = this.mouseEnd .y;
@@ -238,9 +258,11 @@ export default class SelectionWindowTool {
       var width = Math.abs(this.mouseEnd .x - this.mouseStart.x);
       var height = Math.abs(this.mouseEnd .y - this.mouseStart.y);
       var length = width>height ? height : width;
+
       if(length > _CROSS_MAX_WIDTH) {
         length = _CROSS_MAX_WIDTH;
       }
+
       var half_length = length*0.5;
 
       var cross_center = [(this.mouseEnd .x + this.mouseStart.x)*0.5,
@@ -260,13 +282,14 @@ export default class SelectionWindowTool {
       this.crossGeomY.verticesNeedUpdate = true;
       this.lineGeom.verticesNeedUpdate = true;
       // only redraw overlay
-      this.viewer.impl.invalidate(false, false, true);
-    }
-    else {
-      return this.zoomWindow();
+      this.viewer.impl.invalidate(false, false, true)
+
+    } else {
+
+      return this.zoomWindow()
     }
 
-    return false;
+    return false
   }
 
   getPivot (mouseX, mouseY, screenWidth, screenHeight, camera) {
@@ -331,6 +354,7 @@ export default class SelectionWindowTool {
     var rectHeight = Math.abs(rectMaxY - rectMinY)
 
     if(rectWidth === 0 || rectHeight ===0) {
+
       return false;
     }
 
@@ -360,6 +384,7 @@ export default class SelectionWindowTool {
       var dollyTarget = this.viewer.navigation.getWorldPoint(0.5, 0.5);
       this.viewer.navigation.dollyFromPoint(distance*(scale-1), dollyTarget);
 
+      this.deactivate()
       return true;
     }
 
@@ -381,6 +406,23 @@ export default class SelectionWindowTool {
       }
     }
 
+    const geometry = new THREE.Geometry()
+
+    console.log(pivot)
+
+    geometry.vertices.push(pivot)
+    geometry.vertices.push(camera.position)
+
+    const lines = new THREE.Line(geometry,
+      this.mat, THREE.LinePieces)
+
+    this.viewer.impl.addOverlay('test', lines)
+
+    this.viewer.impl.invalidate(
+      true, true, true)
+
+
+
     // calculate the basis vectors for the camera frame
     var eye = camera.position;
     var viewDir = camera.target.clone().sub(eye);
@@ -399,6 +441,7 @@ export default class SelectionWindowTool {
     camera.target.set(pivot.x,pivot.y,pivot.z);
     camera.dirty = true;
 
+    this.deactivate()
     return true;
   }
 }
