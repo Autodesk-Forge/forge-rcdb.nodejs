@@ -62,7 +62,7 @@ module.exports = function() {
     const forgeSvc = ServiceManager.getService(
       'ForgeSvc')
 
-    forgeSvc.delete3LeggedToken(req.session)
+    forgeSvc.logout(req.session)
 
     res.json('success')
   })
@@ -102,17 +102,19 @@ module.exports = function() {
       const forgeSvc = ServiceManager.getService(
         'ForgeSvc')
 
-      const token =
-        await forgeSvc.get3LeggedTokenMaster(
-          req.session)
+      const user = await forgeSvc.getUser(
+        req.session)
 
-      const response = await forgeSvc.getUser(token)
+      if (!user) {
+        res.status(404)
+        return res.json('Not Found')
+      }
 
-      res.json(response)
+      res.json(user)
 
     } catch (ex) {
 
-      res.status(ex.status || 500)
+      res.status(ex.status || 404)
       res.json(ex)
     }
   })
@@ -156,10 +158,10 @@ module.exports = function() {
             return res.redirect(req.session.redirect)
           }
 
-          var forgeSvc = ServiceManager.getService(
+          const forgeSvc = ServiceManager.getService(
             'ForgeSvc')
 
-          var token = {
+          const token = {
             scope: config.forge.oauth.scope,
             expires_in: results.expires_in,
             refresh_token: refresh_token,
@@ -168,6 +170,14 @@ module.exports = function() {
 
           forgeSvc.set3LeggedTokenMaster(
             req.session, token)
+
+          forgeSvc.getUser(req.session).then((user) => {
+
+            const userSvc = ServiceManager.getService(
+              'UserSvc')
+
+            userSvc.save(user)
+          })
 
           return res.redirect(req.session.redirect)
 
@@ -216,25 +226,25 @@ module.exports = function() {
   // 2-legged token
   //
   /////////////////////////////////////////////////////////
-  router.get('/token/2legged', async (req, res) => {
-
-    const forgeSvc = ServiceManager.getService(
-      'ForgeSvc')
-
-    try {
-
-      const token =
-        await forgeSvc.request2LeggedToken(
-          'viewables:read')
-
-      res.json(token)
-
-    } catch (error) {
-
-      res.status(error.statusCode || 500)
-      res.json(error)
-    }
-  })
+  //router.get('/token/2legged', async (req, res) => {
+  //
+  //  const forgeSvc = ServiceManager.getService(
+  //    'ForgeSvc')
+  //
+  //  try {
+  //
+  //    const token =
+  //      await forgeSvc.request2LeggedToken(
+  //        'viewables:read')
+  //
+  //    res.json(token)
+  //
+  //  } catch (error) {
+  //
+  //    res.status(error.statusCode || 500)
+  //    res.json(error)
+  //  }
+  //})
 
   return router
 }

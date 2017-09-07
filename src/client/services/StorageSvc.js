@@ -11,6 +11,8 @@ export default class StorageSvc extends BaseSvc {
   constructor (config) {
 
     super (config)
+
+    this.currentStorageVersion = config.storageVersion
   }
 
   /////////////////////////////////////////////////////////////////
@@ -26,17 +28,32 @@ export default class StorageSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////////////
-  save (key, obj) {
+  save (key, data) {
 
-    Lockr.set(this._config.storageKey + '.' + key, obj)
+    const versionData = Object.assign({}, data, {
+      storageVersion: this.currentStorageVersion
+    })
+
+    Lockr.set(this._config.storageKey + '.' + key, versionData)
   }
 
   /////////////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////////////
-  load (key) {
+  load (key, defaultValue = {}) {
 
-    return Lockr.get(this._config.storageKey + '.' + key) || {}
+    const storageKey = this._config.storageKey + '.' + key
+
+    const data = Lockr.get(storageKey) || defaultValue
+
+    if (data.storageVersion) {
+
+      return (this.currentStorageVersion > data.storageVersion)
+        ? defaultValue
+        : data
+    }
+
+    return defaultValue
   }
 }

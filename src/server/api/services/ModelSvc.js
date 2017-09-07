@@ -43,7 +43,7 @@ export default class ModelSvc extends BaseSvc {
         })
 
         const model = await dbSvc.findOne(
-          this._config.models, query)
+          this._config.collection, query)
 
         return resolve (model)
 
@@ -66,7 +66,7 @@ export default class ModelSvc extends BaseSvc {
         this._config.dbName)
 
       return dbSvc.getItems(
-        this._config.models,
+        this._config.collection,
         opts)
 
     } catch (ex) {
@@ -100,7 +100,7 @@ export default class ModelSvc extends BaseSvc {
         }
 
         const models = await dbSvc.getItems(
-          this._config.models,
+          this._config.collection,
           Object.assign({}, opts, query))
 
         const thumbnails = modelIds.map((id) => {
@@ -131,7 +131,7 @@ export default class ModelSvc extends BaseSvc {
         this._config.dbName)
 
       return dbSvc.insert(
-        this._config.models,
+        this._config.collection,
         modelInfo)
 
     } catch (ex) {
@@ -151,7 +151,7 @@ export default class ModelSvc extends BaseSvc {
       const dbSvc = ServiceManager.getService(
         this._config.dbName)
 
-      return dbSvc.removeItems(this._config.models, {
+      return dbSvc.removeItems(this._config.collection, {
         _id: new mongo.ObjectId(modelId)
       })
 
@@ -184,7 +184,7 @@ export default class ModelSvc extends BaseSvc {
         }
 
         const model = await dbSvc.findOne(
-          this._config.models,
+          this._config.collection,
           query)
 
         return resolve (model.sequence)
@@ -219,8 +219,8 @@ export default class ModelSvc extends BaseSvc {
           }
         }
 
-        await dbSvc.updateItem(
-          this._config.models,
+        await dbSvc.update(
+          this._config.collection,
           query, opts)
 
         return resolve (sequence)
@@ -255,7 +255,7 @@ export default class ModelSvc extends BaseSvc {
         }
 
         const model = await dbSvc.findOne(
-          this._config.models,
+          this._config.collection,
           query)
 
         return resolve (model.states)
@@ -281,7 +281,7 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         const collection = await dbSvc.getCollection(
-          this._config.models)
+          this._config.collection)
 
         collection.update(
           {
@@ -320,7 +320,7 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         const collection = await dbSvc.getCollection(
-          this._config.models)
+          this._config.collection)
 
         collection.update(
           {
@@ -372,7 +372,7 @@ export default class ModelSvc extends BaseSvc {
         }
 
         const model = await dbSvc.findOne(
-          this._config.models,
+          this._config.collection,
           query)
 
         return resolve (model.sequences || [])
@@ -407,7 +407,7 @@ export default class ModelSvc extends BaseSvc {
         }
 
         const model = await dbSvc.findOne(
-          this._config.models,
+          this._config.collection,
           query)
 
         return resolve (model.sequences || [])
@@ -433,7 +433,7 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         const collection = await dbSvc.getCollection(
-          this._config.models)
+          this._config.collection)
 
         collection.update(
           {
@@ -472,7 +472,7 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         const collection = await dbSvc.getCollection(
-          this._config.models)
+          this._config.collection)
 
         collection.update(
           {
@@ -512,7 +512,7 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         const collection = await dbSvc.getCollection(
-          this._config.models)
+          this._config.collection)
 
         const states =
           await this.getConfigSequenceStates (
@@ -555,7 +555,7 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         const collection = await dbSvc.getCollection(
-          this._config.models)
+          this._config.collection)
 
         collection.aggregate([
 
@@ -631,7 +631,7 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         const collection = await dbSvc.getCollection(
-          this._config.models)
+          this._config.collection)
 
         const statesArray = Array.isArray(states)
           ? states : [states]
@@ -682,7 +682,7 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         const collection = await dbSvc.getCollection(
-          this._config.models)
+          this._config.collection)
 
         collection.update(
           {
@@ -732,7 +732,7 @@ export default class ModelSvc extends BaseSvc {
         }
 
         const model = await dbSvc.findOne(
-          this._config.models,
+          this._config.collection,
           query)
 
         return resolve (model.metaProperties || [])
@@ -758,7 +758,7 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         const collection = await dbSvc.getCollection(
-          this._config.models)
+          this._config.collection)
 
         collection.aggregate([
 
@@ -813,7 +813,7 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         const collection = await dbSvc.getCollection(
-          this._config.models)
+          this._config.collection)
 
         collection.aggregate([
 
@@ -879,7 +879,7 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         const collection = await dbSvc.getCollection(
-          this._config.models)
+          this._config.collection)
 
         collection.update(
           {
@@ -917,7 +917,7 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         const collection = await dbSvc.getCollection(
-          this._config.models)
+          this._config.collection)
 
         collection.update(
           {
@@ -956,7 +956,7 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         const collection = await dbSvc.getCollection(
-          this._config.models)
+          this._config.collection)
 
         collection.update(
           {
@@ -995,7 +995,7 @@ export default class ModelSvc extends BaseSvc {
           this._config.dbName)
 
         const collection = await dbSvc.getCollection(
-          this._config.models)
+          this._config.collection)
 
         const text = searchParams.text
 

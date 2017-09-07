@@ -2,8 +2,8 @@ import { applyMiddleware, compose, createStore } from 'redux'
 import { browserHistory } from 'react-router'
 import { updateLocation } from './location'
 import makeRootReducer from './reducers'
+import {client as config} from 'c0nfig'
 import thunk from 'redux-thunk'
-import config from 'c0nfig'
 
 export default (initialState = {}) => {
 

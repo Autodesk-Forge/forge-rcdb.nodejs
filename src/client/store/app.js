@@ -146,14 +146,8 @@ const getStorage = () => {
   const storageSvc = ServiceManager.getService(
     'StorageSvc')
 
-  const storage = storageSvc.load(
-    'AppState.storage') || {}
-
-  const storageVersion = 2.0
-
-  const defaultStorage = {
+  const defaultAppState = {
     layoutType: 'flexLayoutRight',
-    storageVersion,
     theme: {
       css: '/resources/themes/forge-white.css',
       name: 'forge-white-theme',
@@ -166,14 +160,11 @@ const getStorage = () => {
     }
   }
 
-  if (storage.version) {
+  const storage = storageSvc.load(
+    'AppState.storage',
+    defaultAppState)
 
-    return storage.version < storageVersion
-      ? defaultStorage
-      : storage
-  }
-
-  return defaultStorage
+  return storage
 }
 
 // ------------------------------------

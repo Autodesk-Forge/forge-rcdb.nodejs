@@ -22,119 +22,123 @@ import config from 'c0nfig'
 
 module.exports = function () {
 
-    const router = express.Router()
+  const router = express.Router()
 
-    const dbName = config.databases[0].dbName
+  ///////////////////////////////////////////////////////
+  //
+  //
+  ///////////////////////////////////////////////////////
+  router.get('/:db', async(req, res) => {
 
-    ///////////////////////////////////////////////////////////////////////////////
-    //
-    //
-    ///////////////////////////////////////////////////////////////////////////////
-    router.get('/:config', async(req, res) => {
+    try {
 
-      try {
+      const db = req.params.db
 
-        const config = req.params.config
+      const dbSvc = ServiceManager.getService(
+        config.database.dbName)
 
-        const dbSvc = ServiceManager.getService(dbName)
+      const materialsConfig =
+        config.database.materials[db]
 
-        if (!dbSvc) {
+      if (!materialsConfig) {
 
-          res.status(404)
-          res.json('Invalid database')
-          return
-        }
-
-        const collectionCfg = dbSvc.config.collections[config]
-
-        const items = await dbSvc.getItems(
-          collectionCfg.materials)
-
-        res.json(items)
-
-      } catch (ex) {
-
-        console.log(ex)
-
-        res.status(ex.statusCode || 500)
-        res.json(ex)
+        res.status(404)
+        res.json('Invalid config')
+        return
       }
-    })
 
-    ///////////////////////////////////////////////////////////////////////////////
-    //
-    //
-    ///////////////////////////////////////////////////////////////////////////////
-    router.get('/:config/:id', async (req, res) => {
+      const items = await dbSvc.getItems(
+        materialsConfig.collection)
 
-      try {
+      res.json(items)
 
-        const config = req.params.config
+    } catch (ex) {
 
-        const dbSvc = ServiceManager.getService(dbName)
+      console.log(ex)
 
-        if (!dbSvc) {
+      res.status(ex.statusCode || 500)
+      res.json(ex)
+    }
+  })
 
-          res.status(404)
-          res.json('Invalid database')
-          return
-        }
+  ///////////////////////////////////////////////////////
+  //
+  //
+  ///////////////////////////////////////////////////////
+  router.get('/:db/:id', async (req, res) => {
 
-        const id = req.params.id
+    try {
 
-        const collectionCfg = dbSvc.config.collections[config]
+      const db = req.params.db
 
-        const item = await dbSvc.findOne(
-          collectionCfg.materials, {
-            _id: id
-          })
+      const dbSvc = ServiceManager.getService(
+        config.database.dbName)
 
-        res.json (item)
+      const materialsConfig =
+        config.database.materials[db]
 
-      } catch (ex) {
+      if (!materialsConfig) {
 
-        res.status(ex.statusCode || 500)
-        res.json(ex)
+        res.status(404)
+        res.json('Invalid config')
+        return
       }
-    })
 
-    ///////////////////////////////////////////////////////////////////////////////
-    //
-    //
-    ///////////////////////////////////////////////////////////////////////////////
-    router.post('/:config', async (req, res) => {
+      const id = req.params.id
 
-      try {
+      const item = await dbSvc.findOne(
+        materialsConfig.collection, {
+          _id: id
+        })
 
-        const config = req.params.config
+      res.json (item)
 
-        const dbSvc = ServiceManager.getService(dbName)
+    } catch (ex) {
 
-        if (!dbSvc) {
+      res.status(ex.statusCode || 500)
+      res.json(ex)
+    }
+  })
 
-          res.status(404)
-          res.json('Invalid database')
-          return
-        }
+  ///////////////////////////////////////////////////////
+  //
+  //
+  ///////////////////////////////////////////////////////
+  router.post('/:db', async (req, res) => {
 
-        const material = req.body;
+    try {
 
-        const query = { name: material.name }
+      const db = req.params.db
 
-        const collectionCfg = dbSvc.config.collections[config]
+      const dbSvc = ServiceManager.getService(
+        config.database.dbName)
 
-        await dbSvc.upsertItem(
-          collectionCfg.materials,
-          material, query)
+      const materialsConfig =
+        config.database.materials[db]
 
-        res.json(material)
+      if (!materialsConfig) {
 
-      } catch (ex) {
-
-        res.status(ex.statusCode || 500)
-        res.json(ex)
+        res.status(404)
+        res.json('Invalid config')
+        return
       }
-    })
 
-    return router;
+      const material = req.body
+
+      const query = { name: material.name }
+
+      await dbSvc.upsertItem(
+        materialsConfig.collection,
+        material, query)
+
+      res.json(material)
+
+    } catch (ex) {
+
+      res.status(ex.statusCode || 500)
+      res.json(ex)
+    }
+  })
+
+  return router;
 }

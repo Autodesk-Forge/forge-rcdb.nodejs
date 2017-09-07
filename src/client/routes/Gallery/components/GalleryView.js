@@ -24,8 +24,8 @@ class GalleryView extends BaseComponent {
     this.extractorSvc = ServiceManager.getService(
       'ExtractorSvc')
 
-    this.modelSvc = ServiceManager.getService(
-      'ModelSvc')
+    this.storageSvc = ServiceManager.getService(
+      'StorageSvc')
 
     this.socketSvc = ServiceManager.getService(
       'SocketSvc')
@@ -36,8 +36,14 @@ class GalleryView extends BaseComponent {
     this.dialogSvc = ServiceManager.getService(
       'DialogSvc')
 
-    this.storageSvc = ServiceManager.getService(
-      'StorageSvc')
+    this.modelSvc = ServiceManager.getService(
+      'ModelSvc')
+
+    this.forgeSvc = ServiceManager.getService(
+      'ForgeSvc')
+
+    this.userSvc = ServiceManager.getService(
+      'UserSvc')
 
     this.state = {
       search: '',
@@ -108,21 +114,20 @@ class GalleryView extends BaseComponent {
   //
   /////////////////////////////////////////////////////////
   @autobind
-  async onDropFiles (files) {
+  onLogIn () {
 
-    if (this.settings.agreement) {
+    this.forgeSvc.login()
+  }
 
-      return Promise.resolve(true)
-    }
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  validateUploadLimit () {
 
     return new Promise((resolve) => {
 
       const onClose = (result) => {
-
-        this.settings.agreement = true
-
-        this.storageSvc.save(
-          'gallery', this.settings)
 
         resolve(result === 'OK')
 
@@ -137,7 +142,48 @@ class GalleryView extends BaseComponent {
         captionOK: 'I Agree',
         content:
           <div>
+            Yo
+          </div>,
+        open: true
+      })
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  validateAgreement () {
+
+    return new Promise((resolve) => {
+
+      const onClose = (result) => {
+
+        this.dialogSvc.off('dialog.close', onClose)
+
+        if (result === 'OK') {
+
+          this.settings.agreement = true
+
+          this.storageSvc.save(
+            'gallery', this.settings)
+
+          return resolve(true)
+        }
+
+        resolve(false)
+      }
+
+      this.dialogSvc.on('dialog.close', onClose)
+
+      this.dialogSvc.setState({
+        className: 'agreement-dlg',
+        title: 'Gallery Terms & Conditions',
+        captionOK: 'I Agree',
+        content:
+          <div>
             <p>
+              &nbsp;&nbsp;
               By uploading your model to Forge
               RCDB Gallery, you agree to make the
               viewable content available publicly.
@@ -146,6 +192,7 @@ class GalleryView extends BaseComponent {
             </p>
 
             <p>
+              &nbsp;&nbsp;
               The viewable content will remain on
               the Gallery 30 days by default.
               The author reserves the right to
@@ -154,9 +201,20 @@ class GalleryView extends BaseComponent {
             </p>
 
             <p>
-              That website is purely a demo and the
-              author makes no guarrantee that uploaded
-              models will remain available even
+              &nbsp;&nbsp;
+              If you are not an Autodesk employee,
+              you have a limit of 5 active models at
+              a time. Once reached that limit you
+              will not be able to upload more models
+              until one of them expire.
+            </p>
+
+            <p>
+              &nbsp;&nbsp;
+              Reminder: That website is purely a
+              demo and the author makes no
+              guarrantee that uploaded models
+              will remain available even
               during the 30 days default period.
             </p>
 
@@ -164,6 +222,23 @@ class GalleryView extends BaseComponent {
         open: true
       })
     })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  @autobind
+  async onDropFiles (files) {
+
+    if (this.settings.agreement) {
+
+      return true
+    }
+
+    const res = await this.validateAgreement()
+
+    return res
   }
 
   /////////////////////////////////////////////////////////
@@ -429,10 +504,12 @@ class GalleryView extends BaseComponent {
           <div className="secondary">
             <div className="uploader">
               <ModelUploader
+                loggedIn={!!this.props.appState.user}
                 onProgress={this.onUploadProgress}
                 socketId={this.socketSvc.socketId}
                 onInitUpload={this.onInitUpload}
                 onDropFiles={this.onDropFiles}
+                onLogIn={this.onLogIn}
                 database={'gallery'}
               />
             </div>

@@ -4,13 +4,14 @@
 //
 /////////////////////////////////////////////////////////////////////
 const HOST_URL = 'http://localhost'
-const PORT= 3000
+const PORT = 3000
 
 const config = {
 
   env: 'development',
 
   client: {
+    storageVersion: 1.0,
     host: `${HOST_URL}`,
     env: 'development',
     port: PORT
@@ -18,6 +19,7 @@ const config = {
 
   gallery: {
     lifetime: 60 * 60 * 24 * 1, // 1 day
+    uploadLimit: -1,
     bucket: {
         bucketKey: 'forge-rcdb-gallery-tmp-dev',
         policyKey: 'Persistent'
@@ -55,37 +57,43 @@ const config = {
     },
 
     viewer: {
-      //viewer3D: 'https://developer.api.autodesk.com/viewingservice/v2/viewers/viewer3D.js?v=2.17',
-      //threeJS:  'https://developer.api.autodesk.com/viewingservice/v2/viewers/three.js?v=2.17',
-      //style:    'https://developer.api.autodesk.com/viewingservice/v2/viewers/style.css?v=2.17'
+      //viewer3D: 'https://developer.api.autodesk.com/derivativeservice/v2/viewers/viewer3D.js?v=2.17',
+      //threeJS:  'https://developer.api.autodesk.com/derivativeservice/v2/viewers/three.js?v=2.17',
+      //style:    'https://developer.api.autodesk.com/derivativeservice/v2/viewers/style.css?v=2.17'
 
       viewer3D: '/resources/libs/lmv/2.17/viewer3D.js',
       threeJS:  '/resources/libs/lmv/2.17/three.js',
       style:    '/resources/libs/lmv/2.17/style.css'
     }
   },
-  databases: [
-    {
-      type: 'mongo',
-      dbName: 'forge-rcdb',
-      user: '',
-      pass: '',
-      dbhost: 'localhost',
-      port: 27017,
-      collections: {
-        configurator: {
-          models: 'configurator.models'
-        },
-        gallery: {
-          models: 'gallery.models'
-        },
-        rcdb:{
-          materials: 'rcdb.materials',
-          models: 'rcdb.models'
-        }
+
+  database: {
+    type: 'mongo',
+    dbName: 'forge-rcdb',
+    user: '',
+    pass: '',
+    dbhost: 'localhost',
+    port: 27017,
+    models: {
+      configurator: {
+        collection:'configurator.models'
+      },
+      gallery: {
+        collection:'gallery.models'
+      },
+      rcdb:{
+        collection:'rcdb.models'
       }
+    },
+    materials: {
+      rcdb:{
+        collection:'rcdb.materials'
+      }
+    },
+    users: {
+      collection:'rcdb.users'
     }
-  ]
+  }
 }
 
 module.exports = config

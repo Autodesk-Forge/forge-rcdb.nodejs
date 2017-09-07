@@ -22,6 +22,7 @@ import ConfigAPI from './api/endpoints/config'
 import ModelAPI from './api/endpoints/models'
 import ForgeAPI from './api/endpoints/forge'
 import MetaAPI from './api/endpoints/meta'
+import UserAPI from './api/endpoints/user'
 import DMAPI from './api/endpoints/dm'
 
 //Services
@@ -34,6 +35,7 @@ import SocketSvc from './api/services/SocketSvc'
 import UploadSvc from './api/services/UploadSvc'
 import ForgeSvc from './api/services/ForgeSvc'
 import ModelSvc from './api/services/ModelSvc'
+import UserSvc from './api/services/UserSvc'
 import OssSvc from './api/services/OssSvc'
 import DMSvc from './api/services/DMSvc'
 
@@ -170,6 +172,7 @@ app.use('/api/config',    ConfigAPI())
 app.use('/api/models',    ModelAPI())
 app.use('/api/forge',     ForgeAPI())
 app.use('/api/meta',      MetaAPI())
+app.use('/api/user',      UserAPI())
 app.use('/api/dm',        DMAPI())
 
 /////////////////////////////////////////////////////////////////////
@@ -258,42 +261,44 @@ const runServer = (app) => {
         ' reason: ', reason)
     })
 
-    config.databases.forEach((dbConfig) => {
+    const dbConfig = config.database
 
-      switch (dbConfig.type) {
+    const dbSvc = new MongoDbSvc(dbConfig)
 
-        case 'mongo':
+    dbSvc.connect().then(() => {
 
-          const dbSvc = new MongoDbSvc(dbConfig)
+      console.log(
+        'Connected to MongoDB Database: ' +
+        dbConfig.dbName)
 
-          dbSvc.connect().then(() => {
+      ServiceManager.registerService(dbSvc)
 
-            console.log(
-              'Connected to MongoDB Database: ' +
-              dbConfig.dbName)
+      for (const key in dbConfig.models) {
 
-            ServiceManager.registerService(dbSvc)
-
-            for (const key in dbConfig.collections) {
-
-              const collectionCfg = Object.assign(
-                dbConfig.collections[key], {
-                  dbName: dbConfig.dbName,
-                  name: key
-                })
-
-              const modelSvc = new ModelSvc (collectionCfg)
-
-              ServiceManager.registerService(modelSvc)
-            }
+        const modelCfg = Object.assign({},
+          dbConfig.models[key], {
+            dbName: dbConfig.dbName,
+            name: key
           })
 
-          break;
+        const modelSvc = new ModelSvc (modelCfg)
+
+        ServiceManager.registerService(modelSvc)
       }
+
+      const userCfg = Object.assign({},
+        dbConfig.users, {
+          uploadLimit: config.gallery.uploadLimit,
+          dbName: dbConfig.dbName
+        })
+
+      const userSvc = new UserSvc (userCfg)
+
+      ServiceManager.registerService(userSvc)
     })
 
     const server = app.listen(
-      process.env.PORT || config.server_port || 3000, () => {
+      process.env.PORT || 3000, () => {
 
         const socketSvc = new SocketSvc({
           session,

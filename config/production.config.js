@@ -14,6 +14,7 @@ const config = {
     // this the public host name of your server for the
     // client socket to connect.
     // eg. https://myforgeapp.mydomain.com
+    storageVersion: 1.0,
     host: `${HOST_URL}`,
     env: 'production',
     port: PORT
@@ -21,6 +22,7 @@ const config = {
 
   gallery: {
     lifetime: 60 * 60 * 24 * 30, // 30 days
+    uploadLimit: 5,
     bucket: {
       bucketKey: 'forge-rcdb-gallery-tmp-prod',
       policyKey: 'Persistent'
@@ -63,28 +65,34 @@ const config = {
       style:    'https://developer.api.autodesk.com/derivativeservice/v2/viewers/style.css?v=v2.17'
     }
   },
-  databases: [
-    {
-      type: 'mongo',
-      dbhost: process.env.RCDB_DBHOST,
-      dbName: process.env.RCDB_DBNAME,
-      user: process.env.RCDB_USER,
-      pass: process.env.RCDB_PASS,
-      port: process.env.RCDB_PORT,
-      collections: {
-        configurator: {
-          models: 'configurator.models'
-        },
-        gallery: {
-          models: 'gallery.models'
-        },
-        rcdb:{
-          materials: 'rcdb.materials',
-          models: 'rcdb.models'
-        }
+
+  database: {
+    type: 'mongo',
+    dbhost: process.env.RCDB_DBHOST,
+    dbName: process.env.RCDB_DBNAME,
+    user: process.env.RCDB_USER,
+    pass: process.env.RCDB_PASS,
+    port: process.env.RCDB_PORT,
+    models: {
+      configurator: {
+        collection:'configurator.models'
+      },
+      gallery: {
+        collection:'gallery.models'
+      },
+      rcdb: {
+        collection:'rcdb.models'
       }
+    },
+    materials: {
+      rcdb: {
+        collection:'rcdb.materials'
+      }
+    },
+    users: {
+      collection:'rcdb.users'
     }
-  ]
+  }
 }
 
 module.exports = config

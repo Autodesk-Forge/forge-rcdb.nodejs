@@ -219,25 +219,18 @@ export default class AppNavbar extends React.Component {
                   </div>
                   }>
                 <MenuItem eventKey={5.1} onClick={() => {
-                  this.openDatabaseDlg()
-                }}>
-                  <span className="fa fa-database"/>
-                &nbsp; Select database ...
-                </MenuItem>
-                <MenuItem divider/>
-                <MenuItem eventKey={5.2} onClick={() => {
                   this.openLayoutDlg()
                 }}>
                   <span className="fa fa-th-large"/>
-                &nbsp; Select layout ...
+                  &nbsp; Select layout ...
                 </MenuItem>
                 <MenuItem divider/>
-                <MenuItem eventKey={5.3} onClick={() => {
+                <MenuItem eventKey={5.2} onClick={() => {
                   this.openThemeDlg()
                 }}>
                   <span className="fa fa-paint-brush">
                   </span>
-                &nbsp; Select theme ...
+                  &nbsp; Select theme ...
                 </MenuItem>
               </NavDropdown>
             }

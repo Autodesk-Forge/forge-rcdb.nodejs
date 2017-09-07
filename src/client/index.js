@@ -1,8 +1,8 @@
 import AppContainer from './containers/AppContainer'
 import createStore from './store/createStore'
+import {client as config} from 'c0nfig'
 import ReactDOM from 'react-dom'
 import 'font-awesome-webpack'
-import config from 'c0nfig'
 import 'bootstrap-webpack'
 import React from 'react'
 
@@ -21,13 +21,15 @@ import SocketSvc from 'SocketSvc'
 import ModelSvc from 'ModelSvc'
 import EventSvc from 'EventSvc'
 import ForgeSvc from 'ForgeSvc'
+import UserSvc from 'UserSvc'
 
 // ========================================================
 // Services Initialization
 // ========================================================
 
 const storageSvc = new StorageSvc({
-  storageKey: 'Autodesk.Forge-RCDB.Storage'
+  storageKey: 'Autodesk.Forge-RCDB.Storage',
+  storageVersion: config.storageVersion
 })
 
 const materialSvc = new MaterialSvc({
@@ -35,12 +37,12 @@ const materialSvc = new MaterialSvc({
 })
 
 const socketSvc = new SocketSvc({
-  host: config.client.host,
-  port: config.client.port
+  host: config.host,
+  port: config.port
 })
 
 socketSvc.connect().then((socket) => {
-  console.log(`${config.client.host}:${config.client.port}`)
+  console.log(`${config.host}:${config.port}`)
   console.log('Client socket connected: ' + socket.id)
 })
 
@@ -62,6 +64,10 @@ const forgeSvc = new ForgeSvc({
   apiUrl: '/api/forge'
 })
 
+const userSvc = new UserSvc({
+  apiUrl: '/api/user'
+})
+
 // ========================================================
 // Services Registration
 // ========================================================
@@ -74,6 +80,7 @@ ServiceManager.registerService(notifySvc)
 ServiceManager.registerService(modelSvc)
 ServiceManager.registerService(eventSvc)
 ServiceManager.registerService(forgeSvc)
+ServiceManager.registerService(userSvc)
 
 // ========================================================
 // Store Instantiation

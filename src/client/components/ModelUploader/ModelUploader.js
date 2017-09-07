@@ -91,9 +91,9 @@ export default class ModelUploader extends React.Component {
   /////////////////////////////////////////////////////////
   async onDrop (files) {
 
-    const approved = await this.props.onDropFiles(files)
+    const validUpload = await this.props.onDropFiles(files)
 
-    if (approved) {
+    if (validUpload) {
 
       const uploadId = this.guid()
 
@@ -147,19 +147,37 @@ export default class ModelUploader extends React.Component {
             Upload your Model
           </label>
         </div>
-        <Dropzone className="content"
-          onDrop={this.onDrop}
-          multiple={false} >
-          <p>
-            Drop a file here or click to browse ...
-          </p>
-          <hr/>
-          <p>
-            Your model will be available for
+        {
+          !this.props.loggedIn &&
+          <div className="login">
+            <p>
+              In order to upload models ...
+            </p>
+            <hr/>
+            <p>
+              You must be &nbsp;
+              <u onClick={this.props.onLogIn}>
+                logged in
+              </u>
+            </p>
+          </div>
+        }
+        {
+          this.props.loggedIn &&
+          <Dropzone className="content"
+            onDrop={this.onDrop}
+            multiple={false} >
+            <p>
+              Drop a file here or click to browse ...
+            </p>
+            <hr/>
+            <p>
+              Your model will be available for
               <br/>
-            <u>30 days</u>
-          </p>
-        </Dropzone>
+              <u>30 days</u>
+            </p>
+          </Dropzone>
+        }
       </div>
     )
   }

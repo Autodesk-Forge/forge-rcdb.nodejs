@@ -146,7 +146,7 @@ export default class DbSvc extends BaseSvc {
 
     return new Promise(async(resolve, reject) => {
 
-      try{
+      try {
 
         const collection = await this.getCollection(
           collectionName)
@@ -169,141 +169,31 @@ export default class DbSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////
-  findOne(collectionName, opts = {}) {
-
-    var _thisSvc = this;
+  findOne (collectionName, opts = {}) {
 
     return new Promise(async(resolve, reject)=> {
 
-      try{
+      try {
 
-        var collection = await _thisSvc.getCollection(
-          collectionName);
+        const collection =
+          await this.getCollection(
+            collectionName)
 
         collection.findOne(
           opts.fieldQuery || {},
           opts.pageQuery || {}, (err, dbItem)=> {
 
-            if(err){
-              return reject(err);
-            }
-
-            if(!dbItem) {
-              return reject('Not Found');
-            }
-
-            return resolve(dbItem);
-          });
-      }
-      catch(ex){
-
-        console.log(ex)
-        reject(ex);
-      }
-    });
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  findOrCreate(collectionName, item, query) {
-
-    var _thisSvc = this;
-
-    return new Promise(async(resolve, reject)=> {
-
-      try{
-
-        var collection = await _thisSvc.getCollection(
-          collectionName);
-
-        collection.findOne(query, {}, (err, dbItem)=> {
-
-          if(err){
-            return reject(err);
-          }
-
-          if(dbItem) {
-
-            return resolve(dbItem);
-          }
-
-          return _thisSvc.insert(collectionName, item);
-        });
-      }
-      catch(ex){
-
-        reject(ex);
-      }
-    });
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  updateItem(collectionName, query, opts = {}) {
-
-    var _thisSvc = this;
-
-    return new Promise(async(resolve, reject)=> {
-
-      try{
-
-        var collection = await _thisSvc.getCollection(
-          collectionName);
-
-        collection.update(
-          query,
-          opts,
-          (err, res)=> {
-
-            if(err){
-              return reject(err);
-            }
-
-            return resolve(res);
-          });
-      }
-      catch(ex){
-
-        reject(ex);
-      }
-    });
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  updateItem(collectionName, item, query) {
-
-    var _thisSvc = this;
-
-    return new Promise(async(resolve, reject)=> {
-
-      try{
-
-        var collection =
-          await _thisSvc.getCollection(
-            collectionName)
-
-        if (typeof item._id === 'string') {
-
-          item._id = new mongo.ObjectId(item._id)
-        }
-
-        collection.update(
-          query,
-          item, (err, res)=> {
-
-            if(err){
+            if (err) {
 
               return reject(err)
             }
 
-            return resolve(res)
+            if (!dbItem) {
+
+              return reject('Not Found')
+            }
+
+            return resolve(dbItem)
           })
 
       } catch (ex) {
@@ -317,36 +207,33 @@ export default class DbSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////
-  upsertItem(collectionName, item, query) {
+  findOrCreate (collectionName, item, query) {
 
-    var _thisSvc = this;
+    return new Promise(async(resolve, reject) => {
 
-    return new Promise(async(resolve, reject)=> {
+      try {
 
-      try{
+        const collection = await this.getCollection(
+          collectionName)
 
-        var collection = await _thisSvc.getCollection(
-          collectionName);
+        collection.findOne(query, {}, (err, dbItem) => {
 
-        if(typeof item._id === 'string') {
-          item._id = new mongo.ObjectId(item._id);
-        }
+          if (err) {
 
-        collection.update(
-          query,
-          item, { upsert: true },(err, res)=> {
+            return reject(err)
+          }
 
-            if(err){
+          if (dbItem) {
 
-              return reject(err);
-            }
+            return resolve(dbItem)
+          }
 
-            return resolve(res);
-          })
+          return this.insert(collectionName, item)
+        })
 
-      } catch(ex){
+      } catch (ex) {
 
-        reject(ex);
+        reject(ex)
       }
     })
   }
@@ -355,32 +242,96 @@ export default class DbSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////
-  distinct(collectionName, key) {
+  update (collectionName, item, query) {
 
-    var _thisSvc = this;
+    return new Promise(async(resolve, reject) => {
 
-    return new Promise(async(resolve, reject)=> {
+      try {
+
+        const collection = await this.getCollection(
+          collectionName)
+
+        if (typeof item._id === 'string') {
+
+          item._id = new mongo.ObjectId(item._id)
+        }
+
+        collection.update(
+          query, item, (err, res)=> {
+
+            return err
+              ? reject(err)
+              : resolve(item)
+          })
+
+      } catch(ex) {
+
+        reject(ex)
+      }
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  upsert (collectionName, item, query) {
+
+    return new Promise(async(resolve, reject) => {
+
+      try {
+
+        const collection = await this.getCollection(
+          collectionName)
+
+        if (typeof item._id === 'string') {
+
+          item._id = new mongo.ObjectId(item._id)
+        }
+
+        collection.update(
+          query, item, {
+            upsert: true,
+            new: true
+          }, (err, res) => {
+
+            return err
+              ? reject(err)
+              : resolve(res)
+          })
+
+      } catch(ex) {
+
+        reject(ex)
+      }
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  distinct (collectionName, key) {
+
+    return new Promise(async(resolve, reject) => {
 
       try{
 
-        var collection = await _thisSvc.getCollection(
-          collectionName);
+        const collection = await this.getCollection(
+          collectionName)
 
         collection.distinct(key, function(err, values) {
 
-          if (err) {
+          return err
+            ? reject(err)
+            : resolve(values)
+        })
 
-            return reject(err);
-          }
+      } catch(ex) {
 
-          return resolve(values);
-        });
+        reject(ex)
       }
-      catch(ex){
-
-        reject(ex);
-      }
-    });
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -389,22 +340,24 @@ export default class DbSvc extends BaseSvc {
   /////////////////////////////////////////////////////////
   getCursor (collectionName, opts = {}) {
 
-    return new Promise((resolve, reject) => {
+    return new Promise(async(resolve, reject) => {
 
-      this._db.collection(collectionName, (err, collection)=> {
+      try {
 
-        if (err) {
-
-          return reject(err)
-        }
+        const collection = await this.getCollection(
+          collectionName)
 
         const cursor = collection.find(
           opts.fieldQuery || {},
-          opts.pageQuery || {}).
-          sort(opts.sort || {})
+          opts.pageQuery  || {}).
+          sort(opts.sort  || {})
 
         return resolve(cursor)
-      })
+
+      } catch(ex) {
+
+        reject(ex)
+      }
     })
   }
 
@@ -423,12 +376,9 @@ export default class DbSvc extends BaseSvc {
 
         cursor.toArray((err, items) => {
 
-          if (err) {
-
-            return reject(err)
-          }
-
-          return resolve(items)
+          return err
+            ? reject(err)
+            : resolve(items)
         })
 
       } catch (ex) {

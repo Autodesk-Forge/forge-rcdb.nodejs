@@ -133,6 +133,7 @@ module.exports = function() {
         lifetime: galleryConfig.lifetime,
         env: 'AutodeskProduction',
         timestamp: new Date(),
+        owner: data.userId,
         name : data.name,
         model : {
           objectKey,
@@ -460,6 +461,28 @@ module.exports = function() {
 
     try {
 
+      const userSvc = ServiceManager.getService(
+        'UserSvc')
+
+      const user = await userSvc.getCurrentUser(
+        req.session)
+
+      if (!user) {
+
+        res.status(401)
+        return res.json('Unauthorized')
+      }
+
+      const models = await userSvc.getActiveModels(
+        config.database.models.gallery.collection,
+        user.userId)
+
+      if (user.uploadLimit && models.length >= user.uploadLimit) {
+
+        res.status(403)
+        return res.json('Forbidden: upload limit reached')
+      }
+
       const bucketKey = galleryConfig.bucket.bucketKey
 
       const socketId = req.body.socketId
@@ -496,6 +519,7 @@ module.exports = function() {
             getToken: () => forgeSvc.get2LeggedToken(),
             name: path.parse(file.originalname).name,
             filename: file.originalname,
+            userId: user.userId,
             db: req.params.db,
             bucketKey,
             objectKey,
@@ -523,6 +547,8 @@ module.exports = function() {
 
     } catch (error) {
 
+      console.log(error)
+
       res.status(error.statusCode || 500)
       res.json(error)
     }
@@ -533,7 +559,7 @@ module.exports = function() {
   //
   /////////////////////////////////////////////////////////
   router.get('/:db/:modelId/states/sequence',
-    async(req, res)=> {
+    async(req, res) => {
 
     try {
 

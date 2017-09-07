@@ -26,6 +26,17 @@
     margin: 0;
   }
 
+  .login {
+    height: calc(100% - 36px);
+    padding-top: 10px;
+    background: white;
+    cursor: default;
+
+    u {
+      cursor: pointer;
+    }
+  }
+
   .content {
     transition-property: all;
     transition-timing-function: ease;
