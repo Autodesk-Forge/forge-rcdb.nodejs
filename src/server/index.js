@@ -82,7 +82,7 @@ if(process.env.NODE_ENV === 'development') {
 
 } else {
 
-  const dbConfig = config.databases[0]
+  const dbConfig = config.database
 
   const MongoStore = store(session)
 
