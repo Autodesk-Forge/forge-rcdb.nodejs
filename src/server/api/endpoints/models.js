@@ -477,7 +477,8 @@ module.exports = function() {
         config.database.models.gallery.collection,
         user.userId)
 
-      if (user.uploadLimit && models.length >= user.uploadLimit) {
+      if (user.uploadLimit > -1 &&
+          models.length >= user.uploadLimit) {
 
         res.status(403)
         return res.json('Forbidden: upload limit reached')
