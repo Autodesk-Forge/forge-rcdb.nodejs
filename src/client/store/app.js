@@ -55,10 +55,47 @@ export function setViewerEnv (env) {
   }
 }
 
+const getUserWithStats = async(user) => {
+
+  const userSvc =
+    ServiceManager.getService(
+      'UserSvc')
+
+  if (user.uploadLimit) {
+
+    const activeModels =
+      await userSvc.getActiveModels(
+      'gallery')
+
+    const allowedUploads =
+      user.uploadLimit - activeModels.length
+
+    return Object.assign({}, user, {
+      allowedUploads
+    })
+  }
+
+  return user
+}
+
 export function setUser (user) {
-  return {
-    type    : SET_USER,
-    payload : user
+
+  if (!user) {
+    return {
+      type    : SET_USER,
+      payload : null
+    }
+  }
+
+  return (dispatch) => {
+
+   getUserWithStats(user).then((userWithStats) => {
+
+     dispatch({
+       type: SET_USER,
+       payload: userWithStats
+     })
+   })
   }
 }
 
@@ -204,5 +241,7 @@ export default function reducer (
 
   const handler = ACTION_HANDLERS[action.type]
 
-  return handler ? handler(state, action) : state
+  return handler
+    ? handler(state, action)
+    : state
 }

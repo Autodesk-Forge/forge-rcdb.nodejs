@@ -42,9 +42,6 @@ class GalleryView extends BaseComponent {
     this.forgeSvc = ServiceManager.getService(
       'ForgeSvc')
 
-    this.userSvc = ServiceManager.getService(
-      'UserSvc')
-
     this.state = {
       search: '',
       items: []
@@ -117,36 +114,6 @@ class GalleryView extends BaseComponent {
   onLogIn () {
 
     this.forgeSvc.login()
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  validateUploadLimit () {
-
-    return new Promise((resolve) => {
-
-      const onClose = (result) => {
-
-        resolve(result === 'OK')
-
-        this.dialogSvc.off('dialog.close', onClose)
-      }
-
-      this.dialogSvc.on('dialog.close', onClose)
-
-      this.dialogSvc.setState({
-        className: 'agreement-dlg',
-        title: 'Gallery Terms & Conditions',
-        captionOK: 'I Agree',
-        content:
-          <div>
-            Yo
-          </div>,
-        open: true
-      })
-    })
   }
 
   /////////////////////////////////////////////////////////
@@ -504,10 +471,10 @@ class GalleryView extends BaseComponent {
           <div className="secondary">
             <div className="uploader">
               <ModelUploader
-                loggedIn={!!this.props.appState.user}
                 onProgress={this.onUploadProgress}
                 socketId={this.socketSvc.socketId}
                 onInitUpload={this.onInitUpload}
+                user={this.props.appState.user}
                 onDropFiles={this.onDropFiles}
                 onLogIn={this.onLogIn}
                 database={'gallery'}

@@ -37,6 +37,16 @@
     }
   }
 
+  .limit {
+    cursor: not-allowed;
+    padding-top: 3px;
+    color: #e44747;
+
+    hr {
+      margin: -6px 40px 3px 40px;
+    }
+  }
+
   .content {
     transition-property: all;
     transition-timing-function: ease;

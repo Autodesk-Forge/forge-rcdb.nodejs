@@ -477,7 +477,7 @@ module.exports = function() {
         config.database.models.gallery.collection,
         user.userId)
 
-      if (user.uploadLimit > -1 &&
+      if (user.uploadLimit &&
           models.length >= user.uploadLimit) {
 
         res.status(403)

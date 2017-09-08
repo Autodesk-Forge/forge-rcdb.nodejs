@@ -99,10 +99,10 @@ module.exports = function() {
 
     try {
 
-      const forgeSvc = ServiceManager.getService(
-        'ForgeSvc')
+      const userSvc = ServiceManager.getService(
+        'UserSvc')
 
-      const user = await forgeSvc.getUser(
+      const user = await userSvc.getCurrentUser(
         req.session)
 
       if (!user) {
@@ -149,7 +149,7 @@ module.exports = function() {
         grant_type: 'authorization_code',
         redirect_uri: config.forge.oauth.redirectUri
       },
-      (err, access_token, refresh_token, results) => {
+      async(err, access_token, refresh_token, results) => {
 
         try {
 
@@ -171,19 +171,18 @@ module.exports = function() {
           forgeSvc.set3LeggedTokenMaster(
             req.session, token)
 
-          forgeSvc.getUser(req.session).then((user) => {
+          const user = await forgeSvc.getUser(req.session)
 
-            const userSvc = ServiceManager.getService(
-              'UserSvc')
+          const userSvc = ServiceManager.getService(
+            'UserSvc')
 
-            userSvc.save(user)
-          })
+          await userSvc.save(user)
 
-          return res.redirect(req.session.redirect)
+          res.redirect(req.session.redirect)
 
         } catch (ex) {
 
-          return res.redirect(req.session.redirect)
+          res.redirect(req.session.redirect)
         }
       })
   })

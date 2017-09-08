@@ -153,18 +153,17 @@ if (config.env === 'development') {
 // Chunked polyfill for browsers without Intl support
 if (!window.Intl) {
   (new Promise((resolve) => {
-    resolve(import('intl'));
-  }))
-    .then(() => Promise.all([
+    resolve(import('intl'))
+  })).then(() => Promise.all([
       import('intl/locale-data/jsonp/en.js'),
-      import('intl/locale-data/jsonp/zh.js'),
-    ]))
-    .then(() => render(translationMessages))
+      import('intl/locale-data/jsonp/zh.js')
+    ])).then(() => render(translationMessages))
     .catch((err) => {
-      throw err;
-    });
+      throw err
+    })
 } else {
-  render(translationMessages);
+
+  render(translationMessages)
 }
 
 

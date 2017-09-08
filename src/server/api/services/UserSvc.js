@@ -49,7 +49,6 @@ export default class UserSvc extends BaseSvc {
 
       } catch(ex) {
 
-        console.log(ex)
         return reject(ex)
       }
     })
@@ -99,16 +98,14 @@ export default class UserSvc extends BaseSvc {
           this._config.dbName)
 
         // Autodesk accounts have unlimited uploads
-        const uploadLimit =
-          !user.emailId.endsWith('@autodesk.com')
-            ? this._config.uploadLimit
-            : -1
+        const insertInfo = Object.assign({}, {
+            created: new Date()
+          }, !user.emailId.endsWith('@autodesk.com') ? {
+                uploadLimit: this._config.uploadLimit
+              } : {})
 
         const item = Object.assign({}, {
-          $setOnInsert: {
-            created: new Date(),
-            uploadLimit
-          },
+          $setOnInsert: insertInfo,
           $set: user
         })
 
@@ -143,6 +140,10 @@ export default class UserSvc extends BaseSvc {
           collectionName, {
             fieldQuery: {
               owner: userId
+            },
+            pageQuery: {
+              model: 1,
+              name: 1
             }
           })
 

@@ -137,33 +137,15 @@ export default class ModelUploader extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  render () {
+  renderContent () {
 
-    return(
-      <div className="model-uploader">
-        <div className="title">
-          <span className="fa fa-cloud-upload"/>
-          <label>
-            Upload your Model
-          </label>
-        </div>
-        {
-          !this.props.loggedIn &&
-          <div className="login">
-            <p>
-              In order to upload models ...
-            </p>
-            <hr/>
-            <p>
-              You must be &nbsp;
-              <u onClick={this.props.onLogIn}>
-                logged in
-              </u>
-            </p>
-          </div>
-        }
-        {
-          this.props.loggedIn &&
+    const { user } = this.props
+
+    if (user) {
+
+      if (!user.allowedUploads || user.allowedUploads > 0) {
+
+        return (
           <Dropzone className="content"
             onDrop={this.onDrop}
             multiple={false} >
@@ -177,7 +159,54 @@ export default class ModelUploader extends React.Component {
               <u>30 days</u>
             </p>
           </Dropzone>
-        }
+        )
+      }
+
+      return (
+        <div className="limit">
+          <p>
+            You have reached you maximum active models quota :(
+          </p>
+          <hr/>
+          <p>
+            Wait for your current models to expire
+            before being able to upload again ...
+          </p>
+        </div>
+      )
+    }
+
+    return (
+      <div className="login">
+        <p>
+          In order to upload models ...
+        </p>
+        <hr/>
+        <p>
+          You must be &nbsp;
+          <u onClick={this.props.onLogIn}>
+            logged in
+          </u>
+        </p>
+      </div>
+    )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  render () {
+
+    return(
+      <div className="model-uploader">
+        <div className="title">
+          <span className="fa fa-cloud-upload"/>
+          <label>
+            Upload your Model
+          </label>
+        </div>
+        { this.renderContent() }
       </div>
     )
   }
