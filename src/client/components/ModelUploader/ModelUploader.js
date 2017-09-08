@@ -143,7 +143,7 @@ export default class ModelUploader extends React.Component {
 
     if (user) {
 
-      if (!user.allowedUploads || user.allowedUploads > 0) {
+      if (user.allowedUploads === undefined || user.allowedUploads > 0) {
 
         return (
           <Dropzone className="content"
@@ -165,7 +165,7 @@ export default class ModelUploader extends React.Component {
       return (
         <div className="limit">
           <p>
-            You have reached you maximum active models quota :(
+            You have reached your maximum active models quota :(
           </p>
           <hr/>
           <p>

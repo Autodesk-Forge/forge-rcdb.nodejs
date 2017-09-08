@@ -3,10 +3,10 @@ import { connect } from 'react-redux'
 import CoreLayout from './CoreLayout'
 
 import {
-  databaseChange,
   layoutChange,
   themeChange,
   saveAppState,
+  fetchUser,
   setUser,
   } from '../../store/app'
 
@@ -20,10 +20,10 @@ const mapDispatchToProps = {
   removeNotifications,
   updateNotification,
   addNotification,
-  databaseChange,
   layoutChange,
   saveAppState,
   themeChange,
+  fetchUser,
   setUser
 }
 

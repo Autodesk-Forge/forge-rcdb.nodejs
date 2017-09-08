@@ -179,6 +179,8 @@ class CoreLayout extends React.Component {
   @autobind
   onModelAdded (msg) {
 
+    this.props.setUser(this.props.appState.user)
+
     let notification =
       this.notifySvc.getNotification(
         msg.jobId)
