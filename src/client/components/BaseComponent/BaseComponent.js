@@ -1,11 +1,9 @@
 import React from 'react'
-import { intlShape } from 'react-intl'
 
 class BaseComponent extends React.Component {
 
   constructor(props) {
     super(props)
-    this.formatMessage = intlShape.formatMessage
   }
 
   assignState (state) {

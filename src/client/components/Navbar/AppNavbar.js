@@ -24,13 +24,17 @@ import messages from 'translations/messages'
 
 export default class AppNavbar extends React.Component {
 
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  constructor (props) {
+  static contextTypes = {
+    intl: intlShape
+  }
 
-    super(props)
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  constructor (props, context) {
+
+    super(props, context)
 
     this.state = {
       databaseOpen: false,
@@ -43,7 +47,7 @@ export default class AppNavbar extends React.Component {
     this.forgeSvc = ServiceManager.getService(
       'ForgeSvc')
 
-    this.formatMessage = intlShape.formatMessage
+    this.formatMessage = this.context.intl.formatMessage
   }
 
   /////////////////////////////////////////////////////////
