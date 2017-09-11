@@ -1,5 +1,4 @@
 import AppContainer from './containers/AppContainer'
-import createStore from './store/createStore'
 import {client as config} from 'c0nfig'
 import ReactDOM from 'react-dom'
 import 'font-awesome-webpack'
@@ -10,84 +9,7 @@ import { Provider } from 'react-redux'
 import LanguageProvider from './translations/LanguageProvider'
 import { translationMessages } from './i18n'
 
-//Services
-import ServiceManager from 'SvcManager'
-import ExtractorSvc from 'ExtractorSvc'
-import MaterialSvc from 'MaterialSvc'
-import StorageSvc from 'StorageSvc'
-import NotifySvc from 'NotifySvc'
-import DialogSvc from 'DialogSvc'
-import SocketSvc from 'SocketSvc'
-import ModelSvc from 'ModelSvc'
-import EventSvc from 'EventSvc'
-import ForgeSvc from 'ForgeSvc'
-import UserSvc from 'UserSvc'
-
-// ========================================================
-// Services Initialization
-// ========================================================
-
-const storageSvc = new StorageSvc({
-  storageKey: 'Autodesk.Forge-RCDB.Storage',
-  storageVersion: config.storageVersion
-})
-
-const materialSvc = new MaterialSvc({
-  apiUrl: '/api/materials'
-})
-
-const socketSvc = new SocketSvc({
-  host: config.host,
-  port: config.port
-})
-
-socketSvc.connect().then((socket) => {
-  console.log(`${config.host}:${config.port}`)
-  console.log('Client socket connected: ' + socket.id)
-})
-
-const extractorSvc = new ExtractorSvc({
-  apiUrl: '/api/extract'
-})
-
-const modelSvc = new ModelSvc({
-  apiUrl: '/api/models'
-})
-
-const notifySvc = new NotifySvc()
-
-const dialogSvc = new DialogSvc()
-
-const eventSvc = new EventSvc()
-
-const forgeSvc = new ForgeSvc({
-  apiUrl: '/api/forge'
-})
-
-const userSvc = new UserSvc({
-  apiUrl: '/api/user'
-})
-
-// ========================================================
-// Services Registration
-// ========================================================
-ServiceManager.registerService(extractorSvc)
-ServiceManager.registerService(materialSvc)
-ServiceManager.registerService(storageSvc)
-ServiceManager.registerService(socketSvc)
-ServiceManager.registerService(dialogSvc)
-ServiceManager.registerService(notifySvc)
-ServiceManager.registerService(modelSvc)
-ServiceManager.registerService(eventSvc)
-ServiceManager.registerService(forgeSvc)
-ServiceManager.registerService(userSvc)
-
-// ========================================================
-// Store Instantiation
-// ========================================================
-const initialState = window.___INITIAL_STATE__
-
-const store = createStore(initialState)
+import store from './store'
 
 // ========================================================
 // Render Setup
@@ -162,7 +84,6 @@ if (!window.Intl) {
       throw err
     })
 } else {
-
   render(translationMessages)
 }
 
