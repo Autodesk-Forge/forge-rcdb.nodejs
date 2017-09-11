@@ -2,13 +2,10 @@ import React from 'react'
 import { intlShape } from 'react-intl'
 
 class BaseComponent extends React.Component {
-  static contextTypes = {
-    intl: intlShape,
-  }
 
-  constructor(props, context) {
-    super(props, context)
-    this.formatMessage = this.context.intl.formatMessage
+  constructor(props) {
+    super(props)
+    this.formatMessage = intlShape.formatMessage
   }
 
   assignState (state) {
