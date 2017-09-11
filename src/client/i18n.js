@@ -10,8 +10,8 @@ import zhLocaleData from 'react-intl/locale-data/zh'
 
 import { DEFAULT_LOCALE } from './translations/languages'
 
-import enTranslationMessages from './translations/en.json'
-import zhSimpleTranslationMessages from './translations/zh-HANS.json'
+import enTranslationMessages from './translations/locales/en.json'
+import zhSimpleTranslationMessages from './translations/locales/zh-HANS.json'
 
 addLocaleData(enLocaleData)
 addLocaleData(zhLocaleData)

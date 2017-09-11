@@ -1,3 +1,10 @@
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { Provider } from 'react-redux'
+import store from 'store'
+
+import LanguageProvider from 'translations/LanguageProvider'
+import { translationMessages } from 'i18n'
 /////////////////////////////////////////////////////////////////
 //
 //
@@ -166,6 +173,10 @@ export default class ToolPanelBase extends
     $(this.container).append($content)
 
     this.container.classList.add('toolPanelBase')
+
+    if (typeof this.render === 'function') {
+      this.renderReact()
+    }
   }
 
   /////////////////////////////////////////////////////////////
@@ -255,5 +266,21 @@ export default class ToolPanelBase extends
         overflow: 'visible'
       })
     }
+  }
+
+  renderReact() {
+    const Comp = this.render(this.options.viewer)
+    if (!this.reactMountDOM) {
+      console.error('renderReact method need this.reactMountDOM')
+      return
+    }
+    ReactDOM.render(
+      <Provider store={store}>
+        <LanguageProvider messages={translationMessages}>
+          {Comp}
+        </LanguageProvider>
+      </Provider>,
+      this.reactMountDOM
+    )
   }
 }

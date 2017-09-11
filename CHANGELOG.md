@@ -1,4 +1,4 @@
-# Extensions
+# CHANGELOG
 
 [Extensions] Add Marquee Selection Extension.
 
@@ -11,3 +11,7 @@ Thanks [ubicleDowns/webgl-code-samples](https://github.com/cubicleDowns/webgl-co
 > press `ctrl` + `alt` key to activate marquee selection.
 
 [Containers] Add i18n support with lib `react-int` && `intl`
+
+[BaseComponet] The `BaseComponent` inherits `formatMessage` method provied by `react-intl`.
+
+[Base] Share `store` in project by moving `store` into single file.
