@@ -40,7 +40,7 @@
   .secondary {
     height: calc(100% - 30px);
     margin: 16px 0 0 0;
-    overflow: scroll;
+    overflow: hidden;
   }
 
   .uploader {
@@ -53,6 +53,8 @@
 
   .recent {
     box-shadow: 20px 20px 33px 0px rgba(0, 0, 0, 0.21);
+    height: calc(100% - 145px);
+    overflow: auto;
   }
 
   @media only screen and (max-width: 876px) {
@@ -77,6 +79,10 @@
       margin-left: 0;
       float: none;
       width: auto;
+    }
+
+    .recent {
+      height: calc(100%);
     }
   }
 

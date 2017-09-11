@@ -189,31 +189,48 @@ module.exports = function() {
   // Remove models which are not on OSS
   //
   /////////////////////////////////////////////////////////
-  const cleanModelsFromOSS = async(modelSvc) => {
+  const purge = async(modelSvc) => {
 
     const models = await modelSvc.getModels()
 
     const token = await forgeSvc.get2LeggedToken()
 
-    models.forEach((modelInfo) => {
+    models.forEach(async(modelInfo) => {
 
-      const urn = modelInfo.model.urn
+      try {
 
-      const fileId = atob(urn)
+        if (modelInfo.env === 'Local') {
+          return
+        }
 
-      const objectId = ossSvc.parseObjectId(fileId)
+        const urn = modelInfo.model.urn
 
-      ossSvc.getObjectDetails (token,
-        objectId.bucketKey,
-        objectId.objectKey).then((res) => {
+        const fileId = atob(urn)
 
-        }, (err) => {
+        const objectId = ossSvc.parseObjectId(fileId)
 
-          if (err.statusCode === 404) {
+        const res =
+          await ossSvc.getObjectDetails(token,
+            objectId.bucketKey,
+            objectId.objectKey)
 
-            deleteModel(urn, modelInfo._id)
-          }
-        })
+        const manifest =
+          await derivativesSvc.getManifest(
+            token, urn)
+
+        if (!derivativesSvc.hasDerivative(
+            manifest.body, {type: 'geometry'})) {
+
+          deleteModel(modelSvc, modelInfo)
+        }
+
+      } catch (ex) {
+
+        if (ex.statusCode === 404) {
+
+          deleteModel(modelSvc, modelInfo)
+        }
+      }
     })
   }
 
@@ -262,6 +279,8 @@ module.exports = function() {
     if (svc.name() === 'gallery-ModelSvc') {
 
       cleanModels(svc)
+
+      //purge(svc)
     }
   })
 

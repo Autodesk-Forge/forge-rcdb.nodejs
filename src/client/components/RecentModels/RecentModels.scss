@@ -1,5 +1,7 @@
 .recent-models {
   background: #ffffff;
+  overflow: hidden;
+  height: 100%;
 
   .title {
     border-bottom: 1px solid #dedede;
@@ -27,6 +29,7 @@
   }
 
   .content {
+    height: calc(100% - 42px);
     margin: 4px 0 0 4px;
     overflow: auto;
   }

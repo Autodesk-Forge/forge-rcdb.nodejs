@@ -7,6 +7,8 @@ coverage
 .vscode
 resources/libs/lmv
 resources/models/dev
+resources/db/prod
+resources/db/dev
 bin/static
 push-to-prod.sh
 TMP

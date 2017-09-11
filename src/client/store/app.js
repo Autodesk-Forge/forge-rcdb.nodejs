@@ -89,8 +89,6 @@ export function setUser (user) {
 
   return (dispatch) => {
 
-   console.log(user)
-
    getUserWithStats(user).then((userWithStats) => {
 
      dispatch({
