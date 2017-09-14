@@ -329,19 +329,55 @@ module.exports = function() {
         ]
       }
 
-      if (req.query.skip) {
+      if (req.query.offset) {
 
-        opts.pageQuery.skip = req.query.skip
+        opts.pageQuery.skip = parseInt(req.query.offset)
       }
 
       if(req.query.limit) {
 
-        opts.pageQuery.limit = req.query.limit
+        opts.pageQuery.limit = parseInt(req.query.limit)
       }
 
       const response = await modelSvc.getModels(opts)
 
       res.json(response)
+
+    } catch (error) {
+
+      res.status(error.statusCode || 500)
+      res.json(error)
+    }
+  })
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  router.get('/:db/count', async (req, res) => {
+
+    try {
+
+      const db = req.params.db
+
+      const modelSvc = ServiceManager.getService(
+        db + '-ModelSvc')
+
+      const opts = {}
+
+      // Hide private models
+      opts.fieldQuery = {
+        $or: [
+          { private: false },
+          { private: null }
+        ]
+      }
+
+      const models = await modelSvc.getModels(opts)
+
+      res.json({
+        count: models.length
+      })
 
     } catch (error) {
 

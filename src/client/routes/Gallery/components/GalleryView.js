@@ -4,6 +4,7 @@ import ModelUploader from 'ModelUploader'
 import BaseComponent from 'BaseComponent'
 import ServiceManager from 'SvcManager'
 import RecentModels from 'RecentModels'
+import Paginator from 'react-paginate'
 import Background from 'Background'
 import { Link } from 'react-router'
 import Spinner from 'react-spinkit'
@@ -12,6 +13,14 @@ import Image from 'Image'
 import React from 'react'
 
 class GalleryView extends BaseComponent {
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  static defaultProps = {
+    perPage: 10
+  }
 
   /////////////////////////////////////////////////////////
   //
@@ -43,7 +52,9 @@ class GalleryView extends BaseComponent {
       'ForgeSvc')
 
     this.state = {
+      pageCount: 1,
       search: '',
+      offset: 0,
       items: []
     }
   }
@@ -97,11 +108,21 @@ class GalleryView extends BaseComponent {
   @autobind
   async refresh () {
 
-    const items =
-      await this.modelSvc.getModels(
-      'gallery')
+    const res = await this.modelSvc.getCount('gallery')
 
+    const offset = this.state.offset
+    const limit = this.props.perPage
+
+    const items =
+      await this.modelSvc.getModels('gallery', {
+        offset,
+        limit
+      })
+
+    const pageCount = Math.ceil(res.count / this.props.perPage)
+  
     this.assignState({
+      pageCount,
       items
     })
   }
@@ -379,6 +400,23 @@ class GalleryView extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  @autobind
+  onPageChanged (data) {
+
+    const selected = data.selected
+
+    const offset = Math.ceil(selected * this.props.perPage)
+
+    this.assignState({offset}).then(() => {
+
+      this.refresh()
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   renderItem (item) {
 
     const thumbnailUrl = this.modelSvc.getThumbnailUrl(
@@ -463,27 +501,44 @@ class GalleryView extends BaseComponent {
           html={this.state.search}
           className="search"/>
         <div className="container">
-          <div className="primary">
-            <div className="items">
-              {this.renderItems()}
-            </div>
+          <div className="paginator">
+            <Paginator
+              subContainerClassName={"pages pagination"}
+              onPageChange={this.onPageChanged}
+              containerClassName={"pagination"}
+              pageCount={this.state.pageCount}
+              breakLabel={<a href="">...</a>}
+              breakClassName={"break-me"}
+              previousLabel={"previous"}
+              activeClassName={"active"}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={5}
+              nextLabel={"next"}
+            />
           </div>
-          <div className="secondary">
-            <div className="uploader">
-              <ModelUploader
-                onProgress={this.onUploadProgress}
-                socketId={this.socketSvc.socketId}
-                onInitUpload={this.onInitUpload}
-                user={this.props.appState.user}
-                onDropFiles={this.onDropFiles}
-                onLogIn={this.onLogIn}
-                database={'gallery'}
-              />
+          <div className="scroller">
+            <div className="primary">
+              <div className="items">
+                {this.renderItems()}
+              </div>
             </div>
-            <div className="recent">
-              <RecentModels database="gallery"/>
-            </div>
-          <div/>
+            <div className="secondary">
+              <div className="uploader">
+                <ModelUploader
+                  onProgress={this.onUploadProgress}
+                  socketId={this.socketSvc.socketId}
+                  onInitUpload={this.onInitUpload}
+                  user={this.props.appState.user}
+                  onDropFiles={this.onDropFiles}
+                  onLogIn={this.onLogIn}
+                  database={'gallery'}
+                />
+              </div>
+              <div className="recent">
+                <RecentModels database="gallery"/>
+              </div>
+            <div/>
+          </div>
           </div>
         </div>
       </div>

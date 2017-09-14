@@ -5,8 +5,6 @@
 /////////////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import Toolkit from 'Viewer.Toolkit'
-import ReactDOM from 'react-dom'
-import React from 'react'
 
 class BoundingBoxExtension extends MultiModelExtensionBase {
 
@@ -258,4 +256,11 @@ Autodesk.Viewing.theExtensionManager.registerExtension (
   BoundingBoxExtension)
 
 export default 'Viewing.Extension.BoundingBox'
+
+
+
+
+
+
+
 

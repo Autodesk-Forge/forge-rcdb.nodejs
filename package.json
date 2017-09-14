@@ -136,6 +136,7 @@
     "react-measure": "2.0.2",
     "react-modal": "^1.6.5",
     "react-overdrive": "0.0.5",
+    "react-paginate": "^4.4.3",
     "react-redux": "^5.0.3",
     "react-reflex": "^2.0.9",
     "react-router": "^3.0.2",

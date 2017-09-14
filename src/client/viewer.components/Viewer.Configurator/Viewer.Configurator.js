@@ -205,9 +205,9 @@ class ViewerConfigurator extends BaseComponent {
         '../../viewer.components/Viewer.Extensions.Dynamic/' +
         extension.id + '/index').then(() => {
 
-        var extState = {}
-
-        extState[extension.id] = {}
+        const extState = {
+          [extension.id]: {}
+        }
 
         this.assignState(extState).then(() => {
 
@@ -325,10 +325,10 @@ class ViewerConfigurator extends BaseComponent {
 
               const panelState = this.state[panelId] || {}
 
-              var newPanelState = {}
-
-              newPanelState[panelId] = Object.assign({},
-                panelState, state)
+              const newPanelState = {
+                [panelId]: Object.assign({},
+                  panelState, state)
+              }
 
               this.assignState(newPanelState).then(() => {
 
@@ -455,11 +455,11 @@ class ViewerConfigurator extends BaseComponent {
 
                 const extState = this.state[id] || {}
 
-                var newExtState = {}
-
-                newExtState[id] = merge
-                  ? _.merge({}, extState, state)
-                  : Object.assign({}, extState, state)
+                const newExtState = {
+                  [id]: merge
+                    ? _.merge({}, extState, state)
+                    : Object.assign({}, extState, state)
+                }
 
                 this.assignState(newExtState).then(() => {
 

@@ -28,11 +28,26 @@ export default class ModelSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////
-  getModels (dbName) {
+  getCount (dbName) {
+
+    const url = `${dbName}/count`
+
+    return this.api.ajax(url)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  getModels (dbName, opts = {}) {
 
     const url = dbName
 
-    return this.api.ajax(url)
+    const query =
+      `?limit=${opts.limit || 100}` +
+      `&offset=${opts.offset || 0}`
+
+    return this.api.ajax(url + query)
   }
 
   /////////////////////////////////////////////////////////

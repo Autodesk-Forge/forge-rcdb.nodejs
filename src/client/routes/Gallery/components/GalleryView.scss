@@ -31,10 +31,52 @@
     width: 95%;
   }
 
-  .primary {
-    height: calc(100% - 30px);
+  .scroller {
     overflow: scroll;
-    margin-top: 16px;
+    height: 100%;
+  }
+
+  .paginator {
+    margin: 16px 0 0 16px;
+    width: calc(63% - 40px);
+    position: absolute;
+    padding: 0 0 0 0;
+    height: 34px;
+
+    .pagination {
+      border: 0px solid #ffffff;
+      background: white;
+      border-radius: 0;
+      width: 100%;
+      margin: 0;
+
+      li > a {
+        border-right: 1px solid #ddd;
+        border-left: 1px solid #ddd;
+        border-bottom: 0;
+        cursor: pointer;
+        border-top: 0;
+        outline: none;
+      }
+
+      li:first-child > a {
+        border-left: 0;
+      }
+
+      li:last-child > a {
+        border-bottom-right-radius: 0px;
+        border-top-right-radius: 0px;
+      }
+    }
+  }
+
+  .primary {
+    height: calc(100% - 60px);
+    overflow: scroll;
+
+    .items {
+      height: calc(100% - 45px);
+    }
   }
 
   .secondary {
@@ -57,7 +99,7 @@
     overflow: auto;
   }
 
-  @media only screen and (max-width: 876px) {
+  @media only screen and (max-width: 875px) {
 
     .search {
       max-width: 978px;
@@ -67,11 +109,25 @@
       max-width: 978px;
     }
 
+    .scroller {
+      height: calc(100% - 46px);
+      margin-top: 46px;
+    }
+
+    .paginator {
+      margin: 0 0 0 0;
+      width: 100%;
+    }
+
     .primary {
       max-width: 100%;
-      margin-left: 0;
+      margin: 0 0 0 0;
       float: none;
       width: auto;
+
+      .items {
+        height: 100%;
+      }
     }
 
     .secondary {
@@ -82,11 +138,11 @@
     }
 
     .recent {
-      height: calc(100%);
+      height: 100%;
     }
   }
 
-  @media only screen and (min-width: 875px) {
+  @media only screen and (min-width: 876px) {
 
     .search {
       max-width: 978px;
@@ -97,7 +153,7 @@
     }
 
     .primary {
-      margin: 16px 0px 0 3.0%;
+      margin: 60px 0px 0 16px;
       padding: 0px 40px 0 0;
       float: left;
       width: 63%;
@@ -174,6 +230,7 @@
       width: 100%;
 
       .svf:hover {
+
         span {
           color: #595959;
         }
@@ -182,6 +239,7 @@
           color: #595959;
         }
       }
+
       .svf {
         margin-right: 10px;
         cursor: pointer;

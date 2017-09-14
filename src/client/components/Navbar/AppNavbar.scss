@@ -52,11 +52,17 @@
   overflow: visible;
 }
 
+.forge-rcdb-navbar .dropdown-menu {
+ padding: 0;
+}
+
 .forge-rcdb-navbar .dropdown-menu > li {
-  margin: 6px 0;
+  padding: 6px 0;
+  margin: 0;
 }
 
 .forge-rcdb-navbar .dropdown-menu > .divider {
+  padding: 0;
   margin: 0;
 }
 
@@ -68,6 +74,10 @@
   height: 30px;
   line-height: 23px;
   padding: 3px 20px;
+}
+
+.forge-rcdb-navbar .dropdown-menu > li > a:hover {
+  background: #e5e5e5;
 }
 
 .forge-rcdb-navbar .dropdown .caret {
@@ -107,16 +117,8 @@
   top: 1px;
 }
 
-.forge-rcdb-navbar a .forge-rcdb-span {
-  position: relative;
-  line-height: 60px;
-  font-size: 26px;
-  color: #a5a5a5;
-  top: 3px;
-}
-
-.forge-rcdb-navbar a:hover .forge-rcdb-span {
-  color: #5d5f5f;
+.forge-rcdb-navbar a:hover span {
+  color: #ff9000;
 }
 
 .navbar-default .navbar-nav > .active > a {
