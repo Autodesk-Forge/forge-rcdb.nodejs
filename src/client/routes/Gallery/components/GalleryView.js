@@ -55,7 +55,8 @@ class GalleryView extends BaseComponent {
       pageCount: 1,
       search: '',
       offset: 0,
-      items: []
+      items: [],
+      page: 0
     }
   }
 
@@ -307,7 +308,9 @@ class GalleryView extends BaseComponent {
 
     const offset = 0
 
-    this.assignState({offset, search}).then(() => {
+    const page = 0
+
+    this.assignState({offset, page, search}).then(() => {
 
       this.refresh()
     })
@@ -414,11 +417,11 @@ class GalleryView extends BaseComponent {
   @autobind
   onPageChanged (data) {
 
-    const selected = data.selected
+    const page = data.selected
 
-    const offset = Math.ceil(selected * this.props.perPage)
+    const offset = Math.ceil(page * this.props.perPage)
 
-    this.assignState({offset}).then(() => {
+    this.assignState({offset, page}).then(() => {
 
       this.refresh()
     })
@@ -483,7 +486,7 @@ class GalleryView extends BaseComponent {
 
     return this.state.items.map((item) => {
 
-      return this.renderItem(item)
+      return this.renderItem (item)
     })
   }
 
@@ -511,6 +514,8 @@ class GalleryView extends BaseComponent {
               containerClassName={"pagination"}
               pageCount={this.state.pageCount}
               breakLabel={<a href="">...</a>}
+              initialPage={this.state.page}
+              forcePage={this.state.page}
               breakClassName={"break-me"}
               previousLabel={"previous"}
               activeClassName={"active"}

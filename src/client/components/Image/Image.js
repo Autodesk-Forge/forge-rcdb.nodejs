@@ -33,7 +33,8 @@ export default class Image extends React.Component {
     this.onLoad = this.onLoad.bind(this)
 
     this.state = {
-      classNames: []
+      classNames: ['default-adsk'],
+      src: this.props.src
     }
   }
 
@@ -43,6 +44,9 @@ export default class Image extends React.Component {
   /////////////////////////////////////////////////////////
   onLoad () {
 
+    this.setState({
+      classNames: []
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -51,7 +55,9 @@ export default class Image extends React.Component {
   /////////////////////////////////////////////////////////
   onError () {
 
-
+    this.setState({
+      classNames: ['default-adsk']
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -66,9 +72,10 @@ export default class Image extends React.Component {
     ]
 
     return(
-      <img onLoad={this.onLoad} onError={this.onError}
-        className={classNames.join(' ')}
-        {...this.props}
+      <img className={classNames.join(' ')}
+        onError={this.onError}
+        onLoad={this.onLoad}
+        src={this.state.src}
       />
     )
   }

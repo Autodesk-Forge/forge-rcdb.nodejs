@@ -1,5 +1,6 @@
 import React from 'react'
 import './ImageGrid.scss'
+import Image from 'Image'
 
 class ImageGrid extends React.Component {
 
@@ -14,7 +15,7 @@ class ImageGrid extends React.Component {
       return (
         <a key={img.link} href={img.link} target="_blank">
           <button title={img.title}>
-            <img src={img.src}/>
+            <Image src={img.src}/>
           </button>
         </a>
       )

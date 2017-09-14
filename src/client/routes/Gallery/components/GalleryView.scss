@@ -196,11 +196,12 @@
     }
 
     .content:hover img {
-      transform: scale(1.1);
+      transform: scale(1.08);
     }
 
     .image-container {
       overflow: hidden;
+      margin: 0px 0px;
       height: 100px;
       width: 100px;
       float: left;
