@@ -326,7 +326,11 @@ module.exports = function() {
         $or: [
           { private: false },
           { private: null }
-        ]
+        ],
+        name: {
+          $regex: new RegExp(req.query.search || ''),
+          $options : 'i'
+        }
       }
 
       if (req.query.offset) {
@@ -370,7 +374,11 @@ module.exports = function() {
         $or: [
           { private: false },
           { private: null }
-        ]
+        ],
+        name: {
+          $regex: new RegExp(req.query.search || ''),
+          $options : 'i'
+        }
       }
 
       const models = await modelSvc.getModels(opts)

@@ -108,19 +108,25 @@ class GalleryView extends BaseComponent {
   @autobind
   async refresh () {
 
-    const res = await this.modelSvc.getCount('gallery')
+    const {offset, search} = this.state
 
-    const offset = this.state.offset
     const limit = this.props.perPage
 
-    const items =
-      await this.modelSvc.getModels('gallery', {
-        offset,
-        limit
-      })
+    const opts = {
+      offset,
+      search,
+      limit
+    }
 
-    const pageCount = Math.ceil(res.count / this.props.perPage)
-  
+    const countRes = await this.modelSvc.getCount(
+      'gallery', opts)
+
+    const items = await this.modelSvc.getModels(
+      'gallery', opts)
+
+    const pageCount =
+      Math.ceil(countRes.count / limit)
+
     this.assignState({
       pageCount,
       items
@@ -297,8 +303,13 @@ class GalleryView extends BaseComponent {
   /////////////////////////////////////////////////////////
   onSearchChanged (e) {
 
-    this.assignState({
-      search: e.target.value.toLowerCase()
+    const search =  e.target.value.toLowerCase()
+
+    const offset = 0
+
+    this.assignState({offset, search}).then(() => {
+
+      this.refresh()
     })
   }
 
@@ -470,15 +481,7 @@ class GalleryView extends BaseComponent {
   /////////////////////////////////////////////////////////
   renderItems () {
 
-    const {search, items} = this.state
-
-    const filteredItems = items.filter((model) => {
-      return search.length
-        ? model.name.toLowerCase().indexOf(search) > -1
-        : true
-    })
-
-    return filteredItems.map((item) => {
+    return this.state.items.map((item) => {
 
       return this.renderItem(item)
     })

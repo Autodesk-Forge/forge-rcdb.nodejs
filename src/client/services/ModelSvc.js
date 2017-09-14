@@ -28,11 +28,13 @@ export default class ModelSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////
-  getCount (dbName) {
+  getCount (dbName, opts = {}) {
 
     const url = `${dbName}/count`
 
-    return this.api.ajax(url)
+    const query = `?search=${opts.search || ''}`
+
+    return this.api.ajax (url + query)
   }
 
   /////////////////////////////////////////////////////////
@@ -45,9 +47,10 @@ export default class ModelSvc extends BaseSvc {
 
     const query =
       `?limit=${opts.limit || 100}` +
-      `&offset=${opts.offset || 0}`
+      `&offset=${opts.offset || 0}` +
+      `&search=${opts.search || ''}`
 
-    return this.api.ajax(url + query)
+    return this.api.ajax (url + query)
   }
 
   /////////////////////////////////////////////////////////
