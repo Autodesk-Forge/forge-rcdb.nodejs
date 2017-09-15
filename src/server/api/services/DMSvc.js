@@ -497,60 +497,74 @@ export default class DMSvc extends BaseSvc {
         const objectId = ossSvc.parseObjectId(
           storageRes.body.data.id)
 
-        const upload =
+        const dmOpts = Object.assign({}, opts, {
+          onComplete: async(upload) => {
+
+            try {
+
+              // look for items with the same displayName
+              const items = await this.findItemsWithAttributes(
+                getToken,
+                projectId,
+                folderId, {
+                  displayName
+                })
+
+              if (items.length > 0) {
+
+                const item = items[0]
+
+                const versionRes = await this.createVersion(
+                  getToken,
+                  projectId,
+                  item.id,
+                  storageRes.body.data.id,
+                  displayName)
+
+                const response = {
+                  version: versionRes.body.data,
+                  storage: versionRes.body.data,
+                  item: item,
+                  upload
+                }
+
+                opts.onComplete(response)
+
+              } else {
+
+                const itemRes = await this.createItem(
+                  getToken, projectId, folderId,
+                  storageRes.body.data.id,
+                  displayName)
+
+                const versions = await this.getItemVersions(
+                  getToken, projectId, itemRes.body.data.id)
+
+                const response = {
+                  version: versions.body.data[0],
+                  storage: storageRes.body.data,
+                  item: itemRes.body.data,
+                  upload
+                }
+
+                opts.onComplete(response)
+              }
+
+            } catch (ex) {
+
+              opts.onError(ex)
+            }
+          }
+        })
+
+        const uploadRes =
           await ossSvc.uploadObjectChunked (
-            getToken,
-            objectId.bucketKey,
-            objectId.objectKey,
-            file, opts)
-
-        // look for items with the same displayName
-        const items = await this.findItemsWithAttributes(
           getToken,
-          projectId,
-          folderId, {
-            displayName
-          })
+          objectId.bucketKey,
+          objectId.objectKey,
+          file, dmOpts)
 
-        if (items.length > 0) {
-
-          const item = items[0]
-
-          const versionRes = await this.createVersion(
-            getToken,
-            projectId,
-            item.id,
-            storageRes.body.data.id,
-            displayName)
-
-          const response = {
-            version: versionRes.body.data,
-            storage: versionRes.body.data,
-            item: item,
-            upload
-          }
-
-          resolve(response)
-
-        } else {
-
-          const itemRes = await this.createItem(
-            getToken, projectId, folderId,
-            storageRes.body.data.id,
-            displayName)
-
-          const versions = await this.getItemVersions(
-            getToken(), projectId, itemRes.body.data.id)
-
-          const response = {
-            version: versions.body.data[0],
-            storage: storageRes.body.data,
-            item: itemRes.body.data,
-            upload
-          }
-
-          resolve(response)
-        }
+        resolve(uploadRes)
 
       } catch (ex) {
 
@@ -635,7 +649,7 @@ export default class DMSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   createStoragePayload (folderId, filename) {
 
-    return {
+    const payload = {
       data: {
         type: 'objects',
         attributes: {
@@ -651,6 +665,8 @@ export default class DMSvc extends BaseSvc {
         }
       }
     }
+
+    return payload
   }
 
   /////////////////////////////////////////////////////////////////
@@ -659,33 +675,33 @@ export default class DMSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   createItemPayload (folderId, objectId, displayName) {
 
-    return {
+    const payload = {
 
       jsonapi: {
         version: '1.0'
       },
       data: {
-          type: 'items',
-          attributes: {
-            displayName: displayName,
-            extension: {
-              type: 'items:autodesk.core:File',
-              version: '1.0'
+        type: 'items',
+        attributes: {
+          displayName: displayName,
+          extension: {
+            type: 'items:autodesk.core:File',
+            version: '1.0'
+          }
+        },
+        relationships: {
+          tip: {
+            data: {
+              type: 'versions', id: '1'
             }
           },
-          relationships: {
-            tip: {
-              data: {
-                type: 'versions', id: '1'
-              }
-            },
-            parent: {
-              data: {
-                type: 'folders',
-                id: folderId
-              }
+          parent: {
+            data: {
+              type: 'folders',
+              id: folderId
             }
           }
+        }
       },
       included: [ {
         type: 'versions',
@@ -707,6 +723,8 @@ export default class DMSvc extends BaseSvc {
         }
       }]
     }
+
+    return payload
   }
 
   /////////////////////////////////////////////////////////////////
@@ -715,7 +733,7 @@ export default class DMSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   createVersionPayload (itemId, objectId, displayName) {
 
-    return {
+    const payload = {
 
       jsonapi: {
         version: '1.0'
@@ -745,6 +763,8 @@ export default class DMSvc extends BaseSvc {
         }
       }
     }
+
+    return payload
   }
 
   /////////////////////////////////////////////////////////////////
@@ -753,7 +773,7 @@ export default class DMSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   createItemRelationshipRefPayload (refVersionId) {
 
-    return {
+    const payload = {
 
       jsonapi: {
         version: '1.0'
@@ -769,6 +789,8 @@ export default class DMSvc extends BaseSvc {
         }
       }
     }
+
+    return payload
   }
 
   /////////////////////////////////////////////////////////////////
@@ -777,7 +799,7 @@ export default class DMSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   createVersionRelationshipRefPayload (refVersionId) {
 
-    return {
+    const  payload = {
 
       jsonapi: {
         version: '1.0'
@@ -793,6 +815,8 @@ export default class DMSvc extends BaseSvc {
         }
       }
     }
+
+    return payload
   }
 
   /////////////////////////////////////////////////////////////////
@@ -801,7 +825,7 @@ export default class DMSvc extends BaseSvc {
   /////////////////////////////////////////////////////////////////
   createFolderPayload (parentFolderId, folderName) {
 
-    return {
+    const  payload = {
       jsonapi: {
         version: '1.0'
       },
@@ -824,6 +848,8 @@ export default class DMSvc extends BaseSvc {
         }
       }
     }
+
+    return payload
   }
 }
 

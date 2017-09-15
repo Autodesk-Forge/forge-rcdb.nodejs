@@ -16,6 +16,44 @@ export default class ContextMenu
   //
   //
   /////////////////////////////////////////////////////////////////
+  show (event, menu) {
+
+    var viewport = this.viewer.container.getBoundingClientRect();
+
+    // Normalize Hammer events
+    if (Array.isArray(event.changedPointers) && event.changedPointers.length > 0) {
+      event.clientX = event.changedPointers[0].clientX;
+      event.clientY = event.changedPointers[0].clientY;
+    }
+
+    var x = event.clientX - viewport.left;
+    var y = event.clientY - viewport.top;
+
+    if (!this.open) {
+
+      var self = this;
+
+      this.showMenu(menu, x, y);
+      this.open = true;
+      this.hideEventListener = function(event) {
+        if (event.target.className !== "menuItem") {
+          self.hide(event);
+        }
+      }
+
+      this.isTouch = (event.type === "press")
+
+      document.body.addEventListener(
+        this.isTouch
+          ? "touchstart"
+          : "mousedown", this.hideEventListener, true)
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
   showMenu (menu, x, y) {
 
     var container = document.createElement('div'),
@@ -115,7 +153,33 @@ export default class ContextMenu
   //
   //
   /////////////////////////////////////////////////////////////
-  guid(format='xxxxxxxx') {
+  hide () {
+
+    if (this.open) {
+      for (var index=0; index<this.menus.length; ++index) {
+        if(this.menus[index]) {
+          this.menus[index].parentNode.removeChild(this.menus[index]);
+        }
+      }
+      this.menus = [];
+      this.open = false;
+
+      document.body.removeEventListener(
+        this.isTouch
+          ? "touchstart"
+          : "mousedown", this.hideEventListener)
+
+      this.isTouch = false;
+      return true;
+    }
+    return false;
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  guid (format = 'xxxxxxxx') {
 
     var d = new Date().getTime()
 

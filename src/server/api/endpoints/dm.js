@@ -366,14 +366,16 @@ module.exports = function() {
 
       const folderId = req.params.folderId
 
+      const socketId = req.body.socketId
+
+      const nodeId = req.body.nodeId
+
       const file = req.files[0]
 
       const opts = {
         chunkSize: 5 * 1024 * 1024,
         concurrentUploads: 3,
         onProgress: (info) => {
-
-          const socketId = req.body.socketId
 
           if (socketId) {
 
@@ -387,7 +389,37 @@ module.exports = function() {
             })
 
             socketSvc.broadcast (
-              'progress', msg, socketId)
+              'upload.progress', msg, socketId)
+          }
+        },
+        onError: (error) => {
+
+          if (socketId) {
+
+            const socketSvc = ServiceManager.getService(
+              'SocketSvc')
+
+            const dmError = Object.assign({}, error, {
+              nodeId
+            })
+
+            socketSvc.broadcast(
+              'upload.error', dmError, socketId)
+          }
+        },
+        onComplete: (msg) => {
+
+          if (socketId) {
+
+            const socketSvc = ServiceManager.getService(
+              'SocketSvc')
+
+            const dmMsg = Object.assign({}, msg, {
+              nodeId
+            })
+
+            socketSvc.broadcast(
+              'upload.complete', dmMsg, socketId)
           }
         }
       }
@@ -689,8 +721,16 @@ module.exports = function() {
 
       const token = await forgeSvc.get3LeggedTokenMaster(req.session)
 
+      const details =
+        await ossSvc.getObjectDetails(
+        token, bucketKey, objectKey)
+
+      const size = details.body.size
+
       const object = await ossSvc.getObject(
         token, bucketKey, objectKey)
+
+      res.set('Content-Length', size)
 
       res.end(object)
 
