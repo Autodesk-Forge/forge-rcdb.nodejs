@@ -126,10 +126,10 @@ class PhysicsExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  createMaterial () {
+  createMaterial (color = 0xff0000) {
 
     const material = new THREE.MeshPhongMaterial({
-      color: 0xff0000
+      color
     })
 
     this.viewer.impl.matman().addMaterial(
@@ -229,8 +229,6 @@ class PhysicsExtension extends MultiModelExtensionBase {
         inertia)
 
     const body = new Ammo.btRigidBody(rbInfo)
-
-    console.log(ray.direction)
 
     body.setLinearVelocity(
       new Ammo.btVector3(

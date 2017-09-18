@@ -546,8 +546,8 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   getModifiedWorldBoundingBox (fragIds, fragList) {
 
-    var fragbBox = new THREE.Box3()
-    var nodebBox = new THREE.Box3()
+    const fragbBox = new THREE.Box3()
+    const nodebBox = new THREE.Box3()
 
     fragIds.forEach(function(fragId) {
 
@@ -583,7 +583,7 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  // Creates Raycatser object from the pointer
+  // Creates Raycaster object from the pointer
   //
   /////////////////////////////////////////////////////////
   pointerToRaycaster (domElement, camera, pointer) {

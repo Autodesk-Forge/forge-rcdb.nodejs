@@ -94,8 +94,8 @@ class SelectionWindowExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   doSelection () {
 
-    this.viewer.setActiveNavigationTool(
-      'selectionWindowTool')
+    this.viewer.toolController.activateTool(
+      this.selectionWindowTool.getName())
   }
 
   /////////////////////////////////////////////////////////
@@ -157,7 +157,11 @@ class SelectionWindowExtension extends MultiModelExtensionBase {
     return (
       <div className="content">
         <ReactLoader show={false}/>
-        <button onClick={() => this.doSelection()}/>
+        <button onClick={() => this.doSelection()}
+          className="select-btn">
+          <span className="fa fa-object-group"/>
+          Start Window Select ...
+        </button>
       </div>
     )
   }

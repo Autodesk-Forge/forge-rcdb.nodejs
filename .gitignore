@@ -11,5 +11,6 @@ resources/db/prod
 resources/db/dev
 bin/static
 push-to-prod.sh
+config/development.config.js
 TMP
 

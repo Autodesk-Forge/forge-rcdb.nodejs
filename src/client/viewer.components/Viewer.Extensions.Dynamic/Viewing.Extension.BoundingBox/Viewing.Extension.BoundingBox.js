@@ -83,6 +83,8 @@ class BoundingBoxExtension extends MultiModelExtensionBase {
 
     console.log('Viewing.Extension.BoundingBox unloaded')
 
+    this.viewer.impl.removeOverlayScene ('boundingBox')
+
     super.unload ()
 
     return true
@@ -97,8 +99,7 @@ class BoundingBoxExtension extends MultiModelExtensionBase {
     this.options.loader.show (false)
 
     this.viewer.impl.createOverlayScene (
-      'boundingBox',
-      this.linesMaterial)
+      'boundingBox', this.linesMaterial)
   }
 
   /////////////////////////////////////////////////////////

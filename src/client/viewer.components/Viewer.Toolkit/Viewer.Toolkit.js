@@ -578,93 +578,53 @@ export default class Toolkit {
   //
   //
   /////////////////////////////////////////////////////////
-  static drawBox(viewer, min, max, material = null) {
+  static drawBox (viewer, min, max, material, overlayId) {
 
-    var _material = material;
+    const geometry = new THREE.Geometry()
 
-    if(!_material) {
+    geometry.vertices.push(new THREE.Vector3(min.x, min.y, min.z))
+    geometry.vertices.push(new THREE.Vector3(max.x, min.y, min.z))
 
-      _material = new THREE.LineBasicMaterial({
-        color: 0xffff00,
-        linewidth: 2
-      })
+    geometry.vertices.push(new THREE.Vector3(max.x, min.y, min.z))
+    geometry.vertices.push(new THREE.Vector3(max.x, min.y, max.z))
 
-      viewer.impl.matman().addMaterial(
-        'ADN-Material-Line',
-        _material,
-        true)
-    }
+    geometry.vertices.push(new THREE.Vector3(max.x, min.y, max.z))
+    geometry.vertices.push(new THREE.Vector3(min.x, min.y, max.z))
 
-    function drawLines(coordsArray, mat) {
+    geometry.vertices.push(new THREE.Vector3(min.x, min.y, max.z))
+    geometry.vertices.push(new THREE.Vector3(min.x, min.y, min.z))
 
-      var lines = []
+    geometry.vertices.push(new THREE.Vector3(min.x, max.y, max.z))
+    geometry.vertices.push(new THREE.Vector3(max.x, max.y, max.z))
 
-      for (var i = 0; i < coordsArray.length; i+=2) {
+    geometry.vertices.push(new THREE.Vector3(max.x, max.y, max.z))
+    geometry.vertices.push(new THREE.Vector3(max.x, max.y, min.z))
 
-        var start = coordsArray[i]
-        var end = coordsArray[i+1]
+    geometry.vertices.push(new THREE.Vector3(max.x, max.y, min.z))
+    geometry.vertices.push(new THREE.Vector3(min.x, max.y, min.z))
 
-        var geometry = new THREE.Geometry()
+    geometry.vertices.push(new THREE.Vector3(min.x, max.y, min.z))
+    geometry.vertices.push(new THREE.Vector3(min.x, max.y, max.z))
 
-        geometry.vertices.push(new THREE.Vector3(
-          start.x, start.y, start.z))
+    geometry.vertices.push(new THREE.Vector3(min.x, min.y, min.z))
+    geometry.vertices.push(new THREE.Vector3(min.x, max.y, min.z))
 
-        geometry.vertices.push(new THREE.Vector3(
-          end.x, end.y, end.z))
+    geometry.vertices.push(new THREE.Vector3(max.x, min.y, min.z))
+    geometry.vertices.push(new THREE.Vector3(max.x, max.y, min.z))
 
-        geometry.computeLineDistances()
+    geometry.vertices.push(new THREE.Vector3(max.x, min.y, max.z))
+    geometry.vertices.push(new THREE.Vector3(max.x, max.y, max.z))
 
-        var line = new THREE.Line(geometry, mat)
+    geometry.vertices.push(new THREE.Vector3(min.x, min.y, max.z))
+    geometry.vertices.push(new THREE.Vector3(min.x, max.y, max.z))
 
-        viewer.impl.scene.add(line)
+    const lines = new THREE.Line(geometry,
+      material, THREE.LinePieces)
 
-        lines.push(line)
-      }
+    viewer.impl.addOverlay(overlayId, lines)
 
-      return lines
-    }
-
-    var lines = drawLines([
-
-        {x: min.x, y: min.y, z: min.z},
-        {x: max.x, y: min.y, z: min.z},
-
-        {x: max.x, y: min.y, z: min.z},
-        {x: max.x, y: min.y, z: max.z},
-
-        {x: max.x, y: min.y, z: max.z},
-        {x: min.x, y: min.y, z: max.z},
-
-        {x: min.x, y: min.y, z: max.z},
-        {x: min.x, y: min.y, z: min.z},
-
-        {x: min.x, y: max.y, z: max.z},
-        {x: max.x, y: max.y, z: max.z},
-
-        {x: max.x, y: max.y, z: max.z},
-        {x: max.x, y: max.y, z: min.z},
-
-        {x: max.x, y: max.y, z: min.z},
-        {x: min.x, y: max.y, z: min.z},
-
-        {x: min.x, y: max.y, z: min.z},
-        {x: min.x, y: max.y, z: max.z},
-
-        {x: min.x, y: min.y, z: min.z},
-        {x: min.x, y: max.y, z: min.z},
-
-        {x: max.x, y: min.y, z: min.z},
-        {x: max.x, y: max.y, z: min.z},
-
-        {x: max.x, y: min.y, z: max.z},
-        {x: max.x, y: max.y, z: max.z},
-
-        {x: min.x, y: min.y, z: max.z},
-        {x: min.x, y: max.y, z: max.z}],
-
-      _material);
-
-    viewer.impl.sceneUpdated(true)
+    viewer.impl.invalidate(
+      true, true, true)
 
     return lines
   }
