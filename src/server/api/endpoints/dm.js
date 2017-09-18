@@ -370,6 +370,8 @@ module.exports = function() {
 
       const nodeId = req.body.nodeId
 
+      const hubId = req.body.hubId
+
       const file = req.files[0]
 
       const opts = {
@@ -400,7 +402,8 @@ module.exports = function() {
               'SocketSvc')
 
             const dmError = Object.assign({}, error, {
-              nodeId
+              nodeId,
+              hubId
             })
 
             socketSvc.broadcast(
@@ -415,7 +418,8 @@ module.exports = function() {
               'SocketSvc')
 
             const dmMsg = Object.assign({}, msg, {
-              nodeId
+              nodeId,
+              hubId
             })
 
             socketSvc.broadcast(

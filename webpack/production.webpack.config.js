@@ -135,6 +135,7 @@ module.exports = {
 
     new webpack.ProvidePlugin({
       'window.jQuery': 'jquery',
+      Promise: 'bluebird',
       jQuery: 'jquery',
       _: 'lodash',
       $: 'jquery'
@@ -174,7 +175,9 @@ module.exports = {
     new ProgressBarPlugin({
       format: '  build [:bar] ' + chalk.green.bold(':percent') + ' (:elapsed seconds)',
       clear: false
-    })
+    }),
+
+    new webpack.NormalModuleReplacementPlugin(/es6-promise$/, 'bluebird')
   ],
 
   resolve: {

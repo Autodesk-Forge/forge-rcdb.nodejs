@@ -114,26 +114,29 @@ class CoreLayout extends React.Component {
     const notification = this.notifySvc.getNotification(
       msg.uploadId)
 
-    notification.forgeUpload = true
+    if (notification) {
 
-    const progress = 50.0 + (
-      isNaN(msg.progress)
-        ? 0
-        : (msg.progress * 0.5))
+      notification.forgeUpload = true
 
-    notification.message =
-      `progress: ${progress.toFixed(2)}%`
+      const progress = 50.0 + (
+          isNaN(msg.progress)
+            ? 0
+            : (msg.progress * 0.5))
 
-    if (progress === 100) {
+      notification.message =
+        `progress: ${progress.toFixed(2)}%`
 
-      notification.title = `${msg.filename} uploaded!`
-      notification.message = `progress: 100%`
-      notification.dismissAfter = 2000
-      notification.dismissible = true
-      notification.status = 'success'
+      if (progress === 100) {
+
+        notification.title = `${msg.filename} uploaded!`
+        notification.message = `progress: 100%`
+        notification.dismissAfter = 2000
+        notification.dismissible = true
+        notification.status = 'success'
+      }
+
+      this.notifySvc.update(notification)
     }
-
-    this.notifySvc.update(notification)
   }
 
   /////////////////////////////////////////////////////////
@@ -179,32 +182,37 @@ class CoreLayout extends React.Component {
   @autobind
   onModelAdded (msg) {
 
+    // this triggrs an update in case
+    // max uploads have been reached
     this.props.setUser(this.props.appState.user)
 
     let notification =
       this.notifySvc.getNotification(
         msg.jobId)
 
-    notification.status = 'success'
+    if (notification) {
 
-    notification.buttons = [{
-      name: 'Load',
-      primary: true,
-      onClick: () => {
-        const host = window.location.protocol +
-          '//' + window.location.host
-        const url = `${host}/viewer?id=${msg.modelId}`
-        window.open(url,'_blank')
-      }
-    }, {
-      name: 'Hide',
-      onClick: () => {
-        notification.dismissAfter = 1
-        this.notifySvc.update(notification)
-      }
-    }]
+      notification.status = 'success'
 
-    this.notifySvc.update(notification)
+      notification.buttons = [{
+        name: 'Load',
+        primary: true,
+        onClick: () => {
+          const host = window.location.protocol +
+            '//' + window.location.host
+          const url = `${host}/viewer?id=${msg.modelId}`
+          window.open(url,'_blank')
+        }
+      }, {
+        name: 'Hide',
+        onClick: () => {
+          notification.dismissAfter = 1
+          this.notifySvc.update(notification)
+        }
+      }]
+
+      this.notifySvc.update(notification)
+    }
   }
 
   /////////////////////////////////////////////////////////

@@ -75,6 +75,7 @@
     "babel-preset-react": "^6.11.1",
     "babel-preset-react-hmre": "^1.1.1",
     "babel-register": "^6.14.0",
+    "bluebird": "^3.5.0",
     "bootstrap": "^3.3.7",
     "bootstrap-sass": "^3.3.7",
     "bootstrap-webpack": "0.0.6",

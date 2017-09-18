@@ -4,9 +4,11 @@
 //
 /////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
+import SphereBufferGeometry from './SphereBufferGeometry'
 import ContentEditable from 'react-contenteditable'
 import './Viewing.Extension.Physics.SoftBody.scss'
 import WidgetContainer from 'WidgetContainer'
+import EventTool from 'Viewer.EventTool'
 import 'rc-tooltip/assets/bootstrap.css'
 import ScriptLoader from 'ScriptLoader'
 import ServiceManager from 'SvcManager'
@@ -38,6 +40,10 @@ class PhysicsExtension extends MultiModelExtensionBase {
     this.renderTitle = this.renderTitle.bind(this)
     this.onTransform = this.onTransform.bind(this)
     this.onReset = this.onReset.bind(this)
+
+    this.projectileMaterial = this.createMaterial(0xFF0000)
+
+    this.eventTool = new EventTool(this.viewer)
 
     this.react = options.react
   }
@@ -89,9 +95,168 @@ class PhysicsExtension extends MultiModelExtensionBase {
       this.react.pushRenderExtension(this)
     })
 
+    this.eventTool.on ('mousemove', (event) => {
+
+      this.mouseEvent = event
+    })
+
+    this.eventTool.on ('keydown', (event) => {
+
+      if (event.keyCode === 32) { //SPACE
+
+        const pointer = this.mouseEvent.pointers
+          ? this.mouseEvent.pointers[0]
+          : this.mouseEvent
+
+        const rayCaster = this.pointerToRaycaster(
+          this.viewer.impl.canvas,
+          this.viewer.impl.camera,
+          pointer)
+
+        this.createProjectile (rayCaster.ray)
+      }
+    })
+
     console.log('Viewing.Extension.Physics.SoftBody loaded')
 
     return true
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  createMaterial () {
+
+    const material = new THREE.MeshPhongMaterial({
+      color: 0xff0000
+    })
+
+    this.viewer.impl.matman().addMaterial(
+      this.guid(), material, true)
+
+    return material
+  }
+
+  /////////////////////////////////////////////////////////
+  // Creates Raycatser object from the pointer
+  //
+  /////////////////////////////////////////////////////////
+  pointerToRaycaster (domElement, camera, pointer) {
+
+    const pointerVector = new THREE.Vector3()
+    const pointerDir = new THREE.Vector3()
+    const ray = new THREE.Raycaster()
+
+    const rect = domElement.getBoundingClientRect()
+
+    const x = ((pointer.clientX - rect.left) / rect.width) * 2 - 1
+    const y = -((pointer.clientY - rect.top) / rect.height) * 2 + 1
+
+    if (camera.isPerspective) {
+
+      pointerVector.set(x, y, 0.5)
+
+      pointerVector.unproject(camera)
+
+      ray.set(camera.position,
+        pointerVector.sub(
+          camera.position).normalize())
+
+    } else {
+
+      pointerVector.set(x, y, -1)
+
+      pointerVector.unproject(camera)
+
+      pointerDir.set(0, 0, -1)
+
+      ray.set(pointerVector,
+        pointerDir.transformDirection(
+          camera.matrixWorld))
+    }
+
+    return ray
+  }
+
+  createProjectile (ray) {
+
+    const { physicsCore } = this.react.getState()
+
+    const radius = 8
+    const mass = 0.1
+
+    const geometry = new THREE.SphereGeometry(
+      radius, 18, 16)
+
+    geometry.computeFaceNormals()
+
+    const mesh = new THREE.Mesh(
+      geometry, this.projectileMaterial)
+
+    mesh.position.copy(ray.origin)
+    mesh.receiveShadow = true
+    mesh.castShadow = true
+
+
+    const shape = new Ammo.btSphereShape(radius)
+
+    //shape.setMargin(0.05)
+
+    const inertia = new Ammo.btVector3(0, 0, 0)
+
+    shape.calculateLocalInertia(mass, inertia)
+
+    const transform = new Ammo.btTransform
+
+    transform.setIdentity()
+
+    transform.setOrigin(
+      new Ammo.btVector3(
+        ray.origin.x,
+        ray.origin.y,
+        ray.origin.z))
+
+    const motionState =
+      new Ammo.btDefaultMotionState(
+        transform)
+
+    const rbInfo =
+      new Ammo.btRigidBodyConstructionInfo(
+        mass,
+        motionState,
+        shape,
+        inertia)
+
+    const body = new Ammo.btRigidBody(rbInfo)
+
+    console.log(ray.direction)
+
+    body.setLinearVelocity(
+      new Ammo.btVector3(
+        ray.direction.x * 100,
+        ray.direction.y * 100,
+        ray.direction.z * 100))
+
+    body.setFriction(0.8)
+
+    body.type = 'MESH'
+
+    body.mesh = mesh
+
+    physicsCore.addRigidBody(body)
+
+    this.viewer.impl.scene.add(mesh)
+    this.viewer.impl.sceneUpdated(true)
+  }
+
+  createSoftBody () {
+
+    const geometry =
+      new SphereBufferGeometry(
+        1.5, 40, 25)
+
+    geometry.translate(5, 5, 0)
   }
 
   /////////////////////////////////////////////////////////
@@ -204,6 +369,8 @@ class PhysicsExtension extends MultiModelExtensionBase {
 
     this.viewer.autocam.setHomeViewFrom(
       nav.getCamera())
+
+    this.createSoftBody ()
   }
 
   /////////////////////////////////////////////////////////
@@ -237,6 +404,12 @@ class PhysicsExtension extends MultiModelExtensionBase {
     this.bounds =
       await Toolkit.getWorldBoundingBox(
         this.viewer.model)
+
+    this.bounds.expandByScalar(10)
+
+    const nav = this.viewer.navigation
+
+    nav.fitBounds(true, this.bounds)
 
     this.react.setState({
       activateControls: true,
@@ -385,6 +558,10 @@ class PhysicsExtension extends MultiModelExtensionBase {
     const { physicsCore } = this.react.getState()
 
     physicsCore.runAnimation(run)
+
+    run
+      ? this.eventTool.activate()
+      : this.eventTool.deactivate()
   }
 
   /////////////////////////////////////////////////////////

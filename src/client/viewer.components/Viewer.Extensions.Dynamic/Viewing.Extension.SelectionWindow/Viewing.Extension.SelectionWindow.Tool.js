@@ -445,3 +445,20 @@ export default class SelectionWindowTool {
     return true;
   }
 }
+
+
+var _getCameraPlane = function(pos, nor) {
+  var planeNor = nor || pos.clone().sub(_camera.position).normalize();
+  return new THREE.Plane(
+    planeNor, -planeNor.x*pos.x - planeNor.y*pos.y - planeNor.z*pos.z
+  );
+};
+
+var _centerPivot = function() {
+  // find distance pivot to camera plane
+  // set new pivot to be that distance along eye vector
+  var eyeVec = _camera.target.clone().sub(_camera.position).normalize();
+  var plane = _getCameraPlane(_camera.position, eyeVec);
+  var dist = plane.distanceToPoint(_camera.pivot);
+  _camera.pivot.copy(eyeVec).multiplyScalar(dist).add(_camera.position);
+};
