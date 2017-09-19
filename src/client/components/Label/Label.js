@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types'
+import DOMPurify from 'dompurify'
 import ReactDOM from 'react-dom'
 import React from 'react'
 import './Label.scss'
