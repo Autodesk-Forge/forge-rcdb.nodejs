@@ -140,7 +140,7 @@ class TestView extends React.Component {
 
     const lmvProxy = 'lmv-proxy-2legged'
 
-    Autodesk.Viewing.setEndpointAndApi(
+    Autodesk.Viewing.endpoint.setEndpointAndApi(
       `${window.location.origin}/${lmvProxy}`,
       'modelDerivativeV2')
 
@@ -259,7 +259,7 @@ class TestView extends React.Component {
 
     const lmvProxy = 'lmv-proxy-2legged'
 
-    Autodesk.Viewing.setEndpointAndApi(
+    Autodesk.Viewing.endpoint.setEndpointAndApi(
       `${window.location.origin}/${lmvProxy}`,
       'modelDerivativeV2')
 

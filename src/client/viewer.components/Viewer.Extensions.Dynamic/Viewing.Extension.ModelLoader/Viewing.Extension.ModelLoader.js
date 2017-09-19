@@ -220,7 +220,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
           const lmvProxy =
             dbModel.model.proxy || 'lmv-proxy-2legged'
 
-          Autodesk.Viewing.setEndpointAndApi(
+          Autodesk.Viewing.endpoint.setEndpointAndApi(
             `${window.location.origin}/${lmvProxy}`,
             'modelDerivativeV2')
 

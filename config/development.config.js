@@ -57,13 +57,13 @@ const config = {
     },
 
     viewer: {
-      //viewer3D: 'https://developer.api.autodesk.com/derivativeservice/v2/viewers/viewer3D.js?v=2.17',
-      //threeJS:  'https://developer.api.autodesk.com/derivativeservice/v2/viewers/three.js?v=2.17',
-      //style:    'https://developer.api.autodesk.com/derivativeservice/v2/viewers/style.css?v=2.17'
+      //viewer3D: 'https://developer.api.autodesk.com/derivativeservice/v2/viewers/viewer3D.js?v=3.1.1',
+      //threeJS:  'https://developer.api.autodesk.com/derivativeservice/v2/viewers/three.js?v=3.1.1',
+      //style:    'https://developer.api.autodesk.com/derivativeservice/v2/viewers/style.css?v=3.1.1'
 
-      viewer3D: '/resources/libs/lmv/2.17/viewer3D.js',
-      threeJS:  '/resources/libs/lmv/2.17/three.js',
-      style:    '/resources/libs/lmv/2.17/style.css'
+      viewer3D: '/resources/libs/lmv/3.1.1/viewer3D.js',
+      threeJS:  '/resources/libs/lmv/3.1.1/three.js',
+      style:    '/resources/libs/lmv/3.1.1/style.css'
     }
   },
 

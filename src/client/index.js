@@ -70,8 +70,6 @@ if (config.env === 'development') {
 // ========================================================
 // Go!
 // ========================================================
-// render()
-
 // Chunked polyfill for browsers without Intl support
 if (!window.Intl) {
   (new Promise((resolve) => {

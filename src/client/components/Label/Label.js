@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types'
+import ReactDOM from 'react-dom'
 import React from 'react'
 import './Label.scss'
 
@@ -54,7 +55,7 @@ export default class Label extends React.Component {
       <div className={classNames.join(' ')}
         style={style}>
         <p>
-          { this.props.text }
+          { DOMPurify.sanitize(this.props.text) }
         </p>
       </div>
     )

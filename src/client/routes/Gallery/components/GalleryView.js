@@ -8,6 +8,7 @@ import Paginator from 'react-paginate'
 import Background from 'Background'
 import { Link } from 'react-router'
 import Spinner from 'react-spinkit'
+import DOMPurify from 'dompurify'
 import './GalleryView.scss'
 import Image from 'Image'
 import React from 'react'
@@ -447,7 +448,7 @@ class GalleryView extends BaseComponent {
             <Image src={thumbnailUrl}/>
           </div>
           <h3 className="title">
-              {item.name}
+              {DOMPurify.sanitize(item.name)}
           </h3>
         </Link>
         <div className="footer">

@@ -1,3 +1,9 @@
+///////////////////////////////////////////////////////////
+// SelectSet util for Selection Window
+// in Forge Viewer
+// By Philippe Leefsma, September 2017
+//
+///////////////////////////////////////////////////////////
 import Toolkit from 'Viewer.Toolkit'
 
 export default class SelectSet {

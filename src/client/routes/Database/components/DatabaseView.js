@@ -314,7 +314,7 @@ class DatabaseView extends React.Component {
 
         this.props.setViewerEnv(this.dbModel.env)
 
-        Autodesk.Viewing.setEndpointAndApi(
+        Autodesk.Viewing.endpoint.setEndpointAndApi(
           window.location.origin + '/lmv-proxy-2legged',
           'modelDerivativeV2')
 

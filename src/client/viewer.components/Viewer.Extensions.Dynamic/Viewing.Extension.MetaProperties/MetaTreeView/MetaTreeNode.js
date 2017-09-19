@@ -1,7 +1,7 @@
 import EventsEmitter from 'EventsEmitter'
 import Spinner from 'react-spinkit'
 import PropTypes from 'prop-types'
-import ReactDOM from 'react-dom'
+import DOMPurify from 'dompurify'
 import Label from 'Label'
 import React from 'react'
 

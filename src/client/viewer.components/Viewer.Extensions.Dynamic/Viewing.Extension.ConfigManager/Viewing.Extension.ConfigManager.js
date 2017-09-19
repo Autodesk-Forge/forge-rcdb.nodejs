@@ -165,7 +165,7 @@ class ConfigManagerExtension extends ExtensionBase {
         const state = this.react.getState()
 
         const name = !!state.newSequenceName
-          ? state.newSequenceName
+          ? DOMPurify.sanitize(state.newSequenceName)
           : new Date().toString('d/M/yyyy H:mm:ss')
 
         const sequence = {
@@ -412,7 +412,7 @@ class ConfigManagerExtension extends ExtensionBase {
 
     const name = !state.newStateName.length
       ? new Date().toString('d/M/yyyy H:mm:ss')
-      : state.newStateName
+      : DOMPurify.sanitize(state.newStateName)
 
     const viewerState = Object.assign({},
       this.viewer.getState(), {
@@ -936,7 +936,7 @@ class ConfigManagerExtension extends ExtensionBase {
 
     const items = state.items.map((item) => {
 
-      const text = item.name
+      const text = DOMPurify.sanitize(item.name)
 
       const className = "item" +
         (state.stateSelection ? ' selectable' : '') +
