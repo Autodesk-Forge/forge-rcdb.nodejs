@@ -18,7 +18,7 @@ export default class GraphicMarker extends EventsEmitter {
     this._markerId = this.guid();
 
     var htmlMarker = `
-      <div id="${this._markerId}"
+      <div id="${this._markerId}">
       </div>
     `;
 
