@@ -1,21 +1,25 @@
 import SelectSet from './Viewing.Extension.SelectionWindow.SelectSet'
+import EventsEmitter from 'EventsEmitter'
 import Toolkit from 'Viewer.Toolkit'
 import cursors from './cursors'
 
 var _CROSS_MAX_WIDTH = 20;
 
-export default class SelectionWindowTool {
+export default class SelectionWindowTool extends EventsEmitter {
 
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  constructor(viewer) {
+  constructor (viewer) {
+
+    super()
 
     this.onResize = this.onResize.bind(this)
 
     this.selectSet = new SelectSet(viewer)
 
+    this.partialSelect = false
     this.materialLine = null
     this.isDragging = false
     this.crossGeomX = null
@@ -69,15 +73,38 @@ export default class SelectionWindowTool {
   //
   //
   /////////////////////////////////////////////////////////
+  setModel (model) {
+
+    if (this.isActive) {
+
+      this.selectSet.setModel(model)
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  setPartialSelect (partialSelect) {
+
+    this.partialSelect = partialSelect
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   activate () {
 
     if (!this.isActive) {
+
+      this.viewer.clearSelection()
 
       const model =
         this.viewer.activeModel ||
         this.viewer.model
 
-      this.selectSet.loadModel(model)
+      this.selectSet.setModel(model)
 
       this.materialLine = new THREE.LineBasicMaterial({
         color: new THREE.Color(0x0000FF),
@@ -108,14 +135,7 @@ export default class SelectionWindowTool {
 
       this.isActive = true
 
-      // debug
-      if (this.debugMesh) {
-
-        this.viewer.impl.scene.remove(this.debugMesh)
-
-        this.viewer.impl.invalidate(
-          true, true, true)
-      }
+      this.emit('activate')
     }
   }
 
@@ -143,6 +163,8 @@ export default class SelectionWindowTool {
 
       this.viewer.toolController.deactivateTool(
         this.getName())
+
+      this.emit('deactivate')
     }
   }
 
@@ -436,14 +458,17 @@ export default class SelectionWindowTool {
       return false
     }
 
-    this.debugMesh = this.selectSet.compute(
+    const dbIds = this.selectSet.compute(
       this.pointerStart,
-      this.pointerEnd)
+      this.pointerEnd,
+      this.partialSelect)
 
-    this.viewer.impl.scene.add(this.debugMesh)
+    const model =
+      this.viewer.activeModel ||
+      this.viewer.model
 
-    this.viewer.impl.invalidate(
-      true, true, true)
+    this.viewer.impl.selector.setSelection(
+      dbIds, model)
 
     this.deactivate()
 

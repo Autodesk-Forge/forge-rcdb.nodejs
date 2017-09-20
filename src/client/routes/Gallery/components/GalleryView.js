@@ -521,7 +521,7 @@ class GalleryView extends BaseComponent {
               previousLabel={"previous"}
               activeClassName={"active"}
               marginPagesDisplayed={2}
-              pageRangeDisplayed={5}
+              pageRangeDisplayed={3}
               nextLabel={"next"}
             />
           </div>

@@ -24,6 +24,12 @@
     overflow-x: hidden;
     height: 100%;
 
+    .row {
+      padding: 10px;
+      width: 100%;
+      margin: 0;
+    }
+
     button.active {
       border: 2px solid #FF9800;
     }
@@ -54,13 +60,42 @@
       background: whitesmoke;
       border-radius: 4px;
       outline: none;
-      margin: 10px;
       float: left;
 
       span {
         margin-right: 6px;
         top: 1px;
       }
+    }
+
+    .label-container {
+      margin: 4px 0 0 20px;
+    }
+
+    .switch-container {
+      border: 1px solid #9c9c9c;
+      border-radius: 12px;
+      margin: 5px 0 0 6px;
+      float: left;
+    }
+
+    input[type="checkbox"].switch + div {
+      width: 34px;
+      height: 16px;
+    }
+
+    input[type="checkbox"].switch:checked + div {
+      width: 34px;
+    }
+
+    input[type="checkbox"].switch:checked + div > div {
+      transform: translate3d(18px, 0, 0);
+    }
+
+    input[type="checkbox"].switch + div > div {
+      height: 16px;
+      width: 16px;
+      margin: 0;
     }
   }
 }

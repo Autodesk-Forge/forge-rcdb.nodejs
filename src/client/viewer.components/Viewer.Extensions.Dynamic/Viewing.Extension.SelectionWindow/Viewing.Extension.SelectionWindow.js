@@ -8,6 +8,8 @@ import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import WidgetContainer from 'WidgetContainer'
 import { ReactLoader } from 'Loader'
 import ReactDOM from 'react-dom'
+import Switch from 'Switch'
+import Label from 'Label'
 import React from 'react'
 
 class SelectionWindowExtension extends MultiModelExtensionBase {
@@ -20,6 +22,7 @@ class SelectionWindowExtension extends MultiModelExtensionBase {
 
     super (viewer, options)
 
+    this.setPartialSelect = this.setPartialSelect.bind(this)
     this.renderTitle = this.renderTitle.bind(this)
 
     this.react = options.react
@@ -33,6 +36,8 @@ class SelectionWindowExtension extends MultiModelExtensionBase {
 
     this.react.setState({
 
+      showLoader: true,
+      active: false
 
     }).then (() => {
 
@@ -70,6 +75,8 @@ class SelectionWindowExtension extends MultiModelExtensionBase {
 
     console.log('Viewing.Extension.SelectionWindow unloaded')
 
+    this.selectionWindowTool.off()
+
     super.unload ()
 
     return true
@@ -84,8 +91,40 @@ class SelectionWindowExtension extends MultiModelExtensionBase {
     this.selectionWindowTool =
       new SelectionWindowTool(this.viewer)
 
+    this.selectionWindowTool.on('activate', () => {
+
+      this.react.setState({active: true})
+    })
+
+    this.selectionWindowTool.on('deactivate', () => {
+
+      this.react.setState({active: false})
+    })
+
     this.viewer.toolController.registerTool(
       this.selectionWindowTool)
+
+    this.react.setState({
+      showLoader: false
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onModelActivated (event) {
+
+    this.selectionWindowTool.setModel(event.model)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  setPartialSelect (partialSelect) {
+
+    this.selectionWindowTool.setPartialSelect(partialSelect)
   }
 
   /////////////////////////////////////////////////////////
@@ -154,14 +193,22 @@ class SelectionWindowExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderContent () {
 
+    const {active, showLoader} = this.react.getState()
+
     return (
       <div className="content">
-        <ReactLoader show={false}/>
-        <button onClick={() => this.doSelection()}
-          className="select-btn">
-          <span className="fa fa-object-group"/>
-          Start Window Select ...
-        </button>
+        <ReactLoader show={showLoader}/>
+        <div className="row">
+          <button onClick={() => this.doSelection()}
+            className={`select-btn ${active ? 'active':''}`}>
+            <span className="fa fa-object-group"/>
+            Select ...
+          </button>
+          <Label text="Partial Selection: "/>
+          <Switch onChange={this.setPartialSelect}
+            checked={false}
+          />
+        </div>
       </div>
     )
   }
