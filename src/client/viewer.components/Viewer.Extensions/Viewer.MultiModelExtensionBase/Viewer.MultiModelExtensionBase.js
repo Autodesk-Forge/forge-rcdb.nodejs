@@ -82,14 +82,14 @@ export default class MultiModelExtensionBase extends
 
     if (this.eventSink) {
 
-      this.eventSink.off('model.loaded',
-        this.__onModelLoaded)
-
       this.eventSink.off('model.activated',
         this.__onModelActivated)
 
       this.eventSink.off('model.unloaded',
         this.__onModelUnloaded)
+
+      this.eventSink.off('model.loaded',
+        this.__onModelLoaded)
     }
 
     return true
@@ -248,7 +248,7 @@ export default class MultiModelExtensionBase extends
   /////////////////////////////////////////////////////////
   // Initialize all events for the extension
   // Each event will invoke a predefined handler
-  // implemented of not by the derived extension
+  // implemented or not by the derived extension
   //
   /////////////////////////////////////////////////////////
   initializeEvents () {

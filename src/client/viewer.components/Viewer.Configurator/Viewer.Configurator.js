@@ -717,8 +717,8 @@ class ViewerConfigurator extends BaseComponent {
 
             viewer.loadModel(modelInfo.path, localOptions, (model) => {
 
+              model.name = modelInfo.displayName || modelInfo.name
               model.dbModelId = this.state.dbModel._id
-              model.name = modelInfo.name
               model.urn = modelInfo.urn
               model.guid = this.guid()
 
@@ -750,8 +750,8 @@ class ViewerConfigurator extends BaseComponent {
 
             viewer.loadModel(path, loadOptions, (model) => {
 
+              model.name = modelInfo.displayName || modelInfo.name
               model.dbModelId = this.state.dbModel._id
-              model.name = modelInfo.name
               model.urn = modelInfo.urn
               model.guid = this.guid()
 

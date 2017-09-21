@@ -3,15 +3,15 @@
 // by Philippe Leefsma, April 2016
 //
 /////////////////////////////////////////////////////////
+import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import './Viewing.Extension.ExtensionManager.scss'
-import ExtensionBase from 'Viewer.ExtensionBase'
 import ExtensionPane from './ExtensionPane'
 import ServiceManager from 'SvcManager'
 import PaneManager from 'PaneManager'
 import ReactDOM from 'react-dom'
 import React from 'react'
 
-class ExtensionManager extends ExtensionBase {
+class ExtensionManager extends MultiModelExtensionBase {
 
   /////////////////////////////////////////////////////////
   // Class constructor
@@ -87,8 +87,6 @@ class ExtensionManager extends ExtensionBase {
       }
     }
 
-    this.eventSink = options.eventSink
-
     this.react = options.react
   }
 
@@ -115,8 +113,6 @@ class ExtensionManager extends ExtensionBase {
   //
   /////////////////////////////////////////////////////////
   load () {
-
-    this.initLoadEvents ()
 
     this.viewer.addEventListener(
       Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT, (e) => {
@@ -186,6 +182,29 @@ class ExtensionManager extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  onExtensionLoaded (e) {
+
+    const { extensions } = this.react.getState()
+
+    for (let extension of extensions) {
+
+      if (e.extensionId === extension.id) {
+
+        extension.enabled = true
+
+        this.react.setState({
+          extensions
+        })
+
+        return
+      }
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   loadDynamicExtension (extension) {
 
     return new Promise((resolve, reject) => {
@@ -203,76 +222,46 @@ class ExtensionManager extends ExtensionBase {
           react: this.reactOpts
         })
 
-      this.viewer.loadDynamicExtension(
-        extension.id, options).then((extInstance) => {
+      // native extensions are the ones available
+      // with the viewer API
+      if (extension.native) {
 
-          extension.loading = false
-          extension.enabled = true
+        this.viewer.loadExtension(
+          extension.id, options).then((extInstance) => {
 
-          this.react.setState({
-            extensions
+            extension.loading = false
+            extension.enabled = true
+
+            this.react.setState({
+              extensions
+            })
+
+            resolve(extInstance)
+
+          }, (error) => {
+
+            reject(error)
           })
 
-          resolve(extInstance)
+      } else {
 
-        }, (error) => {
+        this.viewer.loadDynamicExtension(
+          extension.id, options).then((extInstance) => {
 
-          reject(error)
-        })
-    })
-  }
+            extension.loading = false
+            extension.enabled = true
 
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  fireModelEvents (extInstance) {
+            this.react.setState({
+              extensions
+            })
 
-    for (const eventId in this.events) {
+            resolve(extInstance)
 
-      const event = this.events[eventId]
+          }, (error) => {
 
-      if (extInstance[event.handler]) {
-
-        extInstance[event.handler](event.args)
+            reject(error)
+          })
       }
-    }
-  }
-
-  initLoadEvents () {
-
-    this.events = {}
-
-    const events = [
-      {
-        id: [
-          Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
-          Autodesk.Viewing.GEOMETRY_LOADED_EVENT
-        ],
-        handler: 'onModelFullyLoaded'
-      },
-      {
-        id: Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT,
-        handler: 'onObjectTreeCreated'
-      },
-      {
-        id: Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT,
-        handler: 'onModelRootLoaded'
-      },
-      {
-        id: Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
-        handler: 'onGeometryLoaded'
-      }
-    ]
-
-    events.forEach((event) => {
-      const eventId = event.id.toString()
-      this.viewerEvent(event.id).then((args) => {
-        this.events[eventId] = {
-          handler: event.handler,
-          args
-        }
-      })
     })
   }
 
@@ -400,7 +389,13 @@ class ExtensionManager extends ExtensionBase {
 
     const { extensions } = this.react.getState()
 
-    return extensions.map((extension) => {
+    const visibleExtensions = extensions.filter(
+      (extension) => {
+
+        return !extension.hidden
+      })
+
+    return visibleExtensions.map((extension) => {
 
       const className = 'item' +
         (extension.enabled ? ' enabled' : '') +
@@ -451,7 +446,8 @@ class ExtensionManager extends ExtensionBase {
         return ext.options.displayIndex || 0
       })
 
-    const nbExt = renderExtensions.length
+    const nbExt = renderExtensions.length +
+      (this.options.visible ? 1 : 0)
 
     const extensionPanes = renderExtensions.map (
       (extension) => {
@@ -493,3 +489,19 @@ class ExtensionManager extends ExtensionBase {
 Autodesk.Viewing.theExtensionManager.registerExtension(
   ExtensionManager.ExtensionId,
   ExtensionManager)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
