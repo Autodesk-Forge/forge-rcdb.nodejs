@@ -12,6 +12,7 @@ import { ReactLoader } from 'Loader'
 import Toolkit from 'Viewer.Toolkit'
 import DOMPurify from 'dompurify'
 import ReactDOM from 'react-dom'
+import Image from 'Image'
 import Label from 'Label'
 import React from 'react'
 import {
@@ -560,7 +561,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
               open: false
             })
         }}>
-          <img src={thumbnailUrl}/>
+          <Image src={thumbnailUrl}/>
           <Label text= {dbModel.name}/>
         </div>
       )

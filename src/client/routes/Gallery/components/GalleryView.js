@@ -448,7 +448,7 @@ class GalleryView extends BaseComponent {
             <Image src={thumbnailUrl}/>
           </div>
           <h3 className="title">
-              {DOMPurify.sanitize(item.name)}
+            {DOMPurify.sanitize(item.name)}
           </h3>
         </Link>
         <div className="footer">
@@ -514,13 +514,13 @@ class GalleryView extends BaseComponent {
               onPageChange={this.onPageChanged}
               containerClassName={"pagination"}
               pageCount={this.state.pageCount}
-              breakLabel={<a href="">...</a>}
               initialPage={this.state.page}
               forcePage={this.state.page}
               breakClassName={"break-me"}
               previousLabel={"previous"}
               activeClassName={"active"}
-              marginPagesDisplayed={2}
+              marginPagesDisplayed={1}
+              breakLabel={<a>...</a>}
               pageRangeDisplayed={3}
               nextLabel={"next"}
             />
