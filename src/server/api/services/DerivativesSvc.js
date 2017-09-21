@@ -210,9 +210,48 @@ export default class DerivativeSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////
+  getDefaultGuid (getToken, urn, role) {
+
+    return new Promise(async(resolve, reject) => {
+
+      try {
+
+        const manifestRes = await this.getManifest(
+          getToken, urn)
+
+        const derivatives1 = this.findDerivatives(
+          manifestRes.body, {
+            type: 'geometry', role: role || '3d'
+          })
+
+        if (derivatives1.length) {
+
+          return resolve(derivatives1[0].guid)
+        }
+
+        const derivatives2 = this.findDerivatives(
+          manifestRes.body, {
+            type: 'geometry', role: role || '2d'
+          })
+
+        derivatives2.length
+          ? resolve (derivatives2[0].guid)
+          : resolve(null)
+
+      } catch (ex) {
+
+        reject(ex)
+      }
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   async getThumbnail (getToken, urn, options = {
-    width: 100, height: 100, base64: false
-  }) {
+      width: 100, height: 100, base64: false
+    }) {
 
     const token = ((typeof getToken == 'function')
       ? await getToken()
@@ -223,11 +262,19 @@ export default class DerivativeSvc extends BaseSvc {
     //return this._derivativesAPI.getThumbnail (
     //  urn, {}, {autoRefresh:false}, token)
 
+    // look for default 3d GUID to prevent
+    // showing 2d thumbnail in Revit documents
+
+    const guid = options.guid ||
+      await this.getDefaultGuid(
+        token, urn, options.role)
+
     const url =
       `${DerivativeSvc.SERVICE_BASE_URL}/designdata/` +
       `${urn}/thumbnail?` +
       `width=${options.width}&` +
-      `height=${options.height}`
+      `height=${options.height}` +
+      (guid ? `&guid=${guid}` : '')
 
     return new Promise((resolve, reject) => {
 
@@ -257,7 +304,7 @@ export default class DerivativeSvc extends BaseSvc {
             ? resolve(bufferToBase64(body))
             : resolve (body)
 
-        } catch(ex){
+        } catch (ex) {
 
           reject(ex)
         }

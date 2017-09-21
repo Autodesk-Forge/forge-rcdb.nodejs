@@ -1,6 +1,5 @@
 ///////////////////////////////////////////////////////////
-// SelectSet util for Selection Window
-// in Forge Viewer
+// SelectSet util for Selection Window in Forge Viewer
 // By Philippe Leefsma, September 2017
 //
 ///////////////////////////////////////////////////////////
@@ -16,9 +15,6 @@ export default class SelectSet {
   constructor (viewer) {
 
     this.viewer = viewer
-
-    this.viewer.impl.createOverlayScene (
-      'debug', this.lineMat)
   }
 
   /////////////////////////////////////////////////////////
@@ -74,7 +70,7 @@ export default class SelectSet {
   }
 
   /////////////////////////////////////////////////////////
-  // Returns bounding box for aggregated fragments
+  // Returns bounding box for fragment list
   //
   /////////////////////////////////////////////////////////
   async getComponentBoundingBox (model, dbId) {
@@ -143,7 +139,8 @@ export default class SelectSet {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Returns true if the box is contained inside the
+  // closed volume defined the the input planes
   //
   /////////////////////////////////////////////////////////
   containsBox (planes, box) {
@@ -176,7 +173,7 @@ export default class SelectSet {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Returns the oriented camera plane
   //
   /////////////////////////////////////////////////////////
   getCameraPlane () {
@@ -197,7 +194,8 @@ export default class SelectSet {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Creates pyramid geometry to perform tri-box
+  // intersection analysis
   //
   /////////////////////////////////////////////////////////
   createPyramidGeometry (vertices) {
@@ -219,7 +217,8 @@ export default class SelectSet {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Determine if the bounding boxes are
+  // inside, outside or intersect with the selection window
   //
   /////////////////////////////////////////////////////////
   filterBoundingBoxes (planes, vertices) {
@@ -232,11 +231,18 @@ export default class SelectSet {
 
     for (let bboxInfo of this.boundingBoxInfo) {
 
+      // if bounding box inside, then we can be sure
+      // the mesh is inside too
+
       if (this.containsBox (planes, bboxInfo.bbox)) {
 
         inside.push(bboxInfo)
 
       } else {
+
+        // otherwise need a more precise tri-box
+        // analysis to determine if the bbox intersect
+        // the pyramid geometry
 
         BoxGeometryIntersect(bboxInfo.bbox, geometry)
           ? intersect.push(bboxInfo)
@@ -375,10 +381,15 @@ export default class SelectSet {
     const result = this.filterBoundingBoxes(
       planes, vertices)
 
+    // all inside bboxes need to be part of the selection
+
     const dbIdsInside = result.inside.map((bboxInfo) => {
 
       return bboxInfo.dbId
     })
+
+    // if partialSelect = true
+    // we need to return the intersect bboxes
 
     if (partialSelect) {
 
@@ -386,6 +397,11 @@ export default class SelectSet {
 
         return bboxInfo.dbId
       })
+
+      // At this point we could perform a finer analysis
+      // to determine if the mesh vertices are inside
+      // or outside the selection window but it would
+      // be a much more expensive computation
 
       return [...dbIdsInside, ...dbIdsIntersect]
     }
