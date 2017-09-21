@@ -267,6 +267,29 @@ class DatabaseView extends React.Component {
         autoLoad: true
       })
 
+      const modelId = this.props.location.query.id
+
+      this.dbModel = await this.modelSvc.getModel(
+        'rcdb', modelId)
+
+      if(!this.props.appState.viewerEnv) {
+
+        await this.initialize({
+          env: this.dbModel.env,
+          useConsolidation: true
+        })
+
+        this.props.setViewerEnv(this.dbModel.env)
+
+        Autodesk.Viewing.endpoint.setEndpointAndApi(
+          window.location.origin + '/lmv-proxy-2legged',
+          'modelDerivativeV2')
+
+        Autodesk.Viewing.Private.memoryOptimizedSvfLoading = true
+      }
+
+      viewer.start()
+
       viewer.addEventListener(
         Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT, (e) => {
 
@@ -298,30 +321,7 @@ class DatabaseView extends React.Component {
         Autodesk.Viewing.FULLSCREEN_MODE_EVENT, (e) => {
 
           this.onFullScreenMode(e)
-      })
-
-      const modelId = this.props.location.query.id
-
-      this.dbModel = await this.modelSvc.getModel(
-        'rcdb', modelId)
-
-      if(!this.props.appState.viewerEnv) {
-
-        await this.initialize({
-          env: this.dbModel.env,
-          useConsolidation: true
         })
-
-        this.props.setViewerEnv(this.dbModel.env)
-
-        Autodesk.Viewing.endpoint.setEndpointAndApi(
-          window.location.origin + '/lmv-proxy-2legged',
-          'modelDerivativeV2')
-
-        Autodesk.Viewing.Private.memoryOptimizedSvfLoading = true
-      }
-
-      viewer.start()
 
       viewer.prefs.tag('ignore-producer')
 
