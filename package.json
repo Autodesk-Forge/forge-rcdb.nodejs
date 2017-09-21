@@ -7,7 +7,7 @@
     "npm": "^3.0.0"
   },
   "scripts": {
-    "build-server": "babel --presets es2015,stage-0 --plugins transform-decorators-legacy ./src/server -d ./bin/static",
+    "build-server": "babel --presets env,stage-0 --plugins transform-decorators-legacy ./src/server -d ./bin/static",
     "build-prod": "cross-env NODE_ENV=production npm run build",
     "start": "node bin/start.js",
     "build": "node webpack",
