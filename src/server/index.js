@@ -3,7 +3,7 @@ import 'babel-polyfill'
 
 //Server stuff
 import cookieParser from 'cookie-parser'
-import compression from 'compression'
+import gzip from 'express-static-gzip'
 import session from 'express-session'
 import bodyParser from 'body-parser'
 import store from 'connect-mongo'
@@ -223,18 +223,15 @@ if (process.env.HOT_RELOADING) {
 
   app.use(webpackHotMiddleware(compiler))
 
+  app.get('*', express.static(path.resolve(process.cwd(), './dist')))
+
 } else {
 
-  // compression middleware compresses your server responses
-  // which makes them smaller (applies also to assets).
-  // You can read more about that technique and other good
-  // practices on official Express.js docs http://mxs.is/googmy
-  app.use(compression())
+  app.use(gzip(path.resolve(process.cwd(), './dist')))
 
-  app.use(express.static(path.resolve(process.cwd(), './dist')))
+  app.get('*', gzip(path.resolve(process.cwd(), './dist')))
 }
 
-app.get('*', express.static(path.resolve(process.cwd(), './dist')))
 
 /////////////////////////////////////////////////////////////////////
 //

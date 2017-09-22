@@ -112,9 +112,7 @@ class BoundingBoxExtension extends MultiModelExtensionBase {
 
       const selection = event.selections[0]
 
-      const model =
-        this.viewer.activeModel ||
-        this.viewer.model
+      const model = selection.model
 
       this.selectedDbId = selection.dbIdArray[0]
 
@@ -190,65 +188,20 @@ class BoundingBoxExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   onContextMenu (event) {
 
-    const model =
-      this.viewer.activeModel ||
-      this.viewer.model
+    event.menu.push({
+      title: 'Clear All BoundingBoxes',
+      target: () => {
+        this.lineGroups.forEach((lines) => {
 
-    event.menu.forEach((entry) => {
+          this.viewer.impl.removeOverlay('boundingBox', lines)
+        })
 
-      const title = entry.title.toLowerCase()
+        this.viewer.impl.invalidate(
+          true, true, true)
 
-      switch (title) {
-
-        case 'isolate':
-          entry.target = () => {
-            Toolkit.isolateFull(
-              this.viewer, this.selectedDbId, model)
-          }
-          break
-
-        case 'hide selected':
-          entry.target = () => {
-            Toolkit.hide(
-              this.viewer, this.selectedDbId, model)
-          }
-          break
-
-        case 'show all objects':
-          entry.target = () => {
-            Toolkit.isolateFull(
-              this.viewer, [], model)
-            this.viewer.fitToView()
-          }
-          break
-
-        default: break
+        this.lineGroups = []
       }
     })
-
-    const instanceTree = model.getData().instanceTree
-
-    const dbId = event.dbId || (instanceTree
-        ? instanceTree.getRootId()
-        : -1)
-
-    if (dbId > -1) {
-
-      event.menu.push({
-        title: 'Clear All BoundingBoxes',
-        target: () => {
-          this.lineGroups.forEach((lines) => {
-
-            this.viewer.impl.removeOverlay('boundingBox', lines)
-          })
-
-          this.viewer.impl.invalidate(
-            true, true, true)
-
-          this.lineGroups = []
-        }
-      })
-    }
   }
 }
 

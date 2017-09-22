@@ -1,5 +1,6 @@
 const InlineManifestWebpackPlugin = require('inline-manifest-webpack-plugin')
 const ProgressBarPlugin = require('progress-bar-webpack-plugin')
+const CompressionPlugin = require('compression-webpack-plugin')
 const ManifestPlugin = require('webpack-manifest-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const OptimizeJsPlugin = require('optimize-js-plugin')
@@ -177,7 +178,15 @@ module.exports = {
       clear: false
     }),
 
-    new webpack.NormalModuleReplacementPlugin(/es6-promise$/, 'bluebird')
+    new webpack.NormalModuleReplacementPlugin(/es6-promise$/, 'bluebird'),
+
+    new CompressionPlugin({
+      test: /\.js$|\.css$|\.html$/,
+      asset: "[path].gz[query]",
+      algorithm: "gzip",
+      threshold: 10240,
+      minRatio: 0.8
+    })
   ],
 
   resolve: {

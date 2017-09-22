@@ -236,11 +236,13 @@ class ExtensionManager extends MultiModelExtensionBase {
               extensions
             })
 
-            resolve(extInstance)
+            resolve (extInstance)
 
           }, (error) => {
 
-            reject(error)
+            extension.loading = false
+
+            reject (error)
           })
 
       } else {
@@ -255,11 +257,13 @@ class ExtensionManager extends MultiModelExtensionBase {
               extensions
             })
 
-            resolve(extInstance)
+            resolve (extInstance)
 
           }, (error) => {
 
-            reject(error)
+            extension.loading = false
+
+            reject (error)
           })
       }
     })

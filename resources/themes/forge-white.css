@@ -287,4 +287,23 @@ img.logo-hero {
   z-index: 3;
 }
 
+.collabPanel .adsk-lmv-tftable,
+.collabBoxOK {
+  color: #484848;
+}
 
+.chatHistory {
+  width: calc(100% - 8px);
+  padding: 4px;
+}
+
+.textEntry {
+  background: rgba(171, 171, 171, 0.5);
+}
+
+.in-viewer-search-button {
+  background: #717171;
+  padding: 0px;
+  right: 4px;
+  top: 6px;
+}
