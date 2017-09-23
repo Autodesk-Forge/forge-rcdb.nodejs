@@ -31,7 +31,6 @@ module.exports = {
   entry: {
     vendor: [
       'react-bootstrap',
-      'redux-logger',
       'redux-thunk',
       'react-redux',
       'react-dom',
