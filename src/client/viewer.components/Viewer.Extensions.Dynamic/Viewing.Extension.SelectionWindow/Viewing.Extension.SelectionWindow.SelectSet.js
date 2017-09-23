@@ -3,7 +3,7 @@
 // By Philippe Leefsma, September 2017
 //
 ///////////////////////////////////////////////////////////
-import BoxGeometryIntersect from './BoxGeometryIntersect'
+import geometryIntersectsBox3 from './GeometryIntersectsBox3'
 import Toolkit from 'Viewer.Toolkit'
 
 export default class SelectSet {
@@ -244,7 +244,7 @@ export default class SelectSet {
         // analysis to determine if the bbox intersect
         // the pyramid geometry
 
-        BoxGeometryIntersect(bboxInfo.bbox, geometry)
+        geometryIntersectsBox3(geometry, bboxInfo.bbox)
           ? intersect.push(bboxInfo)
           : outside.push(bboxInfo)
       }

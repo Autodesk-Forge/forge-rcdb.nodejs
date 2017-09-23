@@ -301,9 +301,62 @@ img.logo-hero {
   background: rgba(171, 171, 171, 0.5);
 }
 
-.in-viewer-search-button {
-  background: #717171;
-  padding: 0px;
-  right: 4px;
-  top: 6px;
+.collabBox {
+  background: rgba(251, 251, 251, 0.8);
 }
+
+.collabBoxTitle {
+  color: #9b9b9b;
+}
+
+.collabBoxText {
+  color: #9b9b9b;
+}
+
+.collabBoxInputContainer input {
+  background: rgb(248, 248, 248);
+  color: #9b9b9b;
+}
+
+.collabBoxOK:hover {
+  border-color: #b1b1b1;
+  background: #f5f5f5;
+}
+
+.collabPanel .adsk-lmv-tftable td:first-child {
+  background: #ececec;
+}
+
+.chatPanel input:empty {
+  content: "Type your message ..."
+}
+
+.in-viewer-search-button {
+  padding: 0px 4px 4px 0px;
+  background: #717171;
+  right: 4px;
+  top: 5px;
+}
+
+#in-viewer-search .in-viewer-search-bar {
+  background-color: #ededed;
+  width: calc(100% - 4px);
+  color: #4a4a4a;
+  margin: 2px;
+}
+
+#in-viewer-search .result-count {
+  color: #9b9b9b;
+}
+
+#in-viewer-search .item-result {
+  color: #05a7df;
+}
+
+#toolbar-animationPlay {
+  padding: 0 0 2px 2px;
+  background: #737373;
+  right: 2px;
+  top: 5px;
+}
+

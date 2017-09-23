@@ -1,4 +1,3 @@
-import Spinner from 'react-spinkit'
 import PropTypes from 'prop-types'
 import React from 'react'
 import './Image.scss'

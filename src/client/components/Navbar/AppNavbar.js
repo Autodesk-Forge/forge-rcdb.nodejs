@@ -136,7 +136,7 @@ export default class AppNavbar extends React.Component {
             <NavItem className="forge-rcdb-brand-item"
               href="https://forge.autodesk.com"
               target="_blank">
-              <img height="30" src="/resources/img/forge-logo.png"/>
+              <img height="30" src="/resources/img/logos/adsk-forge.png"/>
               {/*&nbsp;<b>Forge</b> | RCDB*/}
             </NavItem>
           </Navbar.Brand>

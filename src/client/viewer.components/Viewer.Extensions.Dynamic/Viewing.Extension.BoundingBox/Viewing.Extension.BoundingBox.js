@@ -45,6 +45,9 @@ class BoundingBoxExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   load () {
 
+    this.viewer.impl.createOverlayScene (
+      'boundingBox', this.linesMaterial)
+
     this.viewer.loadDynamicExtension(
       'Viewing.Extension.ContextMenu').then(
       (ctxMenuExtension) => {
@@ -97,9 +100,6 @@ class BoundingBoxExtension extends MultiModelExtensionBase {
   onModelRootLoaded () {
 
     this.options.loader.show (false)
-
-    this.viewer.impl.createOverlayScene (
-      'boundingBox', this.linesMaterial)
   }
 
   /////////////////////////////////////////////////////////
@@ -188,20 +188,23 @@ class BoundingBoxExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   onContextMenu (event) {
 
-    event.menu.push({
-      title: 'Clear All BoundingBoxes',
-      target: () => {
-        this.lineGroups.forEach((lines) => {
+    if (this.lineGroups.length) {
 
-          this.viewer.impl.removeOverlay('boundingBox', lines)
-        })
+      event.menu.push({
+        title: 'Clear All BoundingBoxes',
+        target: () => {
+          this.lineGroups.forEach((lines) => {
 
-        this.viewer.impl.invalidate(
-          true, true, true)
+            this.viewer.impl.removeOverlay('boundingBox', lines)
+          })
 
-        this.lineGroups = []
-      }
-    })
+          this.viewer.impl.invalidate(
+            true, true, true)
+
+          this.lineGroups = []
+        }
+      })
+    }
   }
 }
 

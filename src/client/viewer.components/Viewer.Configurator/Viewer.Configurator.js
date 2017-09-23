@@ -155,7 +155,10 @@ class ViewerConfigurator extends BaseComponent {
   //
   /////////////////////////////////////////////////////////
   @autobind
-  getViewablePath (doc, pathIdx = 0, roles = ['3d', '2d']) {
+  getViewablePath (doc, pathIdx = 0, query = [
+      { type: 'geometry', role: '3d' },
+      { type: 'geometry', role: '2d' }
+    ]) {
 
     const toArray = (obj) => {
 
@@ -166,11 +169,11 @@ class ViewerConfigurator extends BaseComponent {
 
     let items = []
 
-    toArray(roles).forEach((role) => {
+    toArray(query).forEach((queryItem) => {
 
       items = [ ...items,
         ...Autodesk.Viewing.Document.getSubItemsWithProperties(
-          rootItem, { type: 'geometry', role }, true) ]
+          rootItem, queryItem, true) ]
     })
 
     if (!items.length || pathIdx > items.length-1) {
@@ -736,10 +739,15 @@ class ViewerConfigurator extends BaseComponent {
             this.viewerDocument =
               await this.loadDocument(modelInfo.urn)
 
+            const query = modelInfo.query || [
+              { type: 'geometry', role: '3d' },
+              { type: 'geometry', role: '2d' }
+            ]
+
             const path = this.getViewablePath(
               this.viewerDocument,
               modelInfo.pathIndex || 0,
-              modelInfo.role || ['3d', '2d'])
+              query)
 
             const loadOptions = {
               sharedPropertyDbPath:
