@@ -20,6 +20,8 @@ const clean = (dir) => {
         return resolve()
       }
 
+      console.log('Cleaning directory:' + dir)
+
       rimraf(dir, (delErr) => {
 
         if (delErr) {
@@ -70,8 +72,6 @@ const runCompiler = async () => {
     if (!process.env.HOT_RELOADING) {
 
       const dir = path.resolve(__dirname, '../dist')
-
-      console.log('Cleaning directory:' + dir)
 
       await clean(dir)
     }
