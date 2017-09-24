@@ -139,7 +139,7 @@ export default class MetaTreeView extends React.Component {
   /////////////////////////////////////////////////////////
   componentWillReceiveProps (props) {
 
-    if (props.guid  !== this.props.guid) {
+    if (props.guid !== this.props.guid) {
 
       this.delegate.destroy()
 
@@ -173,6 +173,8 @@ export default class MetaTreeView extends React.Component {
   componentWillUnmount () {
 
     this.delegate.destroy()
+
+    this.delegate.off()
 
     this.tree.destroy()
   }

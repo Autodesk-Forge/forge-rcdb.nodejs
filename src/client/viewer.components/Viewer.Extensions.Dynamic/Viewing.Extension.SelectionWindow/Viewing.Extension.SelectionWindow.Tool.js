@@ -77,6 +77,8 @@ export default class SelectionWindowTool extends EventsEmitter {
 
     if (this.isActive) {
 
+      this.model = model
+
       this.selectSet.setModel(model)
     }
   }
@@ -100,11 +102,11 @@ export default class SelectionWindowTool extends EventsEmitter {
 
       this.viewer.clearSelection()
 
-      const model =
+      this.model =
         this.viewer.activeModel ||
         this.viewer.model
 
-      this.selectSet.setModel(model)
+      this.selectSet.setModel(this.model)
 
       this.materialLine = new THREE.LineBasicMaterial({
         color: new THREE.Color(0x0000FF),
@@ -463,12 +465,11 @@ export default class SelectionWindowTool extends EventsEmitter {
       this.pointerEnd,
       this.partialSelect)
 
-    const model =
-      this.viewer.activeModel ||
-      this.viewer.model
-
-    this.viewer.impl.selector.setSelection(
-      dbIds, model)
+    this.emit('selection', {
+      model: this.model,
+      guid: this.guid(),
+      dbIds
+    })
 
     this.deactivate()
 

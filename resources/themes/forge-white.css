@@ -353,10 +353,18 @@ img.logo-hero {
   color: #05a7df;
 }
 
+#in-viewer-search .queries-container {
+  color: #9b9b9b;
+}
+
 #toolbar-animationPlay {
   padding: 0 0 2px 2px;
   background: #737373;
   right: 2px;
   top: 5px;
+}
+
+#remote-panel .body {
+  color: #7b7b7b;
 }
 

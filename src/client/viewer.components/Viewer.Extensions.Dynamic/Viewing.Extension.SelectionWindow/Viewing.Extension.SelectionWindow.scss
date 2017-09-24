@@ -28,6 +28,10 @@
       padding: 10px;
       width: 100%;
       margin: 0;
+
+      .label-container {
+        margin: 4px 0 0 20px;
+      }
     }
 
     button.active {
@@ -68,10 +72,6 @@
       }
     }
 
-    .label-container {
-      margin: 4px 0 0 20px;
-    }
-
     .switch-container {
       border: 1px solid #9c9c9c;
       border-radius: 12px;
@@ -96,6 +96,10 @@
       height: 16px;
       width: 16px;
       margin: 0;
+    }
+
+    .selection-tree-container {
+      height: calc(100% - 55px)
     }
   }
 }

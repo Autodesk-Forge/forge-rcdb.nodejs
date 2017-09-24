@@ -221,7 +221,7 @@ export default class SelectSet {
   // inside, outside or intersect with the selection window
   //
   /////////////////////////////////////////////////////////
-  filterBoundingBoxes (planes, vertices) {
+  filterBoundingBoxes (planes, vertices, partialSelect) {
 
     const geometry = this.createPyramidGeometry(vertices)
 
@@ -238,15 +238,22 @@ export default class SelectSet {
 
         inside.push(bboxInfo)
 
-      } else {
+      } else if (partialSelect) {
 
         // otherwise need a more precise tri-box
         // analysis to determine if the bbox intersect
         // the pyramid geometry
 
-        geometryIntersectsBox3(geometry, bboxInfo.bbox)
+        const intersects = geometryIntersectsBox3(
+          geometry, bboxInfo.bbox)
+
+        intersects.length
           ? intersect.push(bboxInfo)
           : outside.push(bboxInfo)
+
+      } else {
+
+        outside.push(bboxInfo)
       }
     }
 
@@ -379,7 +386,7 @@ export default class SelectSet {
     // if inside, outside or intersect
 
     const result = this.filterBoundingBoxes(
-      planes, vertices)
+      planes, vertices, partialSelect)
 
     // all inside bboxes need to be part of the selection
 

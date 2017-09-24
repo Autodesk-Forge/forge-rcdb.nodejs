@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////
 import SelectionWindowTool from './Viewing.Extension.SelectionWindow.Tool'
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
+import SelectionTreeView from './SelectionTreeView'
 import WidgetContainer from 'WidgetContainer'
 import { ReactLoader } from 'Loader'
 import ReactDOM from 'react-dom'
@@ -23,6 +24,8 @@ class SelectionWindowExtension extends MultiModelExtensionBase {
     super (viewer, options)
 
     this.setPartialSelect = this.setPartialSelect.bind(this)
+    this.onNodeDblClicked = this.onNodeDblClicked.bind(this)
+    this.onNodeClicked = this.onNodeClicked.bind(this)
     this.renderTitle = this.renderTitle.bind(this)
 
     this.react = options.react
@@ -37,6 +40,7 @@ class SelectionWindowExtension extends MultiModelExtensionBase {
     this.react.setState({
 
       showLoader: true,
+      selection: null,
       active: false
 
     }).then (() => {
@@ -91,15 +95,25 @@ class SelectionWindowExtension extends MultiModelExtensionBase {
     this.selectionWindowTool =
       new SelectionWindowTool(this.viewer)
 
+    this.selectionWindowTool.on('deactivate', () => {
+
+      this.react.setState({active: false})
+    })
+
     this.selectionWindowTool.on('activate', () => {
 
       this.react.setState({active: true})
     })
 
-    this.selectionWindowTool.on('deactivate', () => {
+    this.selectionWindowTool.on('selection',
+      (selection) => {
 
-      this.react.setState({active: false})
-    })
+        this.viewer.impl.selector.setSelection(
+          selection.dbIds,
+          selection.model)
+
+        this.react.setState({selection})
+      })
 
     this.viewer.toolController.registerTool(
       this.selectionWindowTool)
@@ -131,7 +145,9 @@ class SelectionWindowExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  doSelection () {
+  async startSelection () {
+
+    await this.react.setState({selection: null})
 
     this.viewer.toolController.activateTool(
       this.selectionWindowTool.getName())
@@ -166,6 +182,59 @@ class SelectionWindowExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  onNodeClicked (node) {
+
+    const model = node.model
+
+    switch (node.type) {
+
+      case 'component':
+        this.viewer.impl.selector.setSelection(
+          [node.id],
+          model)
+        break
+
+      case 'root':
+        this.viewer.impl.selector.setSelection(
+          node.props.childIds,
+          model)
+        break
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onNodeDblClicked (node) {
+
+    const model = node.model
+
+    switch (node.type) {
+
+      case 'component':
+
+        model.visibilityManager.isolate(node.id)
+
+        break
+
+      case 'root':
+
+        model.visibilityManager.isolate(
+          node.props.childIds)
+
+        this.viewer.fitToView(
+          node.props.childIds,
+          model)
+
+        break
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   renderTitle (docked) {
 
     const spanClass = docked
@@ -193,13 +262,14 @@ class SelectionWindowExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderContent () {
 
-    const {active, showLoader} = this.react.getState()
+    const {active, showLoader, selection} =
+      this.react.getState()
 
     return (
       <div className="content">
         <ReactLoader show={showLoader}/>
         <div className="row">
-          <button onClick={() => this.doSelection()}
+          <button onClick={() => this.startSelection()}
             className={`select-btn ${active ? 'active':''}`}>
             <span className="fa fa-object-group"/>
             Select ...
@@ -208,6 +278,12 @@ class SelectionWindowExtension extends MultiModelExtensionBase {
           <Switch onChange={this.setPartialSelect}
             checked={false}
           />
+        </div>
+        <div className="selection-tree-container">
+          <SelectionTreeView
+            onNodeDblClicked={this.onNodeDblClicked}
+            onNodeClicked={this.onNodeClicked}
+            selection={selection}/>
         </div>
       </div>
     )
@@ -237,4 +313,3 @@ Autodesk.Viewing.theExtensionManager.registerExtension (
   SelectionWindowExtension)
 
 export default 'Viewing.Extension.SelectionWindow'
-
