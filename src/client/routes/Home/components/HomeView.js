@@ -1,5 +1,6 @@
 import ServiceManager from 'SvcManager'
 import { Link } from 'react-router'
+import sortBy from 'lodash/sortBy'
 import Image from 'Image'
 import React from 'react'
 import './HomeView.scss'
@@ -26,7 +27,7 @@ class HomeView extends React.Component {
 
       const models = await this.modelSvc.getModels('rcdb')
 
-      const modelsbyName = _.sortBy(models,
+      const modelsbyName = sortBy(models,
         (model) => {
           return model.name
         })
@@ -64,7 +65,7 @@ class HomeView extends React.Component {
 
     return (
       <div className="home">
-        <img className='logo-hero'/>
+        <img className='forge-hero'/>
         <div className="models">
           <div className="title">
             Choose Model

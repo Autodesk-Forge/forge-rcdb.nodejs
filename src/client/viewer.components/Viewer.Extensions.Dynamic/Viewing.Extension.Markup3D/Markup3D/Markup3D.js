@@ -3,6 +3,7 @@ import PinMarker from './Markup3D.PinPoint'
 import LabelMarker from './Markup3D.Label'
 import EventsEmitter from 'EventsEmitter'
 import Leader from './Markup3D.Leader'
+import throttle from 'lodash/throttle'
 
 export default class Markup3D extends EventsEmitter {
 
@@ -42,7 +43,7 @@ export default class Markup3D extends EventsEmitter {
       viewer,
       this.initialWorldPoint)
 
-    this.onTrackerModified = _.throttle(
+    this.onTrackerModified = throttle(
       this.onTrackerModified, 10)
 
     this.trackerModifiedHandler =

@@ -17,7 +17,7 @@
 // Forge Extractor
 // by Philippe Leefsma (original version by Cyrille Fauvel)
 //
-
+import flattenDeep from 'lodash/flattenDeep'
 import BaseSvc from './BaseSvc'
 import archiver from 'archiver'
 import Forge from 'forge-apis'
@@ -113,7 +113,7 @@ export default class ExtractorSvc extends BaseSvc {
         })
 
       // flatten resources
-      const derivativesList = _.flattenDeep(
+      const derivativesList = flattenDeep(
         nestedDerivatives)
 
       // creates async download tasks for each

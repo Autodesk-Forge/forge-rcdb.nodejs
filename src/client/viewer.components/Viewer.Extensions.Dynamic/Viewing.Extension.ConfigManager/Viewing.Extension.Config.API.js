@@ -28,7 +28,7 @@ export default class ConfigAPI extends ClientAPI {
       this.ajax(url).then ((sequences) => {
 
         const result = opts.sortByName
-          ? _.sortBy(sequences, (seq) => { return seq.name })
+          ? sortBy(sequences, (seq) => { return seq.name })
           : sequences
 
         resolve (result)

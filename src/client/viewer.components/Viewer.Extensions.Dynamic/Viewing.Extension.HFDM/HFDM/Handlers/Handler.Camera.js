@@ -1,7 +1,8 @@
 
 import BaseHandler from './Handler.Base'
+import throttle from 'lodash/throttle'
 
-export default class CameraPositionHandler extends BaseHandler {
+export default class CameraHandler extends BaseHandler {
 
   /////////////////////////////////////////////////////////
   //
@@ -13,7 +14,7 @@ export default class CameraPositionHandler extends BaseHandler {
 
     this.viewer = viewer
 
-    this.onCameraChanged = _.throttle(
+    this.onCameraChanged = throttle(
       this.onCameraChanged.bind(this), 500)
   }
 

@@ -10,6 +10,7 @@ import WidgetContainer from 'WidgetContainer'
 import ServiceManager from 'SvcManager'
 import { ReactLoader } from 'Loader'
 import Toolkit from 'Viewer.Toolkit'
+import sortBy from 'lodash/sortBy'
 import DOMPurify from 'dompurify'
 import ReactDOM from 'react-dom'
 import Image from 'Image'
@@ -170,7 +171,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
       (models) => {
 
         const dbModelsByName =
-          _.sortBy(models, (model) => {
+          sortBy(models, (model) => {
             return model.name
           })
 

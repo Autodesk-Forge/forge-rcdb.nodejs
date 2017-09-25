@@ -1,5 +1,6 @@
 import ServiceManager from './SvcManager'
 import BaseSvc from './BaseSvc'
+import find from 'lodash/find'
 import mongo from 'mongodb'
 import _ from 'lodash'
 
@@ -107,7 +108,7 @@ export default class ModelSvc extends BaseSvc {
 
           const mongoId = new mongo.ObjectId(id)
 
-          return _.find(models, { _id: mongoId }).thumbnail
+          return find(models, { _id: mongoId }).thumbnail
         })
 
         return resolve (thumbnails)

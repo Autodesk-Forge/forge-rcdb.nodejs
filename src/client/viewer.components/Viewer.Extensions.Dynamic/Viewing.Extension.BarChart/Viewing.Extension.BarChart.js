@@ -9,6 +9,7 @@ import ExtensionBase from 'Viewer.ExtensionBase'
 import WidgetContainer from 'WidgetContainer'
 import {ReactLoader as Loader} from 'Loader'
 import './Viewing.Extension.BarChart.scss'
+import transform from 'lodash/transform'
 import Toolkit from 'Viewer.Toolkit'
 import BarChart from 'BarChart'
 import React from 'react'
@@ -320,7 +321,7 @@ class BarChartExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   groupMap (map, group, totalValue, minPercent) {
 
-    return _.transform (map, (result, value, key) => {
+    return transform (map, (result, value, key) => {
 
       if (value.length * 100 / totalValue < minPercent) {
 

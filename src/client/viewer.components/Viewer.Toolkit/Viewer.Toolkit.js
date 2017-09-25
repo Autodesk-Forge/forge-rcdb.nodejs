@@ -508,10 +508,6 @@ export default class Toolkit {
 
           const prop = result.properties[0]
 
-          //const prop = _.find(result.properties, {
-          //  displayName: propFilter
-          //})
-
           return Object.assign({}, prop, {
             dbId: result.dbId
           })

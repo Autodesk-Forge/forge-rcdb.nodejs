@@ -8,6 +8,7 @@ import PieChart from './PieChart/PieChart'
 import BarChart from './BarChart/BarChart'
 import ViewerToolkit from 'Viewer.Toolkit'
 import ToolPanelBase from 'ToolPanelBase'
+import transform from 'lodash/transform'
 import TabManager from 'TabManager'
 import Dropdown from 'Dropdown'
 import d3 from 'd3'
@@ -308,7 +309,7 @@ export default class VisualReportPanel extends ToolPanelBase {
   /////////////////////////////////////////////////////////////
   groupMap (map, group, totalValue, minPercent) {
 
-    return _.transform (map, (result, value, key) => {
+    return transform (map, (result, value, key) => {
 
       if (value.length * 100 / totalValue < minPercent) {
 

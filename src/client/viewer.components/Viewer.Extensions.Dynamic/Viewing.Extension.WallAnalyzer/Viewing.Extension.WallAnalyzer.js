@@ -87,7 +87,10 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
 
     this.eventTool.on ('singleclick', this.onClick)
 
-    this.lineMaterial = this.createLineMaterial()
+    this.linesMaterial = this.createLinesMaterial()
+
+    this.viewer.impl.createOverlayScene (
+      'wallAnalyzer', this.linesMaterial)
 
     this.worker.addEventListener(
       'message',
@@ -103,6 +106,8 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
   unload () {
 
     console.log('Viewing.Extension.WallAnalyzer unloaded')
+
+    this.viewer.impl.removeOverlayScene ('wallAnalyzer')
 
     if (this.notification) {
 
@@ -200,7 +205,9 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
 
       geometry.computeLineDistances()
 
-      return new THREE.Line(geometry, this.lineMaterial)
+      return new THREE.Line(geometry,
+        this.linesMaterial,
+        THREE.LinePieces)
     })
 
     level.floor.paths.push({
@@ -524,19 +531,16 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  createLineMaterial() {
+  createLinesMaterial (color = 0xFF0000, opacity = 1.0) {
 
-    const material = new THREE.LineBasicMaterial({
-      color: 0x0000ff,
-      linewidth: 2
-    });
-
-    this.viewer.impl.matman().addMaterial(
-      'forge-line-material',
-      material,
-      true)
-
-    return material
+    return new THREE.LineBasicMaterial({
+      color: new THREE.Color(color),
+      transparent: true,
+      depthWrite: false,
+      depthTest: true,
+      linewidth: 10,
+      opacity
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -752,6 +756,22 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  drawLine (line) {
+
+    this.viewer.impl.addOverlay(
+      'wallAnalyzer', line)
+  }
+
+  clearLine (line) {
+
+    this.viewer.impl.removeOverlay(
+      'wallAnalyzer', line)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   onLevelFloorClicked (level) {
 
     const state = this.react.getState()
@@ -770,7 +790,7 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
 
         path.lines.forEach((line) => {
 
-          this.viewer.impl.scene.add(line)
+          this.drawLine(line)
         })
       })
 
@@ -785,7 +805,7 @@ class WallAnalyzerExtension extends MultiModelExtensionBase {
 
         path.lines.forEach((line) => {
 
-          this.viewer.impl.scene.remove(line)
+          this.clearLine(line)
         })
       })
 

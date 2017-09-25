@@ -7,6 +7,7 @@ import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import './Viewing.Extension.PlantFactory.scss'
 import WidgetContainer from 'WidgetContainer'
 import {ReactLoader as Loader} from 'Loader'
+import transform from 'lodash/transform'
 import Toolkit from 'Viewer.Toolkit'
 import React from 'react'
 import d3 from 'd3'
@@ -426,7 +427,7 @@ class PlantFactoryExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   groupMap (map, group, totalValue, minPercent) {
 
-    return _.transform (map, (result, value, key) => {
+    return transform (map, (result, value, key) => {
 
       if (value.length * 100 / totalValue < minPercent) {
 

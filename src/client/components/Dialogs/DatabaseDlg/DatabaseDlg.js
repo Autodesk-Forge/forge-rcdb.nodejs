@@ -14,18 +14,7 @@ export default class DatabaseDlg extends React.Component {
     super()
 
     this.items = [
-      //{
-      //  img: '/resources/img/forge-theme.png',
-      //  layoutType: 'forge-theme',
-      //  caption: 'Forge',
-      //  key: '1'
-      //},
-      //{
-      //  img: '/resources/img/snow-white-theme.png',
-      //  theme: 'snow-white-theme',
-      //  caption: 'Snow White',
-      //  key: '2'
-      //}
+
     ]
   }
 

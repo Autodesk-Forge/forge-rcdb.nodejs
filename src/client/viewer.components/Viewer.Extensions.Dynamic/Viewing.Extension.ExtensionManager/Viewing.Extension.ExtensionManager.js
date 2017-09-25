@@ -8,6 +8,7 @@ import './Viewing.Extension.ExtensionManager.scss'
 import ExtensionPane from './ExtensionPane'
 import ServiceManager from 'SvcManager'
 import PaneManager from 'PaneManager'
+import sortBy from 'lodash/sortBy'
 import ReactDOM from 'react-dom'
 import React from 'react'
 
@@ -120,7 +121,7 @@ class ExtensionManager extends MultiModelExtensionBase {
         this.options.loader.show(false)
       })
 
-    const extensionsByName = _.sortBy(
+    const extensionsByName = sortBy(
       this.options.extensions || [], (ext) => {
         return ext.name
       })
@@ -445,7 +446,7 @@ class ExtensionManager extends MultiModelExtensionBase {
 
     const state = this.react.getState()
 
-    const renderExtensions = _.sortBy(
+    const renderExtensions = sortBy(
       state.renderExtensions, (ext) => {
         return ext.options.displayIndex || 0
       })

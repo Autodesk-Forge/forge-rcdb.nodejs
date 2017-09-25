@@ -1,4 +1,5 @@
 import ServiceManager from 'SvcManager'
+import merge from 'lodash/merge'
 
 // ------------------------------------
 // Constants
@@ -152,7 +153,7 @@ const ACTION_HANDLERS = {
 
   [SET_NAVBAR_STATE] : (state, action) => {
 
-    const navbar = _.merge({},
+    const navbar = merge({},
       state.navbar, action.payload)
 
     return Object.assign({}, state, {

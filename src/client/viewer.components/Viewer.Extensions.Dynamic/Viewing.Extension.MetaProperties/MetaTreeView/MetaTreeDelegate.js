@@ -1,7 +1,7 @@
 import ContextMenu from './MetaContextMenu'
 import MetaTreeNode from './MetaTreeNode'
 import { TreeDelegate } from 'TreeView'
-
+import sortBy from 'lodash/sortBy'
 
 export default class MetaTreeDelegate extends TreeDelegate {
 
@@ -186,7 +186,7 @@ export default class MetaTreeDelegate extends TreeDelegate {
 
     for (let category in propsMap) {
 
-      propsMap[category] = _.sortBy(
+      propsMap[category] = sortBy(
         propsMap[category], (prop) => {
           return prop.displayName
         })

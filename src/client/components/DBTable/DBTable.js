@@ -1,11 +1,12 @@
 
 import PropTypes from 'prop-types'
 import './libs/nice-select.css'
+import find from 'lodash/find'
 import './libs/nice-select'
-import './libs/Footable'
-import './libs/Footable.Editable'
 import React from 'react'
+import './libs/Footable'
 import './DBTable.scss'
+import './libs/Footable.Editable'
 
 class DBTable extends React.Component {
 
@@ -37,7 +38,7 @@ class DBTable extends React.Component {
 
     this.ftEditable.setUpdateHandler((updateRecord) => {
 
-      let dbItem = _.find(this.props.dbItems, {
+      let dbItem = find(this.props.dbItems, {
         _id: updateRecord.id
       })
 
@@ -82,7 +83,7 @@ class DBTable extends React.Component {
   /////////////////////////////////////////////////////////
   onRowClicked (id) {
 
-    const selectedDbItem = _.find(
+    const selectedDbItem = find(
       this.props.dbItems, { _id: id })
 
     if(selectedDbItem) {
@@ -152,7 +153,7 @@ class DBTable extends React.Component {
 
         const id = $(option).parents('tr')[0].id
 
-        let dbItem = _.find(this.props.dbItems, {
+        let dbItem = find(this.props.dbItems, {
           _id: id
         })
 
@@ -253,7 +254,7 @@ class DBTable extends React.Component {
 
     const id = $(target).parent()[0].id
 
-    return _.find(this.props.dbItems, {
+    return find(this.props.dbItems, {
       _id: id
     })
   }

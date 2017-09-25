@@ -6,8 +6,8 @@
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import EventsEmitter from 'EventsEmitter'
 import Toolkit from 'Viewer.Toolkit'
+import find from 'lodash/find'
 import Stopwatch from 'Stopwatch'
-import _ from 'lodash'
 
 class PhysicsCoreExtension extends MultiModelExtensionBase {
 
@@ -111,7 +111,7 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   getRigidBody (dbId) {
 
-    return _.find(this.rigidBodies, (body) => {
+    return find(this.rigidBodies, (body) => {
 
       return dbId === body.initialState.dbId
     })

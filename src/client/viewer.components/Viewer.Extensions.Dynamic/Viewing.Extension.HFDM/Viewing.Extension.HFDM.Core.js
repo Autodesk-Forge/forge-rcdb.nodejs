@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////
-// Viewing.Extension.ModelLoader
-// by Philippe Leefsma, April 2017
+// Viewing.Extension.HFDM
+// by Philippe Leefsma, June 2017
 //
 /////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'

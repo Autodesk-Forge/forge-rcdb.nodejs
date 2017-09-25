@@ -2,6 +2,7 @@ import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table'
 import ContentEditable from 'react-contenteditable'
 import WidgetContainer from 'WidgetContainer'
 import BaseComponent from 'BaseComponent'
+import flatten from 'lodash/flatten'
 import Toolkit from 'Viewer.Toolkit'
 import React from 'react'
 
@@ -167,7 +168,7 @@ export default class Search extends BaseComponent {
       this.searchDatabase(search)
     ])
 
-    const rows = _.flatten(results)
+    const rows = flatten(results)
 
     this.assignState({
       rows

@@ -1,4 +1,5 @@
 
+import flattenDeep from 'lodash/flattenDeep'
 import ClientAPI from 'ClientAPI'
 
 export default class DerivativesSvc extends ClientAPI {
@@ -114,7 +115,7 @@ export default class DerivativesSvc extends ClientAPI {
           derivative, query)
       })
 
-      return _.flattenDeep([...matches, ...childResults])
+      return flattenDeep([...matches, ...childResults])
     }
 
   }

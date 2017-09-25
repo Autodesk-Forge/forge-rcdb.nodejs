@@ -1,6 +1,8 @@
 // ------------------------------------
 // Constants
 // ------------------------------------
+import sortBy from 'lodash/sortBy'
+
 export const ON_DB_ITEM_SELECTED = 'ON_DB_ITEM_SELECTED'
 export const LOAD_DB_ITEMS = 'LOAD_DB_ITEMS'
 
@@ -35,7 +37,7 @@ const ACTION_HANDLERS = {
 
   [LOAD_DB_ITEMS] : (state, action) => {
 
-    const dbItems = _.sortBy(action.payload,
+    const dbItems = sortBy(action.payload,
       (dbItem) => {
         return dbItem.name
       })

@@ -1,6 +1,7 @@
 import EventsEmitter from 'EventsEmitter'
 import Spinner from 'react-spinkit'
 import PropTypes from 'prop-types'
+import sortBy from 'lodash/sortBy'
 import ReactDOM from 'react-dom'
 import Label from 'Label'
 import React from 'react'
@@ -267,7 +268,7 @@ export default class MetaTreeNode extends EventsEmitter {
 
       case 'root':
 
-        const categories = _.sortBy(
+        const categories = sortBy(
           Object.keys(this.props.propsMap), (item) => {
             return item
           })

@@ -186,19 +186,22 @@ class SelectionWindowExtension extends MultiModelExtensionBase {
 
     const model = node.model
 
-    switch (node.type) {
+    if (model) {
 
-      case 'component':
-        this.viewer.impl.selector.setSelection(
-          [node.id],
-          model)
-        break
+      switch (node.type) {
 
-      case 'root':
-        this.viewer.impl.selector.setSelection(
-          node.props.childIds,
-          model)
-        break
+        case 'component':
+          this.viewer.impl.selector.setSelection(
+            [node.id],
+            model)
+          break
+
+        case 'root':
+          this.viewer.impl.selector.setSelection(
+            node.props.childIds,
+            model)
+          break
+      }
     }
   }
 
@@ -210,24 +213,27 @@ class SelectionWindowExtension extends MultiModelExtensionBase {
 
     const model = node.model
 
-    switch (node.type) {
+    if (model) {
 
-      case 'component':
+      switch (node.type) {
 
-        model.visibilityManager.isolate(node.id)
+        case 'component':
 
-        break
+          model.visibilityManager.isolate(node.id)
 
-      case 'root':
+          break
 
-        model.visibilityManager.isolate(
-          node.props.childIds)
+        case 'root':
 
-        this.viewer.fitToView(
-          node.props.childIds,
-          model)
+          model.visibilityManager.isolate(
+            node.props.childIds)
 
-        break
+          this.viewer.fitToView(
+            node.props.childIds,
+            model)
+
+          break
+      }
     }
   }
 

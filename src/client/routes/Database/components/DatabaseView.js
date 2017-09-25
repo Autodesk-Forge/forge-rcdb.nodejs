@@ -5,11 +5,14 @@ import ContextMenuExtension from 'Viewing.Extension.ContextMenu'
 import TransformExtension from 'Viewing.Extension.Transform'
 import Markup3DExtension from 'Viewing.Extension.Markup3D'
 
+
 import ServiceManager from 'SvcManager'
 import FlexLayout from './FlexLayout'
 import GridLayout from './GridLayout'
 import Toolkit from 'Viewer.Toolkit'
+import sortBy from 'lodash/sortBy'
 import { Loader } from 'Loader'
+import find from 'lodash/find'
 import './DatabaseView.scss'
 import React from 'react'
 import d3 from 'd3'
@@ -513,7 +516,7 @@ class DatabaseView extends React.Component {
 
     // filter out all 'Material' props because
     // it is added in 'Database' category
-    let properties = _.filter(viewerProps, (prop)=> {
+    let properties = viewerProps.filter((prop)=> {
 
       const included =
         this.dbModel.materialCategories.includes(
@@ -618,7 +621,7 @@ class DatabaseView extends React.Component {
 
         componentIds.forEach((dbId) => {
 
-          const materialProp = _.find(materialResults, { dbId })
+          const materialProp = find(materialResults, { dbId })
 
           const materialName = materialProp ?
             materialProp.displayValue :
@@ -626,7 +629,7 @@ class DatabaseView extends React.Component {
 
           if(materialName !== 'undefined') {
 
-            const dbMaterial = _.find(dbMaterials, {
+            const dbMaterial = find(dbMaterials, {
               name: materialName
             })
 
@@ -646,7 +649,7 @@ class DatabaseView extends React.Component {
 
               if (item) {
 
-                const massProp = _.find(massResults, { dbId })
+                const massProp = find(massResults, { dbId })
 
                 const mass = massProp ? massProp.displayValue : 1.0
 
@@ -724,7 +727,7 @@ class DatabaseView extends React.Component {
       }
     })
 
-    return _.sortBy(legendData,
+    return sortBy(legendData,
       (entry) => {
         return entry.value * -1.0
       })

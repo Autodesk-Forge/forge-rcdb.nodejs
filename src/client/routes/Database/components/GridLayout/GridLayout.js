@@ -3,6 +3,7 @@ import {Responsive, WidthProvider} from 'react-grid-layout'
 const ResponsiveReactGridLayout = WidthProvider(Responsive)
 import WidgetContainer from 'WidgetContainer'
 import ResponsiveView from 'ResponsiveView'
+import throttle from 'lodash/throttle'
 import DBDropdown from 'DBDropdown'
 import DBTable from 'DBTable'
 import DBChart from 'DBChart'
@@ -91,7 +92,7 @@ class GridLayout extends React.Component {
   /////////////////////////////////////////////////////////
   componentDidMount() {
 
-    this.throttledUpdate = _.throttle(() => {
+    this.throttledUpdate = throttle(() => {
       this.forceUpdate()
     }, 150)
 
@@ -119,7 +120,7 @@ class GridLayout extends React.Component {
   /////////////////////////////////////////////////////////
   generateDOM() {
 
-    return _.map(this.state.layouts.lg, (layout) => {
+    return this.state.layouts.lg.map((layout) => {
 
       switch(layout.i) {
 

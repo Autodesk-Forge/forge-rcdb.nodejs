@@ -7,6 +7,7 @@ import ExtensionBase from 'Viewer.ExtensionBase'
 import WidgetContainer from 'WidgetContainer'
 import './Viewing.Extension.DualViewer.scss'
 import {ReactLoader as Loader} from 'Loader'
+import throttle from 'lodash/throttle'
 import Toolkit from 'Viewer.Toolkit'
 import Viewer from 'Viewer'
 import React from 'react'
@@ -32,7 +33,7 @@ class DualViewerExtension extends ExtensionBase {
       this.onStopResize.bind(this)
 
     this.onResize =
-      _.throttle(this.onResize, 100)
+      throttle(this.onResize, 100)
 
     this.renderTitle =
       this.renderTitle.bind(this)

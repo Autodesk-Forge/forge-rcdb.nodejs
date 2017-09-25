@@ -25,7 +25,7 @@ class PageNotFoundView extends React.Component {
 
     return (
       <div className="page-not-found">
-        <img className='logo-hero'/>
+        <img className='forge-hero'/>
         <div className="container">
           <label>
             The link you are looking for is invalid or has changed...

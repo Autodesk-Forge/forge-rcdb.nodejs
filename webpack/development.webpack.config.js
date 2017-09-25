@@ -96,7 +96,6 @@ module.exports = {
       'window.jQuery': 'jquery',
       Promise: 'bluebird',
       jQuery: 'jquery',
-      _: 'lodash',
       $: 'jquery'
     }),
 

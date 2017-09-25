@@ -9,6 +9,7 @@ import ExtensionBase from 'Viewer.ExtensionBase'
 import WidgetContainer from 'WidgetContainer'
 import {ReactLoader as Loader} from 'Loader'
 import './Viewing.Extension.PieChart.scss'
+import transform from 'lodash/transform'
 import Toolkit from 'Viewer.Toolkit'
 import PieChart from 'PieChart'
 import React from 'react'
@@ -322,7 +323,7 @@ class PieChartExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   groupMap (map, group, totalValue, minPercent) {
 
-    return _.transform (map, (result, value, key) => {
+    return transform (map, (result, value, key) => {
 
       if (value.length * 100 / totalValue < minPercent) {
 

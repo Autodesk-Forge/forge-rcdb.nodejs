@@ -8,6 +8,8 @@ import './Viewer.Configurator.scss'
 import PropTypes from 'prop-types'
 import Stopwatch from 'Stopwatch'
 import ReactDOM from 'react-dom'
+import merge from 'lodash/merge'
+import find from 'lodash/find'
 import easing from 'easing-js'
 import Viewer from 'Viewer'
 import Panel from 'Panel'
@@ -372,7 +374,7 @@ class ViewerConfigurator extends BaseComponent {
 
     return new Promise ((resolve) => {
 
-      const targetPanel = _.find(this.state.viewerPanels, {
+      const targetPanel = find(this.state.viewerPanels, {
         id: panelId
       })
 
@@ -452,15 +454,15 @@ class ViewerConfigurator extends BaseComponent {
 
               return this.state[id] || {}
             },
-            setState: (state, merge) => {
+            setState: (state, doMerge) => {
 
               return new Promise ((resolve) => {
 
                 const extState = this.state[id] || {}
 
                 const newExtState = {
-                  [id]: merge
-                    ? _.merge({}, extState, state)
+                  [id]: doMerge
+                    ? merge({}, extState, state)
                     : Object.assign({}, extState, state)
                 }
 
@@ -478,7 +480,7 @@ class ViewerConfigurator extends BaseComponent {
 
     viewer.loadDynamicExtension = (id, options = {}) => {
 
-      const fullOptions = _.merge ({},
+      const fullOptions = merge ({},
         createDefaultOptions(id), {
           viewerDocument: this.viewerDocument,
           eventSink: this.eventSvc

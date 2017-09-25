@@ -1,6 +1,8 @@
 import {OverlayTrigger, Popover} from 'react-bootstrap'
 import EventsEmitter from 'EventsEmitter'
 import ReactTooltip from 'react-tooltip'
+import flatten from 'lodash/flatten'
+import sortBy from 'lodash/sortBy'
 import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 import Label from 'Label'
@@ -289,7 +291,7 @@ export default class DataTreeNode extends EventsEmitter {
     const projectsRes =
       await this.api.getProjects(this.props.hubId)
 
-    const projects = _.sortBy(projectsRes.data,
+    const projects = sortBy(projectsRes.data,
       (project) => {
         return this.getNodeName(project).toLowerCase()
       })
@@ -347,7 +349,7 @@ export default class DataTreeNode extends EventsEmitter {
 
       const folderArrays = await Promise.all(projectTasks)
 
-      const folders = _.sortBy(_.flatten(folderArrays),
+      const folders = sortBy(flatten(folderArrays),
         (folderItem) => {
           return this.getNodeName(folderItem).toLowerCase()
         })
@@ -387,7 +389,7 @@ export default class DataTreeNode extends EventsEmitter {
       await this.api.getProjectTopFolders(
         this.props.hubId, this.props.projectId)
 
-    const folderItems = _.sortBy(folderItemsRes.data,
+    const folderItems = sortBy(folderItemsRes.data,
       (folderItem) => {
         return this.getNodeName(folderItem).toLowerCase()
       })
@@ -459,7 +461,7 @@ export default class DataTreeNode extends EventsEmitter {
       await this.api.getFolderContent(
         this.props.projectId, this.props.folderId)
 
-    const folderItems = _.sortBy(folderItemsRes.data,
+    const folderItems = sortBy(folderItemsRes.data,
       (folderItem) => {
         return this.getNodeName(folderItem).toLowerCase()
       })

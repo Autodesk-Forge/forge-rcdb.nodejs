@@ -1,15 +1,15 @@
 import AppContainer from './containers/AppContainer'
 import {client as config} from 'c0nfig'
+import { Provider } from 'react-redux'
 import ReactDOM from 'react-dom'
 import 'font-awesome-webpack'
+import store from './store'
 import 'bootstrap-webpack'
 import React from 'react'
 
-import { Provider } from 'react-redux'
+//i18 imports
 import LanguageProvider from './translations/LanguageProvider'
 import { translationMessages } from './i18n'
-
-import store from './store'
 
 // ========================================================
 // Render Setup

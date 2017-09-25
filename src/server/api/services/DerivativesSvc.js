@@ -1,8 +1,8 @@
-
+import flattenDeep from 'lodash/flattenDeep'
+import isEqual from 'lodash/isEqual'
 import BaseSvc from './BaseSvc'
 import Forge from 'forge-apis'
 import request from 'request'
-import _ from 'lodash'
 
 export default class DerivativeSvc extends BaseSvc {
 
@@ -333,7 +333,7 @@ export default class DerivativeSvc extends BaseSvc {
           return (derivative) => {
             return (
             derivative.role === 'obj' &&
-            _.isEqual(derivative.objectIds, objectIds)
+            isEqual(derivative.objectIds, objectIds)
             )
           }
         }
@@ -441,7 +441,7 @@ export default class DerivativeSvc extends BaseSvc {
           derivative, query)
       })
 
-      return _.flattenDeep([matches, childResults])
+      return flattenDeep([matches, childResults])
     }
 
     return []

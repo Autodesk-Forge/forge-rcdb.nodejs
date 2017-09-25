@@ -12,6 +12,7 @@ import 'react-dragula/dist/dragula.min.css'
 import ServiceManager from 'SvcManager'
 import Toolkit from 'Viewer.Toolkit'
 import Dragula from 'react-dragula'
+import sortBy from 'lodash/sortBy'
 import DOMPurify from 'dompurify'
 import ReactDOM from 'react-dom'
 import Switch from 'Switch'
@@ -174,7 +175,7 @@ class ConfigManagerExtension extends ExtensionBase {
           name
         }
 
-        const sequences = _.sortBy([
+        const sequences = sortBy([
           ...state.sequences, sequence
         ], (s) => { return s.name })
 
@@ -250,7 +251,7 @@ class ConfigManagerExtension extends ExtensionBase {
             stateIds
         })
 
-        const sequences = _.sortBy([
+        const sequences = sortBy([
           ...state.sequences, sequence
         ], (s) => { return s.name })
 

@@ -1,4 +1,5 @@
 import EdgesGeometry from './EdgesGeometry'
+import sortBy from 'lodash/sortBy'
 import ThreeBSP from './threeCSG'
 import THREELib from "three-js"
 const THREE = THREELib()
@@ -317,7 +318,7 @@ async function workerMain () {
     }
   })
 
-  const orderedExtBoxes = _.sortBy(extBoxes, (box) => {
+  const orderedExtBoxes = sortBy(extBoxes, (box) => {
 
     return box.min.z
   })
