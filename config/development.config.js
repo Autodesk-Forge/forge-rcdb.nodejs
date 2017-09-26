@@ -11,6 +11,9 @@ const config = {
   env: 'development',
 
   client: {
+    googleAnalytics: {
+      accountIds: []
+    },
     storageVersion: 1.0,
     host: `${HOST_URL}`,
     env: 'development',

@@ -11,6 +11,13 @@ const config = {
   env: 'production',
 
   client: {
+    googleAnalytics: {
+
+      accountIds: [
+        7938776,
+        60717701
+      ]
+    },
     // this the public host name of your server for the
     // client socket to connect.
     // eg. https://myforgeapp.mydomain.com

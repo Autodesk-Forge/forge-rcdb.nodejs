@@ -1,7 +1,7 @@
 import { browserHistory, Router } from 'react-router'
-import GoogleAnalytics from 'react-g-analytics'
 import { Provider } from 'react-redux'
 import PropTypes from 'prop-types'
+import ReactGA from 'react-ga'
 import React from 'react'
 
 class AppContainer extends React.Component {
@@ -11,30 +11,74 @@ class AppContainer extends React.Component {
     store  : PropTypes.object.isRequired
   }
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  constructor (props) {
+
+    super (props)
+
+    this.logPageView = this.logPageView.bind(this)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  componentDidMount () {
+
+    this.props.GA.accountIds.forEach((accountId) => {
+
+      ReactGA.initialize(accountId)
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   shouldComponentUpdate () {
+
     return false
   }
 
-  renderGA = () => {
-    return (
-      <div>
-        <GoogleAnalytics id="7938776"/>
-        <GoogleAnalytics id="60717701"/>
-      </div>
-    )
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  logPageView () {
+
+    if (this.props.env === 'production') {
+
+      const {pathname, search} = window.location
+
+      const page = pathname + search
+
+      ReactGA.set({
+        page
+      })
+
+      ReactGA.pageview(page)
+    }
   }
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   render () {
 
-    const { env, routes, store } = this.props
-
-    const prod = (env === 'production')
+    const { routes, store } = this.props
 
     return (
       <Provider store={store}>
         <div style={{ height: '100%' }}>
-          {prod && this.renderGA() }
-          <Router history={browserHistory} children={routes} />
+          <Router
+            onUpdate={this.logPageView}
+            history={browserHistory}
+            children={routes}
+          />
         </div>
       </Provider>
     )

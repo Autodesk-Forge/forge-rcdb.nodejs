@@ -24,6 +24,7 @@ let render = (messages) => {
     <Provider store={store}>
       <LanguageProvider messages={messages}>
         <AppContainer
+          GA={config.googleAnalytics}
           env={config.env}
           routes={routes}
           store={store}
