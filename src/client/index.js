@@ -1,5 +1,4 @@
 import AppContainer from './containers/AppContainer'
-import GoogleAnalytics from 'react-g-analytics'
 import {client as config} from 'c0nfig'
 import { Provider } from 'react-redux'
 import ReactDOM from 'react-dom'
