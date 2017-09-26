@@ -41,8 +41,8 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
     this.handlerManager.registerHandler(
       'camera', this.CameraHandler)
 
-    this.registerType(Vector3d)
-    this.registerType(Camera)
+    this.registerType(Vector3d, 'LMV')
+    this.registerType(Camera, 'LMV')
   }
 
   /////////////////////////////////////////////////////////
@@ -84,7 +84,7 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  registerType (Type) {
+  registerType (Type, name) {
 
     this.hfdmFactory.register(Type.template)
 
@@ -94,9 +94,7 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
       BaseEntity, this.handlerManager)
 
     this.entityManager.registerEntity(
-      Type.name,
-      Type.typeId,
-      EntityClass)
+      name, Type.typeId, EntityClass)
   }
 
   /////////////////////////////////////////////////////////

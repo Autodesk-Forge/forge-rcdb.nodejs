@@ -37,18 +37,31 @@ export default class CameraHandler extends BaseHandler {
 
     const nav = this.viewer.navigation
 
-    const position = this.getVectorProperty(
-      'position')
+    if (context) {
 
-    const target = this.getVectorProperty(
-      'target')
+      context.forEach((modifCtx) => {
 
-    const up = this.getVectorProperty(
-      'upVector')
+        const path = modifCtx._path
 
-    nav.setPosition(position)
-    nav.setCameraUpVector(up)
-    nav.setTarget(target)
+        const propertyName = path.split('.')[1]
+
+        const property =
+          this.getVectorProperty(
+            propertyName)
+
+        switch (propertyName) {
+
+          case 'upVector':
+            return nav.setCameraUpVector(property)
+
+          case 'position':
+            return nav.setPosition(property)
+
+          case 'target':
+            return nav.setTarget(property)
+        }
+      })
+    }
   }
 
   /////////////////////////////////////////////////////////

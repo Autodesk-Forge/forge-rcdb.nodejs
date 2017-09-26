@@ -14,8 +14,8 @@ const config = {
     googleAnalytics: {
 
       accountIds: [
-        7938776,
-        60717701
+        'UA-7938776-22',
+        'UA-60717701-4'
       ]
     },
     // this the public host name of your server for the

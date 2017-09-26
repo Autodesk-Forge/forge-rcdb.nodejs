@@ -24,7 +24,9 @@ const EntityClassFactory = (BaseEntity, handlerMng) =>
 
     this.handler.onModify(context)
 
-    const path = context[0]._path.split('.')
+    const absPath = context[0].getAbsolutePath()
+
+    const path = absPath.split('.')
 
     if (path.length > 2) {
 
