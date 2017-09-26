@@ -53,7 +53,8 @@ export default class SelectionTreeNode extends EventsEmitter {
   /////////////////////////////////////////////////////////////
   mount (domContainer) {
 
-    domContainer.className = 'click-trigger'
+    domContainer.className =
+      'treenode-container click-trigger'
 
     this.domContainer = domContainer
 

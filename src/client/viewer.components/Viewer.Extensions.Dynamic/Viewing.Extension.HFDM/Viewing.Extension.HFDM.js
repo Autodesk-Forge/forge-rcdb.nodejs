@@ -213,7 +213,7 @@ class HFDMExtension extends MultiModelExtensionBase {
       await this.viewer.loadExtension(
         HFDMCoreExtensionId, {
           serverUrl: 'https://developer.api.autodesk.com/lynx/v1/pss',
-          hfdmURN: this.options.location.query.hfdmURN,
+          branchUrn: this.options.location.query.branchUrn,
           HFDMAppFramework: window.Forge.AppFramework,
           HFDM_SDK: window.Forge.HFDM,
           getToken: this.getToken

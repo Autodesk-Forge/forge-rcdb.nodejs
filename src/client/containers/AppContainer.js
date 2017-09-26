@@ -14,12 +14,25 @@ class AppContainer extends React.Component {
     return false
   }
 
+  renderGA = () => {
+    return (
+      <div>
+        <GoogleAnalytics id="7938776"/>
+        <GoogleAnalytics id="60717701"/>
+      </div>
+    )
+  }
+
   render () {
-    const { routes, store } = this.props
+
+    const { env, routes, store } = this.props
+
+    const prod = (env === 'production')
 
     return (
       <Provider store={store}>
         <div style={{ height: '100%' }}>
+          {prod && this.renderGA() }
           <Router history={browserHistory} children={routes} />
         </div>
       </Provider>

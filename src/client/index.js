@@ -1,4 +1,5 @@
 import AppContainer from './containers/AppContainer'
+import GoogleAnalytics from 'react-g-analytics'
 import {client as config} from 'c0nfig'
 import { Provider } from 'react-redux'
 import ReactDOM from 'react-dom'
@@ -18,12 +19,16 @@ const MOUNT_NODE = document.getElementById('root')
 
 let render = (messages) => {
 
-  const routes = require('./routes/index').default(store)
+  const routes = require('./routes').default(store)
 
   ReactDOM.render(
     <Provider store={store}>
       <LanguageProvider messages={messages}>
-        <AppContainer store={store} routes={routes} />
+        <AppContainer
+          env={config.env}
+          routes={routes}
+          store={store}
+        />
       </LanguageProvider>
     </Provider>,
     MOUNT_NODE
@@ -58,7 +63,7 @@ if (config.env === 'development') {
     }
 
     // Setup hot module replacement
-    module.hot.accept('./routes/index', () =>
+    module.hot.accept('./routes', () =>
         setImmediate(() => {
           ReactDOM.unmountComponentAtNode(MOUNT_NODE)
           render()

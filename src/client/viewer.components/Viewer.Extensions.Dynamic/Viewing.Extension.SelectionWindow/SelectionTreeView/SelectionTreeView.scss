@@ -22,6 +22,10 @@
     float: left;
   }
 
+  .treenode-container {
+    overflow: hidden;
+  }
+
   .treenode .label-container {
      pointer-events: none;
   }

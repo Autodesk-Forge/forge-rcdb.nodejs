@@ -133,7 +133,7 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
       console.log('Successfully connected to HFDM')
 
       const initParameters = {
-        urn: this.options.hfdmURN
+        urn: this.options.branchUrn
       }
 
       await this.workspace.initialize(initParameters)
@@ -147,21 +147,24 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
 
       this.options.getToken((err, token) => {
 
-        //http://ecs-master-opt.ecs.ads.autodesk.com:5000/PropertyInspector.html
-
         const inspectorURL =
-          `${this.options.serverUrl}/PropertyInspector.html?` +
+          `http://ecs-master-opt.ecs.ads.autodesk.com:3501/HFDMInspector.html?` +
           `branchGuid=${branchGUID}&` +
           `token=${token}`
 
         this.emit('inspectorURL', inspectorURL)
       })
 
-      if (!this.options.hfdmURN) {
+      if (!this.options.branchUrn) {
+
+        const branchUrn = this.workspace.getActiveUrn()
+
+        // share workspace for write to everybody *
+
+        //await this.hfdm.share([branchUrn], ['*'])
 
         const colaborateURL =
-          window.location.href + '&hfdmURN=' +
-          this.workspace.getActiveUrn()
+          `${window.location.href}&branchUrn=${branchUrn}`
 
         this.emit('colaborateURL', colaborateURL)
 
