@@ -17,11 +17,11 @@ module.exports = function() {
   const uploadSvc = ServiceManager.getService(
     'UploadSvc')
 
-  const ossSvc = ServiceManager.getService(
-    'OssSvc')
-
   const forgeSvc = ServiceManager.getService(
     'ForgeSvc')
+
+  const ossSvc = ServiceManager.getService(
+    'OssSvc')
 
   const galleryConfig = config.gallery
 
@@ -456,6 +456,35 @@ module.exports = function() {
         req.params.modelId, {
           pageQuery
         })
+
+      if (model.whiteList) {
+
+        const userSvc = ServiceManager.getService(
+          'UserSvc')
+
+        const user = await userSvc.getCurrentUser(
+          req.session)
+
+        if (!user) {
+
+          res.status(401)
+          return res.json('Unauthorized')
+
+        } else {
+
+          const allowed = model.whiteList.filter(
+            (email) => {
+
+              return user.emailId.match(new RegExp(email))
+            })
+
+          if (!allowed.length) {
+
+            res.status(403)
+            return res.json('Forbidden')
+          }
+        }
+      }
 
       res.json(model)
 

@@ -17,11 +17,11 @@ const EXTENSIONS = {
 }
 
 const WHITE_LIST = [
-  'if-modified-since',
-  'if-none-match',
-  'accept-encoding',
+  'x-ads-acm-check-groups',   // Forge Data Management API
   'x-ads-acm-namespace',      // Forge Data Management API
-  'x-ads-acm-check-groups'    // Forge Data Management API
+  'if-modified-since',
+  'accept-encoding',
+  'if-none-match'
 ]
 
 export default class LMVProxySvc extends BaseSvc {
@@ -50,18 +50,20 @@ export default class LMVProxySvc extends BaseSvc {
   /////////////////////////////////////////////////////////
   fixContentHeaders (req, res) {
 
-    // DS does not return content-encoding header
-    // for gzip and other files that we know are gzipped,
+    // DS does not return content-encoding header or
+    // gzip and other files that we know are gzipped,
     // so we add it here. The viewer does want
     // gzip files uncompressed by the browser
 
     const extName = path.extname (req.path)
 
     if ( EXTENSIONS.gzip.indexOf (extName) > -1 ) {
+
       res.set ('content-encoding', 'gzip')
     }
 
     if ( EXTENSIONS.json.indexOf (extName) > -1 ){
+
       res.set ('content-type', 'application/json')
     }
   }
@@ -72,12 +74,12 @@ export default class LMVProxySvc extends BaseSvc {
   /////////////////////////////////////////////////////////
   setCORSHeaders (res) {
 
-    res.set('access-control-allow-origin', '*')
+    res.set('access-control-allow-headers',
+      'Origin, X-Requested-With, Content-Type, Accept')
 
     res.set('access-control-allow-credentials', false)
 
-    res.set('access-control-allow-headers',
-      "Origin, X-Requested-With, Content-Type, Accept")
+    res.set('access-control-allow-origin', '*')
   }
 
   /////////////////////////////////////////////////////////
@@ -134,7 +136,7 @@ export default class LMVProxySvc extends BaseSvc {
     const creq = https.request(options, (cres) => {
 
       // set encoding
-      //cres.setEncoding('utf8');
+      // cres.setEncoding('utf8');
       for (let h in cres.headers) {
         res.set(h, cres.headers[h])
       }
@@ -166,11 +168,12 @@ export default class LMVProxySvc extends BaseSvc {
 
     const proxyGet = async(req, res) => {
 
-      const token = await getToken(req.session)
-
       const url = req.url.replace(proxyEndpoint, '')
 
-      this.request(token.access_token, req, res, url)
+      const token = await getToken(req.session)
+
+      this.request(token.access_token,
+        req, res, url)
     }
 
     return proxyGet
