@@ -245,7 +245,6 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   initializeAsParticipant () {
 
-
   }
 }
 

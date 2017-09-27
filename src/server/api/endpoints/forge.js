@@ -41,7 +41,7 @@ module.exports = function() {
   // login endpoint
   //
   /////////////////////////////////////////////////////////
-  router.post('/login', (req, res) => {
+  router.post('/login', async(req, res) => {
 
     req.session.redirect = req.body.origin || '/'
 
@@ -50,7 +50,14 @@ module.exports = function() {
       scope: config.forge.oauth.scope.join(' ')
     })
 
-    res.json(authURL + '&response_type=code')
+    const forgeSvc = ServiceManager.getService(
+      'ForgeSvc')
+
+    const csrf = await forgeSvc.generateCryptoToken()
+
+    req.session.csrf = csrf
+
+    res.json(`${authURL}&response_type=code&state=${csrf}`)
   })
 
   /////////////////////////////////////////////////////////
@@ -133,6 +140,13 @@ module.exports = function() {
   /////////////////////////////////////////////////////////
   router.get('/callback/oauth', (req, res) => {
 
+    const csrf = req.query.state
+
+    if (csrf !== req.session.csrf) {
+
+      return res.status(401).end()
+    }
+
     // filter out errors (access_denied, ...)
     if (req.query && req.query.error) {
 
@@ -143,6 +157,8 @@ module.exports = function() {
 
       return res.redirect(req.session.redirect)
     }
+
+
 
     oauth2.getOAuthAccessToken(
       req.query.code, {

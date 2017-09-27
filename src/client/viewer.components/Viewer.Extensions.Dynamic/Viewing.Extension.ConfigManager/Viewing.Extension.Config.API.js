@@ -2,6 +2,7 @@
 // ConfigManager API
 //
 /////////////////////////////////////////////////////////////////
+import sortBy from 'lodash/sortBy'
 import ClientAPI from 'ClientAPI'
 
 export default class ConfigAPI extends ClientAPI {

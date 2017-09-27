@@ -20,6 +20,7 @@ import Forge from 'forge-apis'
 import memoize from 'memoizee'
 import request from 'request'
 import moment from 'moment'
+import crypto from 'crypto'
 
 export default class ForgeSvc extends BaseSvc {
 
@@ -338,6 +339,23 @@ export default class ForgeSvc extends BaseSvc {
 
         reject(ex)
       }
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  generateCryptoToken({
+    stringBase = 'base64',
+    byteLength = 48 } = {}) {
+
+    return new Promise((resolve, reject) => {
+      crypto.randomBytes(byteLength, (err, buffer) => {
+        return err
+          ? reject(err)
+          : resolve(buffer.toString(stringBase))
+      })
     })
   }
 
