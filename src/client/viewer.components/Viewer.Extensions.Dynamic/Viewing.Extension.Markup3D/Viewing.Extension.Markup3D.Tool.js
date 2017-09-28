@@ -72,18 +72,12 @@ export default class Markup3DTool extends EventsEmitter {
 
       this.currentMarkup = null
 
-      this.eventHandlers = [{
-          event: Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
-          handler: this.onSelectionChangedHandler,
-          removeOnDeactivate: true
-      }]
-
-      this.eventHandlers.forEach((entry) => {
-
-        this.viewer.addEventListener(
-          entry.event,
-          entry.handler)
-      })
+      this.viewer.setClickConfig('click', 'onObject', '')
+      this.viewer.setClickConfig('click', 'offObject', '')
+      this.viewer.canvas.addEventListener(
+        'mousedown',
+        this.onSelectionChangedHandler
+      )
 
       this.emit('startCreate')
     }
@@ -101,17 +95,13 @@ export default class Markup3DTool extends EventsEmitter {
 
       this.currentMarkup = null
 
-      this.eventHandlers.forEach((entry) => {
+      this.viewer.canvas.removeEventListener(
+        'mousedown',
+        this.onSelectionChangedHandler
+      )
 
-        if (entry.removeOnDeactivate) {
-
-          this.viewer.removeEventListener(
-            entry.event,
-            entry.handler)
-        }
-      })
-
-      this.eventHandlers = null
+      this.viewer.setClickConfig('click', 'onObject', ['selectOnly'])
+      this.viewer.setClickConfig('click', 'offObject', ['deselectAll'])
 
       this.emit('stopCreate')
     }
@@ -199,15 +189,19 @@ export default class Markup3DTool extends EventsEmitter {
   //
   /////////////////////////////////////////////////////////////////
   onSelectionChanged (event) {
+    if (!this.screenPoint) {
+      this.screenPoint = { x: 0, y: 0 }
+    }
 
-    if (event.selections.length) {
+    this.screenPoint.x = event.clientX
+    this.screenPoint.y = event.clientY
 
-      this.viewer.select([])
+    const testResult = this.viewer.impl.snappingHitTest(this.screenPoint.x, this.screenPoint.y)
+    
+    if (testResult) {
 
       if (this.currentMarkup)
         return
-
-      const selection = event.selections[0]
 
       const worldPoint = this.screenToWorld(
         this.screenPoint)
@@ -217,8 +211,8 @@ export default class Markup3DTool extends EventsEmitter {
         var markup = new Markup3D(
           this.viewer,
           this.screenPoint,
-          selection.dbIdArray[0],
-          selection.fragIdsArray[0],
+          testResult.dbId,
+          testResult.fragId,
           null, this.options)
 
         markup.labelMarker.on('mouseover', () => {
