@@ -141,7 +141,7 @@ module.exports = function() {
   router.get('/callback/oauth', (req, res) => {
 
     const csrf = req.query.state
-    
+
     if (csrf !== req.session.csrf) {
 
       return res.status(401).end()

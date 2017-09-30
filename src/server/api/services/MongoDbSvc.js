@@ -347,10 +347,16 @@ export default class DbSvc extends BaseSvc {
         const collection = await this.getCollection(
           collectionName)
 
+        const options = {
+          limit: opts.limit || 100,
+          sort: opts.sort  || {},
+          skip: opts.skip || 0
+        }
+
         const cursor = collection.find(
           opts.fieldQuery || {},
-          opts.pageQuery  || {}).
-          sort(opts.sort  || {})
+          opts.pageQuery  || {},
+          options)
 
         return resolve(cursor)
 

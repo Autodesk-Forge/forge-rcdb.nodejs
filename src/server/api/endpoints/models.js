@@ -303,13 +303,13 @@ module.exports = function() {
       const modelSvc = ServiceManager.getService(
         db + '-ModelSvc')
 
+      const limit = parseInt(req.query.limit || 100)
+
+      const skip = parseInt(req.query.offset || 0)
+
       const opts = {
         fieldQuery: {
-          private: null,
-          name: {
-            $regex: new RegExp(req.query.search || ''),
-            $options: 'i'
-          }
+          private: null
         },
         pageQuery: {
           extraModels: 1,
@@ -325,17 +325,17 @@ module.exports = function() {
         },
         sort: {
           name: 1
+        },
+        limit,
+        skip
+      }
+
+      if (req.query.search) {
+
+        opts.fieldQuery.name = {
+          $regex: new RegExp(req.query.search),
+          $options: 'i'
         }
-      }
-
-      if (req.query.offset) {
-
-        opts.pageQuery.skip = parseInt(req.query.offset)
-      }
-
-      if(req.query.limit) {
-
-        opts.pageQuery.limit = parseInt(req.query.limit)
       }
 
       const response = await modelSvc.getModels(opts)
@@ -402,21 +402,32 @@ module.exports = function() {
       const modelSvc = ServiceManager.getService(
         db + '-ModelSvc')
 
+      const limit = parseInt(req.query.limit || 15)
+
+      const skip = parseInt(req.query.offset || 0)
+
       const opts = {
+        fieldQuery: {
+          private: null
+        },
         pageQuery: {
-          limit: 15,
           model: 1,
           name: 1,
           urn:  1
         },
         sort: {
           _id: -1
-        }
+        },
+        limit,
+        skip
       }
 
-      if(req.query.limit) {
+      if (req.query.search) {
 
-        opts.pageQuery.limit = req.query.limit
+        opts.fieldQuery.name = {
+          $regex: new RegExp(req.query.search),
+          $options: 'i'
+        }
       }
 
       const response = await modelSvc.getModels(opts)
