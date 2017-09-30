@@ -55,7 +55,7 @@ module.exports = function() {
 
     const csrf = await forgeSvc.generateCryptoToken()
 
-    req.session.csrf = csrf
+    req.session.csrf = csrf.replace(/\+/g, ' ')
 
     res.json(`${authURL}&response_type=code&state=${csrf}`)
   })
@@ -141,11 +141,11 @@ module.exports = function() {
   router.get('/callback/oauth', (req, res) => {
 
     const csrf = req.query.state
+    
+    if (csrf !== req.session.csrf) {
 
-    //if (csrf !== req.session.csrf) {
-    //
-    //  return res.status(401).end()
-    //}
+      return res.status(401).end()
+    }
 
     // filter out errors (access_denied, ...)
     if (req.query && req.query.error) {
@@ -157,7 +157,6 @@ module.exports = function() {
 
       return res.redirect(req.session.redirect)
     }
-
 
 
     oauth2.getOAuthAccessToken(
