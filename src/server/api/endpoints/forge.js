@@ -142,10 +142,10 @@ module.exports = function() {
 
     const csrf = req.query.state
 
-    if (csrf !== req.session.csrf) {
-
-      return res.status(401).end()
-    }
+    //if (csrf !== req.session.csrf) {
+    //
+    //  return res.status(401).end()
+    //}
 
     // filter out errors (access_denied, ...)
     if (req.query && req.query.error) {
