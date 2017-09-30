@@ -219,7 +219,7 @@ class ExtensionManager extends MultiModelExtensionBase {
       })
 
       const options = Object.assign({},
-        extension.options, {
+        this.options, extension.options, {
           react: this.reactOpts
         })
 

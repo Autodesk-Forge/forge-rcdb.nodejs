@@ -4,7 +4,6 @@ import createStore from './createStore'
 //Services
 import ServiceManager from 'SvcManager'
 import ExtractorSvc from 'ExtractorSvc'
-import MaterialSvc from 'MaterialSvc'
 import StorageSvc from 'StorageSvc'
 import NotifySvc from 'NotifySvc'
 import DialogSvc from 'DialogSvc'
@@ -21,10 +20,6 @@ import UserSvc from 'UserSvc'
 const storageSvc = new StorageSvc({
   storageKey: 'Autodesk.Forge-RCDB.Storage',
   storageVersion: config.storageVersion
-})
-
-const materialSvc = new MaterialSvc({
-  apiUrl: '/api/materials'
 })
 
 const socketSvc = new SocketSvc({
@@ -63,7 +58,6 @@ const userSvc = new UserSvc({
 // Services Registration
 // ========================================================
 ServiceManager.registerService(extractorSvc)
-ServiceManager.registerService(materialSvc)
 ServiceManager.registerService(storageSvc)
 ServiceManager.registerService(socketSvc)
 ServiceManager.registerService(dialogSvc)

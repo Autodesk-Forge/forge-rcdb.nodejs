@@ -15,69 +15,66 @@ class DBChart extends React.Component {
     super (props)
 
     this.state = {
-      style: 'full'
+      chartStyle: 'full'
     }
   }
 
-  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   componentDidMount () {
 
-    this.onResizeHandler = () => {
-      this.onResize()
-    }
-
-    window.addEventListener(
-      'resize',
-      this.onResizeHandler)
-
-    this.draw()
+    this.refresh()
   }
 
-  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
+  shouldComponentUpdate (nextProps) {
+
+    if (nextProps.guid !== this.props.guid) {
+
+      return true
+    }
+
+    return false
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  componentDidUpdate () {
+
+    this.refresh()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   componentWillReceiveProps (props) {
 
     const domElement = ReactDOM.findDOMNode(this)
 
     const height = domElement.offsetHeight
 
-    this.setState({
-      style: (height > 220 ? 'full' : 'compact')
-    }, () => {
+    const chartStyle = height < 220
+      ? 'compact'
+      : 'full'
 
-      this.draw()
+    this.setState({
+      chartStyle
     })
   }
 
-  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////
-  onResize () {
-
-    if(this.eventTimeout) {
-      clearTimeout(this.eventTimeout)
-    }
-
-    this.eventTimeout = setTimeout(() => {
-      this.draw()
-    }, 100)
-  }
-
-  /////////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   componentWillUnmount () {
-
-    window.removeEventListener(
-      'resize',
-      this.onResizeHandler)
 
     if (this.pieChart) {
 
@@ -89,11 +86,11 @@ class DBChart extends React.Component {
     $('.legend-container').empty()
   }
 
-  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////
-  draw () {
+  /////////////////////////////////////////////////////////
+  refresh () {
 
     $('.legend-container').empty()
 
@@ -109,7 +106,8 @@ class DBChart extends React.Component {
 
       this.pieChart.pie.openSegment(data.index)
 
-      this.props.onClick(data.item.dbMaterial, false)
+      this.props.onSelectItem(
+        data.item.dbMaterial)
     })
 
     $('.pie-chart-container').empty()
@@ -138,31 +136,27 @@ class DBChart extends React.Component {
             ? (item.dbMaterial || item)
             : null
 
-          this.props.onClick(arg, false)
+          this.props.onSelectItem(arg)
         })
       }
     }
   }
 
-  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   render() {
 
     return (
-      <div className={'db-chart ' + this.state.style}>
+      <div className={'db-chart ' + this.state.chartStyle}>
         <div className="legend-scroll">
-          <div className="legend-container">
-          </div>
+          <div className="legend-container"/>
         </div>
-        <div className="pie-chart-container">
-        </div>
+        <div className="pie-chart-container"/>
         <div className="footer">
-          <div className="footer-panel">
-          </div>
-          <div className="footer-panel">
-          </div>
+          <div className="footer-panel"/>
+          <div className="footer-panel"/>
         </div>
       </div>
     )

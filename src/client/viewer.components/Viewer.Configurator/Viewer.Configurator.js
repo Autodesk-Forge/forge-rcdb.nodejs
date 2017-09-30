@@ -93,6 +93,9 @@ class ViewerConfigurator extends BaseComponent {
       })
 
       window.addEventListener(
+        'resize', this.onStopResize)
+
+      window.addEventListener(
         'resize', this.onResize)
 
     } catch (ex) {
@@ -106,6 +109,9 @@ class ViewerConfigurator extends BaseComponent {
   //
   /////////////////////////////////////////////////////////
   componentWillUnmount () {
+
+    window.removeEventListener(
+      'resize', this.onStopResize)
 
     window.removeEventListener(
       'resize', this.onResize)
@@ -471,7 +477,8 @@ class ViewerConfigurator extends BaseComponent {
                   resolve (newExtState)
                 })
               })
-            }
+            },
+            props: this.props
           }
         })
 
@@ -678,9 +685,11 @@ class ViewerConfigurator extends BaseComponent {
 
     try {
 
+      const {appState, showLoader} = this.props
+
       this.loader = new Loader(viewer.container)
 
-      this.loader.show(this.props.showLoader)
+      this.loader.show(showLoader)
 
       if (this.props.onViewerCreated) {
 
@@ -699,6 +708,16 @@ class ViewerConfigurator extends BaseComponent {
         this.onGeometryLoaded)
 
       viewer.prefs.tag('ignore-producer')
+
+      const viewerTheme = appState.storage.theme.viewer
+
+      viewer.setLightPreset(viewerTheme.lightPreset)
+
+      const bgClr = viewerTheme.backgroundColor
+
+      viewer.setBackgroundColor(
+        bgClr[0], bgClr[1], bgClr[2],
+        bgClr[3], bgClr[4], bgClr[5])
 
       await this.setupDynamicExtensions (viewer)
 
@@ -905,6 +924,22 @@ class ViewerConfigurator extends BaseComponent {
     this.assignState({
       resizing: false
     })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  @autobind
+  onStopResize (e) {
+
+    if (this.state.renderExtension) {
+
+      if (this.state.renderExtension.onStopResize) {
+
+        this.state.renderExtension.onStopResize()
+      }
+    }
   }
 
   /////////////////////////////////////////////////////////

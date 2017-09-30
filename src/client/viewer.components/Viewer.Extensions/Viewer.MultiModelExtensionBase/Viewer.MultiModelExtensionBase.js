@@ -92,6 +92,8 @@ export default class MultiModelExtensionBase extends
         this.__onModelLoaded)
     }
 
+    this.off()
+
     return true
   }
 

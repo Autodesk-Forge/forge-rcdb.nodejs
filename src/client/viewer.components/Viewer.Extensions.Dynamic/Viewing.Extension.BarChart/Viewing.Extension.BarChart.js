@@ -5,7 +5,6 @@
 /////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import { DropdownButton, MenuItem } from 'react-bootstrap'
-import ExtensionBase from 'Viewer.ExtensionBase'
 import WidgetContainer from 'WidgetContainer'
 import {ReactLoader as Loader} from 'Loader'
 import './Viewing.Extension.BarChart.scss'
@@ -85,15 +84,20 @@ class BarChartExtension extends MultiModelExtensionBase {
 
     this.viewer.loadDynamicExtension(
       'Viewing.Extension.ContextMenu', {
-        buildMenu: (menu, selectedDbId) => {
-          return !selectedDbId
-            ? [{
-            title: 'Show all objects',
-            target: () => {
-              Toolkit.isolateFull(this.viewer)
-              this.viewer.fitToView()
-            }}]
-            : menu
+        buildMenu: (menu) => {
+          return menu.map((item) => {
+            const title = item.title.toLowerCase()
+            if (title === 'show all objects') {
+              return {
+                title: 'Show All objects',
+                target: () => {
+                  Toolkit.isolateFull(this.viewer)
+                  this.viewer.fitToView()
+                }
+              }
+            }
+            return item
+          })
         }
       })
 

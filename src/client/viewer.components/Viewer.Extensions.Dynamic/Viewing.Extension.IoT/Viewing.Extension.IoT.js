@@ -233,18 +233,22 @@ class IoTExtension extends ExtensionBase {
 
     this.viewer.loadDynamicExtension(
       'Viewing.Extension.ContextMenu', {
-        buildMenu: (menu, selectedDbId) => {
-          return !selectedDbId
-            ? [{
-                title: 'Show all objects',
+        buildMenu: (menu) => {
+          return menu.map((item) => {
+            const title = item.title.toLowerCase()
+            if (title === 'show all objects') {
+              return {
+                title: 'Show All objects',
                 target: () => {
                   Toolkit.isolateFull(this.viewer)
-                  //this.hotSpotCommand.isolate()
                   this.viewer.fitToView()
-              }}]
-            : menu
+                }
+              }
+            }
+            return item
+          })
         }
-    })
+      })
 
     this.eventTool = new EventTool(this.viewer)
 

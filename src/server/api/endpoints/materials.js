@@ -47,8 +47,15 @@ module.exports = function () {
         return
       }
 
+      const opts = {
+        sort: {
+          name: 1
+        }
+      }
+
       const items = await dbSvc.getItems(
-        materialsConfig.collection)
+        materialsConfig.collection,
+        opts)
 
       res.json(items)
 
@@ -127,7 +134,7 @@ module.exports = function () {
 
       const query = { name: material.name }
 
-      await dbSvc.upsertItem(
+      await dbSvc.upsert(
         materialsConfig.collection,
         material, query)
 

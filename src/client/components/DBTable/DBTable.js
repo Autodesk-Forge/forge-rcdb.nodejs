@@ -38,7 +38,7 @@ class DBTable extends React.Component {
 
     this.ftEditable.setUpdateHandler((updateRecord) => {
 
-      let dbItem = find(this.props.dbItems, {
+      let dbItem = find(this.props.items, {
         _id: updateRecord.id
       })
 
@@ -64,8 +64,31 @@ class DBTable extends React.Component {
           break
       }
 
-      this.props.onUpdateDbItem(dbItem)
+      this.props.onUpdateItem(dbItem)
     })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  shouldComponentUpdate (nextProps) {
+
+    if (nextProps.guid !== this.props.guid) {
+
+      return true
+    }
+
+    return false
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  componentDidUpdate () {
+
+    this.refresh()
   }
 
   /////////////////////////////////////////////////////////
@@ -83,13 +106,15 @@ class DBTable extends React.Component {
   /////////////////////////////////////////////////////////
   onRowClicked (id) {
 
-    const selectedDbItem = find(
-      this.props.dbItems, { _id: id })
+    const selectedItem = find(
+      this.props.items, {
+        _id: id
+      })
 
-    if(selectedDbItem) {
+    if (selectedItem) {
 
-      this.props.onSelectDbItem(
-        selectedDbItem, false)
+      this.props.onSelectItem(
+        selectedItem, true)
     }
   }
 
@@ -99,7 +124,7 @@ class DBTable extends React.Component {
   /////////////////////////////////////////////////////////
   onHeaderClicked (e) {
 
-    console.log(e)
+
   }
 
   /////////////////////////////////////////////////////////
@@ -115,7 +140,7 @@ class DBTable extends React.Component {
 
       this.ftEditable.addRows(
         '.footable',
-        this.props.dbItems.map((dbItem) => {
+        this.props.items.map((dbItem) => {
 
           return {
             name: dbItem.name,
@@ -153,13 +178,13 @@ class DBTable extends React.Component {
 
         const id = $(option).parents('tr')[0].id
 
-        let dbItem = find(this.props.dbItems, {
+        const dbItem = find(this.props.items, {
           _id: id
         })
 
         dbItem.currency = $(option).attr('data-value')
 
-        this.props.onUpdateDbItem(dbItem)
+        this.props.onUpdateItem(dbItem)
       })
 
       $('.footable > tbody > tr > td:first-child').off(
@@ -207,7 +232,7 @@ class DBTable extends React.Component {
 
                 dbItem.price = price
 
-                this.props.onUpdateDbItem(dbItem)
+                this.props.onUpdateItem(dbItem)
               }
 
               e.preventDefault()
@@ -230,7 +255,7 @@ class DBTable extends React.Component {
 
               dbItem[field] = value
 
-              this.props.onUpdateDbItem(dbItem)
+              this.props.onUpdateItem(dbItem)
 
               e.preventDefault()
             }
@@ -254,7 +279,7 @@ class DBTable extends React.Component {
 
     const id = $(target).parent()[0].id
 
-    return find(this.props.dbItems, {
+    return find(this.props.items, {
       _id: id
     })
   }
@@ -290,57 +315,45 @@ class DBTable extends React.Component {
     return field
   }
 
-  /////////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////////
-  componentDidUpdate () {
-
-  }
-
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
   render() {
 
-    setTimeout(() => {
-      this.refresh()
-    }, 0)
-
     return (
-        <div className="db-table">
-          <table className="footable scroll">
-            <thead>
-              <tr>
-                <th className="db-column fooId"
-                  data-field="material">
-                  <label>Material</label>
-                </th>
-                <th className="db-column fooEditable"
-                  data-hide="phone,tablet"
-                  data-field="supplier">
-                  Supplier
-                </th>
-                <th className="db-column fooEditable"
-                  data-field="price">
-                  Price (/kg)
-                </th>
-                <th className="db-column"
-                  data-field="currency"
-                  data-hide="phone"
-                  data-ft-control="select">
-                  Currency
-                </th>
-                <th className="db-column hidden">
-                  _id
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
-        </div>
+      <div className="db-table">
+        <table className="footable scroll">
+          <thead>
+            <tr>
+              <th className="db-column fooId"
+                data-field="material">
+                <label>Material</label>
+              </th>
+              <th className="db-column fooEditable"
+                data-hide="phone,tablet"
+                data-field="supplier">
+                Supplier
+              </th>
+              <th className="db-column fooEditable"
+                data-field="price">
+                Price (/kg)
+              </th>
+              <th className="db-column"
+                data-field="currency"
+                data-hide="phone"
+                data-ft-control="select">
+                Currency
+              </th>
+              <th className="db-column hidden">
+                _id
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
     )
   }
 }

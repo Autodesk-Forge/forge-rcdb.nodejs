@@ -3,11 +3,11 @@
 // by Philippe Leefsma, April 2016
 //
 /////////////////////////////////////////////////////////////////////
+import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import VisualReportPanel from './Viewing.Extension.VisualReport.Panel'
-import ExtensionBase from 'Viewer.ExtensionBase'
 import ViewerToolkit from 'Viewer.Toolkit'
 
-class VisualReportExtension extends ExtensionBase {
+class VisualReportExtension extends MultiModelExtensionBase {
 
   /////////////////////////////////////////////////////////////////
   // Class constructor
@@ -26,28 +26,38 @@ class VisualReportExtension extends ExtensionBase {
 
     return 'Viewing.Extension.VisualReport'
   }
+  /////////////////////////////////////////////////////////////////
+  // Load callback
+  //
+  /////////////////////////////////////////////////////////////////
+  load() {
+
+    console.log('Viewing.Extension.VisualReport loaded');
+
+    return true;
+  }
 
   /////////////////////////////////////////////////////////////////
   // Load callback
   //
   /////////////////////////////////////////////////////////////////
-  async load() {
+  async onModelCompletedLoad() {
 
-    this._viewer.setQualityLevel(false, true)
+    this.viewer.setQualityLevel(false, true)
 
     var componentIds = await ViewerToolkit.getLeafNodes(
-      this._viewer.model);
+      this.viewer.model);
 
     var fragIdToMaterial = {}
 
     componentIds.forEach(async(dbId) => {
 
       var fragIds = await ViewerToolkit.getFragIds(
-        this._viewer.model, dbId)
+        this.viewer.model, dbId)
 
       fragIds.forEach((fragId) => {
 
-        let fragList = this._viewer.model.getFragmentList()
+        let fragList = this.viewer.model.getFragmentList()
 
         let material = fragList.getMaterial(fragId)
 
@@ -58,14 +68,16 @@ class VisualReportExtension extends ExtensionBase {
       })
     })
 
-    let properties = this._options.properties
+    let properties = this.options.properties
 
     if (!properties) {
 
       properties = await ViewerToolkit.getPropertyList(
-        this._viewer,
+        this.viewer,
         componentIds)
     }
+
+    const viewerToolbar = this.viewer.getToolbar(true)
 
     this._control = ViewerToolkit.createButton(
       'toolbar-visual-report',
@@ -75,23 +87,17 @@ class VisualReportExtension extends ExtensionBase {
       this._panel.toggleVisibility()
     })
 
+    this.parentControl = viewerToolbar.getControl(
+      'settingsTools')
+
+    this.parentControl.addControl(
+      this._control)
+
     this._panel = new VisualReportPanel(
-      this._viewer,
+      this.viewer,
       properties,
       componentIds,
       this._control.container)
-
-    this.parentControl = this._options.parentControl
-
-    if (!this.parentControl) {
-
-      var viewerToolbar = this._viewer.getToolbar(true)
-
-      this.parentControl = new Autodesk.Viewing.UI.ControlGroup(
-        'visual-report')
-
-      viewerToolbar.addControl(this.parentControl)
-    }
 
     this._panel.on('close', () => {
 
@@ -99,24 +105,17 @@ class VisualReportExtension extends ExtensionBase {
 
         let material = fragIdToMaterial[fragId]
 
-        let fragList = this._viewer.model.getFragmentList()
+        let fragList = this.viewer.model.getFragmentList()
 
         fragList.setMaterial(fragId, material)
       }
 
       ViewerToolkit.isolateFull(
-        this._viewer)
+        this.viewer)
 
-      this._viewer.impl.invalidate(
+      this.viewer.impl.invalidate(
         true, false, false);
     })
-
-    this.parentControl.addControl(
-      this._control)
-
-    console.log('Viewing.Extension.VisualReport loaded');
-
-    return true;
   }
 
   /////////////////////////////////////////////////////////////////

@@ -304,6 +304,13 @@ module.exports = function() {
         db + '-ModelSvc')
 
       const opts = {
+        fieldQuery: {
+          private: null,
+          name: {
+            $regex: new RegExp(req.query.search || ''),
+            $options: 'i'
+          }
+        },
         pageQuery: {
           extraModels: 1,
           timestamp: 1,
@@ -318,18 +325,6 @@ module.exports = function() {
         },
         sort: {
           name: 1
-        }
-      }
-
-      // Hide private models
-      opts.fieldQuery = {
-        $or: [
-          { private: false },
-          { private: null }
-        ],
-        name: {
-          $regex: new RegExp(req.query.search || ''),
-          $options : 'i'
         }
       }
 

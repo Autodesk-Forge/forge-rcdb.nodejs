@@ -99,14 +99,6 @@ class DataManagementExtension extends MultiModelExtensionBase {
       })
     })
 
-    this.viewer.loadDynamicExtension(
-      'Viewing.Extension.ContextMenu').then(
-        (ctxMenuExtension) => {
-
-          ctxMenuExtension.addHandler(
-            this.onContextMenu)
-        })
-
     console.log('Viewing.Extension.DataManagement loaded')
 
 		return true

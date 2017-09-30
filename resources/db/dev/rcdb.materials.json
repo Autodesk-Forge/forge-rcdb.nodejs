@@ -128,8 +128,8 @@
     "_id" : ObjectId("583ec501c6bad5f3088806c0"), 
     "name" : "Concrete - Cast-in-Place Concrete", 
     "supplier" : "Industrial", 
-    "currency" : "EUR", 
-    "price" : NumberInt(12)
+    "currency" : "ARS", 
+    "price" : NumberInt(15)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806c1"), 
@@ -150,7 +150,7 @@
     "name" : "Default Floor", 
     "supplier" : "zzq", 
     "currency" : "USD", 
-    "price" : NumberInt(100)
+    "price" : NumberInt(10)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806c4"), 

@@ -193,7 +193,8 @@ const getStorage = () => {
         backgroundColor: [
           245, 245, 245,
           245, 245, 245
-        ]
+        ],
+        lightPreset: 1
       }
     }
   }

@@ -14,7 +14,7 @@ const config = {
     googleAnalytics: {
       accountIds: []
     },
-    storageVersion: 1.0,
+    storageVersion: 2.0,
     host: `${HOST_URL}`,
     env: 'development',
     port: PORT
@@ -64,9 +64,9 @@ const config = {
       //threeJS:  'https://developer.api.autodesk.com/derivativeservice/v2/viewers/three.js?v=3.1.1',
       //style:    'https://developer.api.autodesk.com/derivativeservice/v2/viewers/style.css?v=3.1.1'
 
-      viewer3D: '/resources/libs/lmv/3.1.1/viewer3D.js',
-      threeJS:  '/resources/libs/lmv/3.1.1/three.js',
-      style:    '/resources/libs/lmv/3.1.1/style.css'
+      viewer3D: '/resources/libs/lmv/3.1.2/viewer3D.js',
+      threeJS:  '/resources/libs/lmv/3.1.2/three.js',
+      style:    '/resources/libs/lmv/3.1.2/style.css'
     }
   },
 

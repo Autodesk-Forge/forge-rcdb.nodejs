@@ -8,6 +8,7 @@ import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import SelectionTreeView from './SelectionTreeView'
 import WidgetContainer from 'WidgetContainer'
 import { ReactLoader } from 'Loader'
+import Toolkit from 'Viewer.Toolkit'
 import ReactDOM from 'react-dom'
 import Switch from 'Switch'
 import Label from 'Label'
@@ -47,6 +48,25 @@ class SelectionWindowExtension extends MultiModelExtensionBase {
 
       this.react.pushRenderExtension(this)
     })
+
+    this.viewer.loadDynamicExtension(
+      'Viewing.Extension.ContextMenu', {
+        buildMenu: (menu) => {
+          return menu.map((item) => {
+            const title = item.title.toLowerCase()
+            if (title === 'show all objects') {
+              return {
+                title: 'Show All objects',
+                target: () => {
+                  Toolkit.isolateFull(this.viewer)
+                  this.viewer.fitToView()
+                }
+              }
+            }
+            return item
+          })
+        }
+      })
 
     console.log('Viewing.Extension.SelectionWindow loaded')
 
@@ -221,12 +241,22 @@ class SelectionWindowExtension extends MultiModelExtensionBase {
 
           model.visibilityManager.isolate(node.id)
 
+          Toolkit.isolateFull (
+            this.viewer,
+            node.id,
+            model)
+
           break
 
         case 'root':
 
           model.visibilityManager.isolate(
             node.props.childIds)
+
+          Toolkit.isolateFull (
+            this.viewer,
+            node.props.childIds,
+            model)
 
           this.viewer.fitToView(
             node.props.childIds,

@@ -17,10 +17,10 @@ export default class VisualReportPanel extends ToolPanelBase {
 
   constructor(viewer, properties, componentIds, buttonElement) {
 
-    super($('.viewer-view')[0], 'Visual Reports', {
+    super(viewer.container, 'Visual Reports', {
       shadow: true,
       buttonElement
-    });
+    })
 
     this.viewer = viewer;
 
