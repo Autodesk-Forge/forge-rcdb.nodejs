@@ -23,11 +23,17 @@ class ViewerView extends React.Component {
   /////////////////////////////////////////////////////////
   componentWillMount () {
 
-    this.props.setNavbarState({
-      links: {
-        settings: false
-      }
-    })
+    const {query} = this.props.location
+
+    const embed = query.embed
+        ? (query.embed.toLowerCase() === 'true')
+        : false
+
+    const navbarState = !embed
+      ? { links: { settings: false } }
+      : { visible: false }
+
+    this.props.setNavbarState(navbarState)
   }
 
   /////////////////////////////////////////////////////////
@@ -60,8 +66,14 @@ class ViewerView extends React.Component {
   /////////////////////////////////////////////////////////
   render() {
 
+    const viewStyle = {
+      height: !this.props.appState.navbar.visible
+        ? 'calc(100vh)'
+        : '100%'
+    }
+
     return (
-      <div className="viewer-view">
+      <div className="viewer-view" style={viewStyle}>
         <ViewerConfigurator
           setNavbarState={this.props.setNavbarState}
           onViewerCreated={this.onViewerCreated}

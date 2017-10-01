@@ -128,7 +128,7 @@ export default class AppNavbar extends React.Component {
       ? `${user.firstName} ${user.lastName}`
       : ''
 
-    return (
+    return appState.navbar.visible && (
 
       <Navbar className="forge-rcdb-navbar">
         <Navbar.Header>
@@ -137,7 +137,6 @@ export default class AppNavbar extends React.Component {
               href="https://forge.autodesk.com"
               target="_blank">
               <img height="30" src="/resources/img/logos/adsk-forge.png"/>
-              {/*&nbsp;<b>Forge</b> | RCDB*/}
             </NavItem>
           </Navbar.Brand>
           <Navbar.Toggle/>

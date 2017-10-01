@@ -79,27 +79,27 @@ class VisualReportExtension extends MultiModelExtensionBase {
 
     const viewerToolbar = this.viewer.getToolbar(true)
 
-    this._control = ViewerToolkit.createButton(
+    this.control = ViewerToolkit.createButton(
       'toolbar-visual-report',
       'glyphicon glyphicon-tasks',
       'Visual Report', () => {
 
-      this._panel.toggleVisibility()
+      this.panel.toggleVisibility()
     })
 
     this.parentControl = viewerToolbar.getControl(
       'settingsTools')
 
     this.parentControl.addControl(
-      this._control)
+      this.control)
 
-    this._panel = new VisualReportPanel(
+    this.panel = new VisualReportPanel(
       this.viewer,
       properties,
       componentIds,
-      this._control.container)
+      this.control.container)
 
-    this._panel.on('close', () => {
+    this.panel.on('close', () => {
 
       for(let fragId in fragIdToMaterial) {
 
@@ -114,7 +114,7 @@ class VisualReportExtension extends MultiModelExtensionBase {
         this.viewer)
 
       this.viewer.impl.invalidate(
-        true, false, false);
+        true, false, false)
     })
   }
 
@@ -124,14 +124,20 @@ class VisualReportExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////////////
   unload() {
 
-    this._panel.setVisible(false);
+    console.log('Viewing.Extension.VisualReport unloaded')
 
-    this.parentControl.removeControl(
-      this._control)
+    if (this.panel) {
 
-    console.log('Viewing.Extension.VisualReport unloaded');
+      this.panel.setVisible(false)
+    }
 
-    return true;
+    if (this.control) {
+
+      this.parentControl.removeControl(
+        this.control)
+    }
+
+    return true
   }
 }
 

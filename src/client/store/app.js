@@ -154,7 +154,8 @@ const ACTION_HANDLERS = {
   [SET_NAVBAR_STATE] : (state, action) => {
 
     const navbar = merge({},
-      state.navbar, action.payload)
+      state.navbar,
+      action.payload)
 
     return Object.assign({}, state, {
       navbar
@@ -213,6 +214,7 @@ const createInitialState = () => {
 
   const defaultState = {
     navbar: {
+      visible: true,
       links:{
         settings: true,
         gallery: true,

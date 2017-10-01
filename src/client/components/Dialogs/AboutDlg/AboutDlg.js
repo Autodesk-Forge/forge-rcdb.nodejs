@@ -57,6 +57,8 @@ export default class AboutDlg extends React.Component {
 
           <div className="content ">
              <div>
+               Forge / Responsive / Connected / Database
+               <br/>
                Written by Philippe Leefsma
                <br/>
                <a href="https://twitter.com/F3lipek" target="_blank">
