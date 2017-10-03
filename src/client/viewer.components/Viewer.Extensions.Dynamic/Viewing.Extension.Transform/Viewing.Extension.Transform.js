@@ -265,9 +265,9 @@ class TransformExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////////////
   setFullTransform (fullTransform) {
 
-    this.translateTool.fullTransform = fullTransform
+    this.translateTool.setFullTransform(fullTransform)
 
-    this.rotateTool.fullTransform = fullTransform
+    this.rotateTool.setFullTransform(fullTransform)
   }
 
   /////////////////////////////////////////////////////////////////

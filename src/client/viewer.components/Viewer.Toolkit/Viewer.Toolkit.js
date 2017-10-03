@@ -158,9 +158,11 @@ export default class Toolkit {
 
       try {
 
-        const instanceTree = model.getData().instanceTree
+        const map =
+          model.getData().instanceTree ||
+          model.getFragmentMap()
 
-        dbIds = dbIds || instanceTree.getRootId()
+        dbIds = dbIds || map.getRootId()
 
         const dbIdArray = Array.isArray(dbIds) ? dbIds : [dbIds]
 
@@ -170,7 +172,7 @@ export default class Toolkit {
 
           var childCount = 0;
 
-          instanceTree.enumNodeChildren(id, (childId) => {
+          map.enumNodeChildren(id, (childId) => {
 
               getLeafNodesRec(childId)
 
@@ -207,25 +209,38 @@ export default class Toolkit {
 
       try {
 
-        const instanceTree = model.getData().instanceTree
+        const it = model.getData().instanceTree
 
-        dbIds = dbIds || instanceTree.getRootId()
+        dbIds = dbIds || it.getRootId()
 
         const dbIdArray = Array.isArray(dbIds)
           ? dbIds : [dbIds]
 
-        const leafIds =
-          await Toolkit.getLeafNodes(
-            model, dbIdArray)
+        const leafIds = it
+          ? await Toolkit.getLeafNodes(model, dbIdArray)
+          : dbIdArray
 
-        const fragIds = []
+        let fragIds = []
 
         for(var i=0; i< leafIds.length; ++i) {
 
-          instanceTree.enumNodeFragments(
-            leafIds[i], (fragId) => {
-              fragIds.push(fragId)
-            })
+          if (it) {
+            it.enumNodeFragments(
+              leafIds[i], (fragId) => {
+                fragIds.push(fragId)
+              })
+
+          } else {
+
+            const leafFragIds =
+              Toolkit.getLeafFragIds(
+                model, leafIds[i])
+
+            fragIds = [
+              ...fragIds,
+              ...leafFragIds
+            ]
+          }
         }
 
         return resolve(fragIds)
@@ -243,16 +258,29 @@ export default class Toolkit {
   /////////////////////////////////////////////////////////
   static getLeafFragIds (model, leafId) {
 
-    const instanceTree = model.getData().instanceTree
+   if (model.getData().instanceTree) {
 
-    const fragIds = []
+     const it = model.getData().instanceTree
 
-    instanceTree.enumNodeFragments(
-      leafId, (fragId) => {
-        fragIds.push(fragId)
-      })
+     const fragIds = []
 
-    return fragIds
+     it.enumNodeFragments(
+       leafId, (fragId) => {
+         fragIds.push(fragId)
+       })
+
+     return fragIds
+
+   } else {
+
+     const fragments = model.getData().fragments
+
+     const fragIds = fragments.dbId2fragId[leafId]
+
+     return !Array.isArray(fragIds)
+       ? [fragIds]
+       : fragIds
+   }
   }
 
   /////////////////////////////////////////////////////////
@@ -697,27 +725,27 @@ export default class Toolkit {
   /////////////////////////////////////////////////////////
   static executeTaskOnModelTree (model, task) {
 
-    var taskResults = [];
+    const taskResults = []
 
-    function _executeTaskOnModelTreeRec(dbId){
+    function executeTaskOnModelTreeRec(dbId){
 
       instanceTree.enumNodeChildren(dbId,
         function(childId) {
 
-          taskResults.push(task(model, childId));
+          taskResults.push(task(model, childId))
 
-          _executeTaskOnModelTreeRec(childId);
-        });
+          executeTaskOnModelTreeRec(childId)
+        })
     }
 
     //get model instance tree and root component
-    var instanceTree = model.getData().instanceTree;
+    const instanceTree = model.getData().instanceTree
 
-    var rootId = instanceTree.getRootId();
+    const rootId = instanceTree.getRootId()
 
-    _executeTaskOnModelTreeRec(rootId);
+    executeTaskOnModelTreeRec(rootId)
 
-    return taskResults;
+    return taskResults
   }
 
   /////////////////////////////////////////////////////////

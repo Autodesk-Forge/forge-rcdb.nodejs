@@ -19,13 +19,14 @@ process.noDeprecation = true
 ///////////////////////////////////////////////////////////
 module.exports = {
 
-  devtool: 'source-map',
+  devtool: 'eval',
 
   context: path.join(__dirname, '..'),
 
   entry: {
     bundle: [
       'webpack-hot-middleware/client',
+      'react-hot-loader/patch',
       path.resolve('./src/client/index.js')
     ]
   },
@@ -149,13 +150,12 @@ module.exports = {
         test: /\.jsx?$/,
         exclude: /node_modules/,
         use: [{
-          loader:'react-hot-loader'
-        }, {
           loader: 'babel-loader',
           options: {
             presets: ['react', 'env', 'stage-0'],
             plugins: [
               'transform-decorators-legacy',
+              'react-hot-loader/babel',
               'transform-runtime'
             ],
             cacheDirectory: true

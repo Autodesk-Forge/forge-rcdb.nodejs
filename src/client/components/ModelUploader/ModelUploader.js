@@ -1,10 +1,12 @@
+import ContentEditable from 'react-contenteditable'
+import BaseComponent from 'BaseComponent'
 import ServiceManager from 'SvcManager'
 import Dropzone from 'react-dropzone'
 import PropTypes from 'prop-types'
 import './ModelUploader.scss'
 import React from 'react'
 
-export default class ModelUploader extends React.Component {
+export default class ModelUploader extends BaseComponent {
 
   /////////////////////////////////////////////////////////
   //
@@ -21,6 +23,10 @@ export default class ModelUploader extends React.Component {
       'ModelSvc')
 
     this.onDrop = this.onDrop.bind(this)
+
+    this.state = {
+      rootFilename: null
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -46,22 +52,56 @@ export default class ModelUploader extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  onKeyDown (e) {
+
+    if (e.keyCode === 13) {
+
+      e.stopPropagation()
+      e.preventDefault()
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onRootFilenameChanged (e) {
+
+    this.assignState({
+      rootFilename: e.target.value
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   isComposite (file) {
 
     return new Promise ((resolve) => {
 
-      const filename = file.name.toLowerCase()
+      const filename = file.name
+
+      const rootFilename =
+        filename.substring(
+          0, filename.length - 4)
 
       if (filename.endsWith('.zip')) {
 
         const onClose = (result) => {
 
-          resolve(result === 'OK')
-
           this.dialogSvc.off('dialog.close', onClose)
+          
+          return (result === 'OK')
+            ? resolve(this.state.rootFilename || rootFilename)
+            : resolve(false)
         }
 
         this.dialogSvc.on('dialog.close', onClose)
+
+        this.assignState({
+          rootFilename: null
+        })
 
         this.dialogSvc.setState({
           className: 'composite-dlg',
@@ -74,6 +114,13 @@ export default class ModelUploader extends React.Component {
               <p>
                 Are you uploading a composite model?
               </p>
+              <ContentEditable
+                data-placeholder={`Specify root filename: ${rootFilename}`}
+                onChange={(e) => this.onRootFilenameChanged(e)}
+                onKeyDown={(e) => this.onKeyDown(e)}
+                html={this.state.rootFilename}
+                className="root-filename"
+              />
             </div>,
           open: true
         })
@@ -91,13 +138,26 @@ export default class ModelUploader extends React.Component {
   /////////////////////////////////////////////////////////
   async onDrop (files) {
 
-    const validUpload = await this.props.onDropFiles(files)
+    const validUpload = await this.props.onFileDrop(files)
 
     if (validUpload) {
+
+      const composite = await this.isComposite(files[0])
+
+      const socketId = this.props.socketId
 
       const uploadId = this.guid()
 
       const file = files[0]
+
+      const data = Object.assign({
+        socketId,
+        uploadId
+      }, !!composite
+        ? {
+            rootFilename: composite
+          }
+        : null)
 
       const options = {
         progress: (percent) => {
@@ -111,13 +171,8 @@ export default class ModelUploader extends React.Component {
             })
           }
         },
-        data: {
-          socketId: this.props.socketId,
-          uploadId
-        }
+        data
       }
-
-      const composite = await this.isComposite(file)
 
       if (this.props.onInitUpload) {
 

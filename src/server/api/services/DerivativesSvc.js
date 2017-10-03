@@ -389,7 +389,7 @@ export default class DerivativeSvc extends BaseSvc {
           return reject(job)
         }
 
-      } catch(ex) {
+      } catch (ex) {
 
         return reject(ex)
       }

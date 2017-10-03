@@ -165,7 +165,7 @@ export default class AppNavbar extends React.Component {
               <LinkContainer to={{ pathname: '/configurator'}}>
                 <NavItem eventKey={2}>
                   <label className="nav-label">
-                    &nbsp; {this.formatMessage(messages.demo)}
+                    &nbsp;{this.formatMessage(messages.demo)}
                   </label>
                 </NavItem>
               </LinkContainer>
@@ -179,7 +179,7 @@ export default class AppNavbar extends React.Component {
               <LinkContainer to={{ pathname: '/gallery', query: { } }}>
                 <NavItem eventKey={3}>
                   <label className="nav-label">
-                    &nbsp; {this.formatMessage(messages.gallery)}
+                    &nbsp;{this.formatMessage(messages.gallery)}
                   </label>
                 </NavItem>
               </LinkContainer>

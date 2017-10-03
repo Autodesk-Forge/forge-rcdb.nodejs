@@ -81,53 +81,63 @@ module.exports = function() {
   //
   //
   /////////////////////////////////////////////////////////
-  const postSVFJob = (data) => {
+  const postSVFJob = async(data) => {
 
     const bucketKey = queryString.escape(data.bucketKey)
     const objectKey = queryString.escape(data.objectKey)
 
-    const fileId = (
-      `urn:adsk.objects:os.object:${bucketKey}/${objectKey}`)
+    const fileId =
+      `urn:adsk.objects:os.object:${bucketKey}/${objectKey}`
 
-    const urn = btoa(fileId).replace(
-      new RegExp('=', 'g'), '')
-
-    const job = {
-      input: {
-        urn
-      },
-      output: {
-        force: true,
-        formats:[{
-          type: 'svf',
-          views: ['2d', '3d']
-        }]
-      }
-    }
+    const urn = btoa(fileId).replace(new RegExp('=', 'g'), '')
 
     const socketSvc = ServiceManager.getService(
       'SocketSvc')
 
     const jobId = guid()
 
-    derivativesSvc.postJobWithProgress(
-      data.getToken, job, {
-      query: { type: 'geometry' },
-      onProgress: async(progress) => {
+    try {
 
-        if (data.socketId) {
-
-          const msg = {
-            filename: data.filename,
-            progress,
-            jobId
+      const input = Object.assign({urn}, data.compressedUrn
+        ? {
+            compressedUrn: data.compressedUrn,
+            rootFilename: data.rootFilename
           }
+        : null)
 
-          socketSvc.broadcast (
-            'svf.progress', msg, data.socketId)
+      const job = {
+        input,
+        output: {
+          force: true,
+          formats:[{
+            views: ['2d', '3d'],
+            type: 'svf'
+          }]
         }
       }
-    }).then(async() => {
+
+      await derivativesSvc.postJobWithProgress (
+        data.getToken, job, {
+          query: { outputType: 'svf' },
+          onProgress: async(progress) => {
+
+            if (data.socketId) {
+
+              const filename = data.compressedUrn
+                ? data.rootFilename
+                : data.filename
+
+              const msg = {
+                filename,
+                progress,
+                jobId
+              }
+
+              socketSvc.broadcast (
+                'svf.progress', msg, data.socketId)
+            }
+          }
+        })
 
       const modelInfo = {
         lifetime: galleryConfig.lifetime,
@@ -154,7 +164,27 @@ module.exports = function() {
       }
 
       socketSvc.broadcast ('model.added', msg)
-    })
+
+    } catch (ex) {
+
+      // removes circular buffer
+      const error = Object.assign(ex, {
+        parent: undefined
+      })
+
+      const msg = {
+        filename: data.filename,
+        jobId,
+        error
+      }
+
+      socketSvc.broadcast ('svf.error', msg)
+
+      data.getToken().then((token) => {
+        ossSvc.deleteObject(
+          token, bucketKey, objectKey)
+      })
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -594,6 +624,14 @@ module.exports = function() {
       const socketSvc = ServiceManager.getService(
         'SocketSvc')
 
+      const rootFilename = req.body.rootFilename
+
+      const compressedUrn = !!rootFilename
+
+      const name =
+        rootFilename ||
+        path.parse(file.originalname).name
+
       const opts = {
         chunkSize: 5 * 1024 * 1024, //5MB chunks
         concurrentUploads: 3,
@@ -616,13 +654,15 @@ module.exports = function() {
 
           postSVFJob({
             getToken: () => forgeSvc.get2LeggedToken(),
-            name: path.parse(file.originalname).name,
             filename: file.originalname,
             userId: user.userId,
             db: req.params.db,
+            compressedUrn,
+            rootFilename,
             bucketKey,
             objectKey,
-            socketId
+            socketId,
+            name
           })
         },
         onError: (error) => {
@@ -645,8 +685,6 @@ module.exports = function() {
       res.json(response)
 
     } catch (error) {
-
-      console.log(error)
 
       res.status(error.statusCode || 500)
       res.json(error)

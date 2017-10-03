@@ -706,6 +706,8 @@ class ModelTransformerExtension extends MultiModelExtensionBase {
 
     const {transformExtension} =  this.react.getState()
 
+    this.viewer.clearSelection()
+
     transformExtension.setFullTransform (
       fullTransform)
 

@@ -11,9 +11,6 @@ const config = {
   env: 'development',
 
   client: {
-    googleAnalytics: {
-      accountIds: []
-    },
     storageVersion: 2.0,
     host: `${HOST_URL}`,
     env: 'development',
@@ -25,7 +22,7 @@ const config = {
     uploadLimit: 5,
     bucket: {
         bucketKey: 'forge-rcdb-gallery-dev',
-        policyKey: 'Persistent'
+        policyKey: 'Transient'
       }
   },
 

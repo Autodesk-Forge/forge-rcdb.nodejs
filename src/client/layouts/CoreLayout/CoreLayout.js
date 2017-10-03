@@ -59,8 +59,14 @@ class CoreLayout extends React.Component {
     this.socketSvc.on('upload.progress',
       this.onForgeUploadProgress)
 
+    this.socketSvc.on('upload.error',
+      this.onForgeUploadError)
+
     this.socketSvc.on('svf.progress',
       this.onForgeTranslateProgress)
+
+    this.socketSvc.on('svf.error',
+      this.onForgeTranslateError)
 
     this.socketSvc.on('model.added',
       this.onModelAdded)
@@ -144,6 +150,16 @@ class CoreLayout extends React.Component {
   //
   /////////////////////////////////////////////////////////
   @autobind
+  onForgeUploadError (msg) {
+
+
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  @autobind
   onForgeTranslateProgress (msg) {
 
     let notification =
@@ -173,6 +189,42 @@ class CoreLayout extends React.Component {
     notification.message = `progress: ${msg.progress}`
 
     this.notifySvc.update(notification)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  @autobind
+  onForgeTranslateError (msg) {
+
+    console.log(msg)
+
+    const notification =
+      this.notifySvc.getNotification(
+        msg.jobId)
+
+    if (notification) {
+
+      notification.message = `translation failed :(`
+
+      notification.buttons = [{
+          name: 'Show error',
+          onClick: () => {
+            console.log(msg.error)
+            notification.dismissAfter = 1
+            this.notifySvc.update(notification)
+          }
+        }, {
+          name: 'Hide',
+          onClick: () => {
+            notification.dismissAfter = 1
+            this.notifySvc.update(notification)
+          }
+      }]
+
+      this.notifySvc.update(notification)
+    }
   }
 
   /////////////////////////////////////////////////////////

@@ -163,16 +163,19 @@ export default class Search extends BaseComponent {
 
     const {search} = this.state
 
-    const results = await Promise.all([
-      this.searchModel(search),
-      this.searchDatabase(search)
-    ])
+    if (!!search) {
 
-    const rows = flatten(results)
+      const results = await Promise.all([
+        this.searchModel(search),
+        this.searchDatabase(search)
+      ])
 
-    this.assignState({
-      rows
-    })
+      const rows = flatten(results)
+
+      this.assignState({
+        rows
+      })
+    }
   }
 
   /////////////////////////////////////////////////////////

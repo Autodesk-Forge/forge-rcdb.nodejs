@@ -1,4 +1,5 @@
 import EventsEmitter from 'EventsEmitter'
+import Toolkit from 'Viewer.Toolkit'
 import './TransformGizmos'
 
 export default class TranslateTool extends EventsEmitter {
@@ -52,19 +53,30 @@ export default class TranslateTool extends EventsEmitter {
     return ['Viewing.Tool.Translate']
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   getName () {
 
     return 'Viewing.Tool.Translate'
   }
 
-  ///////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  setFullTransform (fullTransform) {
+
+    this.fullTransform = fullTransform
+
+    this.clearSelection()
+  }
+
+  /////////////////////////////////////////////////////////
   // Creates a dummy mesh to attach control to
   //
-  ///////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   createTransformMesh() {
 
     var material = new THREE.MeshPhongMaterial(
@@ -233,7 +245,7 @@ export default class TranslateTool extends EventsEmitter {
   //
   //
   ///////////////////////////////////////////////////////////////////////////
-  initializeSelection (hitPoint) {
+  async initializeSelection (hitPoint) {
 
     this._selectedFragProxyMap = {}
 
@@ -258,7 +270,15 @@ export default class TranslateTool extends EventsEmitter {
       Autodesk.Viewing.CAMERA_CHANGE_EVENT,
       this.onCameraChanged)
 
-    this._selection.fragIdsArray.forEach((fragId) => {
+    const dbIds = this._selection.dbIdArray
+
+    const model = this._selection.model
+
+    const fragIds = !this._selection.fragIdsArray.length
+      ? await Toolkit.getFragIds(model, dbIds)
+      : this._selection.fragIdsArray
+
+    fragIds.forEach((fragId) => {
 
       var fragProxy = this._viewer.impl.getFragmentProxy(
         this._selection.model,
@@ -287,11 +307,13 @@ export default class TranslateTool extends EventsEmitter {
 
     if (this.active) {
 
-      this._selection = null
+      this._transformControlTx.visible = false
 
       this._selectedFragProxyMap = {}
 
-      this._transformControlTx.visible = false
+      this._selection = null
+
+      this._dbIds = []
 
       this._transformControlTx.removeEventListener(
         'change', this.onTxChange)

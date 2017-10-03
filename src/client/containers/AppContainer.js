@@ -1,7 +1,6 @@
 import { browserHistory, Router } from 'react-router'
 import { Provider } from 'react-redux'
 import PropTypes from 'prop-types'
-import ReactGA from 'react-ga'
 import React from 'react'
 
 class AppContainer extends React.Component {
@@ -18,8 +17,6 @@ class AppContainer extends React.Component {
   constructor (props) {
 
     super (props)
-
-    this.logPageView = this.logPageView.bind(this)
   }
 
   /////////////////////////////////////////////////////////
@@ -28,10 +25,6 @@ class AppContainer extends React.Component {
   /////////////////////////////////////////////////////////
   componentDidMount () {
 
-    this.props.GA.accountIds.forEach((accountId) => {
-
-      ReactGA.initialize(accountId)
-    })
   }
 
   /////////////////////////////////////////////////////////
@@ -47,26 +40,6 @@ class AppContainer extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
-  logPageView () {
-
-    if (this.props.env === 'production') {
-
-      const {pathname, search} = window.location
-
-      const page = pathname + search
-
-      ReactGA.set({
-        page
-      })
-
-      ReactGA.pageview(page)
-    }
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
   render () {
 
     const { routes, store } = this.props
@@ -75,7 +48,6 @@ class AppContainer extends React.Component {
       <Provider store={store}>
         <div style={{ height: '100%' }}>
           <Router
-            onUpdate={this.logPageView}
             history={browserHistory}
             children={routes}
           />

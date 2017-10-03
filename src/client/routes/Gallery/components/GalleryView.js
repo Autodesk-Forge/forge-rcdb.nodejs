@@ -225,7 +225,7 @@ class GalleryView extends BaseComponent {
   //
   /////////////////////////////////////////////////////////
   @autobind
-  async onDropFiles (files) {
+  async onFileDrop () {
 
     if (this.settings.agreement) {
 
@@ -538,7 +538,7 @@ class GalleryView extends BaseComponent {
                   socketId={this.socketSvc.socketId}
                   onInitUpload={this.onInitUpload}
                   user={this.props.appState.user}
-                  onDropFiles={this.onDropFiles}
+                  onFileDrop={this.onFileDrop}
                   onLogIn={this.onLogIn}
                   database={'gallery'}
                 />

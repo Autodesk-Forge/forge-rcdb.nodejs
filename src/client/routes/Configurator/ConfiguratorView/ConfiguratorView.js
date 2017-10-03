@@ -39,6 +39,10 @@ class ConfiguratorView extends React.Component {
     if (error.responseJSON === 'Not Found') {
 
       browserHistory.push('/404')
+
+    } else if (error) {
+
+      console.log('catched', error)
     }
   }
 
