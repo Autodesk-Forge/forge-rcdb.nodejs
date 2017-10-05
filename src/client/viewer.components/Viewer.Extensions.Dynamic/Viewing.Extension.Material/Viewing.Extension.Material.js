@@ -38,6 +38,8 @@ class MaterialExtension extends MultiModelExtensionBase {
 
     this.react = options.react
 
+    this.overrides = {}
+
     this.materials = {}
   }
 
@@ -187,8 +189,11 @@ class MaterialExtension extends MultiModelExtensionBase {
         this.viewer.activeModel ||
         this.viewer.model
 
-      const fragIds = await Toolkit.getFragIds(
-        model, dbIds)
+      this.saveDefaultMaterial (model, dbIds)
+
+      const fragIds =
+        await Toolkit.getFragIds(
+          model, dbIds)
 
       if (clrActive) {
 
@@ -200,10 +205,37 @@ class MaterialExtension extends MultiModelExtensionBase {
         this.setTextureMaterial(model, fragIds)
       }
 
-      this.viewer.impl.invalidate(true)
+      this.viewer.impl.sceneUpdated(true)
 
       this.viewer.clearSelection()
     }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  saveDefaultMaterial (model, dbIds) {
+
+    dbIds.forEach((dbId) => {
+
+      if (!this.overrides[model.guid + dbId]) {
+
+        Toolkit.getFragIds(model, dbId).then(
+          (fragIds) => {
+
+            const renderProxy =
+              this.viewer.impl.getRenderProxy(
+                model, fragIds[0])
+
+            this.overrides[model.guid + dbId] = {
+              material: renderProxy.material,
+              model,
+              dbId
+            }
+          })
+      }
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -323,8 +355,25 @@ class MaterialExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  clearOverrides () {
+  async clearOverrides () {
 
+    for (let key in this.overrides) {
+
+      const {model, dbId, material} = this.overrides[key]
+
+      const fragIds = await Toolkit.getFragIds(
+        model, dbId)
+
+      fragIds.forEach((fragId) => {
+
+        model.getFragmentList().setMaterial(
+          fragId, material)
+      })
+    }
+
+    this.overrides = {}
+
+    this.viewer.impl.sceneUpdated(true)
   }
 
   /////////////////////////////////////////////////////////
