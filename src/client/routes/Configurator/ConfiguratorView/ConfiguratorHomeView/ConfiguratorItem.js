@@ -1,5 +1,4 @@
 import { DropdownButton, MenuItem } from 'react-bootstrap'
-import { browserHistory } from 'react-router'
 import BaseComponent from 'BaseComponent'
 import ServiceManager from 'SvcManager'
 import { Link } from 'react-router'

@@ -91,7 +91,7 @@ export default class ModelUploader extends BaseComponent {
         const onClose = (result) => {
 
           this.dialogSvc.off('dialog.close', onClose)
-          
+
           return (result === 'OK')
             ? resolve(this.state.rootFilename || rootFilename)
             : resolve(false)

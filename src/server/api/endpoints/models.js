@@ -324,6 +324,36 @@ module.exports = function() {
   //
   //
   /////////////////////////////////////////////////////////
+  const buildUserWhiteListQuery = async(req, inQuery) => {
+
+    const userSvc = ServiceManager.getService(
+      'UserSvc')
+
+    const user = await userSvc.getCurrentUser(
+      req.session)
+
+    const emailId = user ? user.emailId : ''
+
+    const funcDef = `
+      function() {
+        const allowed = this.whiteList.filter((email) => {
+          return "${emailId}".match(new RegExp(email))
+        })
+        return (allowed.length > 0)
+      }`
+
+    return Object.assign({}, inQuery, {
+      $or: [
+        { whiteList: null },
+        { $where: funcDef }
+      ]
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   router.get('/:db', async (req, res) => {
 
     try {
@@ -333,14 +363,25 @@ module.exports = function() {
       const modelSvc = ServiceManager.getService(
         db + '-ModelSvc')
 
+      const fieldQuery =
+        await buildUserWhiteListQuery(req, {
+          private: null
+        })
+
+      if (req.query.search) {
+
+        fieldQuery.name = {
+          $regex: new RegExp(req.query.search),
+          $options: 'i'
+        }
+      }
+
       const limit = parseInt(req.query.limit || 100)
 
       const skip = parseInt(req.query.offset || 0)
 
       const opts = {
-        fieldQuery: {
-          private: null
-        },
+        fieldQuery,
         pageQuery: {
           extraModels: 1,
           timestamp: 1,
@@ -360,20 +401,13 @@ module.exports = function() {
         skip
       }
 
-      if (req.query.search) {
-
-        opts.fieldQuery.name = {
-          $regex: new RegExp(req.query.search),
-          $options: 'i'
-        }
-      }
-
       const response = await modelSvc.getModels(opts)
 
       res.json(response)
 
     } catch (error) {
 
+      console.log(error)
       res.status(error.statusCode || 500)
       res.json(error)
     }
@@ -392,18 +426,21 @@ module.exports = function() {
       const modelSvc = ServiceManager.getService(
         db + '-ModelSvc')
 
-      const opts = {}
+      const fieldQuery =
+        await buildUserWhiteListQuery(req, {
+          private: null
+        })
 
-      // Hide private models
-      opts.fieldQuery = {
-        $or: [
-          { private: false },
-          { private: null }
-        ],
-        name: {
-          $regex: new RegExp(req.query.search || ''),
-          $options : 'i'
+      if (req.query.search) {
+
+        fieldQuery.name = {
+          $regex: new RegExp(req.query.search),
+          $options: 'i'
         }
+      }
+
+      const opts = {
+        fieldQuery
       }
 
       const models = await modelSvc.getModels(opts)
@@ -432,14 +469,25 @@ module.exports = function() {
       const modelSvc = ServiceManager.getService(
         db + '-ModelSvc')
 
+      const fieldQuery =
+        await buildUserWhiteListQuery(req, {
+          private: null
+        })
+
+      if (req.query.search) {
+
+        fieldQuery.name = {
+          $regex: new RegExp(req.query.search),
+          $options: 'i'
+        }
+      }
+
       const limit = parseInt(req.query.limit || 15)
 
       const skip = parseInt(req.query.offset || 0)
 
       const opts = {
-        fieldQuery: {
-          private: null
-        },
+        fieldQuery,
         pageQuery: {
           model: 1,
           name: 1,
@@ -450,14 +498,6 @@ module.exports = function() {
         },
         limit,
         skip
-      }
-
-      if (req.query.search) {
-
-        opts.fieldQuery.name = {
-          $regex: new RegExp(req.query.search),
-          $options: 'i'
-        }
       }
 
       const response = await modelSvc.getModels(opts)

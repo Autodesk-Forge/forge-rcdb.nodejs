@@ -1,4 +1,3 @@
-import { browserHistory } from 'react-router'
 import autobind from 'autobind-decorator'
 import NotificationsSystem from 'reapop'
 import ServiceManager from 'SvcManager'

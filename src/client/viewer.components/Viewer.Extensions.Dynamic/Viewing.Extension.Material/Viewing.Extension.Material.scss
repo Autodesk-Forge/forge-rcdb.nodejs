@@ -1,0 +1,177 @@
+.material {
+
+  .title {
+    display: inline-flex;
+    float: left;
+  }
+
+  .title > label {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    white-space: nowrap;
+    font-weight: normal;
+    user-select: none;
+    margin-left: 27px;
+    margin-top: 10px;
+    select: none;
+    width: 144px;
+    float: left;
+  }
+
+  .content {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 100%;
+
+    .row {
+      padding: 10px;
+      width: 100%;
+      margin: 0;
+
+      .label-container {
+        margin: 4px 0 0 20px;
+      }
+    }
+
+    button.active {
+      border: 2px solid #FF9800;
+    }
+
+    button.active > span {
+      color: #FF9800;
+    }
+
+    button > span {
+      position: relative;
+      font-size: 16px;
+      color: #9b9b9b;
+    }
+
+    button:disabled > span {
+      color: #d0d0d0;
+    }
+
+    button:hover:not(:disabled) > span {
+      color: #FF9800;
+    }
+
+    button:disabled > span {
+      color: #d0d0d0;
+    }
+
+    .start-selection {
+      border: 1px solid #c6c6c6;
+      width: calc(100% - 12px);
+      background: whitesmoke;
+      padding: 6px 0 0 5px;
+      margin: 6px 0 0 6px;
+      text-align: left;
+      cursor: pointer;
+      height: 36px;
+
+      &.active {
+        border: 2px solid #FF9800;
+        padding: 5px 0 0 4px;
+      }
+
+      .picker {
+        border: 1px solid #505050;
+        margin: -1px 12px 0 0;
+        height: 24px;
+        width: 24px;
+        float: left;
+      }
+    }
+  }
+}
+
+/////////////////////////////////////////////////////////
+// title controls
+//
+/////////////////////////////////////////////////////////
+.material-controls {
+  margin: auto 0 auto calc(100% - 152px);
+  position: relative;
+  float: left;
+}
+
+.material-controls > button {
+  border: 1px solid #c6c6c6;
+  background-color: #e1e1e1;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+  outline: none;
+  height: 24px;
+  width: 26px;
+}
+
+.material-controls > button:hover {
+  border: 1px solid #878787;
+  background-color: #f5f5f5;
+}
+
+.material-controls > button > label {
+  position: relative;
+  font-size: 20px;
+  color: #f0fcff;
+  top: -8px;
+}
+
+.material-controls > button > span {
+  pointer-events: none;
+  color: #9b9b9b
+}
+
+.color-picker-dlg {
+
+  width:227px !important;
+
+  .content {
+    padding: 0 !important;
+  }
+}
+
+.texture-picker-dlg {
+
+  .content {
+
+    padding: 4px !important;
+
+    .tex-item {
+      transition-property: border, background;
+      transition-timing-function: ease;
+      transition-duration: 1.0s;
+      transition-delay: 0.0s;
+
+      border: 1px solid #c6c6c6;
+      width: calc(100% - 12px);
+      background: whitesmoke;
+      padding: 6px 0 0 5px;
+      margin: 6px 0 0 6px;
+      text-align: left;
+      cursor: pointer;
+      height: 36px;
+
+      &:hover {
+        background: rgba(0, 105, 245, 0.25);
+        border: 1px solid #1bb1f4;
+      }
+
+      .img {
+        border: 1px solid black;
+        margin: -1px 12px 0 0;
+        pointer-events: none;
+        height: 24px;
+        width: 24px;
+        float: left;
+      }
+    }
+  }
+
+  .controls {
+    border-top: none !important;
+    height: 16px !important;
+  }
+}

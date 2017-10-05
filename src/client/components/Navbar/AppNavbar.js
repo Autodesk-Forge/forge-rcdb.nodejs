@@ -1,5 +1,5 @@
-
 import { LinkContainer } from 'react-router-bootstrap'
+import { browserHistory } from 'react-router'
 import DatabaseDlg from 'Dialogs/DatabaseDlg'
 import LayoutDlg from 'Dialogs/LayoutDlg'
 import ThemeDlg from 'Dialogs/ThemeDlg'
@@ -106,7 +106,10 @@ export default class AppNavbar extends React.Component {
 
       this.props.setUser(null)
 
-      this.forgeSvc.logout()
+      this.forgeSvc.logout().then(() => {
+
+        window.location.reload()
+      })
 
     } else {
 
