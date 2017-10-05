@@ -185,9 +185,7 @@ class MaterialExtension extends MultiModelExtensionBase {
 
       const dbIds = selection.dbIdArray
 
-      const model =
-        this.viewer.activeModel ||
-        this.viewer.model
+      const model = selection.model
 
       this.saveDefaultMaterial (model, dbIds)
 
