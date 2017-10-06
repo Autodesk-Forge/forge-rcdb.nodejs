@@ -393,8 +393,10 @@ class GalleryView extends BaseComponent {
 
         if (error.status === 404) {
 
-          this.extractorSvc.extract(itemId, {
-            socketId: this.socketSvc.socketId
+          this.socketSvc.getSocketId().then((socketId) => {
+            this.extractorSvc.extract(itemId, {
+              socketId
+            })
           })
         }
       })
@@ -535,7 +537,6 @@ class GalleryView extends BaseComponent {
               <div className="uploader">
                 <ModelUploader
                   onProgress={this.onUploadProgress}
-                  socketId={this.socketSvc.socketId}
                   onInitUpload={this.onInitUpload}
                   user={this.props.appState.user}
                   onFileDrop={this.onFileDrop}

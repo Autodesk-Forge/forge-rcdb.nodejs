@@ -1,13 +1,11 @@
 import ServiceManager from '../services/SvcManager'
 import compression from 'compression'
 import queryString from 'querystring'
-import shrinkRay from 'shrink-ray'
 import express from 'express'
 import {Buffer} from 'buffer'
 import config from'c0nfig'
 import path from 'path'
-
-var zlib = require('zlib')
+import zlib from 'zlib'
 
 module.exports = function() {
 
@@ -328,7 +326,7 @@ module.exports = function() {
     return true
   }
 
-  router.use(shrinkRay({
+  router.use(compression({
     filter: shouldCompress
   }))
 
@@ -584,6 +582,10 @@ module.exports = function() {
     }
   })
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   const gzipImg = (res, img) => {
 
     zlib.gzip(img, function (error, zip) {
@@ -618,7 +620,9 @@ module.exports = function() {
 
         const img = new Buffer(model.thumbnail, 'base64')
 
-        return gzipImg(res, img)
+        res.contentType('image/png')
+
+        return res.end(img, 'binary')
       }
 
       const options = {

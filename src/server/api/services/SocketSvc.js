@@ -13,11 +13,11 @@ export default class SocketSvc extends BaseSvc {
 
     super (config)
 
-    this._connections = {}
+    this.io = io(config.server)
 
-    this._io = io(config.server)
+    this.connections = {}
 
-    this._io.sockets.on(
+    this.io.sockets.on(
       'connection',
       this.handleConnection)
   }
@@ -38,33 +38,26 @@ export default class SocketSvc extends BaseSvc {
   @autobind
   handleConnection (socket) {
 
-    var _thisSvc = this
-
-    _thisSvc._connections[socket.id] = socket
-
-    socket.on('request.connection.data', ()=> {
-      socket.emit('connection.data', {
-        socketId: socket.id
-      })
-    })
+    this.connections[socket.id] = socket
 
     socket.on('disconnect', ()=> {
 
-      _thisSvc.handleDisconnection(socket.id)
+      this.handleDisconnection(socket.id)
     })
 
     socket.on('broadcast', (data) => {
 
-      let socketIds = Object.keys(_thisSvc._connections)
+      const socketIds = Object.keys(_thisSvc.connections)
 
-      let filter = socketIds.filter((socketId) => {
+      const filter = socketIds.filter((socketId) => {
+
         return socketId !== socket.id
       })
 
-      _thisSvc.broadcast(data.msgId, data.msg, filter)
+      this.broadcast(data.msgId, data.msg, filter)
     })
 
-    _thisSvc.emit('SocketSvc.Connection', {
+    this.emit('SocketSvc.Connection', {
       id: socket.id
     })
 
@@ -78,15 +71,13 @@ export default class SocketSvc extends BaseSvc {
   @autobind
   handleDisconnection (id) {
 
-    var _thisSvc = this
-
-    _thisSvc.emit('SocketSvc.Disconnection', {
+    this.emit('SocketSvc.Disconnection', {
       id: id
     })
 
-    if(_thisSvc._connections[id]){
+    if (this.connections[id]) {
 
-      delete _thisSvc._connections[id]
+      delete this.connections[id]
 
       console.log('Socket disconnected: ' + id)
     }
@@ -99,17 +90,15 @@ export default class SocketSvc extends BaseSvc {
   ///////////////////////////////////////////////////////////////////
   broadcast (msgId, msg, filter = null) {
 
-    var _thisSvc = this
-
     if (filter) {
 
       filter = Array.isArray(filter) ? filter : [filter]
 
       filter.forEach((socketId) => {
 
-        if(_thisSvc._connections[socketId]){
+        if (this.connections[socketId]){
 
-          var socket = _thisSvc._connections[socketId]
+          var socket = this.connections[socketId]
 
           socket.emit(msgId, msg)
         }
@@ -117,9 +106,9 @@ export default class SocketSvc extends BaseSvc {
 
     } else {
 
-      for(var socketId in _thisSvc._connections){
+      for (var socketId in this.connections) {
 
-        var socket = _thisSvc._connections[socketId]
+        var socket = this.connections[socketId]
 
         socket.emit(msgId, msg)
       }

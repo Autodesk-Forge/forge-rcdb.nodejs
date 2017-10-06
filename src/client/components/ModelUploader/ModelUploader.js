@@ -16,6 +16,9 @@ export default class ModelUploader extends BaseComponent {
 
     super (props)
 
+    this.socketSvc = ServiceManager.getService(
+      'SocketSvc')
+
     this.dialogSvc = ServiceManager.getService(
       'DialogSvc')
 
@@ -144,7 +147,7 @@ export default class ModelUploader extends BaseComponent {
 
       const composite = await this.isComposite(files[0])
 
-      const socketId = this.props.socketId
+      const socketId = await this.socketSvc.getSocketId()
 
       const uploadId = this.guid()
 

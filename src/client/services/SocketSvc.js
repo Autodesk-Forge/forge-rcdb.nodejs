@@ -11,6 +11,8 @@ export default class SocketSvc extends BaseSvc {
   constructor (config) {
 
     super (config)
+
+    this.eventBuffer = []
   }
 
   /////////////////////////////////////////////////////////
@@ -19,16 +21,27 @@ export default class SocketSvc extends BaseSvc {
   /////////////////////////////////////////////////////////
   name() {
 
-    return 'SocketSvc';
+    return 'SocketSvc'
   }
 
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  get socketId() {
+  getSocketId() {
 
-    return this.socket ? this.socket.id : null
+    return new Promise((resolve, reject) => {
+
+      if (this.socket) {
+
+        return resolve(this.socket.id)
+      }
+
+      this.connect().then((socket) => {
+
+        return resolve(socket.id)
+      })
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -44,7 +57,14 @@ export default class SocketSvc extends BaseSvc {
           reconnect: true
         })
 
-      this.socket.on('connect', ()=> {
+      this.socket.on('connect', () => {
+
+        this.eventBuffer.forEach((event) => {
+
+          this.socket.on(event.msgId, event.handler)
+        })
+
+        this.eventBuffer = []
 
         resolve(this.socket)
       })
@@ -59,7 +79,17 @@ export default class SocketSvc extends BaseSvc {
 
     msgIds.split(' ').forEach((msgId) => {
 
-      this.socket.on(msgId, handler)
+      if (this.socket) {
+
+        this.socket.on(msgId, handler)
+
+      } else {
+
+        this.eventBuffer.push({
+          handler,
+          msgId
+        })
+      }
     })
   }
 
@@ -69,19 +99,22 @@ export default class SocketSvc extends BaseSvc {
   /////////////////////////////////////////////////////////
   off (msgIds, handler) {
 
-    msgIds.split(' ').forEach((msgId) => {
+    if (this.socket) {
 
-      this.socket.off(msgId, handler)
-    })
+      msgIds.split(' ').forEach((msgId) => {
+
+        this.socket.off(msgId, handler)
+      })
+    }
   }
 
   /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
-  emit(msgId, msg) {
+  async emit (msgId, msg) {
 
-    if(this.socket) {
+    if (this.socket) {
 
       this.socket.emit(msgId, msg)
     }
@@ -91,9 +124,9 @@ export default class SocketSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////
-  broadcast(msgId, msg, filter = null) {
+  async broadcast (msgId, msg, filter = null) {
 
-    if(this.socket) {
+    if (this.socket) {
 
       this.socket.emit('broadcast', {
         filter,
