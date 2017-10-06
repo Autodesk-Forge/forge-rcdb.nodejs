@@ -7,6 +7,8 @@ import {Buffer} from 'buffer'
 import config from'c0nfig'
 import path from 'path'
 
+var zlib = require('zlib')
+
 module.exports = function() {
 
   /////////////////////////////////////////////////////////
@@ -582,6 +584,19 @@ module.exports = function() {
     }
   })
 
+  const gzipImg = (res, img) => {
+
+    zlib.gzip(img, function (error, zip) {
+
+      res.set({
+        'content-type': 'image/png',
+        'content-encoding': 'gzip'
+      })
+
+      res.end(zip, 'binary')
+    })
+  }
+
   /////////////////////////////////////////////////////////
   // GET /{collection}/model/{modelId}/thumbnail
   // Get model thumbnail
@@ -603,8 +618,7 @@ module.exports = function() {
 
         const img = new Buffer(model.thumbnail, 'base64')
 
-        res.contentType('image/png')
-        return res.end(img, 'binary')
+        return gzipImg(res, img)
       }
 
       const options = {
