@@ -1,10 +1,23 @@
 import ServiceManager from '../services/SvcManager'
+import compression from 'compression'
 import express from 'express'
 import Debug from 'debug'
 
 module.exports = function() {
 
-  var router = express.Router()
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  const router = express.Router()
+
+  const shouldCompress = (req, res) => {
+    return true
+  }
+
+  router.use(compression({
+    filter: shouldCompress
+  }))
 
   /////////////////////////////////////////////////////////
   // return sequences

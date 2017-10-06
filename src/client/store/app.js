@@ -188,7 +188,7 @@ const getStorage = () => {
   const defaultAppState = {
     layoutType: 'flexLayoutRight',
     theme: {
-      css: '/resources/themes/forge-white.css',
+      css: '/resources/themes/forge-white.min.css',
       name: 'forge-white-theme',
       viewer: {
         backgroundColor: [

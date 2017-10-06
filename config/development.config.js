@@ -11,7 +11,7 @@ const config = {
   env: 'development',
 
   client: {
-    storageVersion: 2.0,
+    storageVersion: 2.1,
     host: `${HOST_URL}`,
     env: 'development',
     port: PORT

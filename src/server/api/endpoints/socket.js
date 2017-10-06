@@ -1,11 +1,24 @@
 
 import ServiceManager from '../services/SvcManager'
 import { serverConfig as config } from 'c0nfig'
+import compression from 'compression'
 import express from 'express'
 
 module.exports = function() {
 
-  var router = express.Router()
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  const router = express.Router()
+
+  const shouldCompress = (req, res) => {
+    return true
+  }
+
+  router.use(compression({
+    filter: shouldCompress
+  }))
 
   /////////////////////////////////////////////////////////////////////////////
   // POST /message
@@ -15,7 +28,7 @@ module.exports = function() {
   router.post('/message', async (req, res) => {
 
     try {
-      
+
       var payload = JSON.parse(req.body.payload)
 
       var socketSvc = ServiceManager.getService(

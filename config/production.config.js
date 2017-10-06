@@ -14,7 +14,7 @@ const config = {
     // this the public host name of your server for the
     // client socket to connect.
     // eg. https://myforgeapp.mydomain.com
-    storageVersion: 2.0,
+    storageVersion: 2.1,
     host: `${HOST_URL}`,
     env: 'production',
     port: PORT

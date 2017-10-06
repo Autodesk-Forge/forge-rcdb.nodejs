@@ -1,5 +1,6 @@
 
 import ServiceManager from '../services/SvcManager'
+import compression from 'compression'
 import express from 'express'
 import config from 'c0nfig'
 import fs from 'fs'
@@ -8,7 +9,19 @@ module.exports = function() {
 
   const uploadSvc = ServiceManager.getService('UploadSvc')
 
-  var router = express.Router()
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  const router = express.Router()
+
+  const shouldCompress = (req, res) => {
+    return true
+  }
+
+  router.use(compression({
+    filter: shouldCompress
+  }))
 
   /////////////////////////////////////////////////////////////////////////////
   // GET /hubs

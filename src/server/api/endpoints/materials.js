@@ -15,14 +15,26 @@
 // DOES NOT WARRANT THAT THE OPERATION OF THE PROGRAM WILL BE
 // UNINTERRUPTED OR ERROR FREE.
 /////////////////////////////////////////////////////////////////////////////////
-
 import ServiceManager from '../services/SvcManager'
+import compression from 'compression'
 import express from 'express'
 import config from 'c0nfig'
 
 module.exports = function () {
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   const router = express.Router()
+
+  const shouldCompress = (req, res) => {
+    return true
+  }
+
+  router.use(compression({
+    filter: shouldCompress
+  }))
 
   ///////////////////////////////////////////////////////
   //

@@ -321,7 +321,13 @@ module.exports = function() {
   /////////////////////////////////////////////////////////
   const router = express.Router()
 
-  router.use(compression())
+  const shouldCompress = (req, res) => {
+    return true
+  }
+
+  router.use(compression({
+    filter: shouldCompress
+  }))
 
   /////////////////////////////////////////////////////////
   //
@@ -338,17 +344,18 @@ module.exports = function() {
     const emailId = user ? user.emailId : ''
 
     const funcDef = `
-      function() {
-        const allowed = this.whiteList.filter((email) => {
-          return "${emailId}".match(new RegExp(email))
-        })
+      function () {
+        const allowed = this.whiteList.filter(
+          function(email){
+            return "${emailId}".match(new RegExp(email))
+          })
         return (allowed.length > 0)
       }`
 
     return Object.assign({}, inQuery, {
       $or: [
-        { whiteList: null },
-        { $where: funcDef }
+        {whiteList: null},
+        {$where: funcDef}
       ]
     })
   }
