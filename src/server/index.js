@@ -1,8 +1,6 @@
 // async support
 import 'babel-polyfill'
 
-import compression from 'compression'
-
 //Server stuff
 import cookieParser from 'cookie-parser'
 import gzip from 'express-static-gzip'
@@ -49,15 +47,6 @@ import config from'c0nfig'
 //
 /////////////////////////////////////////////////////////////////////
 var app = express()
-
-const shouldCompress = (req, res) => {
-  return true
-}
-
-app.use(compression({
-  filter: shouldCompress
-}))
-
 
 if(process.env.NODE_ENV === 'development') {
 
