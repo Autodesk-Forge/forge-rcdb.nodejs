@@ -82,6 +82,8 @@ class DatabaseTableExtension extends MultiModelExtensionBase {
     this.socketSvc.on('material.update',
       this.onUpdateItem)
 
+    this.socketSvc.connect()
+
     this.viewer.loadDynamicExtension(
       'Viewing.Extension.ContextMenu', {
         buildMenu: (menu) => {

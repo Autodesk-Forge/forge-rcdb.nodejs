@@ -44,6 +44,8 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
     this.socketSvc =
       ServiceManager.getService('SocketSvc')
 
+    this.socketSvc.connect()
+
     this.react = options.react
 	}
 

@@ -27,11 +27,6 @@ const socketSvc = new SocketSvc({
   port: config.port
 })
 
-//socketSvc.connect().then((socket) => {
-//  console.log(`${config.host}:${config.port}`)
-//  console.log('Client socket connected: ' + socket.id)
-//})
-
 const extractorSvc = new ExtractorSvc({
   apiUrl: '/api/extract'
 })

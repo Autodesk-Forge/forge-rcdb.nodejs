@@ -19,7 +19,7 @@ export default class SocketSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////
-  name() {
+  name () {
 
     return 'SocketSvc'
   }
@@ -30,7 +30,7 @@ export default class SocketSvc extends BaseSvc {
   /////////////////////////////////////////////////////////
   getSocketId() {
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
 
       if (this.socket) {
 
@@ -52,6 +52,11 @@ export default class SocketSvc extends BaseSvc {
 
     return new Promise((resolve, reject) => {
 
+      if (this.socket) {
+
+        return resolve(this.socket)
+      }
+
       this.socket = ioClient.connect(
         `${this._config.host}:${this._config.port}`, {
           reconnect: true
@@ -63,8 +68,6 @@ export default class SocketSvc extends BaseSvc {
 
           this.socket.on(event.msgId, event.handler)
         })
-
-        this.eventBuffer = []
 
         resolve(this.socket)
       })
@@ -79,16 +82,14 @@ export default class SocketSvc extends BaseSvc {
 
     msgIds.split(' ').forEach((msgId) => {
 
+      this.eventBuffer.push({
+        handler,
+        msgId
+      })
+
       if (this.socket) {
 
-        this.socket.on(msgId, handler)
-
-      } else {
-
-        this.eventBuffer.push({
-          handler,
-          msgId
-        })
+        this.socket.on (msgId, handler)
       }
     })
   }
@@ -99,13 +100,18 @@ export default class SocketSvc extends BaseSvc {
   /////////////////////////////////////////////////////////
   off (msgIds, handler) {
 
-    if (this.socket) {
+    msgIds.split(' ').forEach((msgId) => {
 
-      msgIds.split(' ').forEach((msgId) => {
+      this.eventBuffer =
+        this.eventBuffer.filter((event) => {
+          return (event.msgId !== msgId)
+        })
 
-        this.socket.off(msgId, handler)
-      })
-    }
+      if (this.socket) {
+
+        this.socket.off (msgId, handler)
+      }
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -116,7 +122,7 @@ export default class SocketSvc extends BaseSvc {
 
     if (this.socket) {
 
-      this.socket.emit(msgId, msg)
+      this.socket.emit (msgId, msg)
     }
   }
 
