@@ -1,6 +1,7 @@
 import ServiceManager from '../services/SvcManager'
 import compression from 'compression'
 import queryString from 'querystring'
+import shrinkRay from 'shrink-ray'
 import express from 'express'
 import {Buffer} from 'buffer'
 import config from'c0nfig'
@@ -325,7 +326,7 @@ module.exports = function() {
     return true
   }
 
-  router.use(compression({
+  router.use(shrinkRay({
     filter: shouldCompress
   }))
 
