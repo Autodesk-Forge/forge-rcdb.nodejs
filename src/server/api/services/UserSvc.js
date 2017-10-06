@@ -49,7 +49,7 @@ export default class UserSvc extends BaseSvc {
 
       } catch(ex) {
 
-        return reject(ex)
+        return resolve(null)
       }
     })
   }

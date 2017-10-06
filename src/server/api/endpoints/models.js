@@ -1,4 +1,5 @@
 import ServiceManager from '../services/SvcManager'
+import compression from 'compression'
 import queryString from 'querystring'
 import express from 'express'
 import {Buffer} from 'buffer'
@@ -319,6 +320,8 @@ module.exports = function() {
   //
   /////////////////////////////////////////////////////////
   const router = express.Router()
+
+  router.use(compression())
 
   /////////////////////////////////////////////////////////
   //

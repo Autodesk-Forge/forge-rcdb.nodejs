@@ -10,7 +10,7 @@
     "name" : "Steel", 
     "supplier" : "Autodesk", 
     "currency" : "ARS", 
-    "price" : NumberInt(100)
+    "price" : NumberInt(200)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806b0"), 
@@ -72,14 +72,14 @@
     "_id" : ObjectId("583ec501c6bad5f3088806b8"), 
     "name" : "Acetal Resin, White", 
     "supplier" : "Autodessk", 
-    "currency" : "EUR", 
+    "currency" : "CAD", 
     "price" : NumberInt(456)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806b9"), 
     "name" : "Aluminum-6061", 
     "supplier" : "test", 
-    "currency" : "BRL", 
+    "currency" : "CAD", 
     "price" : NumberInt(38)
 }
 { 
@@ -128,7 +128,7 @@
     "_id" : ObjectId("583ec501c6bad5f3088806c0"), 
     "name" : "Concrete - Cast-in-Place Concrete", 
     "supplier" : "Acme", 
-    "currency" : "JPY", 
+    "currency" : "USD", 
     "price" : NumberInt(200)
 }
 { 
@@ -205,7 +205,7 @@
     "_id" : ObjectId("583ec501c6bad5f3088806cf"), 
     "name" : "Copper", 
     "supplier" : "KF Mech", 
-    "currency" : "EUR", 
+    "currency" : "CAD", 
     "price" : NumberInt(10)
 }
 { 
@@ -240,7 +240,7 @@
     "_id" : ObjectId("58470be47ffea21ed80ee8f4"), 
     "name" : "Aluminum", 
     "supplier" : "Autodesk", 
-    "currency" : "EUR", 
+    "currency" : "BRL", 
     "price" : NumberInt(100)
 }
 { 

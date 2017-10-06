@@ -232,7 +232,6 @@ if (process.env.HOT_RELOADING) {
   app.get('*', gzip(path.resolve(process.cwd(), './dist')))
 }
 
-
 /////////////////////////////////////////////////////////////////////
 //
 //

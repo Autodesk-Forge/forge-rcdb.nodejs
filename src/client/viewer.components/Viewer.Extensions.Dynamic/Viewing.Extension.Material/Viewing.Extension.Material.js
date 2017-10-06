@@ -67,13 +67,16 @@ class MaterialExtension extends MultiModelExtensionBase {
       this.react.pushRenderExtension(this)
     })
 
+    if (!this.viewer.model) {
+
+      this.eventTool = new EventTool(this.viewer)
+
+      this.eventTool.on('keydown', this.onKeyDown)
+    }
+
     this.viewer.loadDynamicExtension(
       'Viewing.Extension.ContextMenu', {
         buildMenu: (menu, dbId) => {
-
-          if (dbId) {
-
-          }
 
           menu.push({
             title: 'Clear All Material Overrides',
@@ -81,6 +84,7 @@ class MaterialExtension extends MultiModelExtensionBase {
               this.clearOverrides()
             }
           })
+
           return menu
         }
       })
@@ -266,6 +270,8 @@ class MaterialExtension extends MultiModelExtensionBase {
   createColorMaterial (color) {
 
     const material = new THREE.MeshPhongMaterial({
+      specular: new THREE.Color(color),
+      side: THREE.DoubleSide,
       reflectivity: 0.0,
       color
     })
@@ -291,10 +297,11 @@ class MaterialExtension extends MultiModelExtensionBase {
     tex.wrapS  = THREE.RepeatWrapping
     tex.wrapT = THREE.RepeatWrapping
 
-    tex.repeat.set (0.05, 0.05)
+    tex.repeat.set (0.1, 0.1)
 
     const material = new THREE.MeshBasicMaterial({
       specular: new THREE.Color(0x111111),
+      side: THREE.DoubleSide,
       reflectivity: 0.0,
       map: tex
     })
@@ -589,3 +596,5 @@ Autodesk.Viewing.theExtensionManager.registerExtension (
   MaterialExtension)
 
 export default 'Viewing.Extension.Material'
+
+
