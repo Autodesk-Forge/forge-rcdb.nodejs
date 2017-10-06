@@ -67,7 +67,7 @@ class MaterialExtension extends MultiModelExtensionBase {
       this.react.pushRenderExtension(this)
     })
 
-    if (!this.viewer.model) {
+    if (this.viewer.model) {
 
       this.eventTool = new EventTool(this.viewer)
 

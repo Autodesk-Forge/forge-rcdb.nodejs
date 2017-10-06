@@ -620,6 +620,10 @@ module.exports = function() {
 
         const img = new Buffer(model.thumbnail, 'base64')
 
+        const expire = new Date(Date.now() + 2592000000).toUTCString()
+
+        res.setHeader('Cache-Control', 'public, max-age=2592000')
+        res.setHeader('Expires', expire)
         res.contentType('image/png')
 
         return res.end(img, 'binary')
@@ -638,6 +642,10 @@ module.exports = function() {
       const response = await derivativesSvc.getThumbnail(
         token, model.model.urn, options)
 
+      const expire = new Date(Date.now() + 2592000000).toUTCString()
+
+      res.setHeader('Cache-Control', 'public, max-age=2592000')
+      res.setHeader('Expires', expire)
       res.contentType('image/png')
       res.end(response, 'binary')
 
