@@ -64,6 +64,8 @@ export default class SocketSvc extends BaseSvc {
 
       this.socket.on('connect', () => {
 
+        console.log('Socket connected: ' + this.socket.id)
+
         this.eventBuffer.forEach((event) => {
 
           this.socket.on(event.msgId, event.handler)

@@ -47,7 +47,7 @@ export default class SocketSvc extends BaseSvc {
 
     socket.on('broadcast', (data) => {
 
-      const socketIds = Object.keys(_thisSvc.connections)
+      const socketIds = Object.keys(this.connections)
 
       const filter = socketIds.filter((socketId) => {
 
@@ -57,7 +57,7 @@ export default class SocketSvc extends BaseSvc {
       this.broadcast(data.msgId, data.msg, filter)
     })
 
-    this.emit('SocketSvc.Connection', {
+    this.emit('socket.connected', {
       id: socket.id
     })
 
@@ -71,7 +71,7 @@ export default class SocketSvc extends BaseSvc {
   @autobind
   handleDisconnection (id) {
 
-    this.emit('SocketSvc.Disconnection', {
+    this.emit('socket.disconnected', {
       id: id
     })
 

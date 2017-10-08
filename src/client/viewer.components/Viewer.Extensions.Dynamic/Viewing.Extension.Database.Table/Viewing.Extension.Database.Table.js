@@ -26,6 +26,7 @@ class DatabaseTableExtension extends MultiModelExtensionBase {
 
     super (viewer, options)
 
+    this.onUpdateItemSocket = this.onUpdateItemSocket.bind(this)
     this.onUpdateItem = this.onUpdateItem.bind(this)
     this.onSelectItem = this.onSelectItem.bind(this)
 
@@ -80,7 +81,7 @@ class DatabaseTableExtension extends MultiModelExtensionBase {
     })
 
     this.socketSvc.on('material.update',
-      this.onUpdateItem)
+      this.onUpdateItemSocket)
 
     this.socketSvc.connect()
 
@@ -117,7 +118,7 @@ class DatabaseTableExtension extends MultiModelExtensionBase {
     console.log('Viewing.Extension.Database.Table unloaded')
 
     this.socketSvc.off('material.update',
-      this.onUpdateItem)
+      this.onUpdateItemSocket)
 
     super.unload ()
 
@@ -254,17 +255,20 @@ class DatabaseTableExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onUpdateItem (item) {
+  onUpdateItem (item, externalUpdate) {
 
     if (item) {
 
       const state = this.react.getState()
 
-      this.dbAPI.postItem('rcdb', item)
+      if (!externalUpdate) {
 
-      this.socketSvc.broadcast(
-        'material.update',
-        item)
+        this.dbAPI.postItem('rcdb', item)
+
+        this.socketSvc.broadcast(
+          'material.update',
+          item)
+      }
 
       const entry = this.materialMap[item.name]
 
@@ -281,8 +285,13 @@ class DatabaseTableExtension extends MultiModelExtensionBase {
           : item
       })
 
-      this.react.setState({
-        items
+      const guid = externalUpdate
+          ? this.guid()
+          : state.guid
+
+      this.react.setState({ 
+        items,
+        guid
       })
 
       this.costBreakDownExtension.computeCost(
@@ -295,6 +304,15 @@ class DatabaseTableExtension extends MultiModelExtensionBase {
       this.viewerPropertiesExtension.updateProperties(
         dbProperties)
     }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onUpdateItemSocket (item) {
+
+    this.onUpdateItem(item, true)
   }
 
   /////////////////////////////////////////////////////////
