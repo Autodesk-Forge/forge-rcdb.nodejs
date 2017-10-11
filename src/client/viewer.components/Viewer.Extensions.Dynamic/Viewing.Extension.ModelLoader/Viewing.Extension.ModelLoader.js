@@ -10,6 +10,7 @@ import WidgetContainer from 'WidgetContainer'
 import ServiceManager from 'SvcManager'
 import { ReactLoader } from 'Loader'
 import Toolkit from 'Viewer.Toolkit'
+import './MultiModelStructurePanel'
 import sortBy from 'lodash/sortBy'
 import DOMPurify from 'dompurify'
 import ReactDOM from 'react-dom'
@@ -495,10 +496,21 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
 
     const instanceTree = model.getData().instanceTree
 
-    if (instanceTree && this.viewer.modelstructure) {
+    const modelstructure = this.viewer.modelstructure
 
-      this.viewer.modelstructure.setModel(
-        instanceTree)
+    if (instanceTree && modelstructure) {
+
+      if (modelstructure.instanceTree !== instanceTree) {
+
+        //if (modelstructure.tree) {
+        //
+        //  modelstructure.tree.clearSelection()
+        //}
+
+        modelstructure.uiCreated = false
+
+        modelstructure.setModel(instanceTree)
+      }
     }
   }
 

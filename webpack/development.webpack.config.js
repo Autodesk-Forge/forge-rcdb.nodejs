@@ -1,9 +1,9 @@
-const ProgressBarPlugin = require('progress-bar-webpack-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const webpack = require('webpack')
-const config = require('c0nfig')
-const chalk = require('chalk')
-const path = require('path')
+import ProgressBarPlugin from 'progress-bar-webpack-plugin'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+import webpack from 'webpack'
+import config from 'c0nfig'
+import chalk from 'chalk'
+import path from 'path'
 
 ///////////////////////////////////////////////////////////
 // Silence deprecation warnings

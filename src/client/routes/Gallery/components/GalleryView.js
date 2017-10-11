@@ -133,6 +133,8 @@ class GalleryView extends BaseComponent {
       pageCount,
       items
     })
+
+    this.primaryRef.scrollTop = 0
   }
 
   /////////////////////////////////////////////////////////
@@ -528,7 +530,9 @@ class GalleryView extends BaseComponent {
             />
           </div>
           <div className="scroller">
-            <div className="primary">
+            <div className="primary" ref={
+              (div) => this.primaryRef = div
+              }>
               <div className="items">
                 {this.renderItems()}
               </div>

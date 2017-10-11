@@ -819,7 +819,9 @@ export default class Toolkit {
 
       model = model || viewer.activeModel || viewer.model
 
-      viewer.isolate(dbIds)
+      const vizMng = viewer.impl.visibilityManager
+
+      vizMng.isolate(dbIds, model)
 
       const targetIds = Array.isArray(dbIds) ? dbIds : [dbIds]
 
@@ -835,8 +837,7 @@ export default class Toolkit {
           const show = !targetLeafIds.length  ||
             targetLeafIds.indexOf(dbId) > -1
 
-          viewer.impl.visibilityManager.setNodeOff(
-            dbId, !show)
+          vizMng.setNodeOff(dbId, !show, model)
 
           resolveLeaf()
         })
@@ -974,8 +975,7 @@ export default class Toolkit {
         viewer.impl.getRenderProxy(
           model, fragId)
 
-      matrixWorld = matrixWorld ||
-      renderProxy.matrixWorld
+      matrixWorld = matrixWorld || renderProxy.matrixWorld
 
       const geometry = renderProxy.geometry
 

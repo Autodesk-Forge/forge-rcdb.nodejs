@@ -263,7 +263,7 @@ class DatabaseTableExtension extends MultiModelExtensionBase {
 
       if (!externalUpdate) {
 
-        this.dbAPI.postItem('rcdb', item)
+        this.dbAPI.postItem(this.options.database, item)
 
         this.socketSvc.broadcast(
           'material.update',
@@ -289,7 +289,7 @@ class DatabaseTableExtension extends MultiModelExtensionBase {
           ? this.guid()
           : state.guid
 
-      this.react.setState({ 
+      this.react.setState({
         items,
         guid
       })

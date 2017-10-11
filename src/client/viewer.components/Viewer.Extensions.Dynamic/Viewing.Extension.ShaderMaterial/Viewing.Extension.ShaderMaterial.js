@@ -3,7 +3,6 @@
 // By Philippe Leefsma, February 2016
 //
 /////////////////////////////////////////////////////////////////
-import ShaderMaterialPanel from './Viewing.Extension.ShaderMaterial.Panel'
 import ExtensionBase from 'Viewer.ExtensionBase'
 import Toolkit from 'Viewer.Toolkit'
 

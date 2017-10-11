@@ -1,14 +1,16 @@
-const InlineManifestWebpackPlugin = require('inline-manifest-webpack-plugin')
-const ProgressBarPlugin = require('progress-bar-webpack-plugin')
-const CompressionPlugin = require('compression-webpack-plugin')
-const ManifestPlugin = require('webpack-manifest-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const OptimizeJsPlugin = require('optimize-js-plugin')
-const WebpackMd5Hash = require('webpack-md5-hash')
-const webpack = require('webpack')
-const config = require('c0nfig')
-const chalk = require('chalk')
-const path = require('path')
+import InlineManifestWebpackPlugin from 'inline-manifest-webpack-plugin'
+import ProgressBarPlugin from 'progress-bar-webpack-plugin'
+import CompressionPlugin from 'compression-webpack-plugin'
+import ManifestPlugin from 'webpack-manifest-plugin'
+import ImageminPlugin from 'imagemin-webpack-plugin'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+import OptimizeJsPlugin from 'optimize-js-plugin'
+import WebpackMd5Hash from 'webpack-md5-hash'
+import webpack from 'webpack'
+import config from 'c0nfig'
+import chalk from 'chalk'
+import path from 'path'
+import glob from 'glob'
 
 ///////////////////////////////////////////////////////////
 // Silence deprecation warnings
@@ -187,6 +189,16 @@ module.exports = {
       algorithm: "gzip",
       threshold: 10240,
       minRatio: 0.8
+    }),
+
+    new ImageminPlugin({
+      disable: process.env.OPTIMIZE_IMG !== null,
+      externalImages: {
+        sources: glob.sync('./resources/img/**/*.png')
+      },
+      pngquant: {
+        quality: '95-100'
+      }
     })
   ],
 

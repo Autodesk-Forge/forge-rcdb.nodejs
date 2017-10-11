@@ -71,7 +71,8 @@ module.exports = function() {
   /////////////////////////////////////////////////////////
   const btoa = (str) => {
 
-    return new Buffer(str).toString('base64')
+    return new Buffer(str).toString('base64').replace(
+      new RegExp('=', 'g'), '')
   }
 
   const atob = (b64Encoded) => {
@@ -91,7 +92,7 @@ module.exports = function() {
     const fileId =
       `urn:adsk.objects:os.object:${bucketKey}/${objectKey}`
 
-    const urn = btoa(fileId).replace(new RegExp('=', 'g'), '')
+    const urn = btoa(fileId)
 
     const socketSvc = ServiceManager.getService(
       'SocketSvc')
@@ -218,20 +219,22 @@ module.exports = function() {
   }
 
   /////////////////////////////////////////////////////////
-  // Remove models which are not on OSS
+  // Remove DB models which are not on OSS
+  // or have no geometry (extraction failed)
   //
   /////////////////////////////////////////////////////////
-  const purge = async(modelSvc) => {
-
-    const models = await modelSvc.getModels()
+  const purgeDB = async(modelSvc) => {
 
     const token = await forgeSvc.get2LeggedToken()
+
+    const models = await modelSvc.getModels()
 
     models.forEach(async(modelInfo) => {
 
       try {
 
         if (modelInfo.env === 'Local') {
+
           return
         }
 
@@ -263,6 +266,45 @@ module.exports = function() {
           deleteModel(modelSvc, modelInfo)
         }
       }
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // Remove OSS models which are not in the DB
+  //
+  /////////////////////////////////////////////////////////
+  const purgeOSS = async(modelSvc) => {
+
+    const token = await forgeSvc.get2LeggedToken()
+
+    const bucketKey = galleryConfig.bucket.bucketKey
+
+    const res = await ossSvc.getObjects(token, bucketKey)
+
+    res.body.items.forEach((object) => {
+
+      const urn = btoa(object.objectId)
+
+      const opts = {
+        fieldQuery: {
+          'model.urn': urn
+        },
+        pageQuery: {
+          name: 1
+        }
+      }
+
+      modelSvc.getModel(opts).then((model) => {
+
+        //console.log(model.name)
+
+      }, () => {
+
+        console.log(`NOT FOUND: ${object.objectKey}`)
+
+        ossSvc.deleteObject(
+          token, bucketKey, object.objectKey)
+      })
     })
   }
 
@@ -312,7 +354,8 @@ module.exports = function() {
 
       cleanModels(svc)
 
-      //purge(svc)
+      //purgeOSS(svc)
+      //purgeDB(svc)
     }
   })
 

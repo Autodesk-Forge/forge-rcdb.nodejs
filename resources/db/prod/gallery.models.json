@@ -311,56 +311,6 @@
     }
 }
 { 
-    "_id" : ObjectId("59aeda1af4df88390e3bc94a"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-09-05T17:08:42.103+0000"), 
-    "name" : "rac_basic_sample_project", 
-    "model" : {
-        "objectKey" : "8129-51b9-ffbc.rvt", 
-        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/8129-51b9-ffbc.rvt", 
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzgxMjktNTFiOS1mZmJjLnJ2dA"
-    }
-}
-{ 
-    "_id" : ObjectId("59af9263f4df88390e3bc94b"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-09-06T06:14:59.132+0000"), 
-    "name" : "Voile Ferraillage", 
-    "model" : {
-        "objectKey" : "0eb5-7d25-88c2.ifc", 
-        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/0eb5-7d25-88c2.ifc", 
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzBlYjUtN2QyNS04OGMyLmlmYw"
-    }
-}
-{ 
-    "_id" : ObjectId("59b161ff0b818d157e3da0b5"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-09-07T15:13:03.041+0000"), 
-    "owner" : "200704122227993", 
-    "name" : "Analyze", 
-    "model" : {
-        "objectKey" : "eb82-2480-5d07.dwf", 
-        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/eb82-2480-5d07.dwf", 
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2ViODItMjQ4MC01ZDA3LmR3Zg"
-    }
-}
-{ 
-    "_id" : ObjectId("59b1f5940b818d157e3da0b6"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-09-08T01:42:44.644+0000"), 
-    "owner" : "VASLJ8DE975K", 
-    "name" : "幼儿园", 
-    "model" : {
-        "objectKey" : "4759-382b-8da2.nwd", 
-        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/4759-382b-8da2.nwd", 
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzQ3NTktMzgyYi04ZGEyLm53ZA"
-    }
-}
-{ 
     "_id" : ObjectId("59b3569357c83e2bb08bd774"), 
     "lifetime" : NumberInt(2592000), 
     "env" : "AutodeskProduction", 
@@ -807,5 +757,44 @@
         "objectKey" : "fa92-aa11-0230.f3d", 
         "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/fa92-aa11-0230.f3d", 
         "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2ZhOTItYWExMS0wMjMwLmYzZA"
+    }
+}
+{ 
+    "_id" : ObjectId("59d66e8c2d4cc628b15b6cfd"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-05T17:40:28.185+0000"), 
+    "owner" : "HSY6QMY92VYU", 
+    "name" : "Model5", 
+    "model" : {
+        "objectKey" : "ff24-99db-545d.rvt", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/ff24-99db-545d.rvt", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2ZmMjQtOTlkYi01NDVkLnJ2dA"
+    }
+}
+{ 
+    "_id" : ObjectId("59d805eeca948d5233b9060a"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-06T22:38:38.581+0000"), 
+    "owner" : "200707132327054", 
+    "name" : "Sample Bridge", 
+    "model" : {
+        "objectKey" : "e5a1-f8a9-52d6.nwc", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/e5a1-f8a9-52d6.nwc", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2U1YTEtZjhhOS01MmQ2Lm53Yw"
+    }
+}
+{ 
+    "_id" : ObjectId("59db1eda8de0367e29cf371c"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-09T07:01:46.947+0000"), 
+    "owner" : "MS95QHX5TKCJ", 
+    "name" : "5M", 
+    "model" : {
+        "objectKey" : "24c4-4117-e6f0.dwg", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/24c4-4117-e6f0.dwg", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzI0YzQtNDExNy1lNmYwLmR3Zw"
     }
 }

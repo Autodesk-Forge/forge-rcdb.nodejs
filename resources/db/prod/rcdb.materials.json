@@ -59,7 +59,7 @@
     "name" : "ABS Plastic", 
     "supplier" : "ADSK", 
     "currency" : "ARS", 
-    "price" : NumberInt(1)
+    "price" : NumberInt(2)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806b7"), 
