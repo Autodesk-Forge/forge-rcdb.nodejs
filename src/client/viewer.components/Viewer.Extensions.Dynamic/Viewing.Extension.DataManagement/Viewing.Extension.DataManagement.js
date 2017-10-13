@@ -234,6 +234,8 @@ class DataManagementExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   async onItemNodeCreated (node) {
 
+    node.showLoader(true)
+
     const versionsRes =
       await this.dmAPI.getItemVersions(
         node.props.projectId, node.props.itemId)
@@ -258,9 +260,11 @@ class DataManagementExtension extends MultiModelExtensionBase {
       node.setVersions(versions)
 
       await this.setNodeThumbnail(node, urn)
-
-      node.showLoader(false)
     }
+
+    node.showLoader(false)
+
+    node.setLoaded(true)
   }
 
   /////////////////////////////////////////////////////////

@@ -223,7 +223,20 @@ export default class DataTreeNode extends EventsEmitter {
   /////////////////////////////////////////////////////////////
   onReload () {
 
-    if (this.children) {
+    if (this.type === 'items') {
+
+      this.parentDomElement.classList.remove('derivated')
+
+      this.render({
+        viewerUrn: null,
+        thumbnail: null,
+        versions: null,
+        loaded: null
+      })
+
+      this.delegate.emit('item.created', this)
+
+    } else if (this.children) {
 
       this.children.forEach((child) => {
 
@@ -278,16 +291,16 @@ export default class DataTreeNode extends EventsEmitter {
 
     switch (this.type) {
 
-      case 'hubs':
-        await this.loadHubChildren()
-        break
-
       case 'projects':
         await this.loadProjectChildren()
         break
 
       case 'folders':
         await this.loadFolderChildren()
+        break
+
+      case 'hubs':
+        await this.loadHubChildren()
         break
 
       default: break
@@ -458,11 +471,13 @@ export default class DataTreeNode extends EventsEmitter {
 
         const childNode = new DataTreeNode(childProps)
 
-        this.delegate.emit('item.created', childNode)
-
         this.children.push(childNode)
 
         this.addChild(childNode)
+
+        this.delegate.emit(
+          'item.created',
+          childNode)
       })
     })
   }
@@ -530,13 +545,13 @@ export default class DataTreeNode extends EventsEmitter {
 
         const childNode = new DataTreeNode(childProps)
 
-        this.delegate.emit('item.created', childNode)
-
         this.children.push(childNode)
 
         this.addChild(childNode)
 
-        childNode.showLoader(true)
+        this.delegate.emit(
+          'item.created',
+          childNode)
       })
     })
   }
@@ -600,7 +615,7 @@ class ReactTreeNode extends React.Component {
           <div>
             <span className="fa fa-refresh"
               data-for={`reload-${this.props.id}`}
-              style={{marginRight:'162px'}}
+              style={{marginRight:'190px'}}
               onClick={this.props.onReload}
               data-tip
             />
@@ -780,6 +795,23 @@ class ReactTreeNode extends React.Component {
             </ReactTooltip>
           </div>
         }
+        {
+          this.props.loaded &&
+          <div>
+            <span className="fa fa-refresh"
+              data-for={`reload-${this.props.id}`}
+              onClick={this.props.onReload}
+              data-tip
+            />
+            <ReactTooltip id={`reload-${this.props.id}`}
+              className="tooltip-text"
+              effect="solid">
+              <div>
+                  {`Reload item ...`}
+              </div>
+            </ReactTooltip>
+          </div>
+        }
       </div>
     )
   }
@@ -799,7 +831,7 @@ class ReactTreeNode extends React.Component {
 
         const verNum = this.props.versions.length - idx
 
-        const name = version.attributes.displayName
+        const name = version.attributes.name
 
         return (
           <div
