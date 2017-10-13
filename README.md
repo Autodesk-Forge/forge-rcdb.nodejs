@@ -17,7 +17,7 @@ This is Forge Responsive Connected Database: A responsive React-based web applic
 This project is based on the cool [React Redux Starter Kit](https://github.com/davezuko/react-redux-starter-kit)
 
 
-## Thumnail
+### Thumnail
 ![thumbnail](resources/img/thumbnail.png)
 
 
