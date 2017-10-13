@@ -77,8 +77,6 @@ class VisualReportExtension extends MultiModelExtensionBase {
         componentIds)
     }
 
-    const viewerToolbar = this.viewer.getToolbar(true)
-
     this.control = ViewerToolkit.createButton(
       'toolbar-visual-report',
       'glyphicon glyphicon-tasks',
@@ -87,8 +85,15 @@ class VisualReportExtension extends MultiModelExtensionBase {
       this.panel.toggleVisibility()
     })
 
-    this.parentControl = viewerToolbar.getControl(
-      'settingsTools')
+    this.parentControl = this.options.parentControl
+
+    if (typeof this.parentControl === 'string') {
+
+      var viewerToolbar = this.viewer.getToolbar(true)
+
+      this.parentControl = viewerToolbar.getControl(
+        this.parentControl)
+    }
 
     this.parentControl.addControl(
       this.control)

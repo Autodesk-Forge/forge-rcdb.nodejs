@@ -2,6 +2,7 @@ import { DropdownButton, MenuItem } from 'react-bootstrap'
 import BaseComponent from 'BaseComponent'
 import ServiceManager from 'SvcManager'
 import { Link } from 'react-router'
+import Stars from 'react-stars'
 import Image from 'Image'
 import React from 'react'
 import Label from 'Label'
@@ -73,6 +74,14 @@ class ConfiguratorItem extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  ratingChanged () {
+
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   renderDropdown () {
 
     const extraModels = this.state.extraModels
@@ -116,12 +125,12 @@ class ConfiguratorItem extends BaseComponent {
     return (
       <div className="item">
         <Link className="content" to={href}>
-          <div className="image-container">
-            <Image src={thumbnailUrl}/>
-          </div>
           <label className="title">
               { item.name }
           </label>
+          <div className="image-container">
+            <Image src={thumbnailUrl}/>
+          </div>
           <p className="description">
               { item.desc || '' }
           </p>
@@ -131,10 +140,22 @@ class ConfiguratorItem extends BaseComponent {
             item.extraModels &&
             this.renderDropdown()
           }
-          <a className="git-link fa fa-github"
-            href={item.git}
-            target="_blank">
-          </a>
+          <div className="git-link">
+            <Label text="Source on "/>
+            <a className="fa fa-github"
+              href={item.git}
+              target="_blank">
+            </a>
+          </div>
+          <div className="stars">
+            <Label text="Rate this demo: "/>
+            <Stars
+              onChange={this.ratingChanged}
+              color2={'#ffd700'}
+              count={5}
+              size={22}
+            />
+          </div>
         </div>
       </div>
     )

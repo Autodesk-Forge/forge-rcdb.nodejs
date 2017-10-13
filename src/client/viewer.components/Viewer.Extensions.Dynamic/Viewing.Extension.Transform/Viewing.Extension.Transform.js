@@ -150,6 +150,14 @@ class TransformExtension extends ExtensionBase {
 
     this.parentControl = this._options.parentControl
 
+    if (typeof this.parentControl === 'string') {
+
+      var viewerToolbar = this._viewer.getToolbar(true)
+
+      this.parentControl = viewerToolbar.getControl(
+        this.parentControl)
+    }
+
     if (!this.parentControl && !this._options.hideControls) {
 
       var viewerToolbar = this._viewer.getToolbar(true)

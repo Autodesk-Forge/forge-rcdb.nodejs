@@ -379,29 +379,36 @@ module.exports = function() {
   /////////////////////////////////////////////////////////
   const buildUserWhiteListQuery = async(req, inQuery) => {
 
-    const userSvc = ServiceManager.getService(
-      'UserSvc')
+    try {
 
-    const user = await userSvc.getCurrentUser(
-      req.session)
+      const userSvc = ServiceManager.getService(
+        'UserSvc')
 
-    const emailId = user ? user.emailId : ''
+      const user = await userSvc.getCurrentUser(
+        req.session)
 
-    const funcDef = `
-      function () {
-        const allowed = this.whiteList.filter(
-          function(email){
-            return "${emailId}".match(new RegExp(email))
-          })
-        return (allowed.length > 0)
-      }`
+      const emailId = user ? user.emailId : ''
 
-    return Object.assign({}, inQuery, {
-      $or: [
-        {whiteList: null},
-        {$where: funcDef}
-      ]
-    })
+      const funcDef = `
+        function () {
+          const allowed = this.whiteList.filter(
+            function(email){
+              return "${emailId}".match(new RegExp(email))
+            })
+          return (allowed.length > 0)
+        }`
+
+      return Object.assign({}, inQuery, {
+        $or: [
+          {whiteList: null},
+          {$where: funcDef}
+        ]
+      })
+
+    } catch (ex) {
+
+      return inQuery
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -736,6 +743,8 @@ module.exports = function() {
 
       const socketId = req.body.socketId
 
+      const uploadId = req.body.uploadId
+
       const file = req.file
 
       const objectKey = guid('xxxx-xxxx-xxxx') +
@@ -761,9 +770,9 @@ module.exports = function() {
 
             const msg = Object.assign({}, info, {
               filename: file.originalname,
-              uploadId: req.body.uploadId,
               bucketKey,
-              objectKey
+              objectKey,
+              uploadId
             })
 
             socketSvc.broadcast (
@@ -789,8 +798,14 @@ module.exports = function() {
 
           if (socketId) {
 
+            const msg = {
+              filename: file.originalname,
+              uploadId,
+              error
+            }
+
             socketSvc.broadcast (
-              'upload.error', error, socketId)
+              'upload.error', msg, socketId)
           }
         }
       }

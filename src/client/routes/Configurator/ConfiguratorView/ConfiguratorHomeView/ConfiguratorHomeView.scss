@@ -34,7 +34,8 @@
 
   .primary {
     height: calc(100% - 30px);
-    overflow: scroll;
+    overflow-x: hidden;
+    overflow-y: scroll;
     margin-top: 16px;
   }
 
@@ -125,8 +126,7 @@
       .image-container {
         box-shadow: 15px 15px 33px 0px rgba(0, 0, 0, 0.21);
         border: 1px solid #cccccc;
-        height: 200px;
-        width: 200px;
+        width: calc(100% - 16px);
         float: left;
         margin: 8px;
       }
@@ -135,13 +135,14 @@
         margin: 4px 0 0 22px;
         font-size: 18px;
         color: black;
+        width: 100%;
       }
 
       .description {
-        width: calc(100% - 220px);
         padding: 10px 20px 0 25px;
         color: #545454;
         float: left;
+        width: 100%;
       }
     }
 
@@ -180,12 +181,13 @@
     .footer {
       border-top: 1px solid gainsboro;
       background: #f9f9f9;
-      height: 34px;
+      min-height: 34px;
       float: left;
       width: 100%;
 
       .dropdown {
         margin-left: 9px;
+        height: 32px;
         top: 4px;
 
         .dropdown-toggle.btn {
@@ -196,13 +198,40 @@
         }
       }
 
-      .git-link {
-        text-decoration: none;
-        margin: 3px 4px 0 0;
-        cursor: pointer;
-        font-size: 28px;
-        color: black;
+      .stars {
+        margin: 1px 18px 0 0;
+        display: none;
         float: right;
+
+        .label-container {
+          margin: 5px 4px 0 0;
+          cursor: default;
+        }
+      }
+
+      .git-link {
+        margin: 3px 6px 0 0;
+        cursor: default;
+        float: right;
+
+        .label-container {
+          margin: 3px 6px 0 0;
+
+          p {
+            margin: 0;
+          }
+        }
+
+        a {
+          text-decoration: none;
+          cursor: pointer;
+          font-size: 28px;
+          color: #484848;
+
+          &:hover {
+            color: orange;
+          }
+        }
       }
     }
   }

@@ -59,9 +59,6 @@ class BarChartExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   load () {
 
-    window.addEventListener(
-      'resize', this.onStopResize)
-
     this.react.setState({
       activeProperty: '',
       showLoader: true,
@@ -118,9 +115,6 @@ class BarChartExtension extends MultiModelExtensionBase {
 
       this.toggleTheming()
     }
-
-    window.removeEventListener(
-      'resize', this.onStopResize)
 
     console.log('Viewing.Extension.BarChart unloaded')
 
@@ -193,7 +187,7 @@ class BarChartExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onGeometryLoaded (event) {
+  onModelCompletedLoad (event) {
 
     this.loadChart(event.model)
   }

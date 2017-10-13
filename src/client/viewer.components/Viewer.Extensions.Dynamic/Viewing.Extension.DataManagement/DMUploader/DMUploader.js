@@ -3,10 +3,10 @@ import BaseComponent from 'BaseComponent'
 import ServiceManager from 'SvcManager'
 import Dropzone from 'react-dropzone'
 import PropTypes from 'prop-types'
-import './ModelUploader.scss'
+import './DMUploader.scss'
 import React from 'react'
 
-export default class ModelUploader extends BaseComponent {
+export default class DMUploader extends BaseComponent {
 
   /////////////////////////////////////////////////////////
   //
@@ -26,6 +26,8 @@ export default class ModelUploader extends BaseComponent {
       'ModelSvc')
 
     this.onDrop = this.onDrop.bind(this)
+
+    this.dmAPI = this.props.api
 
     this.state = {
       rootFilename: null
@@ -141,113 +143,52 @@ export default class ModelUploader extends BaseComponent {
   /////////////////////////////////////////////////////////
   async onDrop (files) {
 
-    const validUpload = await this.props.onFileDrop(files)
+    const composite = await this.isComposite(files[0])
 
-    if (validUpload) {
+    const uploadId = this.guid()
 
-      const composite = await this.isComposite(files[0])
+    const file = files[0]
 
-      const uploadId = this.guid()
+    if (this.props.onInitUpload) {
 
-      const file = files[0]
+      this.props.onInitUpload({
+        uploadId,
+        file
+      })
+    }
 
-      if (this.props.onInitUpload) {
+    const socketId = await this.socketSvc.getSocketId()
 
-        this.props.onInitUpload({
-          uploadId,
-          file
-        })
-      }
+    const {hubId, projectId, folderId} = this.props
 
-      const socketId = await this.socketSvc.getSocketId()
-
-      const data = Object.assign({
-        socketId,
-        uploadId
+    const data = Object.assign({
+      socketId,
+      uploadId,
+      hubId
       }, !!composite
-        ? {
-            rootFilename: composite
-          }
-        : null)
+      ? {
+          rootFilename: composite
+        }
+      : null)
 
-      const options = {
-        progress: (percent) => {
+    const options = {
+      progress: (percent) => {
 
-          if (this.props.onProgress) {
+        if (this.props.onProgress) {
 
-            this.props.onProgress({
-              uploadId,
-              percent,
-              file
-            })
-          }
-        },
-        data
-      }
-
-      this.modelSvc.upload(
-        this.props.database,
-        file, options)
-    }
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  renderContent () {
-
-    const { user } = this.props
-
-    if (user) {
-
-      if (user.allowedUploads === undefined || user.allowedUploads > 0) {
-
-        return (
-          <Dropzone className="content"
-            onDrop={this.onDrop}
-            multiple={false} >
-            <p>
-              Drop a file here or click to browse ...
-            </p>
-            <hr/>
-            <p>
-              Your model will be available for
-              <br/>
-              <u>30 days</u>
-            </p>
-          </Dropzone>
-        )
-      }
-
-      return (
-        <div className="limit">
-          <p>
-            You have reached your maximum active models quota :(
-          </p>
-          <hr/>
-          <p>
-            Wait for your current models to expire
-            before being able to upload again ...
-          </p>
-        </div>
-      )
+          this.props.onProgress({
+            uploadId,
+            percent,
+            file
+          })
+        }
+      },
+      data
     }
 
-    return (
-      <div className="login">
-        <p>
-          In order to upload models ...
-        </p>
-        <hr/>
-        <p>
-          You must be &nbsp;
-          <u onClick={this.props.onLogIn}>
-            logged in
-          </u>
-        </p>
-      </div>
-    )
+    this.dmAPI.upload(
+      projectId, folderId,
+      file, options)
   }
 
   /////////////////////////////////////////////////////////
@@ -257,14 +198,15 @@ export default class ModelUploader extends BaseComponent {
   render () {
 
     return(
-      <div className="model-uploader">
-        <div className="title">
-          <span className="fa fa-cloud-upload"/>
-          <label>
-            Upload your Model
-          </label>
-        </div>
-        { this.renderContent() }
+      <div className="dm-uploader">
+        <Dropzone className="content"
+          onDrop={this.onDrop}
+          multiple={false} >
+          <p>
+            <span className="fa fa-cloud-upload"/>
+            Drop a file here or click to browse ...
+          </p>
+        </Dropzone>
       </div>
     )
   }

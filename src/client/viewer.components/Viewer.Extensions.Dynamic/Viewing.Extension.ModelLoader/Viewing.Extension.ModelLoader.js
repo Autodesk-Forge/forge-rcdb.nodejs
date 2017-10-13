@@ -245,6 +245,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
                 model.urn = dbModel.model.urn
                 model.name = dbModel.name
                 model.guid = this.guid()
+                model.proxy = lmvProxy
 
                 this.eventSink.emit('model.loaded', {
                   model
@@ -501,13 +502,6 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
     if (instanceTree && modelstructure) {
 
       if (modelstructure.instanceTree !== instanceTree) {
-
-        //if (modelstructure.tree) {
-        //
-        //  modelstructure.tree.clearSelection()
-        //}
-
-        modelstructure.uiCreated = false
 
         modelstructure.setModel(instanceTree)
       }

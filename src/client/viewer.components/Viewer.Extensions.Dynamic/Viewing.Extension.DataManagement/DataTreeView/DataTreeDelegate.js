@@ -9,18 +9,100 @@ export default class DataTreeDelegate extends TreeDelegate {
   //
   //
   /////////////////////////////////////////////////////////
-  constructor (menuContainer) {
+  constructor (props) {
 
     super ()
 
+    this.onContextDetails = this.onContextDetails.bind(this)
+
     this.contextMenu = new ContextMenu({
-      container: menuContainer
+      container: props.menuContainer
     })
+
+    this.contextMenu.on(
+      'context.details',
+      this.onContextDetails)
 
     this.on('node.dblClick', (node) => {
 
-      console.log(node)
+      //console.log(node)
     })
+
+    this.dmAPI = props.api
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onContextDetails (data) {
+
+    switch (data.type) {
+
+      case 'hubs':
+        this.showPayload(
+          `${this.dmAPI.apiUrl}/hubs/` +
+          `${data.node.props.hubId}`)
+        break
+
+      case 'hubs.projects':
+        this.showPayload(
+          `${this.dmAPI.apiUrl}/hubs/` +
+          `${data.node.props.hubId}/projects`)
+        break
+
+      case 'projects':
+        this.showPayload(
+          `${this.dmAPI.apiUrl}/hubs/` +
+          `${data.node.props.hubId}/projects/` +
+          `${data.node.props.projectId}`)
+        break
+
+      case 'top.folders.content':
+        this.showPayload(
+          `${this.dmAPI.apiUrl}/hubs/` +
+          `${data.node.props.hubId}/projects/` +
+          `${data.node.props.projectId}/topFolders`)
+        break
+
+      case 'folders':
+        this.showPayload(
+          `${this.dmAPI.apiUrl}/projects/` +
+          `${data.node.props.projectId}/folders/` +
+          `${data.node.props.folderId}`)
+        break
+
+      case 'folders.content':
+        this.showPayload(
+          `${this.dmAPI.apiUrl}/projects/` +
+          `${data.node.props.projectId}/folders/` +
+          `${data.node.props.folderId}/content`)
+        break
+
+      case 'items':
+        this.showPayload(
+          `${this.dmAPI.apiUrl}/projects/` +
+          `${data.node.props.projectId}/items/` +
+          `${data.node.props.itemId}`)
+        break
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  showPayload (uri, target = '_blank') {
+
+    const link = document.createElement('a')
+
+    document.body.appendChild(link)
+
+    link.target = target
+    link.href = uri
+    link.click()
+
+    document.body.removeChild(link)
   }
 
   /////////////////////////////////////////////////////////
@@ -41,6 +123,8 @@ export default class DataTreeDelegate extends TreeDelegate {
   destroy () {
 
     this.rootNode.destroy()
+
+    this.off()
   }
 
   /////////////////////////////////////////////////////////
@@ -79,21 +163,6 @@ export default class DataTreeDelegate extends TreeDelegate {
     return (
       className.toLowerCase().indexOf('click-trigger') > -1
     )
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  onTreeNodeRightClick (tree, node, event) {
-
-    if (node.type === 'property') {
-
-      if (node.props.metaType !== undefined) {
-
-        this.contextMenu.show(event, node)
-      }
-    }
   }
 
   /////////////////////////////////////////////////////////

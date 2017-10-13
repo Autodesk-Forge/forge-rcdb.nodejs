@@ -20,6 +20,7 @@ export default class DataTreeNode extends EventsEmitter {
 
     this.onVersionSelected = this.onVersionSelected.bind(this)
     this.onLoadItem = this.onLoadItem.bind(this)
+    this.onUpload = this.onUpload.bind(this)
     this.onReload = this.onReload.bind(this)
     this.onExpand = this.onExpand.bind(this)
 
@@ -33,6 +34,10 @@ export default class DataTreeNode extends EventsEmitter {
     this.type         = props.type
     this.api          = props.api
     this.id           = props.id
+
+    this.renderProps = {
+      onUpload: this.onUpload
+    }
 
     this.children = null
 
@@ -199,6 +204,17 @@ export default class DataTreeNode extends EventsEmitter {
 
     this.delegate.emit(
       'node.destroy', this.id)
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  onUpload () {
+
+    this.delegate.emit(
+      'folder.upload',
+      this.props)
   }
 
   /////////////////////////////////////////////////////////////
@@ -592,7 +608,7 @@ class ReactTreeNode extends React.Component {
               className="tooltip-text"
               effect="solid">
               <div>
-                  {`Reload child nodes ...`}
+                {`Reload child nodes ...`}
               </div>
             </ReactTooltip>
           </div>
@@ -656,6 +672,20 @@ class ReactTreeNode extends React.Component {
             <span/>
           </div>
         }
+        <div>
+          <span className="fa fa-cloud-upload"
+            data-for={`upload-${this.props.id}`}
+            onClick={this.props.onUpload}
+            data-tip
+          />
+          <ReactTooltip id={`upload-${this.props.id}`}
+            className="tooltip-text"
+            effect="solid">
+            <div>
+                {`Upload file to that folder ...`}
+            </div>
+          </ReactTooltip>
+        </div>
         {
           this.props.loaded &&
           <div>

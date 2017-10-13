@@ -59,9 +59,6 @@ class PieChartExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   load () {
 
-    window.addEventListener(
-      'resize', this.onStopResize)
-
     this.react.setState({
       activeProperty: '',
       showLoader: true,
@@ -80,10 +77,6 @@ class PieChartExtension extends MultiModelExtensionBase {
         this.loadChart (model)
       }
     })
-
-    this.viewer.addEventListener(
-      Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
-      this.onGeometryLoaded)
 
     this.viewer.loadDynamicExtension(
       'Viewing.Extension.ContextMenu', {
@@ -121,9 +114,6 @@ class PieChartExtension extends MultiModelExtensionBase {
 
       this.toggleTheming()
     }
-
-    window.removeEventListener(
-      'resize', this.onStopResize)
 
     console.log('Viewing.Extension.PieChart unloaded')
 
@@ -196,7 +186,7 @@ class PieChartExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onGeometryLoaded (event) {
+  onModelCompletedLoad (event) {
 
     this.loadChart(event.model)
   }

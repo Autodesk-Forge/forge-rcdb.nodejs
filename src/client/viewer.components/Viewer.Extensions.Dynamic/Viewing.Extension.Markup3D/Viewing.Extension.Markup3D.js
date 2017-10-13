@@ -80,6 +80,14 @@ class Markup3DExtension extends ExtensionBase {
 
     this.parentControl = this._options.parentControl
 
+    if (typeof this.parentControl === 'string') {
+
+      var viewerToolbar = this._viewer.getToolbar(true)
+
+      this.parentControl = viewerToolbar.getControl(
+        this.parentControl)
+    }
+
     if (!this.parentControl) {
 
       var viewerToolbar = this._viewer.getToolbar(true)

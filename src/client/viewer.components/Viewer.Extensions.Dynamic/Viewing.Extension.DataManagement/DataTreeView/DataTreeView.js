@@ -37,8 +37,10 @@ export default class DataTreeView extends BaseComponent {
     this.onKeyDown = this.onKeyDown.bind(this)
     this.onSearch = this.onSearch.bind(this)
 
-    this.delegate = new DataTreeDelegate(
-      props.menuContainer)
+    this.delegate = new DataTreeDelegate({
+      menuContainer: props.menuContainer,
+      api: props.api
+    })
 
     this.delegate.on('node.destroy', (nodeId) => {
 
@@ -58,6 +60,14 @@ export default class DataTreeView extends BaseComponent {
       if (this.props.onLoadItem) {
 
         this.props.onLoadItem(node)
+      }
+    })
+
+    this.delegate.on('folder.upload', (data) => {
+
+      if (this.props.onFolderUpload) {
+
+        this.props.onFolderUpload(data)
       }
     })
 

@@ -366,5 +366,20 @@ export default class DataManagementAPI extends ClientAPI {
 
     return null
   }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  upload (projectId, folderId, file, opts = {}) {
+
+    const url = `/projects/${projectId}/folders/${folderId}`
+
+    const options = Object.assign({}, {
+      tag: 'model'
+    }, opts)
+
+    return super.upload (url, file, options)
+  }
 }
 

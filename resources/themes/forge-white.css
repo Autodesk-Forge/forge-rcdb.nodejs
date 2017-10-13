@@ -261,7 +261,14 @@
 .menuItem {
   border: 1px solid rgb(162, 162, 162);
   border-radius: 4px;
+  text-align: left;
   color: #696969;
+}
+
+.menuItem > span {
+  position: relative;
+  float: left;
+  top: 3px;
 }
 
 .menuItem:hover {

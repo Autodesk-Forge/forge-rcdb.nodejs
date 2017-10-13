@@ -10,6 +10,7 @@ import { browserHistory } from 'react-router'
 import { Tabs, Tab } from 'react-bootstrap'
 import DataTreeView from './DataTreeView'
 import ServiceManager from 'SvcManager'
+import DMUploader from './DMUploader'
 import { ReactLoader } from 'Loader'
 import Measure from 'react-measure'
 import DOMPurify from 'dompurify'
@@ -29,8 +30,20 @@ class DataManagementExtension extends MultiModelExtensionBase {
 		super (viewer, options)
 
     this.onItemNodeCreated = this.onItemNodeCreated.bind(this)
+    this.onUploadComplete = this.onUploadComplete.bind(this)
+    this.onUploadProgress = this.onUploadProgress.bind(this)
+    this.onFolderUpload = this.onFolderUpload.bind(this)
     this.onTabSelected = this.onTabSelected.bind(this)
+    this.onInitUpload = this.onInitUpload.bind(this)
     this.onLoadItem = this.onLoadItem.bind(this)
+
+    this.socketSvc =
+      ServiceManager.getService(
+        'SocketSvc')
+
+    this.notifySvc =
+      ServiceManager.getService(
+      'NotifySvc')
 
     this.dialogSvc =
       ServiceManager.getService(
@@ -99,6 +112,10 @@ class DataManagementExtension extends MultiModelExtensionBase {
       })
     })
 
+    this.socketSvc.on(
+      'dm.upload.complete',
+      this.onUploadComplete)
+
     console.log('Viewing.Extension.DataManagement loaded')
 
 		return true
@@ -129,6 +146,10 @@ class DataManagementExtension extends MultiModelExtensionBase {
 	unload () {
 
     console.log('Viewing.Extension.DataManagement loaded')
+
+    this.socketSvc.off(
+      'dm.upload.complete',
+      this.onUploadComplete)
 
     super.unload ()
 
@@ -280,7 +301,9 @@ class DataManagementExtension extends MultiModelExtensionBase {
 
       const extId = 'Viewing.Extension.ModelLoader'
 
-      const loader = this.viewer.getExtension(extId)
+      const loader =
+        await this.viewer.loadDynamicExtension(
+          extId, this.options)
 
       const version = node.activeVersion
 
@@ -302,6 +325,99 @@ class DataManagementExtension extends MultiModelExtensionBase {
     }
 
     node.showLoader(false)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onInitUpload (data) {
+
+    this.dialogSvc.setState({
+      open: false
+    })
+
+    const notification = this.notifySvc.add({
+      title: 'Uploading ' + data.file.name,
+      message: 'progress: 0%',
+      dismissible: false,
+      status: 'loading',
+      id: data.uploadId,
+      dismissAfter: 0,
+      position: 'tl'
+    })
+
+    notification.buttons = [{
+      name: 'Hide',
+      onClick: () => {
+        notification.dismissAfter = 1
+        this.notifySvc.update(notification)
+      }
+    }]
+
+    this.notifySvc.update(notification)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onUploadProgress (data) {
+
+    const notification =
+      this.notifySvc.getNotification(data.uploadId)
+
+    if (!notification.forgeUpload) {
+
+      const progress = data.percent * 0.5
+
+      notification.message =
+        `progress: ${progress.toFixed(2)}%`
+
+      this.notifySvc.update(notification)
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onUploadComplete (data) {
+
+    console.log(data)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async onFolderUpload (data) {
+
+    const onClose = (result) => {
+
+      this.dialogSvc.off('dialog.close', onClose)
+
+      if (result === 'OK') {
+
+      }
+    }
+
+    this.dialogSvc.on('dialog.close', onClose)
+
+    this.dialogSvc.setState({
+      className: 'folder-upload-dlg',
+      title: 'Upload to Folder ...',
+      content:
+        <DMUploader
+          onProgress={this.onUploadProgress}
+          onInitUpload={this.onInitUpload}
+          projectId={data.projectId}
+          folderId={data.folderId}
+          hubId={data.hubId}
+          api={this.dmAPI}
+        />,
+      open: true
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -428,6 +544,7 @@ class DataManagementExtension extends MultiModelExtensionBase {
           <DataTreeView
             onItemNodeCreated={this.onItemNodeCreated}
             menuContainer={this.options.appContainer}
+            onFolderUpload={this.onFolderUpload}
             onLoadItem={this.onLoadItem}
             api={this.dmAPI}
             hub={hub}

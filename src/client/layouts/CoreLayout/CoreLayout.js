@@ -102,8 +102,14 @@ class CoreLayout extends React.Component {
     this.socketSvc.off('upload.progress',
       this.onForgeUploadProgress)
 
+    this.socketSvc.off('upload.error',
+      this.onForgeUploadError)
+
     this.socketSvc.off('svf.progress',
       this.onForgeTranslateProgress)
+
+    this.socketSvc.off('svf.error',
+      this.onForgeTranslateError)
 
     this.socketSvc.off('model.added',
       this.onModelAdded)
@@ -151,7 +157,30 @@ class CoreLayout extends React.Component {
   @autobind
   onForgeUploadError (msg) {
 
+    const notification = this.notifySvc.getNotification(
+      msg.uploadId)
 
+    if (notification) {
+
+      notification.message = `upload failed :(`
+
+      notification.buttons = [{
+        name: 'Show error',
+        onClick: () => {
+          console.log(msg.error)
+          notification.dismissAfter = 1
+          this.notifySvc.update(notification)
+        }
+      }, {
+        name: 'Hide',
+        onClick: () => {
+          notification.dismissAfter = 1
+          this.notifySvc.update(notification)
+        }
+      }]
+
+      this.notifySvc.update(notification)
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -196,8 +225,6 @@ class CoreLayout extends React.Component {
   /////////////////////////////////////////////////////////
   @autobind
   onForgeTranslateError (msg) {
-
-    console.log(msg)
 
     const notification =
       this.notifySvc.getNotification(
