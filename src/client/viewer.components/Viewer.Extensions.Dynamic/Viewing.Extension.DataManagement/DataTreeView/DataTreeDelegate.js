@@ -28,7 +28,9 @@ export default class DataTreeDelegate extends TreeDelegate {
       //console.log(node)
     })
 
-    this.dmAPI = props.api
+    this.derivativesAPI = props.derivativesAPI
+
+    this.dmAPI = props.dmAPI
   }
 
   /////////////////////////////////////////////////////////
@@ -84,6 +86,12 @@ export default class DataTreeDelegate extends TreeDelegate {
           `${this.dmAPI.apiUrl}/projects/` +
           `${data.node.props.projectId}/items/` +
           `${data.node.props.itemId}`)
+        break
+
+      case 'items.manifest':
+        this.showPayload(
+          `${this.derivativesAPI.apiUrl}/manifest/` +
+          `${data.node.viewerUrn}`)
         break
     }
   }

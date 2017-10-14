@@ -30,9 +30,9 @@ export default class DataTreeNode extends EventsEmitter {
     this.parent       = props.parent
     this.level        = props.level
     this.group        = props.group
+    this.dmAPI        = props.dmAPI
     this.name         = props.name
     this.type         = props.type
-    this.api          = props.api
     this.id           = props.id
 
     this.renderProps = {
@@ -318,7 +318,7 @@ export default class DataTreeNode extends EventsEmitter {
   async loadHubChildren () {
 
     const projectsRes =
-      await this.api.getProjects(this.props.hubId)
+      await this.dmAPI.getProjects(this.props.hubId)
 
     const projects = sortBy(projectsRes.data,
       (project) => {
@@ -365,7 +365,7 @@ export default class DataTreeNode extends EventsEmitter {
         return new Promise(async(resolve) => {
 
           const folderItemsRes =
-            await this.api.getProjectTopFolders(
+            await this.dmAPI.getProjectTopFolders(
               this.props.hubId, project.id)
 
           folderItemsRes.data.forEach((folder) => {
@@ -415,7 +415,7 @@ export default class DataTreeNode extends EventsEmitter {
   async loadProjectChildren () {
 
     const folderItemsRes =
-      await this.api.getProjectTopFolders(
+      await this.dmAPI.getProjectTopFolders(
         this.props.hubId, this.props.projectId)
 
     const folderItems = sortBy(folderItemsRes.data,
@@ -489,7 +489,7 @@ export default class DataTreeNode extends EventsEmitter {
   async loadFolderChildren () {
 
     const folderItemsRes =
-      await this.api.getFolderContent(
+      await this.dmAPI.getFolderContent(
         this.props.projectId, this.props.folderId)
 
     const folderItems = sortBy(folderItemsRes.data,

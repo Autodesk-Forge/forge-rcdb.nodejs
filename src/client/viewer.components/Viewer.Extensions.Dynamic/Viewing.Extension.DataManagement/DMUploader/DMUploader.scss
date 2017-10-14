@@ -25,6 +25,16 @@
 
     p {
       padding: 10px;
+
+      span {
+        left: calc(50% - 40px);
+        position: absolute;
+        font-size: 81px;
+        color: #9b9b9b;
+        opacity: 0.2;
+        z-index: 0;
+        top: 8px;
+      }
     }
   }
 

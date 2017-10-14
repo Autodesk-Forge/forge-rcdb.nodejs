@@ -36,6 +36,8 @@ class ConfigManagerExtension extends ExtensionBase {
     this.renderTitle = this.renderTitle.bind(this)
     this.toggleItem = this.toggleItem.bind(this)
 
+    this.restoreFilter = options.restoreFilter || null
+
     this.dialogSvc =
       ServiceManager.getService('DialogSvc')
 
@@ -458,7 +460,7 @@ class ConfigManagerExtension extends ExtensionBase {
 
     this.viewer.restoreState(
       filteredState,
-      null,
+      this.restoreFilter,
       this.options.restoreImmediate)
   }
 

@@ -297,17 +297,20 @@ class DataManagementExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   async onLoadItem (node) {
 
-    console.log(node)
-
     node.showLoader(true)
 
     try {
 
       const extId = 'Viewing.Extension.ModelLoader'
 
+      const options = Object.assign({}, this.options, {
+        database: 'gallery'
+      })
+
       const loader =
+        this.viewer.getExtension(extId) ||
         await this.viewer.loadDynamicExtension(
-          extId, this.options)
+          extId, options)
 
       const version = node.activeVersion
 
@@ -549,8 +552,9 @@ class DataManagementExtension extends MultiModelExtensionBase {
             onItemNodeCreated={this.onItemNodeCreated}
             menuContainer={this.options.appContainer}
             onFolderUpload={this.onFolderUpload}
+            derivativesAPI={this.derivativesAPI}
             onLoadItem={this.onLoadItem}
-            api={this.dmAPI}
+            dmAPI={this.dmAPI}
             hub={hub}
           />
         </Tab>

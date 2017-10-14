@@ -4,12 +4,14 @@
 //
 /////////////////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
+
 import xpos from './img/bridge/skybox-xpos.png'
 import xneg from './img/bridge/skybox-xneg.png'
 import ypos from './img/bridge/skybox-ypos.png'
 import yneg from './img/bridge/skybox-yneg.png'
 import zpos from './img/bridge/skybox-zpos.png'
 import zneg from './img/bridge/skybox-zneg.png'
+
 import EventTool from 'Viewer.EventTool'
 import Skybox from 'Viewer.Skybox'
 import Stopwatch from 'Stopwatch'
@@ -147,10 +149,12 @@ class ShowcaseExtension extends MultiModelExtensionBase {
 
     if (event.model.dbModelId) {
 
-      this.loadContainer(this.options.containerURN).then(
-        () => {
-          this.configureNavigation()
-        })
+      const urn = this.options.containerURN
+
+      this.loadContainer(urn).then(() => {
+
+        this.configureNavigation()
+      })
 
       this.stopwatch.getElapsedMs()
 
@@ -203,7 +207,7 @@ class ShowcaseExtension extends MultiModelExtensionBase {
   // used by the viewer
   //
   /////////////////////////////////////////////////////////
-  clampLength(vector, min, max ) {
+  clampLength (vector, min, max ) {
 
     const length = vector.length()
 

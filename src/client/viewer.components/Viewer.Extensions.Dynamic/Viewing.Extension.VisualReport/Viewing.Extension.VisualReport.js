@@ -32,9 +32,86 @@ class VisualReportExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////////////
   load() {
 
-    console.log('Viewing.Extension.VisualReport loaded');
+    console.log('Viewing.Extension.VisualReport loaded')
 
-    return true;
+    this.createUI ()
+
+    return true
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  async getParentCtrl(ctrl) {
+
+    return new Promise ((resolve) => {
+
+      if (typeof ctrl === 'string') {
+
+        var viewerToolbar = this.viewer.getToolbar(true)
+        const parentControl = viewerToolbar.getControl(ctrl)
+        return resolve(parentControl)
+      }
+
+      resolve(ctrl)
+    })
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  async createUI () {
+
+    this.parentControl =
+      await this.getParentCtrl(
+        this.options.parentControl)
+
+    this.control = ViewerToolkit.createButton(
+      'toolbar-visual-report',
+      'glyphicon glyphicon-tasks',
+      'Visual Report', () => {
+
+        this.panel = this.panel || this.createPanel()
+
+        this.panel.toggleVisibility()
+      })
+
+    this.parentControl.addControl(this.control)
+  }
+
+  /////////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////////
+  createPanel () {
+
+    const panel = new VisualReportPanel(
+      this.viewer,
+      this.options.properties,
+      this.componentIds,
+      this.control.container)
+
+    panel.on('close', () => {
+
+      for(let fragId in this.fragIdToMaterial) {
+
+        let material = this.fragIdToMaterial[fragId]
+
+        let fragList = this.viewer.model.getFragmentList()
+
+        fragList.setMaterial(fragId, material)
+      }
+
+      ViewerToolkit.isolateFull(
+        this.viewer)
+
+      this.viewer.impl.invalidate(
+        true, false, false)
+    })
+
+    return panel
   }
 
   /////////////////////////////////////////////////////////////////
@@ -48,7 +125,7 @@ class VisualReportExtension extends MultiModelExtensionBase {
     var componentIds = await ViewerToolkit.getLeafNodes(
       this.viewer.model);
 
-    var fragIdToMaterial = {}
+    this.fragIdToMaterial = {}
 
     componentIds.forEach(async(dbId) => {
 
@@ -63,64 +140,12 @@ class VisualReportExtension extends MultiModelExtensionBase {
 
         if(material) {
 
-          fragIdToMaterial[fragId] = material
+          this.fragIdToMaterial[fragId] = material
         }
       })
     })
 
-    let properties = this.options.properties
-
-    if (!properties) {
-
-      properties = await ViewerToolkit.getPropertyList(
-        this.viewer,
-        componentIds)
-    }
-
-    this.control = ViewerToolkit.createButton(
-      'toolbar-visual-report',
-      'glyphicon glyphicon-tasks',
-      'Visual Report', () => {
-
-      this.panel.toggleVisibility()
-    })
-
-    this.parentControl = this.options.parentControl
-
-    if (typeof this.parentControl === 'string') {
-
-      var viewerToolbar = this.viewer.getToolbar(true)
-
-      this.parentControl = viewerToolbar.getControl(
-        this.parentControl)
-    }
-
-    this.parentControl.addControl(
-      this.control)
-
-    this.panel = new VisualReportPanel(
-      this.viewer,
-      properties,
-      componentIds,
-      this.control.container)
-
-    this.panel.on('close', () => {
-
-      for(let fragId in fragIdToMaterial) {
-
-        let material = fragIdToMaterial[fragId]
-
-        let fragList = this.viewer.model.getFragmentList()
-
-        fragList.setMaterial(fragId, material)
-      }
-
-      ViewerToolkit.isolateFull(
-        this.viewer)
-
-      this.viewer.impl.invalidate(
-        true, false, false)
-    })
+    this.componentIds = componentIds
   }
 
   /////////////////////////////////////////////////////////////////

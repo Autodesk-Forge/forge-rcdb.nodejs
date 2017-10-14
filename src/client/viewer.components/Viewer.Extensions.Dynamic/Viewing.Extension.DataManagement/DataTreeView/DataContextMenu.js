@@ -162,6 +162,19 @@ export default class DataContextMenu extends
           }
         })
 
+        if (node.viewerUrn) {
+
+          menu.push({
+            title: 'Show manifest',
+            className: 'fa fa-cubes',
+            target: () => {
+              this.emit('context.details', {
+                event, node, type: 'items.manifest'
+              })
+            }
+          })
+        }
+
         //if (node.manifest) {
         //
         //  menu.push({

@@ -38,8 +38,9 @@ export default class DataTreeView extends BaseComponent {
     this.onSearch = this.onSearch.bind(this)
 
     this.delegate = new DataTreeDelegate({
+      derivativesAPI: props.derivativesAPI,
       menuContainer: props.menuContainer,
-      api: props.api
+      dmAPI: props.dmAPI
     })
 
     this.delegate.on('node.destroy', (nodeId) => {
@@ -85,7 +86,7 @@ export default class DataTreeView extends BaseComponent {
     const rootNode = this.delegate.createRootNode({
       name: hub.attributes.name,
       delegate: this.delegate,
-      api: this.props.api,
+      dmAPI: this.props.dmAPI,
       type: hub.type,
       hubId: hub.id,
       details: hub,
