@@ -38,6 +38,8 @@ class ConfigManagerExtension extends ExtensionBase {
 
     this.restoreFilter = options.restoreFilter || null
 
+    this.playPeriod = this.options.playPeriod || 1800
+
     this.dialogSvc =
       ServiceManager.getService('DialogSvc')
 
@@ -662,7 +664,7 @@ class ConfigManagerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  playSequence (period) {
+  playSequence () {
 
     // sequence is playing -> stopping it
     if (this.playTimeout) {
@@ -670,6 +672,8 @@ class ConfigManagerExtension extends ExtensionBase {
       clearTimeout(this.playTimeout)
 
       this.playTimeout = null
+
+      this.sequenceIdx = 0
 
       this.react.setState({
         play: false
@@ -723,7 +727,7 @@ class ConfigManagerExtension extends ExtensionBase {
 
         this.playTimeout = step(stateIds[this.sequenceIdx])
 
-      }, period)
+      }, this.playPeriod)
     }
 
     if (stateIds.length > 0) {
@@ -865,13 +869,28 @@ class ConfigManagerExtension extends ExtensionBase {
 
         <div className="row">
 
-          <ContentEditable
-            onChange={(e) => this.onInputChanged(e, 'newStateName')}
-            data-placeholder={state.emptyStateNameCaption}
-            onKeyDown={(e) => this.onKeyDown(e)}
-            disabled={stateCreationDisabled}
-            className="state-name-input"
-            html={state.newStateName}/>
+          {
+            stateCreationDisabled &&
+            <ContentEditable
+              onChange={(e) => this.onInputChanged(e, 'newStateName')}
+              data-placeholder={state.emptyStateNameCaption}
+              onKeyDown={(e) => this.onKeyDown(e)}
+              className="state-name-input"
+              html={state.newStateName}
+              disabled={true}
+            />
+          }
+
+          {
+            !stateCreationDisabled &&
+            <ContentEditable
+              onChange={(e) => this.onInputChanged(e, 'newStateName')}
+              data-placeholder={state.emptyStateNameCaption}
+              onKeyDown={(e) => this.onKeyDown(e)}
+              className="state-name-input"
+              html={state.newStateName}
+            />
+          }
 
           <button disabled={stateCreationDisabled}
             onClick={() => this.addItem()}
@@ -881,7 +900,7 @@ class ConfigManagerExtension extends ExtensionBase {
 
           <button
             title={state.play ? "Pause sequence" : "Play sequence"}
-            onClick={() => this.playSequence(1800)}
+            onClick={() => this.playSequence()}
             disabled={!sequence}>
             <span className={"fa fa-" + (state.play ? "pause" : "play")}/>
           </button>

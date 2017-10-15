@@ -586,7 +586,11 @@ module.exports = function() {
         db + '-ModelSvc')
 
       const pageQuery = {
-        thumbnail: 0
+        dynamicExtensions: 1,
+        layout:1,
+        name: 1,
+        model:1,
+        env:1
       }
 
       const model = await modelSvc.getById(

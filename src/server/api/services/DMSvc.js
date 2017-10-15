@@ -744,7 +744,11 @@ export default class DMSvc extends BaseSvc {
   // Creates item payload
   //
   /////////////////////////////////////////////////////////////////
-  createItemPayload (folderId, objectId, displayName) {
+  createItemPayload (folderId, objectId, displayName, isBIM) {
+
+    const fileType = isBIM
+      ? 'autodesk.bim360:File'
+      : 'autodesk.core:File'
 
     const payload = {
       jsonapi: {
@@ -755,7 +759,7 @@ export default class DMSvc extends BaseSvc {
         attributes: {
           displayName: displayName,
           extension: {
-            type: 'items:autodesk.core:File',
+            type: `items:${fileType}`,
             version: '1.0'
           }
         },
@@ -779,7 +783,7 @@ export default class DMSvc extends BaseSvc {
         attributes: {
           name: displayName,
           extension: {
-            type: 'versions:autodesk.core:File',
+            type: `versions:${fileType}`,
             version: '1.0'
           }
         },
@@ -801,7 +805,11 @@ export default class DMSvc extends BaseSvc {
   // Creates version payload
   //
   /////////////////////////////////////////////////////////////////
-  createVersionPayload (itemId, objectId, displayName) {
+  createVersionPayload (itemId, objectId, displayName, isBIM) {
+
+    const fileType = isBIM
+      ? 'autodesk.bim360:File'
+      : 'autodesk.core:File'
 
     const payload = {
       jsonapi: {
@@ -812,7 +820,7 @@ export default class DMSvc extends BaseSvc {
         attributes: {
           name: displayName,
           extension: {
-            type: 'versions:autodesk.core:File',
+            type: `versions:${fileType}`,
             version: '1.0'
           }
         },
