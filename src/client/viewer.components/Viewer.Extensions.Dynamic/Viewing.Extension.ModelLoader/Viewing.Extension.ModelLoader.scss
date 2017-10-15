@@ -33,6 +33,12 @@
   width: calc(100% - 88px);
   margin-bottom: 6px;
   float: left;
+
+  .dropdown-menu {
+    max-height: 150px;
+    overflow: scroll;
+    width: 100%;
+  }
 }
 
 .model-loader .content > .controls .dropdown > button {

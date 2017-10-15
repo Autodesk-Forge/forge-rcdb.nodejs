@@ -65,9 +65,10 @@
           margin-left: 8px;
           float: left;
 
-          .open > .dropdown-menu {
+          .dropdown-menu {
             max-height: 150px;
             overflow: scroll;
+            width: 100%;
           }
 
           .btn {
