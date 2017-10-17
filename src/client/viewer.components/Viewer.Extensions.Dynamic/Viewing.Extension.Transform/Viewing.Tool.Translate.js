@@ -161,7 +161,11 @@ export default class TranslateTool extends EventsEmitter {
 
           this._viewer.clearSelection()
 
-          this._viewer.select(this._dbIds)
+          if (this._selection.model.selector) {
+
+            this._selection.model.selector.setSelection(
+              this._dbIds)
+          }
 
           return
         }
@@ -187,7 +191,11 @@ export default class TranslateTool extends EventsEmitter {
 
           this._viewer.clearSelection()
 
-          this._viewer.select(this._dbIds)
+          if (this._selection.model.selector) {
+
+            this._selection.model.selector.setSelection(
+              this._dbIds)
+          }
 
           this.setPosition(this._hitPoint)
         }

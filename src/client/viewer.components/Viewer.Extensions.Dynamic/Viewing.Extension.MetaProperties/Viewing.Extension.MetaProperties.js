@@ -352,7 +352,10 @@ class MetaPropertiesExtension extends MultiModelExtensionBase {
 
           for (let [idx, modelProperty] of entries) {
 
-            if (modelProperty.displayCategory ===
+            const displayCategory =
+              modelProperty.displayCategory || 'Other'
+
+            if (displayCategory ===
                 metaProperty.displayCategory &&
                 modelProperty.displayName ===
                 metaProperty.displayName) {
