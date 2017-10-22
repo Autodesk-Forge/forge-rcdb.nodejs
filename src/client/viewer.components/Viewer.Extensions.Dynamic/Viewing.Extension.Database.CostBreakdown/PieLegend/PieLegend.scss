@@ -6,19 +6,23 @@
   outline: none;
   height: 100%;
 
-  .ReactTable .rt-thead .rt-tr {
-    font-weight: bold;
-    text-align: left;
-    font-size: 13px;
-    color: #5a5a5a;
-  }
+  .ReactTable {
+    height: 100%;
 
-  .ReactTable .rt-tbody .rt-td {
-    text-align: left;
-    color: #727272;
-  }
+    .rt-thead .rt-tr {
+      font-weight: bold;
+      text-align: left;
+      font-size: 13px;
+      color: #5a5a5a;
+    }
 
-  .ReactTable .rt-tbody .rt-tr > .rt-td:first-child {
-    padding: 4px;
+    .rt-tbody .rt-td:first-child {
+      padding: 4px;
+    }
+
+    .rt-tbody .rt-td {
+      text-align: left;
+      color: #727272;
+    }
   }
 }

@@ -342,7 +342,7 @@ class CostGraphContainer extends BaseComponent {
     const height = domElement.offsetHeight
 
     this.assignState({
-      showPie: !!(height > 200)
+      showPie: !!(height > 220)
     })
   }
 
@@ -372,7 +372,7 @@ class CostGraphContainer extends BaseComponent {
 
     return (
       <ReflexContainer>
-        <ReflexElement flex={0.40}>
+        <ReflexElement flex={this.state.showPie ? 0.4 : 1}>
           {
             legendData.length &&
             <PieLegend
