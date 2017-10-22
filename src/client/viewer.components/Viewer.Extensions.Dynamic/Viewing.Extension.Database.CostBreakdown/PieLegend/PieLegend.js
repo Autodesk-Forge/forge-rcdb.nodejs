@@ -40,8 +40,8 @@ export default class PieLegend extends BaseComponent {
         accessor: 'color',
         resizable: false,
         sortable: false,
-        maxWidth: 34,
-        minWidth: 34,
+        maxWidth: 28,
+        minWidth: 28,
         Header: '',
         Cell: row => (
         <div style={{
