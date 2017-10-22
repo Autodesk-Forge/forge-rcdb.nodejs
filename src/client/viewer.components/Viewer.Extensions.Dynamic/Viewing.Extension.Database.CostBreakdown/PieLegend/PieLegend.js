@@ -38,6 +38,8 @@ export default class PieLegend extends BaseComponent {
 
     const columns = [{
         accessor: 'color',
+        resizable: false,
+        sortable: false,
         maxWidth: 34,
         minWidth: 34,
         Header: '',
@@ -70,10 +72,24 @@ export default class PieLegend extends BaseComponent {
         Header: 'Material'
       }, {
         accessor: 'percentTxt',
-        Header: 'Percent Total'
+        Header: 'Percent Total',
+        sortMethod: (a, b) => {
+          const fa = parseFloat(a.replace('%',''))
+          const fb = parseFloat(b.replace('%',''))
+          if (fa < fb) return -1
+          if (fa > fb) return 1
+          return 0
+        }
       } , {
         accessor: 'cost',
-        Header: 'Cost'
+        Header: 'Cost',
+        sortMethod: (a, b) => {
+          const fa = parseFloat(a.replace('$USD',''))
+          const fb = parseFloat(b.replace('$USD',''))
+          if (fa < fb) return -1
+          if (fa > fb) return 1
+          return 0
+        }
       }
     ]
 
