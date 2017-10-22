@@ -4,9 +4,9 @@ import './libs/nice-select.css'
 import find from 'lodash/find'
 import './libs/nice-select'
 import React from 'react'
-import './libs/Footable'
+import './libs/footable'
 import './DBTable.scss'
-import './libs/Footable.Editable'
+import './libs/footable.editable'
 
 class DBTable extends React.Component {
 
