@@ -33,6 +33,10 @@ const config = {
     }
   },
 
+  layouts: {
+    index: 'index.ejs'
+  },
+
   forge: {
 
     oauth: {

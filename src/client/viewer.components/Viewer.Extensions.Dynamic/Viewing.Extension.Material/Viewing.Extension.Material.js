@@ -52,10 +52,10 @@ class MaterialExtension extends MultiModelExtensionBase {
     this.react.setState({
 
       texture: {name: 'wood' , img: wood},
+      disabled: !this.models.length,
       clrActive: false,
       texActive: false,
       color: '#FF0000',
-      disabled: true,
       textures: [
         {name: 'brick', img: brick},
         {name: 'steel', img: steel},
@@ -149,16 +149,21 @@ class MaterialExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   startSelection (active) {
 
-    this.eventTool.activate()
+    const {disabled} = this.react.getState()
 
-    const state = Object.assign({
-      clrActive: false,
-      texActive: false
-    }, {
-      [`${active}`]: true
-    })
+    if (!disabled) {
 
-    this.react.setState(state)
+      this.eventTool.activate()
+
+      const state = Object.assign({
+        clrActive: false,
+        texActive: false
+      }, {
+        [`${active}`]: true
+      })
+
+      this.react.setState(state)
+    }
   }
 
   /////////////////////////////////////////////////////////

@@ -106,7 +106,10 @@ module.exports = {
       threeJS: config.forge.viewer.threeJS,
       style: config.forge.viewer.style,
 
-      template: path.resolve(__dirname, '../src/client/layouts/index.ejs'),
+      template: path.resolve(
+        __dirname,
+        `../src/client/layouts/${config.layouts.index}`),
+
       title: 'Forge | RCDB | DEV',
       filename: 'index.html',
       minify: false,

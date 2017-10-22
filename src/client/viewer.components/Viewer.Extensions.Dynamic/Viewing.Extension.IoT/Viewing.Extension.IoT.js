@@ -17,8 +17,6 @@ import './Data.scss'
 // Commands
 import HotSpotCommand from 'HotSpot.Command'
 
-import hotspots from './hotspots'
-
 class IoTExtension extends ExtensionBase {
 
   /////////////////////////////////////////////////////////////////
@@ -36,8 +34,8 @@ class IoTExtension extends ExtensionBase {
 
     this.hotSpotCommand = new HotSpotCommand (viewer, {
       parentControl: options.parentControl,
-      animate: true,
-      hotspots
+      hotspots: options.hotspots,
+      animate: true
     })
 
     this.panel = new HotSpotPropertyPanel(
@@ -92,6 +90,8 @@ class IoTExtension extends ExtensionBase {
     })
 
     this.socketSvc = ServiceManager.getService('SocketSvc')
+
+    this.socketSvc.connect()
 
     const sensorEvents = [
       'sensor.acceleration',

@@ -208,7 +208,7 @@ class DualViewerExtension extends MultiModelExtensionBase {
 
     const model = this.dualViewer.model
 
-    if (!this.selection1Locked && model.selector) {
+    if (!this.selection1Locked && model && model.selector) {
 
       this.selection2Locked = true
 

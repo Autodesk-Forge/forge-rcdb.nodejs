@@ -4,13 +4,17 @@
 //
 /////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
+import {ReflexContainer, ReflexElement} from 'react-reflex'
 import './Viewing.Extension.Database.CostBreakdown.scss'
 import WidgetContainer from 'WidgetContainer'
 import {ReactLoader as Loader} from 'Loader'
+import BaseComponent from 'BaseComponent'
 import ServiceManager from 'SvcManager'
 import Toolkit from 'Viewer.Toolkit'
+import PieLegend from './PieLegend'
 import sortBy from 'lodash/sortBy'
-import DBChart from 'DBChart'
+import ReactDOM from 'react-dom'
+import PieChart from 'PieChart'
 import React from 'react'
 import d3 from 'd3'
 
@@ -24,7 +28,7 @@ class DatabaseCostBreakdownExtension extends MultiModelExtensionBase {
 
     super (viewer, options)
 
-    this.onSelectItem = this.onSelectItem.bind(this)
+    this.onItemSelected = this.onItemSelected.bind(this)
 
     this.react = options.react
   }
@@ -103,41 +107,33 @@ class DatabaseCostBreakdownExtension extends MultiModelExtensionBase {
       ])
 
     let totalCost = 0.0
-    let totalMass = 0.0
 
     for (let key in materialMap) {
 
       const item = materialMap[key]
 
       totalCost += item.totalCost
-      totalMass += item.totalMass
     }
 
     const legendData = keys.map((key, idx) => {
 
       const item = materialMap[key]
 
-      const cost = item.totalCost.toFixed(2)
-      const mass = item.totalMass.toFixed(2)
-
       const costPercent = (item.totalCost * 100 / totalCost).toFixed(2)
-      const massPercent = (item.totalMass * 100 / totalMass).toFixed(2)
 
-      const label = fieldName === 'totalCost'
-        ? `${key}: ${costPercent}% (${cost} USD)`
-        : `${key}: ${massPercent}% (${mass} Kg)`
+      const percent = item.totalCost * 100 / totalCost
 
-      const legendLabel = [
-        {text: key, spacing: 0},
-        {text: `% ${costPercent}`, spacing: 190},
-        {text: `$USD ${cost}`, spacing: 250}
-      ]
+      const cost = item.totalCost.toFixed(2)
+
+      const label = `${key}: ${costPercent}% (${cost} USD)`
 
       return {
         value: parseFloat(item[fieldName].toFixed(2)),
-        percent: item.totalCost * 100 / totalCost,
+        percentTxt: '% ' + percent.toFixed(2),
+        cost: '$USD ' + cost,
         color: colors(idx),
-        legendLabel,
+        name: key,
+        percent,
         label,
         item
       }
@@ -230,7 +226,7 @@ class DatabaseCostBreakdownExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onSelectItem (item) {
+  onItemSelected (item) {
 
     this.emit('item.selected', item)
   }
@@ -278,15 +274,19 @@ class DatabaseCostBreakdownExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderContent () {
 
-    const {guid, legendData, pieData} = this.react.getState()
+    const {
+      legendData,
+      pieData,
+      guid
+    } = this.react.getState()
 
     const showLoader = !legendData.length
 
     return (
       <div className="content">
         <Loader show={showLoader}/>
-        <DBChart
-          onSelectItem={this.onSelectItem}
+        <CostGraphContainer
+          onItemSelected={this.onItemSelected}
           legendData={legendData}
           pieData={pieData}
           guid={guid}
@@ -310,6 +310,93 @@ class DatabaseCostBreakdownExtension extends MultiModelExtensionBase {
         { this.renderContent() }
 
       </WidgetContainer>
+    )
+  }
+}
+
+class CostGraphContainer extends BaseComponent {
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  constructor () {
+
+    super ()
+
+    this.onPieGroupClicked = this.onPieGroupClicked.bind(this)
+
+    this.state = {
+      showPie: false
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  componentWillReceiveProps (props) {
+
+    const domElement = ReactDOM.findDOMNode(this)
+
+    const height = domElement.offsetHeight
+
+    this.assignState({
+      showPie: !!(height > 200)
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onPieGroupClicked (group) {
+
+    const item = group.data.item
+
+    this.props.onItemSelected (item)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  render() {
+
+    const {
+      onItemSelected,
+      legendData,
+      pieData,
+      guid
+    } = this.props
+
+    return (
+      <ReflexContainer>
+        <ReflexElement flex={0.40}>
+          {
+            legendData.length &&
+            <PieLegend
+              onItemSelected={onItemSelected}
+              data={legendData}
+            />
+          }
+        </ReflexElement>
+        {
+          this.state.showPie &&
+          <ReflexElement>
+            <div style={{
+              paddingTop:'10px',
+              height: '100%'
+              }}>
+              <PieChart
+                onGroupClicked={this.onPieGroupClicked}
+                data={pieData}
+                guid={guid}
+              />
+            </div>
+          </ReflexElement>
+        }
+      </ReflexContainer>
     )
   }
 }

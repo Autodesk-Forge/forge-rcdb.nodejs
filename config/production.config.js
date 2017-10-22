@@ -36,6 +36,10 @@ const config = {
     }
   },
 
+  layouts: {
+    index: 'index.analytics.ejs'
+  },
+
   forge: {
 
     oauth: {

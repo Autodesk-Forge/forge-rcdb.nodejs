@@ -290,7 +290,7 @@
     "name" : "Rubber, Silicone", 
     "supplier" : "Autodesk", 
     "currency" : "USD", 
-    "price" : NumberInt(100)
+    "price" : NumberInt(1)
 }
 { 
     "_id" : ObjectId("58b1a54bef674eb1b0b1896c"), 
