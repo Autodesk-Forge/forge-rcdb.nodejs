@@ -81,7 +81,7 @@ export default class PieLegend extends BaseComponent {
       <div className="pie-legend">
         <ReactTable
           defaultPageSize={this.props.data.length}
-          className="-striped -highlight"
+          className="-highlight"
           showPagination={false}
           data={this.props.data}
           columns={columns}

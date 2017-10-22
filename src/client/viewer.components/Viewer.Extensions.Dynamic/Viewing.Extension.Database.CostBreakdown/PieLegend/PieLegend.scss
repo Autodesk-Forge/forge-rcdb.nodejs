@@ -6,8 +6,14 @@
   outline: none;
   height: 100%;
 
+  .ReactTable .rt-thead .rt-tr {
+    font-weight: bold;
+    color: #5a5a5a;
+  }
+
   .ReactTable .rt-tbody .rt-td {
     text-align: left;
+    color: #727272;
   }
 
   .ReactTable .rt-tbody .rt-tr > .rt-td:first-child {

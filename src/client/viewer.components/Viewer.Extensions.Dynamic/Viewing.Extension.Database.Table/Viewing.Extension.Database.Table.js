@@ -12,8 +12,8 @@ import ServiceManager from 'SvcManager'
 import throttle from 'lodash/throttle'
 import Toolkit from 'Viewer.Toolkit'
 import sortBy from 'lodash/sortBy'
+import DBTable from './DBTable'
 import find from 'lodash/find'
-import DBTable from 'DBTable'
 import React from 'react'
 
 class DatabaseTableExtension extends MultiModelExtensionBase {
