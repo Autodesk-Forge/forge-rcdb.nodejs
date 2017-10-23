@@ -389,7 +389,17 @@ module.exports = function() {
 
       const file = req.file
 
+      const getToken =
+        () => forgeSvc.get3LeggedTokenMaster(
+          req.session)
+
+      const hubRes = await dmSvc.getHub (
+        getToken, hubId)
+
+      const hubType = hubRes.body.data.attributes.extension.type
+
       const opts = {
+        isBIM: (hubType === 'hubs:autodesk.bim360:Account'),
         chunkSize: 5 * 1024 * 1024,
         concurrentUploads: 3,
         onProgress: (info) => {
@@ -446,10 +456,6 @@ module.exports = function() {
         }
       }
 
-      const getToken =
-        () => forgeSvc.get3LeggedTokenMaster(
-          req.session)
-
       const response = await dmSvc.upload(
         getToken,
         projectId, folderId, file, opts)
@@ -457,6 +463,8 @@ module.exports = function() {
       res.json(response)
 
     } catch (ex) {
+
+      console.log(ex)
 
       res.status(ex.status || 500)
       res.json(ex)

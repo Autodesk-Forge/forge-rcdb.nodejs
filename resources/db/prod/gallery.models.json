@@ -1,48 +1,4 @@
 { 
-    "_id" : ObjectId("57f3739777c879f48ad54a44"), 
-    "name" : "Office", 
-    "env" : "AutodeskProduction", 
-    "model" : {
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9vZmZpY2UucnZ0"
-    }
-}
-{ 
-    "_id" : ObjectId("57efaf0377c8eb0a560ef467"), 
-    "name" : "Engine", 
-    "env" : "AutodeskProduction", 
-    "model" : {
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9lbmdpbmUuZHdm", 
-        "role" : "3d"
-    }
-}
-{ 
-    "_id" : ObjectId("5841e11f540a4d30802763e2"), 
-    "name" : "V8", 
-    "path" : "resources/models/v8/0.svf", 
-    "env" : "AutodeskProduction", 
-    "model" : {
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9WOC5mM2Q=", 
-        "role" : "3d"
-    }
-}
-{ 
-    "_id" : ObjectId("5933cf4d5cdbe364a829e5d1"), 
-    "name" : "Suspension", 
-    "env" : "AutodeskProduction", 
-    "model" : {
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9TdXNwZW5zaW9uLmR3Zg==", 
-        "role" : "3d"
-    }
-}
-{ 
-    "_id" : ObjectId("57efaead77c8eb0a560ef465"), 
-    "name" : "Car Seat", 
-    "env" : "AutodeskProduction", 
-    "model" : {
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9zZWF0LmR3Zg"
-    }
-}
-{ 
     "_id" : ObjectId("595cbcd2b015b92b16952cdd"), 
     "env" : "AutodeskProduction", 
     "name" : "Toy Plane", 
@@ -311,84 +267,6 @@
     }
 }
 { 
-    "_id" : ObjectId("59b3569357c83e2bb08bd774"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-09-09T02:48:51.085+0000"), 
-    "owner" : "GEPRL6ELW22H", 
-    "name" : "行政楼完整版-", 
-    "model" : {
-        "objectKey" : "1e70-1e38-0186.rvt", 
-        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/1e70-1e38-0186.rvt", 
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzFlNzAtMWUzOC0wMTg2LnJ2dA"
-    }
-}
-{ 
-    "_id" : ObjectId("59b63e2857c83e2bb08bd775"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-09-11T07:41:28.564+0000"), 
-    "owner" : "GEPRL6ELW22H", 
-    "name" : "图书馆模型", 
-    "model" : {
-        "objectKey" : "b23f-0700-e99d.rvt", 
-        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/b23f-0700-e99d.rvt", 
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2IyM2YtMDcwMC1lOTlkLnJ2dA"
-    }
-}
-{ 
-    "_id" : ObjectId("59b63edf57c83e2bb08bd776"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-09-11T07:44:31.975+0000"), 
-    "owner" : "GEPRL6ELW22H", 
-    "name" : "图书馆模型", 
-    "model" : {
-        "objectKey" : "18ee-85d1-f7eb.rvt", 
-        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/18ee-85d1-f7eb.rvt", 
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzE4ZWUtODVkMS1mN2ViLnJ2dA"
-    }
-}
-{ 
-    "_id" : ObjectId("59b6920657c83e2bb08bd777"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-09-11T13:39:18.719+0000"), 
-    "owner" : "200704122227993", 
-    "name" : "V8", 
-    "model" : {
-        "objectKey" : "04dd-8533-0b84.dwfx", 
-        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/04dd-8533-0b84.dwfx", 
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzA0ZGQtODUzMy0wYjg0LmR3Zng"
-    }
-}
-{ 
-    "_id" : ObjectId("59b8f7e867e0c03c6ebcc2b7"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-09-13T09:18:32.946+0000"), 
-    "owner" : "FBY3NUGRJXGX", 
-    "name" : "75平米2167", 
-    "model" : {
-        "objectKey" : "872b-03ab-b164.ifc", 
-        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/872b-03ab-b164.ifc", 
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzg3MmItMDNhYi1iMTY0LmlmYw"
-    }
-}
-{ 
-    "_id" : ObjectId("59b9029367e0c03c6ebcc2b8"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-09-13T10:04:03.840+0000"), 
-    "owner" : "FBY3NUGRJXGX", 
-    "name" : "75平米2167", 
-    "model" : {
-        "objectKey" : "062b-dee1-6aa9.ifc", 
-        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/062b-dee1-6aa9.ifc", 
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzA2MmItZGVlMS02YWE5LmlmYw"
-    }
-}
-{ 
     "_id" : ObjectId("59b9323c67e0c03c6ebcc2b9"), 
     "env" : "AutodeskProduction", 
     "timestamp" : ISODate("2017-09-13T13:27:24.044+0000"), 
@@ -398,175 +276,6 @@
         "objectKey" : "7939-b0c9-f15e.dwfx", 
         "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/7939-b0c9-f15e.dwfx", 
         "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzc5MzktYjBjOS1mMTVlLmR3Zng"
-    }
-}
-{ 
-    "_id" : ObjectId("59ba3adb67e0c03c6ebcc2ba"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-09-14T08:16:27.587+0000"), 
-    "owner" : "EY2SN6QP9FH5", 
-    "name" : "1KRS_PROXY_2", 
-    "model" : {
-        "objectKey" : "889c-a25c-150c.ifc", 
-        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/889c-a25c-150c.ifc", 
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzg4OWMtYTI1Yy0xNTBjLmlmYw"
-    }
-}
-{ 
-    "_id" : ObjectId("59bb308b54bb4d3a13e20a23"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-09-15T01:44:43.943+0000"), 
-    "owner" : "DGQTQDYWZDBW", 
-    "name" : "Market2016", 
-    "model" : {
-        "objectKey" : "9a11-858c-ef30.rvt", 
-        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/9a11-858c-ef30.rvt", 
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzlhMTEtODU4Yy1lZjMwLnJ2dA"
-    }
-}
-{ 
-    "_id" : ObjectId("59bb33e754bb4d3a13e20a24"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-09-15T01:59:03.249+0000"), 
-    "owner" : "DGQTQDYWZDBW", 
-    "name" : "Market7#_All", 
-    "model" : {
-        "objectKey" : "51ed-e08c-88a9.rvt", 
-        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/51ed-e08c-88a9.rvt", 
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzUxZWQtZTA4Yy04OGE5LnJ2dA"
-    }
-}
-{ 
-    "_id" : ObjectId("59bb6d6d54bb4d3a13e20a25"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-09-15T06:04:29.326+0000"), 
-    "owner" : "DGQTQDYWZDBW", 
-    "name" : "Subway_station", 
-    "model" : {
-        "objectKey" : "61c6-ca05-26cf.rvt", 
-        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/61c6-ca05-26cf.rvt", 
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzYxYzYtY2EwNS0yNmNmLnJ2dA"
-    }
-}
-{ 
-    "_id" : ObjectId("59bbf6ecfe89f35c710e30e4"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-09-15T15:51:08.660+0000"), 
-    "owner" : "EAZQQ43YALSS", 
-    "name" : "城市广场-土建轮廓", 
-    "model" : {
-        "objectKey" : "4d62-033d-af2a.rvt", 
-        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/4d62-033d-af2a.rvt", 
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzRkNjItMDMzZC1hZjJhLnJ2dA"
-    }
-}
-{ 
-    "_id" : ObjectId("59bbf7d1fe89f35c710e30e5"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-09-15T15:54:57.142+0000"), 
-    "owner" : "EAZQQ43YALSS", 
-    "name" : "城市广场-土建轮廓", 
-    "model" : {
-        "objectKey" : "f127-8ad0-7e39.rvt", 
-        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/f127-8ad0-7e39.rvt", 
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2YxMjctOGFkMC03ZTM5LnJ2dA"
-    }
-}
-{ 
-    "_id" : ObjectId("59bd1578fe89f35c710e30e6"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-09-16T12:13:44.255+0000"), 
-    "owner" : "8J5YP2FTEARQ", 
-    "name" : "IS-Tomasz Rajpold", 
-    "model" : {
-        "objectKey" : "14c2-42ef-80d9.rvt", 
-        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/14c2-42ef-80d9.rvt", 
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzE0YzItNDJlZi04MGQ5LnJ2dA"
-    }
-}
-{ 
-    "_id" : ObjectId("59bd178bfe89f35c710e30e7"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-09-16T12:22:35.611+0000"), 
-    "owner" : "8J5YP2FTEARQ", 
-    "name" : "TF-2016-01-Droga Wojewodzka km 0+000 do 0+830m", 
-    "model" : {
-        "objectKey" : "aa06-7f37-6135.ifc", 
-        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/aa06-7f37-6135.ifc", 
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2FhMDYtN2YzNy02MTM1LmlmYw"
-    }
-}
-{ 
-    "_id" : ObjectId("59bf7a91fe89f35c710e30e8"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-09-18T07:49:37.402+0000"), 
-    "owner" : "AC2GQL569JAC", 
-    "name" : "工艺实习场", 
-    "model" : {
-        "objectKey" : "729e-6819-83ee.rvt", 
-        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/729e-6819-83ee.rvt", 
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzcyOWUtNjgxOS04M2VlLnJ2dA"
-    }
-}
-{ 
-    "_id" : ObjectId("59c0d7a0e74f7d39e067f193"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-09-19T08:38:56.708+0000"), 
-    "owner" : "2RXNJVBSXSHA", 
-    "name" : "elephant", 
-    "model" : {
-        "objectKey" : "3557-3791-fbdd.obj", 
-        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/3557-3791-fbdd.obj", 
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzM1NTctMzc5MS1mYmRkLm9iag"
-    }
-}
-{ 
-    "_id" : ObjectId("59c380cdc88e9478df68d35f"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-09-21T09:05:17.106+0000"), 
-    "owner" : "58S3NGN6P8UF", 
-    "name" : "Overall Plot Plan-Fuel Skid option", 
-    "model" : {
-        "objectKey" : "b76f-cc3e-3b3c.dwg", 
-        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/b76f-cc3e-3b3c.dwg", 
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2I3NmYtY2MzZS0zYjNjLmR3Zw"
-    }
-}
-{ 
-    "_id" : ObjectId("59c43bf331ff871e9ba4fede"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-09-21T22:23:47.136+0000"), 
-    "owner" : "RL4SNAX83EFX", 
-    "name" : "Prism2", 
-    "model" : {
-        "objectKey" : "8733-ddcb-4150.3ds", 
-        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/8733-ddcb-4150.3ds", 
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzg3MzMtZGRjYi00MTUwLjNkcw"
-    }
-}
-{ 
-    "_id" : ObjectId("59c4ed859ebddf2b7cc29f27"), 
-    "lifetime" : NumberInt(2592000), 
-    "env" : "AutodeskProduction", 
-    "timestamp" : ISODate("2017-09-22T11:01:25.143+0000"), 
-    "owner" : "P6RDNYV4VBMB", 
-    "name" : "rme_basic_sample_project", 
-    "model" : {
-        "objectKey" : "4f66-044e-7f1e.rvt", 
-        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/4f66-044e-7f1e.rvt", 
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzRmNjYtMDQ0ZS03ZjFlLnJ2dA"
     }
 }
 { 
@@ -796,5 +505,389 @@
         "objectKey" : "24c4-4117-e6f0.dwg", 
         "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/24c4-4117-e6f0.dwg", 
         "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzI0YzQtNDExNy1lNmYwLmR3Zw"
+    }
+}
+{ 
+    "_id" : ObjectId("59db79ad8de0367e29cf371d"), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-09T13:29:17.158+0000"), 
+    "owner" : "K8JMR3J2U5F8", 
+    "name" : "Hospital", 
+    "model" : {
+        "objectKey" : "1b85-1b61-bc4d.rvt", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/1b85-1b61-bc4d.rvt", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzFiODUtMWI2MS1iYzRkLnJ2dA"
+    }
+}
+{ 
+    "_id" : ObjectId("59db87d58de0367e29cf371e"), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-09T14:29:41.690+0000"), 
+    "owner" : "200704122227993", 
+    "name" : "Engine", 
+    "model" : {
+        "objectKey" : "783c-d407-5b0e.dwf", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/783c-d407-5b0e.dwf", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzc4M2MtZDQwNy01YjBlLmR3Zg"
+    }
+}
+{ 
+    "_id" : ObjectId("59db87e18de0367e29cf371f"), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-09T14:29:53.005+0000"), 
+    "owner" : "200704122227993", 
+    "name" : "Car Seat", 
+    "model" : {
+        "objectKey" : "716a-7f2b-9288.dwf", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/716a-7f2b-9288.dwf", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzcxNmEtN2YyYi05Mjg4LmR3Zg"
+    }
+}
+{ 
+    "_id" : ObjectId("59db87f08de0367e29cf3720"), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-09T14:30:08.702+0000"), 
+    "owner" : "200704122227993", 
+    "name" : "V8", 
+    "model" : {
+        "objectKey" : "f049-e74f-d5a8.dwfx", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/f049-e74f-d5a8.dwfx", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2YwNDktZTc0Zi1kNWE4LmR3Zng"
+    }
+}
+{ 
+    "_id" : ObjectId("59db88a38de0367e29cf3721"), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-09T14:33:07.689+0000"), 
+    "owner" : "200704122227993", 
+    "name" : "Office", 
+    "model" : {
+        "objectKey" : "bb7f-1319-d82b.rvt", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/bb7f-1319-d82b.rvt", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2JiN2YtMTMxOS1kODJiLnJ2dA"
+    }
+}
+{ 
+    "_id" : ObjectId("59db89eb8de0367e29cf3722"), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-09T14:38:35.704+0000"), 
+    "owner" : "200704122227993", 
+    "name" : "210 King Office", 
+    "model" : {
+        "objectKey" : "0a3a-6bf3-3474.rvt", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/0a3a-6bf3-3474.rvt", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzBhM2EtNmJmMy0zNDc0LnJ2dA"
+    }
+}
+{ 
+    "_id" : ObjectId("59dc5b008de0367e29cf3723"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-10T05:30:40.148+0000"), 
+    "owner" : "9FBPMRCHFRS5", 
+    "name" : "FXF5EOSJ7UQZH62", 
+    "model" : {
+        "objectKey" : "1f0f-8840-c255.dxf", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/1f0f-8840-c255.dxf", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzFmMGYtODg0MC1jMjU1LmR4Zg"
+    }
+}
+{ 
+    "_id" : ObjectId("59dc5cf38de0367e29cf3724"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-10T05:38:59.365+0000"), 
+    "owner" : "9FBPMRCHFRS5", 
+    "name" : "FXF5EOSJ7UQZH621", 
+    "model" : {
+        "objectKey" : "b93c-ed31-fb3a.dxf", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/b93c-ed31-fb3a.dxf", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2I5M2MtZWQzMS1mYjNhLmR4Zg"
+    }
+}
+{ 
+    "_id" : ObjectId("59ddb7598de0367e29cf3725"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-11T06:16:57.572+0000"), 
+    "owner" : "NS8ZL84L8TUD", 
+    "name" : "Stacked walls_Doors and windows", 
+    "model" : {
+        "objectKey" : "fc6d-e0e2-0ff4.rvt", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/fc6d-e0e2-0ff4.rvt", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2ZjNmQtZTBlMi0wZmY0LnJ2dA"
+    }
+}
+{ 
+    "_id" : ObjectId("59ddb8d98de0367e29cf3726"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-11T06:23:21.024+0000"), 
+    "owner" : "NS8ZL84L8TUD", 
+    "name" : "Project1_centerline", 
+    "model" : {
+        "objectKey" : "96b1-c205-0d7a.rvt", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/96b1-c205-0d7a.rvt", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzk2YjEtYzIwNS0wZDdhLnJ2dA"
+    }
+}
+{ 
+    "_id" : ObjectId("59dfd3b16173925474130c18"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-12T20:42:25.477+0000"), 
+    "owner" : "C43QMD352HUW", 
+    "name" : "POTSDAM_Original", 
+    "model" : {
+        "objectKey" : "49fd-6d7b-aa6c.ifc", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/49fd-6d7b-aa6c.ifc", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzQ5ZmQtNmQ3Yi1hYTZjLmlmYw"
+    }
+}
+{ 
+    "_id" : ObjectId("59e0597f6173925474130c19"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-13T06:13:19.734+0000"), 
+    "owner" : "200809200483218", 
+    "name" : "concrete", 
+    "model" : {
+        "objectKey" : "6c44-bf37-0f2b.rvt", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/6c44-bf37-0f2b.rvt", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzZjNDQtYmYzNy0wZjJiLnJ2dA"
+    }
+}
+{ 
+    "_id" : ObjectId("59e064086173925474130c1a"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-13T06:58:16.727+0000"), 
+    "owner" : "VJH7QDHX8DXK", 
+    "name" : "ES-TR-01AR", 
+    "model" : {
+        "objectKey" : "ce40-08e9-3fa8.dwg", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/ce40-08e9-3fa8.dwg", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2NlNDAtMDhlOS0zZmE4LmR3Zw"
+    }
+}
+{ 
+    "_id" : ObjectId("59e08990642fb0121a2d79bd"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-13T09:38:24.479+0000"), 
+    "owner" : "TFSBN5RWL7E3", 
+    "name" : "Arch Link Model", 
+    "model" : {
+        "objectKey" : "77ba-c8de-032a.rvt", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/77ba-c8de-032a.rvt", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzc3YmEtYzhkZS0wMzJhLnJ2dA"
+    }
+}
+{ 
+    "_id" : ObjectId("59e4aaba650df25ea9d841fc"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-16T12:48:58.022+0000"), 
+    "owner" : "200704122227993", 
+    "name" : "Car Seat", 
+    "model" : {
+        "objectKey" : "2898-18b1-85ca.dwf", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/2898-18b1-85ca.dwf", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzI4OTgtMThiMS04NWNhLmR3Zg"
+    }
+}
+{ 
+    "_id" : ObjectId("59e60443650df25ea9d841fd"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-17T13:23:15.588+0000"), 
+    "owner" : "200704122227993", 
+    "name" : "Mining Truck.iam", 
+    "model" : {
+        "objectKey" : "d6b5-4265-6d5b.zip", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/d6b5-4265-6d5b.zip", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2Q2YjUtNDI2NS02ZDViLnppcA"
+    }
+}
+{ 
+    "_id" : ObjectId("59e60a04650df25ea9d841fe"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-17T13:47:48.038+0000"), 
+    "owner" : "200704122227993", 
+    "name" : "Ferrari Fiorano.iam", 
+    "model" : {
+        "objectKey" : "2b3c-5761-9c8d.zip", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/2b3c-5761-9c8d.zip", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzJiM2MtNTc2MS05YzhkLnppcA"
+    }
+}
+{ 
+    "_id" : ObjectId("59e60d89650df25ea9d841ff"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-17T14:02:49.378+0000"), 
+    "owner" : "200704122227993", 
+    "name" : "Ferrari Enzo.iam", 
+    "model" : {
+        "objectKey" : "693f-a2f1-9ecd.zip", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/693f-a2f1-9ecd.zip", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzY5M2YtYTJmMS05ZWNkLnppcA"
+    }
+}
+{ 
+    "_id" : ObjectId("59e60dd6650df25ea9d84200"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-17T14:04:06.447+0000"), 
+    "owner" : "200704122227993", 
+    "name" : "Container Yard.iam", 
+    "model" : {
+        "objectKey" : "0c3b-96c7-261b.zip", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/0c3b-96c7-261b.zip", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzBjM2ItOTZjNy0yNjFiLnppcA"
+    }
+}
+{ 
+    "_id" : ObjectId("59e61337650df25ea9d84201"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-17T14:27:03.357+0000"), 
+    "owner" : "200704122227993", 
+    "name" : "New York City.iam", 
+    "model" : {
+        "objectKey" : "e622-0ee7-e67f.zip", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/e622-0ee7-e67f.zip", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2U2MjItMGVlNy1lNjdmLnppcA"
+    }
+}
+{ 
+    "_id" : ObjectId("59e61349650df25ea9d84202"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-17T14:27:21.984+0000"), 
+    "owner" : "200704122227993", 
+    "name" : "Burj Khalifa.iam", 
+    "model" : {
+        "objectKey" : "b1c3-7ecb-eec6.zip", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/b1c3-7ecb-eec6.zip", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2IxYzMtN2VjYi1lZWM2LnppcA"
+    }
+}
+{ 
+    "_id" : ObjectId("59e7582bfed6e6271711ee13"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-18T13:33:31.641+0000"), 
+    "owner" : "PZVFK3H6H4M6", 
+    "name" : "M0050014M91_VR-6 genio+Cargador RM4000", 
+    "model" : {
+        "objectKey" : "23cf-10b7-e779.dwg", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/23cf-10b7-e779.dwg", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzIzY2YtMTBiNy1lNzc5LmR3Zw"
+    }
+}
+{ 
+    "_id" : ObjectId("59e85799fed6e6271711ee14"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-19T07:43:21.216+0000"), 
+    "owner" : "Q6PVN8SHK33N", 
+    "name" : "greek_vase_shapes", 
+    "model" : {
+        "objectKey" : "76a1-5a27-185f.dwg", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/76a1-5a27-185f.dwg", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzc2YTEtNWEyNy0xODVmLmR3Zw"
+    }
+}
+{ 
+    "_id" : ObjectId("59e86e58237dba40963cd800"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-19T09:20:24.913+0000"), 
+    "owner" : "SYGVKY5EHW89", 
+    "name" : "ASM0007085", 
+    "model" : {
+        "objectKey" : "3455-86b9-3973.pdf", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/3455-86b9-3973.pdf", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzM0NTUtODZiOS0zOTczLnBkZg"
+    }
+}
+{ 
+    "_id" : ObjectId("59e86f42237dba40963cd801"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-19T09:24:18.631+0000"), 
+    "owner" : "SYGVKY5EHW89", 
+    "name" : "ASM0007085", 
+    "model" : {
+        "objectKey" : "ed6d-3325-356e.dwf", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/ed6d-3325-356e.dwf", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2VkNmQtMzMyNS0zNTZlLmR3Zg"
+    }
+}
+{ 
+    "_id" : ObjectId("59e8715f237dba40963cd802"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-19T09:33:19.275+0000"), 
+    "owner" : "200704122227993", 
+    "name" : "Sports Car", 
+    "model" : {
+        "objectKey" : "9516-e857-67b3.dwfx", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/9516-e857-67b3.dwfx", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzk1MTYtZTg1Ny02N2IzLmR3Zng"
+    }
+}
+{ 
+    "_id" : ObjectId("59e9ca3b237dba40963cd803"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-20T10:04:43.140+0000"), 
+    "owner" : "DNCTRY2WRG78", 
+    "name" : "Engine MKII.iam", 
+    "model" : {
+        "objectKey" : "5493-5226-d908.dwf", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/5493-5226-d908.dwf", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzU0OTMtNTIyNi1kOTA4LmR3Zg"
+    }
+}
+{ 
+    "_id" : ObjectId("59e9edd8237dba40963cd804"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-20T12:36:40.715+0000"), 
+    "owner" : "PP9WNAMRQNJU", 
+    "name" : "Projet Test", 
+    "model" : {
+        "objectKey" : "8d50-8c34-098a.ifc", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/8d50-8c34-098a.ifc", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzhkNTAtOGMzNC0wOThhLmlmYw"
+    }
+}
+{ 
+    "_id" : ObjectId("59ea1602237dba40963cd805"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-20T15:28:02.574+0000"), 
+    "owner" : "C43QMD352HUW", 
+    "name" : "Conduit", 
+    "model" : {
+        "objectKey" : "c54f-ad75-44b0.ifc", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/c54f-ad75-44b0.ifc", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2M1NGYtYWQ3NS00NGIwLmlmYw"
+    }
+}
+{ 
+    "_id" : ObjectId("59ebf72e237dba40963cd806"), 
+    "lifetime" : NumberInt(2592000), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-22T01:41:02.095+0000"), 
+    "owner" : "AC2GQL569JAC", 
+    "name" : "院1", 
+    "model" : {
+        "objectKey" : "2724-92bb-901b.rvt", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-tmp-prod/2724-92bb-901b.rvt", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kLzI3MjQtOTJiYi05MDFiLnJ2dA"
     }
 }

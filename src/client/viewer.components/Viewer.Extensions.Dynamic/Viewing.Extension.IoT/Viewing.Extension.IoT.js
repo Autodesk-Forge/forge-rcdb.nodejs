@@ -273,10 +273,9 @@ class IoTExtension extends ExtensionBase {
     this.react.pushRenderExtension(this)
 
     this.react.setState({
-      hotspots: hotspots.filter((hotspot) => {
+      hotspots: this.options.hotspots.filter((hotspot) => {
         return !hotspot.controlled
       })
-
     })
 
     return true

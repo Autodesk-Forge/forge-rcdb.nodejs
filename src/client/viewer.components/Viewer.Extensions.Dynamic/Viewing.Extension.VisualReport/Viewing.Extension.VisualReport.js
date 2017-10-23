@@ -173,4 +173,4 @@ class VisualReportExtension extends MultiModelExtensionBase {
 
 Autodesk.Viewing.theExtensionManager.registerExtension(
   VisualReportExtension.ExtensionId,
-  VisualReportExtension);
+  VisualReportExtension)

@@ -310,14 +310,15 @@ export default class DMSvc extends BaseSvc {
   //
   /////////////////////////////////////////////////////////////////
   async createItem (
-    getToken, projectId, folderId, objectId, filename, displayName = null) {
+    getToken, projectId, folderId, objectId,
+    displayName, isBIM = false) {
 
     const token = (typeof getToken == 'function')
       ? await getToken()
       : getToken
 
     const payload = this.createItemPayload(
-      folderId, objectId, filename, displayName)
+      folderId, objectId, displayName, isBIM)
 
     //return this._itemsAPI.postItem(
     //  projectId, JSON.stringify(payload),
@@ -345,15 +346,15 @@ export default class DMSvc extends BaseSvc {
   // Creates new Version
   //
   /////////////////////////////////////////////////////////////////
-  async createVersion (
-    getToken, projectId, itemId, objectId, filename) {
+  async createVersion (getToken,
+    projectId, itemId, objectId, displayName, isBIM) {
 
     const token = (typeof getToken == 'function')
       ? await getToken()
       : getToken
 
     const payload = this.createVersionPayload(
-      itemId, objectId, filename)
+      itemId, objectId, displayName, isBIM)
 
     //return this._versionsAPI.postVersion(
     //  projectId, JSON.stringify(payload),
@@ -583,11 +584,10 @@ export default class DMSvc extends BaseSvc {
                 const item = items[0]
 
                 const versionRes = await this.createVersion(
-                  getToken,
-                  projectId,
-                  item.id,
+                  getToken, projectId, item.id,
                   storageRes.body.data.id,
-                  displayName)
+                  displayName,
+                  opts.isBIM)
 
                 const response = {
                   version: versionRes.body.data,
@@ -603,7 +603,8 @@ export default class DMSvc extends BaseSvc {
                 const itemRes = await this.createItem(
                   getToken, projectId, folderId,
                   storageRes.body.data.id,
-                  displayName)
+                  displayName,
+                  opts.isBIM)
 
                 const versions = await this.getItemVersions(
                   getToken, projectId, itemRes.body.data.id)

@@ -4,7 +4,7 @@
     "env" : "AutodeskProduction", 
     "layout" : {
         "type" : "flexLayoutRight", 
-        "rightFlex" : 0.4
+        "rightFlex" : 0.35
     }, 
     "model" : {
         "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9zZWF0LmR3Zg", 
@@ -26,6 +26,7 @@
                     "Material", 
                     "Part Number"
                 ], 
+                "parentControl" : "modelTools", 
                 "extensions" : [
                     {
                         "id" : "Viewing.Extension.Database.Table", 
@@ -33,15 +34,14 @@
                         "options" : {
                             "displayIndex" : NumberInt(0), 
                             "apiUrl" : "/api/materials", 
-                            "flex" : 0.5
+                            "flex" : 0.4
                         }
                     }, 
                     {
                         "id" : "Viewing.Extension.Database.CostBreakdown", 
                         "enabled" : true, 
                         "options" : {
-                            "displayIndex" : NumberInt(1), 
-                            "flex" : 0.5
+                            "displayIndex" : NumberInt(1)
                         }
                     }, 
                     {
@@ -50,6 +50,14 @@
                     }, 
                     {
                         "id" : "Viewing.Extension.VisualReport", 
+                        "enabled" : true
+                    }, 
+                    {
+                        "id" : "Viewing.Extension.Markup3D", 
+                        "enabled" : true
+                    }, 
+                    {
+                        "id" : "Viewing.Extension.Transform", 
                         "enabled" : true
                     }
                 ]
@@ -64,10 +72,11 @@
     "env" : "AutodeskProduction", 
     "layout" : {
         "type" : "flexLayoutRight", 
-        "rightFlex" : 0.4
+        "rightFlex" : 0.35
     }, 
     "model" : {
-        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9WOC5mM2Q=", 
+        "urn_" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9WOC5mM2Q=", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2YwNDktZTc0Zi1kNWE4LmR3Zng", 
         "name" : "V8"
     }, 
     "dynamicExtensions" : [
@@ -84,6 +93,7 @@
                     "Material", 
                     "Part Number"
                 ], 
+                "parentControl" : "modelTools", 
                 "extensions" : [
                     {
                         "id" : "Viewing.Extension.Database.Table", 
@@ -91,15 +101,14 @@
                         "options" : {
                             "displayIndex" : NumberInt(0), 
                             "apiUrl" : "/api/materials", 
-                            "flex" : 0.5
+                            "flex" : 0.4
                         }
                     }, 
                     {
                         "id" : "Viewing.Extension.Database.CostBreakdown", 
                         "enabled" : true, 
                         "options" : {
-                            "displayIndex" : NumberInt(1), 
-                            "flex" : 0.5
+                            "displayIndex" : NumberInt(1)
                         }
                     }, 
                     {
@@ -108,6 +117,14 @@
                     }, 
                     {
                         "id" : "Viewing.Extension.VisualReport", 
+                        "enabled" : true
+                    }, 
+                    {
+                        "id" : "Viewing.Extension.Markup3D", 
+                        "enabled" : true
+                    }, 
+                    {
+                        "id" : "Viewing.Extension.Transform", 
                         "enabled" : true
                     }
                 ]
@@ -122,7 +139,7 @@
     "env" : "AutodeskProduction", 
     "layout" : {
         "type" : "flexLayoutRight", 
-        "rightFlex" : 0.4
+        "rightFlex" : 0.35
     }, 
     "model" : {
         "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9vZmZpY2UucnZ0", 
@@ -178,6 +195,7 @@
                     "System Name", 
                     "System Type"
                 ], 
+                "parentControl" : "modelTools", 
                 "extensions" : [
                     {
                         "id" : "Viewing.Extension.Database.Table", 
@@ -185,15 +203,14 @@
                         "options" : {
                             "displayIndex" : NumberInt(0), 
                             "apiUrl" : "/api/materials", 
-                            "flex" : 0.5
+                            "flex" : 0.4
                         }
                     }, 
                     {
                         "id" : "Viewing.Extension.Database.CostBreakdown", 
                         "enabled" : true, 
                         "options" : {
-                            "displayIndex" : NumberInt(1), 
-                            "flex" : 0.5
+                            "displayIndex" : NumberInt(1)
                         }
                     }, 
                     {
@@ -202,6 +219,14 @@
                     }, 
                     {
                         "id" : "Viewing.Extension.VisualReport", 
+                        "enabled" : true
+                    }, 
+                    {
+                        "id" : "Viewing.Extension.Markup3D", 
+                        "enabled" : true
+                    }, 
+                    {
+                        "id" : "Viewing.Extension.Transform", 
                         "enabled" : true
                     }
                 ]
@@ -216,7 +241,7 @@
     "env" : "AutodeskProduction", 
     "layout" : {
         "type" : "flexLayoutRight", 
-        "rightFlex" : 0.4
+        "rightFlex" : 0.35
     }, 
     "model" : {
         "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS8yMTAlMjBLaW5nJTIwLSUyMDIwMTUucnZ0", 
@@ -268,6 +293,7 @@
                     "System Name", 
                     "System Type"
                 ], 
+                "parentControl" : "modelTools", 
                 "extensions" : [
                     {
                         "id" : "Viewing.Extension.Database.Table", 
@@ -275,15 +301,14 @@
                         "options" : {
                             "displayIndex" : NumberInt(0), 
                             "apiUrl" : "/api/materials", 
-                            "flex" : 0.5
+                            "flex" : 0.4
                         }
                     }, 
                     {
                         "id" : "Viewing.Extension.Database.CostBreakdown", 
                         "enabled" : true, 
                         "options" : {
-                            "displayIndex" : NumberInt(1), 
-                            "flex" : 0.5
+                            "displayIndex" : NumberInt(1)
                         }
                     }, 
                     {
@@ -292,6 +317,14 @@
                     }, 
                     {
                         "id" : "Viewing.Extension.VisualReport", 
+                        "enabled" : true
+                    }, 
+                    {
+                        "id" : "Viewing.Extension.Markup3D", 
+                        "enabled" : true
+                    }, 
+                    {
+                        "id" : "Viewing.Extension.Transform", 
                         "enabled" : true
                     }
                 ]
@@ -306,7 +339,7 @@
     "env" : "AutodeskProduction", 
     "layout" : {
         "type" : "flexLayoutRight", 
-        "rightFlex" : 0.4
+        "rightFlex" : 0.35
     }, 
     "model" : {
         "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9lbmdpbmUuZHdm", 
@@ -328,6 +361,7 @@
                     "Material", 
                     "Part Number"
                 ], 
+                "parentControl" : "modelTools", 
                 "extensions" : [
                     {
                         "id" : "Viewing.Extension.Database.Table", 
@@ -335,15 +369,14 @@
                         "options" : {
                             "displayIndex" : NumberInt(0), 
                             "apiUrl" : "/api/materials", 
-                            "flex" : 0.5
+                            "flex" : 0.4
                         }
                     }, 
                     {
                         "id" : "Viewing.Extension.Database.CostBreakdown", 
                         "enabled" : true, 
                         "options" : {
-                            "displayIndex" : NumberInt(1), 
-                            "flex" : 0.5
+                            "displayIndex" : NumberInt(1)
                         }
                     }, 
                     {
@@ -352,6 +385,14 @@
                     }, 
                     {
                         "id" : "Viewing.Extension.VisualReport", 
+                        "enabled" : true
+                    }, 
+                    {
+                        "id" : "Viewing.Extension.Markup3D", 
+                        "enabled" : true
+                    }, 
+                    {
+                        "id" : "Viewing.Extension.Transform", 
                         "enabled" : true
                     }
                 ]
