@@ -341,4 +341,3 @@ export default class MultiModelExtensionBase extends
     return Promise.all (eventTasks)
   }
 }
-

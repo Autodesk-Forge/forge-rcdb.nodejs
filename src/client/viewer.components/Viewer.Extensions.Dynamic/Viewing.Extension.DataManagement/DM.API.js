@@ -381,5 +381,35 @@ export default class DataManagementAPI extends ClientAPI {
 
     return super.upload (url, file, options)
   }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  deleteItem (projectId, itemId) {
+
+    const url = `/projects/${projectId}/items/${itemId}`
+
+    return this.ajax({
+      type: 'DELETE',
+      rawBody: true,
+      url
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  deleteVersion (projectId, versionId) {
+
+    const url = `/projects/${projectId}/versions/${versionId}`
+
+    return this.ajax({
+      type: 'DELETE',
+      rawBody: true,
+      url
+    })
+  }
 }
 

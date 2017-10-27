@@ -35,6 +35,7 @@ class DataManagementExtension extends MultiModelExtensionBase {
     this.onFolderUpload = this.onFolderUpload.bind(this)
     this.onTabSelected = this.onTabSelected.bind(this)
     this.onInitUpload = this.onInitUpload.bind(this)
+    this.onDeleteItem = this.onDeleteItem.bind(this)
     this.onLoadItem = this.onLoadItem.bind(this)
 
     this.socketSvc =
@@ -226,6 +227,39 @@ class DataManagementExtension extends MultiModelExtensionBase {
 
       console.log(ex)
     }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async onDeleteItem (node) {
+
+    const onClose = (result) => {
+
+      this.dialogSvc.off('dialog.close', onClose)
+
+      if (result === 'OK') {
+
+        this.dmAPI.deleteItem(
+          node.projectId,
+          node.itemId)
+      }
+    }
+
+    this.dialogSvc.on('dialog.close', onClose)
+
+    this.dialogSvc.setState({
+      className: 'item-delete-dlg',
+      title: 'Delete Item ...',
+      content:
+        <div>
+          Are you sure you want to delete
+          <br/>
+          {node.name} ?
+        </div>,
+      open: true
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -553,6 +587,7 @@ class DataManagementExtension extends MultiModelExtensionBase {
             menuContainer={this.options.appContainer}
             onFolderUpload={this.onFolderUpload}
             derivativesAPI={this.derivativesAPI}
+            onDeleteItem={this.onDeleteItem}
             onLoadItem={this.onLoadItem}
             dmAPI={this.dmAPI}
             hub={hub}

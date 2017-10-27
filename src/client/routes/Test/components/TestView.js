@@ -150,6 +150,22 @@ class TestView extends React.Component {
 
     //const path = this.getViewablePath(doc)
 
+    viewer.addEventListener(
+      Autodesk.Viewing.GEOMETRY_LOADED_EVENT, () => {
+
+        viewer.setCutPlanes([
+          //new THREE.Vector4(0,0,1,-20),
+          new THREE.Vector4(0,0,-1,-10)
+        ])
+      })
+
+    viewer.addEventListener(
+      Autodesk.Viewing.CUTPLANES_CHANGE_EVENT, (e) => {
+
+        console.log(e)
+      })
+
+
     viewer.start()
 
     const path = 'resources/models/dev/office/Resource/3D_View/3D/office.svf'
@@ -157,65 +173,6 @@ class TestView extends React.Component {
     viewer.loadModel(path)
 
     //viewer.loadExtension('Autodesk.Viewing.ZoomWindow')
-
-    //this.onSelectionChanged = this.onSelectionChanged.bind(this)
-    //
-    //viewer.addEventListener(
-    //  Autodesk.Viewing.SELECTION_CHANGED_EVENT,
-    //  this.onSelectionChanged)
-    //
-    ////this.material = this.addColorMaterial('clr', 0xf571d6)
-    //this.material = this.addTexMaterial('tex', '/resources/img/textures/heatmap.png')
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  addColorMaterial (name, color) {
-
-    const material = new THREE.MeshPhongMaterial({
-      color: color
-    })
-
-    this.viewer.impl.matman().addMaterial(
-      name, material, true)
-
-    return material
-  }
-
-  addTexMaterial(name, texture) {
-
-    const tex = THREE.ImageUtils.loadTexture(texture)
-
-    tex.wrapS  = THREE.RepeatWrapping
-    tex.wrapT = THREE.RepeatWrapping
-    tex.repeat.set(1, 1)
-
-    const material = new THREE.MeshBasicMaterial({
-      map: tex
-    })
-
-    tex.needsUpdate = true
-
-    this.viewer.impl.matman().addMaterial(
-      name, material, true)
-
-    return material
-  }
-
-  setMaterialOverlay(renderProxy, materialName) {
-
-    const meshProxy = new THREE.Mesh(
-      renderProxy.geometry,
-      renderProxy.material)
-
-    meshProxy.matrix.copy(renderProxy.matrixWorld)
-    meshProxy.matrixWorldNeedsUpdate = true
-    meshProxy.matrixAutoUpdate = false
-    meshProxy.frustumCulled = false
-
-    this.viewer.impl.addOverlay(materialName, meshProxy)
   }
 
   /////////////////////////////////////////////////////////
@@ -225,30 +182,6 @@ class TestView extends React.Component {
   onSelectionChanged (event) {
 
     return console.log(event)
-
-    if (event.dbIdArray.length) {
-
-      const dbId = event.dbIdArray[0]
-
-      const mesh = this.buildComponentMesh(
-        dbId, this.material)
-
-      this.viewer.impl.scene.add(mesh)
-    }
-
-    //console.log(event)
-    //
-    //event.fragIdsArray.forEach((fragId) => {
-    //
-    //  const renderProxy = this.viewer.impl.getRenderProxy(
-    //    this.viewer.model, fragId)
-    //
-    //  renderProxy.material = this.material
-    //
-    //  //this.setMaterialOverlay(renderProxy, 'tex')
-    //})
-
-    this.viewer.impl.invalidate(true)
   }
 
   ////////////////////////////////////////////////////////
@@ -275,8 +208,10 @@ class TestView extends React.Component {
   render() {
 
     return (
-      <Viewer onViewerCreated={(data) => this.onViewerCreated(data)}
-        style={{height:"calc(100vh - 65px)"}}/>
+      <Viewer
+        onViewerCreated={(data) => this.onViewerCreated(data)}
+        style={{height:"calc(100vh - 65px)"}}
+      />
     )
   }
 

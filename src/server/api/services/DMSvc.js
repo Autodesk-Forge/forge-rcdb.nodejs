@@ -185,7 +185,7 @@ export default class DMSvc extends BaseSvc {
   // Delete Item
   //
   /////////////////////////////////////////////////////////////////
-  async deleteItem (getToken, projectId, itemId) {
+  async deleteItem (getToken, projectId, itemId, opts = {}) {
 
     return new Promise(async(resolve, reject) => {
 
@@ -196,7 +196,7 @@ export default class DMSvc extends BaseSvc {
           : getToken
 
         const versionsRes = await this._itemsAPI.getItemVersions(
-          projectId, itemId, {autoRefresh:false}, token)
+          projectId, itemId, opts, {autoRefresh:false}, token)
 
         const deleteTasks = versionsRes.body.data.map((version) => {
 
@@ -208,6 +208,7 @@ export default class DMSvc extends BaseSvc {
 
       } catch (ex) {
 
+        console.log(ex)
         reject (ex)
       }
     })
@@ -231,43 +232,47 @@ export default class DMSvc extends BaseSvc {
   // Delete Version
   //
   /////////////////////////////////////////////////////////////////
-  deleteVersion (getToken, projectId, versionId) {
+  async deleteVersion (getToken, projectId, versionId) {
 
-    return new Promise(async(resolve, reject) => {
+    try {
 
-      try {
+      const token = (typeof getToken == 'function')
+        ? await getToken()
+        : getToken
 
-        const token = (typeof getToken == 'function')
-          ? await getToken()
-          : getToken
+      const versionsRes =
+        await this._versionsAPI.getVersion(
+          projectId, versionId,
+          {autoRefresh:false}, token)
 
-        const versionsRes = await this._versionsAPI.getVersion(
-          projectId, versionId, {autoRefresh:false}, token)
+      const payload = this.createDeleteVersionPayload(
+        versionsRes.body.data.relationships.item.data.id)
 
-        const version = versionsRes.body.data
+      //return this._versionsAPI.postVersion(
+      //  projectId, JSON.stringify(payload),
+      //  {autoRefresh:false}, token)
 
-        if (version.relationships.storage) {
+      const url =
+        `${DMSvc.SERVICE_BASE_URL}/projects/` +
+        `${projectId}/versions`
 
-          const ossSvc = ServiceManager.getService('OssSvc')
-
-          const objectId = ossSvc.parseObjectId(
-            version.relationships.storage.data.id)
-
-          const res = await ossSvc.deleteObject (
-            token,
-            objectId.bucketKey,
-            objectId.objectKey)
-
-          resolve (res)
-        }
-
-        return reject('no storage')
-
-      } catch (ex) {
-
-        reject (ex)
+      const headers = {
+        'Content-Type': 'application/vnd.api+json',
+        'Authorization': 'Bearer ' + token.access_token
       }
-    })
+
+      return requestAsync({
+        method: 'POST',
+        body: payload,
+        json: true,
+        headers,
+        url
+      })
+
+    } catch (ex) {
+
+      Promise.reject (ex)
+    }
   }
 
   /////////////////////////////////////////////////////////////////
@@ -836,6 +841,39 @@ export default class DMSvc extends BaseSvc {
             data: {
               type: 'objects',
               id: objectId
+            }
+          }
+        }
+      }
+    }
+
+    return payload
+  }
+
+  /////////////////////////////////////////////////////////////////
+  // Creates delete version payload
+  //
+  /////////////////////////////////////////////////////////////////
+  createDeleteVersionPayload (itemId) {
+
+    const payload = {
+      jsonapi: {
+        version: '1.0'
+      },
+      data:{
+        type: 'versions',
+        attributes:{
+          name: 'max-delete.max',
+          extension:{
+            type: 'versions:autodesk.core:Deleted',
+            version: '1.0'
+          }
+        },
+        relationships:{
+          item:{
+            data:{
+              type: 'items',
+              id: itemId
             }
           }
         }

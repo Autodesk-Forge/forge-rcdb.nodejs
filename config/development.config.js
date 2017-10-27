@@ -55,8 +55,10 @@ const config = {
         'data:read',
         'data:write',
         'data:create',
+        'data:search',
         'bucket:read',
-        'bucket:create'
+        'bucket:create',
+        'bucket:delete'
       ]
     },
 

@@ -19,10 +19,15 @@ export default class DataTreeNode extends EventsEmitter {
     super ()
 
     this.onVersionSelected = this.onVersionSelected.bind(this)
+    this.onDeleteItem = this.onDeleteItem.bind(this)
     this.onLoadItem = this.onLoadItem.bind(this)
     this.onUpload = this.onUpload.bind(this)
     this.onReload = this.onReload.bind(this)
     this.onExpand = this.onExpand.bind(this)
+
+    const hubType = props.delegate.rootNode
+      ? props.delegate.rootNode.props.hubType
+      : null
 
     this.on('expand', this.onExpand)
 
@@ -36,7 +41,9 @@ export default class DataTreeNode extends EventsEmitter {
     this.id           = props.id
 
     this.renderProps = {
-      onUpload: this.onUpload
+      onDeleteItem: this.onDeleteItem,
+      onUpload: this.onUpload,
+      hubType
     }
 
     this.children = null
@@ -204,6 +211,17 @@ export default class DataTreeNode extends EventsEmitter {
 
     this.delegate.emit(
       'node.destroy', this.id)
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  onDeleteItem () {
+
+    this.delegate.emit(
+      'item.delete',
+      this.props)
   }
 
   /////////////////////////////////////////////////////////////
@@ -807,7 +825,25 @@ class ReactTreeNode extends React.Component {
               className="tooltip-text"
               effect="solid">
               <div>
-                  {`Reload item ...`}
+                {`Reload item ...`}
+              </div>
+            </ReactTooltip>
+          </div>
+        }
+        {
+          this.props.hubType === 'hubs:autodesk.bim360:Account' &&
+          this.props.versions &&
+          <div>
+            <span className="fa fa-times"
+              data-for={`delete-${this.props.id}`}
+              onClick={this.props.onDeleteItem}
+              data-tip
+            />
+            <ReactTooltip id={`delete-${this.props.id}`}
+              className="tooltip-text"
+              effect="solid">
+              <div>
+                {`Delete item ...`}
               </div>
             </ReactTooltip>
           </div>

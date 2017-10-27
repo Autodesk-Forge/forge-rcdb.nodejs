@@ -4,7 +4,7 @@
     "env" : "Local", 
     "layout" : {
         "type" : "flexLayoutRight", 
-        "rightFlex" : 0.4
+        "rightFlex" : 0.35
     }, 
     "model" : {
         "path" : "resources/models/dev/seat/0.svf", 
@@ -34,15 +34,14 @@
                         "options" : {
                             "displayIndex" : NumberInt(0), 
                             "apiUrl" : "/api/materials", 
-                            "flex" : 0.5
+                            "flex" : 0.4
                         }
                     }, 
                     {
                         "id" : "Viewing.Extension.Database.CostBreakdown", 
                         "enabled" : true, 
                         "options" : {
-                            "displayIndex" : NumberInt(1), 
-                            "flex" : 0.5
+                            "displayIndex" : NumberInt(1)
                         }
                     }, 
                     {
@@ -73,7 +72,7 @@
     "env" : "Local", 
     "layout" : {
         "type" : "flexLayoutRight", 
-        "rightFlex" : 0.4
+        "rightFlex" : 0.35
     }, 
     "model" : {
         "path" : "resources/models/dev/office/Resource/3D_View/3D/office.svf", 
@@ -137,15 +136,14 @@
                         "options" : {
                             "displayIndex" : NumberInt(0), 
                             "apiUrl" : "/api/materials", 
-                            "flex" : 0.5
+                            "flex" : 0.4
                         }
                     }, 
                     {
                         "id" : "Viewing.Extension.Database.CostBreakdown", 
                         "enabled" : true, 
                         "options" : {
-                            "displayIndex" : NumberInt(1), 
-                            "flex" : 0.5
+                            "displayIndex" : NumberInt(1)
                         }
                     }, 
                     {
@@ -176,7 +174,7 @@
     "env" : "Local", 
     "layout" : {
         "type" : "flexLayoutRight", 
-        "rightFlex" : 0.4
+        "rightFlex" : 0.35
     }, 
     "model" : {
         "path" : "resources/models/dev/engine/0.svf", 
@@ -206,15 +204,14 @@
                         "options" : {
                             "displayIndex" : NumberInt(0), 
                             "apiUrl" : "/api/materials", 
-                            "flex" : 0.5
+                            "flex" : 0.4
                         }
                     }, 
                     {
                         "id" : "Viewing.Extension.Database.CostBreakdown", 
                         "enabled" : true, 
                         "options" : {
-                            "displayIndex" : NumberInt(1), 
-                            "flex" : 0.5
+                            "displayIndex" : NumberInt(1)
                         }
                     }, 
                     {
@@ -245,7 +242,7 @@
     "env" : "Local", 
     "layout" : {
         "type" : "flexLayoutRight", 
-        "rightFlex" : 0.4
+        "rightFlex" : 0.35
     }, 
     "model" : {
         "path" : "resources/models/dev/V8/0.svf", 
@@ -273,15 +270,14 @@
                         "options" : {
                             "displayIndex" : NumberInt(0), 
                             "apiUrl" : "/api/materials", 
-                            "flex" : 0.5
+                            "flex" : 0.4
                         }
                     }, 
                     {
                         "id" : "Viewing.Extension.Database.CostBreakdown", 
                         "enabled" : true, 
                         "options" : {
-                            "displayIndex" : NumberInt(1), 
-                            "flex" : 0.5
+                            "displayIndex" : NumberInt(1)
                         }
                     }, 
                     {
@@ -312,7 +308,7 @@
     "env" : "Local", 
     "layout" : {
         "type" : "flexLayoutRight", 
-        "rightFlex" : 0.4
+        "rightFlex" : 0.35
     }, 
     "model" : {
         "path" : "resources/models/dev/210 King/Resource/3D_View/_3D_ 1583181/_3D_.svf", 
@@ -372,15 +368,14 @@
                         "options" : {
                             "displayIndex" : NumberInt(0), 
                             "apiUrl" : "/api/materials", 
-                            "flex" : 0.5
+                            "flex" : 0.4
                         }
                     }, 
                     {
                         "id" : "Viewing.Extension.Database.CostBreakdown", 
                         "enabled" : true, 
                         "options" : {
-                            "displayIndex" : NumberInt(1), 
-                            "flex" : 0.5
+                            "displayIndex" : NumberInt(1)
                         }
                     }, 
                     {

@@ -487,7 +487,7 @@ module.exports = function() {
 
       const forgeSvc = ServiceManager.getService('ForgeSvc')
 
-      var token = await forgeSvc.get3LeggedTokenMaster(req.session)
+      const token = await forgeSvc.get3LeggedTokenMaster(req.session)
 
       const dmSvc = ServiceManager.getService('DMSvc')
 
@@ -498,7 +498,37 @@ module.exports = function() {
 
     } catch (ex) {
 
-      console.log(ex)
+      res.status(ex.status || 500)
+      res.json(ex)
+    }
+  })
+
+  /////////////////////////////////////////////////////////
+  // DELETE /project/{projectId}/versions/{versionId}
+  // Delete version
+  //
+  /////////////////////////////////////////////////////////
+  router.delete('/projects/:projectId/versions/:versionId',
+    async (req, res) => {
+
+    try {
+
+      const projectId = req.params.projectId
+
+      const versionId = req.params.versionId
+
+      const forgeSvc = ServiceManager.getService('ForgeSvc')
+
+      const token = await forgeSvc.get3LeggedTokenMaster(req.session)
+
+      const dmSvc = ServiceManager.getService('DMSvc')
+
+      const response = await dmSvc.deleteVersion(
+        token, projectId, versionId)
+
+      res.json(response)
+
+    } catch (ex) {
 
       res.status(ex.status || 500)
       res.json(ex)

@@ -53,9 +53,11 @@ class MaterialExtension extends MultiModelExtensionBase {
 
       texture: {name: 'wood' , img: wood},
       disabled: !this.models.length,
-      clrActive: false,
+      materialClrActive: false,
+      themingClrActive: false,
       texActive: false,
-      color: '#FF0000',
+      materialColor: '#D02D2D',
+      themingColor: '#41C638',
       textures: [
         {name: 'brick', img: brick},
         {name: 'steel', img: steel},
@@ -156,7 +158,8 @@ class MaterialExtension extends MultiModelExtensionBase {
       this.eventTool.activate()
 
       const state = Object.assign({
-        clrActive: false,
+        materialClrActive: false,
+        themingClrActive: false,
         texActive: false
       }, {
         [`${active}`]: true
@@ -175,7 +178,7 @@ class MaterialExtension extends MultiModelExtensionBase {
     this.eventTool.deactivate()
 
     this.react.setState({
-      clrActive: false,
+      materialClrActive: false,
       texActive: false
     })
   }
@@ -188,7 +191,11 @@ class MaterialExtension extends MultiModelExtensionBase {
 
     if (this.eventTool.active && event.selections.length) {
 
-      const {clrActive, texActive} = this.react.getState()
+      const {
+        materialClrActive,
+        themingClrActive,
+        texActive
+      } = this.react.getState()
 
       const selection = event.selections[0]
 
@@ -202,9 +209,14 @@ class MaterialExtension extends MultiModelExtensionBase {
         await Toolkit.getFragIds(
           model, dbIds)
 
-      if (clrActive) {
+      if (materialClrActive) {
 
         this.setColorMaterial(model, fragIds)
+      }
+
+      if (themingClrActive) {
+
+        this.setThemingColor(model, dbIds)
       }
 
       if (texActive) {
@@ -329,9 +341,9 @@ class MaterialExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   setColorMaterial (model, fragIds) {
 
-    const {color} = this.react.getState()
+    const {materialColor} = this.react.getState()
 
-    const colorHexStr = color.replace('#', '0x')
+    const colorHexStr = materialColor.replace('#', '0x')
 
     const colorInt = parseInt(colorHexStr, 16)
 
@@ -341,6 +353,28 @@ class MaterialExtension extends MultiModelExtensionBase {
 
       model.getFragmentList().setMaterial(
         fragId, material)
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  setThemingColor (model, dbIds) {
+
+    const {themingColor} = this.react.getState()
+
+    const colorHexStr = themingColor.replace('#', '0x')
+
+    const colorInt = parseInt(colorHexStr, 16)
+
+    const clr = new THREE.Color(colorInt)
+
+    dbIds.forEach((dbId) => {
+
+      model.setThemingColor(dbId,
+        new THREE.Vector4(
+        clr.r, clr.g, clr.b, clr.a))
     })
   }
 
@@ -384,6 +418,11 @@ class MaterialExtension extends MultiModelExtensionBase {
     this.overrides = {}
 
     this.viewer.impl.sceneUpdated(true)
+
+    this.models.forEach((model) => {
+
+      model.clearThemingColors()
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -402,10 +441,10 @@ class MaterialExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onColorPicked (color) {
+  onColorPicked (field, color) {
 
     this.react.setState({
-      color: color.hex
+      [field]: color.hex
     })
   }
 
@@ -413,9 +452,11 @@ class MaterialExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onColorPick (e) {
+  onColorPick (field, e) {
 
-    const {color} = this.react.getState()
+    const state = this.react.getState()
+
+    const color = state[field]
 
     this.dialogSvc.setState({
       className: 'color-picker-dlg',
@@ -424,7 +465,7 @@ class MaterialExtension extends MultiModelExtensionBase {
       content:
         <div>
           <ChromePicker
-            onChangeComplete={this.onColorPicked}
+            onChangeComplete={(c) => this.onColorPicked(field, c)}
             color={color}
           />
         </div>,
@@ -538,15 +579,21 @@ class MaterialExtension extends MultiModelExtensionBase {
   renderContent () {
 
     const {
-      color,
-      clrActive,
+      materialClrActive,
+      themingClrActive,
       texActive,
       disabled,
-      texture
+      texture,
+      materialColor,
+      themingColor
     } = this.react.getState()
 
-    const colorPickerStytle = {
-      background: color
+    const materialPicker = {
+      background: materialColor
+    }
+
+    const themingPicker = {
+      background: themingColor
     }
 
     const texPickerStytle = {
@@ -555,14 +602,23 @@ class MaterialExtension extends MultiModelExtensionBase {
 
     return (
       <div className="content">
-        <div className={`start-selection ${clrActive ? 'active':''}`}
-          onClick={() => this.startSelection('clrActive')}
+        <div className={`start-selection ${themingClrActive ? 'active':''}`}
+          onClick={() => this.startSelection('themingClrActive')}
           disabled={disabled}>
-          <div onClick={this.onColorPick}
-            style={colorPickerStytle}
+          <div onClick={(e) => this.onColorPick('themingColor', e)}
+            style={themingPicker}
             className="picker"
           />
-          Color
+          Theming Color
+        </div>
+        <div className={`start-selection ${materialClrActive ? 'active':''}`}
+          onClick={() => this.startSelection('materialClrActive')}
+          disabled={disabled}>
+          <div onClick={(e) => this.onColorPick('materialColor', e)}
+            style={materialPicker}
+            className="picker"
+          />
+          Material Color
         </div>
         <div className={`start-selection ${texActive ? 'active':''}`}
           onClick={() => this.startSelection('texActive')}

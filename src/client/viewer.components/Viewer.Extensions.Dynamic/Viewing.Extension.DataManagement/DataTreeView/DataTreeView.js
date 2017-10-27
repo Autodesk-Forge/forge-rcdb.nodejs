@@ -56,6 +56,14 @@ export default class DataTreeView extends BaseComponent {
       }
     })
 
+    this.delegate.on('item.delete', (node) => {
+
+      if (this.props.onDeleteItem) {
+
+        this.props.onDeleteItem(node)
+      }
+    })
+
     this.delegate.on('item.load', (node) => {
 
       if (this.props.onLoadItem) {
@@ -83,6 +91,8 @@ export default class DataTreeView extends BaseComponent {
   /////////////////////////////////////////////////////////
   loadHub (hub) {
 
+    const hubType = hub.attributes.extension.type
+
     const rootNode = this.delegate.createRootNode({
       name: hub.attributes.name,
       delegate: this.delegate,
@@ -92,7 +102,8 @@ export default class DataTreeView extends BaseComponent {
       details: hub,
       group: true,
       id: hub.id,
-      level: 0
+      level: 0,
+      hubType
     })
 
     this.tree = new TreeView (

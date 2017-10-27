@@ -53,3 +53,16 @@
         "path" : "resources/models/dev/210 King/Resource/3D_View/_3D_ 1583181/_3D_.svf"
     }
 }
+{ 
+    "_id" : ObjectId("59efa98b8612dcfff2ea831c"), 
+    "lifetime" : NumberInt(86400), 
+    "env" : "AutodeskProduction", 
+    "timestamp" : ISODate("2017-10-24T20:58:51.557+0000"), 
+    "owner" : "200704122227993", 
+    "name" : "RUS_Project", 
+    "model" : {
+        "objectKey" : "74d0-db0c-d181.rvt", 
+        "fileId" : "urn:adsk.objects:os.object:forge-rcdb-gallery-dev/74d0-db0c-d181.rvt", 
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LWRldi83NGQwLWRiMGMtZDE4MS5ydnQ"
+    }
+}
