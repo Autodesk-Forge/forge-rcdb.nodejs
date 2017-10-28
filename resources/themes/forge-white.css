@@ -36,10 +36,14 @@
   color: rgb(72, 72, 72);
 }
 
-.dockingPanel {
+.adsk-viewing-viewer .modelStructurePanel .dockingPanelScroll {
   background: rgba(255, 255, 255, 0.8);
   text-align: left;
   box-shadow: 0 3px 5px rgba(0,0,0,.2);
+}
+
+.adsk-viewing-viewer .modelStructurePanel .footer {
+ background: #FFFFFF;
 }
 
 .dockingPanelTitle {
@@ -74,11 +78,15 @@
 .adsk-viewing-viewer .modelStructurePanel .treeview lmvheader {
   white-space: normal;
   word-wrap: break-word;
-  width: auto;
   display: inline-block;
   border-radius: 4px;
   background: rgb(245, 245, 245);
   box-shadow: 0 3px 5px rgba(0,0,0,.2);
+}
+
+.adsk-viewing-viewer .modelStructurePanel .treeview div.visibility {
+  background-color: #000;
+  background-position: 9px 12px;
 }
 
 .adsk-viewing-viewer .treeview div.group label {
