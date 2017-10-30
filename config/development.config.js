@@ -11,6 +11,7 @@ const config = {
   env: 'development',
 
   client: {
+    theme: 'forge-white.css',
     storageVersion: 2.1,
     host: `${HOST_URL}`,
     env: 'development',
@@ -69,7 +70,7 @@ const config = {
 
       viewer3D: '/resources/libs/lmv/3.2.1/viewer3D.js',
       threeJS:  '/resources/libs/lmv/3.2.1/three.js',
-      style:    '/resources/libs/lmv/3.2.1/style.css'
+      style:    '/resources/libs/lmv/3.2.1/style.min.css'
     }
   },
 

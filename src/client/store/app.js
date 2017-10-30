@@ -1,3 +1,4 @@
+import {client as config} from 'c0nfig'
 import ServiceManager from 'SvcManager'
 import merge from 'lodash/merge'
 
@@ -188,7 +189,7 @@ const getStorage = () => {
   const defaultAppState = {
     layoutType: 'flexLayoutRight',
     theme: {
-      css: '/resources/themes/forge-white.min.css',
+      css: `/resources/themes/${config.theme}`,
       name: 'forge-white-theme',
       viewer: {
         backgroundColor: [
