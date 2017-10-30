@@ -2,7 +2,6 @@
 import './ui/spectrum.css'
 import './ui/spectrum'
 import './ui/MarkupsUiUtils'
-import './ui/MarkupsUiUtils'
 import './ui/MarkupsStyleDropdown'
 import './ui/MarkupsColorPicker'
 import './ui/MarkupsStyleToggleButton'

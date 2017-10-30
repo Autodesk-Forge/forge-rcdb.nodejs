@@ -952,10 +952,8 @@ export default class Toolkit {
   // component
   //
   /////////////////////////////////////////////////////////
-  static buildComponentMesh (
-    viewer, model, dbId, faceFilter, material) {
-
-    const vertexArray = []
+  static buildComponentGeometry (
+    viewer, model, dbId, faceFilter) {
 
     // first we assume the component dbId is a leaf
     // component: ie has no child so contains
@@ -1033,6 +1031,22 @@ export default class Toolkit {
     })
 
     meshGeometry.applyMatrix(matrixWorld)
+
+    return meshGeometry
+  }
+
+  /////////////////////////////////////////////////////////
+  // Creates a standard THREE.Mesh out of a Viewer
+  // component
+  //
+  /////////////////////////////////////////////////////////
+  static buildComponentMesh (
+    viewer, model, dbId, faceFilter, material) {
+
+    const meshGeometry =
+      Toolkit.buildComponentGeometry(
+        viewer, model, dbId, faceFilter)
+
     meshGeometry.computeFaceNormals()
     meshGeometry.computeVertexNormals()
 
