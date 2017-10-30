@@ -116,7 +116,7 @@ You should be ready to deploy to heroku, providing the same Forge credentials us
 
 [https://forge-rcdb.autodesk.io](https://forge-rcdb.autodesk.io)
 
- ![forge-rcdb](resources/img/forge-rcdb.jpg)
+ ![forge-rcdb](resources/img/logos/adsk-forge.png)
 
 ## License
 
