@@ -150,27 +150,13 @@ class TestView extends React.Component {
 
     //const path = this.getViewablePath(doc)
 
-    viewer.addEventListener(
-      Autodesk.Viewing.GEOMETRY_LOADED_EVENT, () => {
-
-        viewer.setCutPlanes([
-          //new THREE.Vector4(0,0,1,-20),
-          new THREE.Vector4(0,0,-1,-10)
-        ])
-      })
-
-    viewer.addEventListener(
-      Autodesk.Viewing.CUTPLANES_CHANGE_EVENT, (e) => {
-
-        console.log(e)
-      })
-
-
     viewer.start()
 
     const path = 'resources/models/dev/office/Resource/3D_View/3D/office.svf'
 
     viewer.loadModel(path)
+
+    viewer.disableHighlight(true)
 
     //viewer.loadExtension('Autodesk.Viewing.ZoomWindow')
   }
@@ -205,7 +191,7 @@ class TestView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////////////
-  render() {
+  renderViewer() {
 
     return (
       <Viewer
@@ -219,22 +205,31 @@ class TestView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////////////
-  //render() {
+  renderViewingApp() {
+
+    const viewStyle = {
+      height: 'calc(100vh - 65px)'
+    }
+
+    return (
+      <div className="test" style={viewStyle}>
+        <ViewingApp
+          onViewingApplicationCreated={this.onViewingApplicationCreated}
+          onViewerCreated={this.onViewerCreated}
+          urn={this.state.urn}
+        />
+      </div>
+    )
+  }
+
+  /////////////////////////////////////////////////////////////////
   //
-  //  const viewStyle = {
-  //    height: 'calc(100vh - 65px)'
-  //  }
   //
-  //  return (
-  //    <div className="test" style={viewStyle}>
-  //      <ViewingApp
-  //        onViewingApplicationCreated={this.onViewingApplicationCreated}
-  //        onViewerCreated={this.onViewerCreated}
-  //        urn={this.state.urn}
-  //      />
-  //    </div>
-  //  )
-  //}
+  /////////////////////////////////////////////////////////////////
+  render() {
+
+    return this.renderViewer()
+  }
 }
 
 export default TestView

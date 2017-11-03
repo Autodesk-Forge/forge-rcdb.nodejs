@@ -215,7 +215,7 @@ module.exports = function() {
 
     setTimeout(() => {
       cleanModels(modelSvc)
-    }, 1000 * 60 * 60 * 24)
+    }, 1000 * 60 * 60) //Every hour
   }
 
   /////////////////////////////////////////////////////////
