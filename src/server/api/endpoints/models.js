@@ -1,4 +1,5 @@
 import ServiceManager from '../services/SvcManager'
+import sanitizeHtml from 'sanitize-html'
 import compression from 'compression'
 import queryString from 'querystring'
 import express from 'express'
@@ -144,10 +145,10 @@ module.exports = function() {
 
       const modelInfo = {
         lifetime: galleryConfig.lifetime,
+        name : sanitizeHtml(data.name),
         env: 'AutodeskProduction',
         timestamp: new Date(),
         owner: data.userId,
-        name : data.name,
         model : {
           objectKey,
           fileId,

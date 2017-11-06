@@ -58,6 +58,7 @@
     "react-tooltip": "3.3.0",
     "rimraf": "^2.6.1",
     "rmdir": "^1.2.0",
+    "sanitize-html": "1.15.0",
     "socket.io": "^2.0.2",
     "socketio-shared-webworker": "1.0.2",
     "superagent": "^3.5.2",
