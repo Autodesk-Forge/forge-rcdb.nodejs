@@ -11,6 +11,8 @@
 
   function ConstrainedPlacementExtension(viewer, options) {
 
+    this.events = new Viewing.Extension.ConstrainedPlacement.EventsEmitter
+
     Autodesk.Viewing.Extension.call(this, viewer, options)
 
     this.options = options
@@ -81,14 +83,28 @@
     this.control = button
   }
 
+  proto.createPanel = function () {
+
+    var panel = new Viewing.Extension.ConstrainedPlacement.Panel(
+      this.viewer, {
+        snapper: this.snapper
+      })
+
+    var _events = this.events
+
+    panel.events.on('complete', function (args) {
+
+      _events.emit('complete', args)
+
+      console.log(args)
+    })
+
+    return panel
+  }
+
   proto.onButtonClicked = function () {
 
-    this.panel =
-      this.panel ||
-      new Viewing.Extension.ConstrainedPlacement.Panel(
-        this.viewer, {
-          snapper: this.snapper
-        })
+    this.panel = this.panel || this.createPanel()
 
     this.panel.setVisible(true)
   }

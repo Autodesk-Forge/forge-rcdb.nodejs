@@ -4,19 +4,15 @@
 
   function SnapperTool(viewer) {
 
-    this.events = new Viewing.Extension.ConstrainedPlacement.EventsEmitter
+    var _events = this.events = new Viewing.Extension.ConstrainedPlacement.EventsEmitter
 
-    var _tooltipId = guid();
+    var _tooltip = null
 
     var _snappedGeometry = null;
     var _snappedGeometryType = null;
 
     var _detectRadius = 0.1;
 
-    var _onEdgeSnapped = null;
-    var _onFaceSnapped = null;
-    var _onVertexSnapped = null;
-    var _onGeometrySelected = null;
     var _onSelectionCancelled = null;
 
     var SNAP_PRECISION = 0.001
@@ -73,7 +69,7 @@
         viewer.toolController.activateTool(
           'snapper-tool')
 
-        this.events.emit('activate')
+        _events.emit('activate')
       }
     }
 
@@ -88,7 +84,7 @@
         viewer.toolController.deactivateTool(
           'snapper-tool')
 
-        this.events.emit('deactivate')
+        _events.emit('deactivate')
       }
     }
 
@@ -317,21 +313,21 @@
 
       if(!_selectionFilter.length || _selectionFilter.indexOf('vertex') > -1) {
 
-        _snappedGeometry = geometry;
+        _snappedGeometry = geometry
 
-        _snappedGeometryType = 'vertex';
+        _snappedGeometryType = 'vertex'
 
-        _tool.drawPoint(geometry);
+        if (_events.emit('vertex.snapped', geometry)){
 
-        if(_onVertexSnapped) {
-
-          _onVertexSnapped(geometry);
+          return false
         }
 
-        return true;
+        _tool.drawPoint(geometry)
+
+        return true
       }
 
-      return false;
+      return false
     }
 
     function edgeSnap(geometry) {
@@ -342,17 +338,17 @@
 
         _snappedGeometryType = 'edge';
 
-        _tool.drawLine(geometry);
+        if (_events.emit('edge.snapped', geometry)){
 
-        if(_onEdgeSnapped) {
-
-          _onEdgeSnapped(geometry);
+          return false
         }
 
-        return true;
+        _tool.drawLine(geometry)
+
+        return true
       }
 
-      return false;
+      return false
     }
 
     function faceSnap(geometry) {
@@ -363,12 +359,12 @@
 
         _snappedGeometryType = 'face';
 
-        _tool.drawFace(geometry);
+        if (_events.emit('face.snapped', geometry)){
 
-        if(_onFaceSnapped) {
-
-          _onFaceSnapped(geometry);
+          return false
         }
+
+        _tool.drawFace(geometry);
 
         return true;
       }
@@ -378,23 +374,20 @@
 
     function createTooltip() {
 
-      var html = [
+      _tooltip = document.createElement('div')
 
-        '<div class="snapper-tooltip" id="' + _tooltipId + '">',
-        '</div>',
+      _tooltip.className = 'snapper-tooltip'
 
-      ].join('\n');
-
-      $(viewer.container).append(html);
+      viewer.container.appendChild(_tooltip)
     }
 
     this.showTooltip = function(show, text) {
 
-      $('#' + _tooltipId).text(text);
+      _tooltip.style.visibility = show
+        ? 'visible'
+        : 'hidden'
 
-      $('#' + _tooltipId).css({
-        'visibility': (show ? 'visible' : 'hidden')
-      });
+      _tooltip.innerHTML = text
     }
 
     /////////////////////////////////////////////////////////
@@ -1254,16 +1247,14 @@
 
     this.handleButtonDown = function (event, button) {
 
-      _isDragging = true;
+      _isDragging = true
 
-      if(_onGeometrySelected && _snappedGeometry) {
+      _events.emit('geometry.selected', {
+        geometry: _snappedGeometry,
+        type: _snappedGeometryType
+      })
 
-        _onGeometrySelected(
-          _snappedGeometry,
-          _snappedGeometryType);
-      }
-
-      return false;
+      return false
     };
 
     this.handleButtonUp = function (event, button) {
@@ -1274,10 +1265,8 @@
 
     this.handleMouseMove = function (event) {
 
-      $('#' + _tooltipId).css({
-        'left' : event.canvasX + 'px',
-        'top' : event.canvasY - 30 + 'px'
-      });
+      _tooltip.style.top = event.canvasY - 30 + 'px'
+      _tooltip.style.left = event.canvasX + 'px'
 
       if (!_isDragging) {
 
@@ -1335,13 +1324,13 @@
 
     this.destroy = function() {
 
-      $('#' + _tooltipId).remove();
-
       this.clearOverlay();
 
       _viewer.impl.removeOverlayScene(_faceOverlayName);
       _viewer.impl.removeOverlayScene(_vertexOverlayName);
       _viewer.impl.removeOverlayScene(_edgeOverlayName);
+
+      _tooltip.style.visibility = 'hidden'
     }
 
     viewer.toolController.registerTool(this)
