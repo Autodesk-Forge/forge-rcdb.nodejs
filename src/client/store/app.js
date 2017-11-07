@@ -193,8 +193,8 @@ const getStorage = () => {
       name: 'forge-white-theme',
       viewer: {
         backgroundColor: [
-          245, 245, 245,
-          245, 245, 245
+          205, 205, 205,
+          255, 255, 255
         ],
         lightPreset: 1
       }

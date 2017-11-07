@@ -161,29 +161,6 @@ class DataManagementExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  async setViewerUrn (node, urn) {
-
-    try {
-
-      const manifest =
-        await this.derivativesAPI.getManifest(urn)
-
-      if (this.derivativesAPI.hasDerivative (
-          manifest, { type: 'geometry'})) {
-
-        node.setViewerUrn(urn)
-      }
-
-    } catch (ex) {
-
-      console.log(ex)
-    }
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
   async setNodeViewerUrn (node, urn) {
 
     try {

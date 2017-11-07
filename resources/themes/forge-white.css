@@ -319,6 +319,10 @@
   color: #767676;
 }
 
+.adsk-viewing-viewer .modelStructurePanel.dockingPanel {
+  box-shadow: 0 3px 5px rgba(0,0,0,.5);
+}
+
 .adsk-viewing-viewer .modelStructurePanel.dockingPanel:hover {
   background: rgb(255, 255, 255);
   border: 0 solid rgba(150,150,150,.8);

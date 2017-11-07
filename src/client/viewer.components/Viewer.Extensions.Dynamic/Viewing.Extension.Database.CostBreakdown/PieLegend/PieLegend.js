@@ -101,7 +101,6 @@ export default class PieLegend extends BaseComponent {
           showPagination={false}
           data={this.props.data}
           columns={columns}
-
           getTdProps={(state, row, column, instance) => {
             return {
               onClick: (e, handleOriginal) => {

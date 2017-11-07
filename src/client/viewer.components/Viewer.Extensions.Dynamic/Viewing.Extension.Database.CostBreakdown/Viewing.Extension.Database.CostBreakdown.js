@@ -352,7 +352,9 @@ class CostGraphContainer extends BaseComponent {
   /////////////////////////////////////////////////////////
   onPieGroupClicked (group) {
 
-    const item = group.data.item
+    const item = !group.expanded
+      ? group.data.item
+      : null
 
     this.props.onItemSelected (item)
   }

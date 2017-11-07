@@ -375,6 +375,8 @@ module.exports = function() {
 
       const dmSvc = ServiceManager.getService('DMSvc')
 
+      const rootFilename = req.body.rootFilename
+
       const projectId = req.params.projectId
 
       const folderId = req.params.folderId
@@ -400,6 +402,7 @@ module.exports = function() {
 
       const opts = {
         isBIM: (hubType === 'hubs:autodesk.bim360:Account'),
+        rootFilename: rootFilename,
         chunkSize: 5 * 1024 * 1024,
         concurrentUploads: 3,
         onProgress: (info) => {
