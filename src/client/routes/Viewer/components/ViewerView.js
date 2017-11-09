@@ -13,6 +13,7 @@ class ViewerView extends React.Component {
 
     super (props)
 
+    this.onModelRootLoaded = this.onModelRootLoaded.bind(this)
     this.onViewerCreated = this.onViewerCreated.bind(this)
     this.onError = this.onError.bind(this)
   }
@@ -54,10 +55,30 @@ class ViewerView extends React.Component {
   /////////////////////////////////////////////////////////
   onViewerCreated (viewer, loader) {
 
+    this.viewer = viewer
+    this.loader = loader
+
     viewer.addEventListener(
-      Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT, () => {
-        loader.show(false)
+      Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT,
+      this.onModelRootLoaded)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onModelRootLoaded (e) {
+
+    this.viewer.removeEventListener(
+      Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT,
+      this.onModelRootLoaded)
+
+    this.viewer.loadDynamicExtension(
+      'Viewing.Extension.ViewableSelector', {
+        apiUrl: '/api/derivatives/2legged'
       })
+
+    this.loader.show(false)
   }
 
   /////////////////////////////////////////////////////////

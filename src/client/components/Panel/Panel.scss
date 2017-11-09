@@ -23,11 +23,14 @@
   margin: 0px 8px 0px 0px;
   background: #ededed;
   display: inline-flex;
-  cursor: move;
   height: 35px;
   float: left;
   width: 100%;
   z-index: 1;
+
+  &.draggable{
+    cursor: move;
+  }
 }
 
 .react-panel .title > label {

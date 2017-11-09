@@ -20,34 +20,6 @@ module.exports = function (getToken) {
   }))
 
   /////////////////////////////////////////////////////////
-  // POST /job
-  // Post a derivative job - generic
-  //
-  /////////////////////////////////////////////////////////
-  router.post('/job', async (req, res) => {
-
-    try {
-
-      const payload = JSON.parse(req.body.payload)
-
-      const token = await getToken(req.session)
-
-      const derivativesSvc = ServiceManager.getService(
-        'DerivativesSvc')
-
-      const response = await derivativesSvc.postJob(
-        token, payload)
-
-      res.json(response)
-
-    } catch (ex) {
-
-      res.status(ex.statusCode || 500)
-      res.json(ex)
-    }
-  })
-
-  /////////////////////////////////////////////////////////
   // GET /formats
   // Get supported formats
   //
@@ -194,35 +166,6 @@ module.exports = function (getToken) {
   })
 
   /////////////////////////////////////////////////////////
-  // DELETE /manifest/{urn}
-  // Delete design manifest
-  //
-  /////////////////////////////////////////////////////////
-  router.delete('/manifest/:urn', async (req, res) => {
-
-    try {
-
-      const urn = req.params.urn
-
-      const token = await getToken(req.session)
-
-      const derivativesSvc = ServiceManager.getService(
-        'DerivativesSvc')
-
-      const response =
-        await derivativesSvc.deleteManifest(
-          token, urn)
-
-      res.json(response)
-
-    } catch (ex) {
-
-      res.status(ex.statusCode || 500)
-      res.json(ex)
-    }
-  })
-
-  /////////////////////////////////////////////////////////
   // GET /download
   // Get download uri for derivative resource
   //
@@ -279,7 +222,8 @@ module.exports = function (getToken) {
       const options = {
         height: req.query.size || 400,
         width: req.query.size || 400,
-        base64: req.query.base64
+        base64: req.query.base64,
+        guid: req.query.guid
       }
 
       const derivativesSvc = ServiceManager.getService(
@@ -305,6 +249,63 @@ module.exports = function (getToken) {
       res.json(ex)
     }
   })
+
+  /////////////////////////////////////////////////////////
+  // POST /job
+  // Post a derivative job - generic
+  //
+  /////////////////////////////////////////////////////////
+  //router.post('/job', async (req, res) => {
+  //
+  //  try {
+  //
+  //    const payload = JSON.parse(req.body.payload)
+  //
+  //    const token = await getToken(req.session)
+  //
+  //    const derivativesSvc = ServiceManager.getService(
+  //      'DerivativesSvc')
+  //
+  //    const response = await derivativesSvc.postJob(
+  //      token, payload)
+  //
+  //    res.json(response)
+  //
+  //  } catch (ex) {
+  //
+  //    res.status(ex.statusCode || 500)
+  //    res.json(ex)
+  //  }
+  //})
+
+  /////////////////////////////////////////////////////////
+  // DELETE /manifest/{urn}
+  // Delete design manifest
+  //
+  /////////////////////////////////////////////////////////
+  //router.delete('/manifest/:urn', async (req, res) => {
+  //
+  //  try {
+  //
+  //    const urn = req.params.urn
+  //
+  //    const token = await getToken(req.session)
+  //
+  //    const derivativesSvc = ServiceManager.getService(
+  //      'DerivativesSvc')
+  //
+  //    const response =
+  //      await derivativesSvc.deleteManifest(
+  //        token, urn)
+  //
+  //    res.json(response)
+  //
+  //  } catch (ex) {
+  //
+  //    res.status(ex.statusCode || 500)
+  //    res.json(ex)
+  //  }
+  //})
 
   return router
 }

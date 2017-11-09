@@ -66,8 +66,9 @@
 }
 
 .propertyPanel .treeview group > lmvheader {
-  display: block;
   background-color: #e6e6e6 !important;
+  text-align: left;
+  display: block;
 }
 
 .adsk-viewing-viewer .treeview div.group label {
