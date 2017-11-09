@@ -73,7 +73,7 @@ class ViewableSelectorExtension extends MultiModelExtensionBase {
 
         await this.react.setState({
           activeItem: items[0],
-          items: [items[0], items[1], items[2]]
+          items: items
         })
 
         if (this.options.showPanel) {
@@ -102,7 +102,7 @@ class ViewableSelectorExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Load the selected viewable
   //
   /////////////////////////////////////////////////////////
   onItemSelected (item) {
@@ -127,7 +127,7 @@ class ViewableSelectorExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Create a button to display the panel
   //
   /////////////////////////////////////////////////////////
   createButton () {
@@ -155,7 +155,7 @@ class ViewableSelectorExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Show/Hide panel
   //
   /////////////////////////////////////////////////////////
   showPanel (show) {
@@ -192,7 +192,7 @@ class ViewableSelectorExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Render React panel content
   //
   /////////////////////////////////////////////////////////
   renderContent () {
@@ -243,7 +243,7 @@ class ViewableSelectorExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Render title
   //
   /////////////////////////////////////////////////////////
   renderTitle () {
@@ -264,7 +264,7 @@ class ViewableSelectorExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Render main
   //
   /////////////////////////////////////////////////////////
   render (opts) {
