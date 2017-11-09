@@ -58,8 +58,6 @@ class ViewableSelectorExtension extends MultiModelExtensionBase {
 
     }).then (async() => {
 
-      this.createButton()
-
       const urn = this.options.model.urn
 
       this.viewerDocument =
@@ -71,15 +69,17 @@ class ViewableSelectorExtension extends MultiModelExtensionBase {
 
       if (items.length > 1) {
 
+        this.createButton()
+
+        await this.react.setState({
+          activeItem: items[0],
+          items: [items[0], items[1], items[2]]
+        })
+
         if (this.options.showPanel) {
 
           this.showPanel (true)
         }
-
-        this.react.setState({
-          activeItem: items[0],
-          items
-        })
       }
     })
 
@@ -162,18 +162,24 @@ class ViewableSelectorExtension extends MultiModelExtensionBase {
 
     if (show) {
 
+      const {items} = this.react.getState()
+
       this.button.classList.add('active')
 
       const container = this.viewer.container
 
+      const height = Math.min(
+        container.offsetHeight - 110,
+        (items.length + 1)  * 78 + 55)
+
       this.react.pushViewerPanel(this, {
-        maxHeight: container.offsetHeight - 110,
-        height: container.offsetHeight - 110,
+        maxHeight: height,
         draggable: false,
         maxWidth: 500,
         minWidth: 310,
         width: 310,
-        top: 30
+        top: 30,
+        height
       })
 
     } else {
