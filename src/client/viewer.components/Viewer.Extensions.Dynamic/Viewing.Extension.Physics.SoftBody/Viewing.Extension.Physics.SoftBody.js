@@ -4,7 +4,6 @@
 //
 /////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
-import SphereBufferGeometry from './SphereBufferGeometry'
 import ContentEditable from 'react-contenteditable'
 import './Viewing.Extension.Physics.SoftBody.scss'
 import WidgetContainer from 'WidgetContainer'
@@ -15,6 +14,7 @@ import ServiceManager from 'SvcManager'
 import { ReactLoader } from 'Loader'
 import Toolkit from 'Viewer.Toolkit'
 import 'rc-slider/assets/index.css'
+import SoftBody from './SoftBody'
 import ReactDOM from 'react-dom'
 import Tooltip from 'rc-tooltip'
 import Slider from 'rc-slider'
@@ -22,6 +22,9 @@ import FPS from './FPSMeter'
 import Switch from 'Switch'
 import Label from 'Label'
 import React from 'react'
+
+import THREELib from "three-js"
+const THREEJS = THREELib()
 
 class PhysicsExtension extends MultiModelExtensionBase {
 
@@ -104,16 +107,45 @@ class PhysicsExtension extends MultiModelExtensionBase {
 
       if (event.keyCode === 32) { //SPACE
 
-        const pointer = this.mouseEvent.pointers
-          ? this.mouseEvent.pointers[0]
-          : this.mouseEvent
+        const geometry =
+          new THREEJS.SphereBufferGeometry(
+            1.5, 40, 25)
 
-        const rayCaster = this.pointerToRaycaster(
-          this.viewer.impl.canvas,
-          this.viewer.impl.camera,
-          pointer)
+        geometry.translate(5, 5, 0)
 
-        this.createProjectile (rayCaster.ray)
+        const { physicsCore } = this.react.getState()
+
+        const sbh = physicsCore.softBodyHelpers
+
+        const worldInfo = physicsCore.world.getWorldInfo()
+
+        const softBody = new SoftBody (
+          geometry, worldInfo, sbh, {
+            pressure: 200,
+            margin: 0.05,
+            mass: 15
+          })
+
+        console.log(softBody)
+
+        physicsCore.addSoftBody(softBody.body)
+
+        this.viewer.impl.scene.add(softBody.mesh)
+
+        this.viewer.impl.sceneUpdated(true)
+
+
+
+        //const pointer = this.mouseEvent.pointers
+        //  ? this.mouseEvent.pointers[0]
+        //  : this.mouseEvent
+        //
+        //const rayCaster = this.pointerToRaycaster(
+        //  this.viewer.impl.canvas,
+        //  this.viewer.impl.camera,
+        //  pointer)
+        //
+        //this.createProjectile (rayCaster.ray)
       }
     })
 
@@ -150,8 +182,11 @@ class PhysicsExtension extends MultiModelExtensionBase {
 
     const rect = domElement.getBoundingClientRect()
 
-    const x = ((pointer.clientX - rect.left) / rect.width) * 2 - 1
-    const y = -((pointer.clientY - rect.top) / rect.height) * 2 + 1
+    const px = pointer.clientX
+    const py = pointer.clientY
+
+    const x = ((px - rect.left) / rect.width) * 2 - 1
+    const y = -((py - rect.top) / rect.height) * 2 + 1
 
     if (camera.isPerspective) {
 
@@ -179,12 +214,16 @@ class PhysicsExtension extends MultiModelExtensionBase {
     return ray
   }
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   createProjectile (ray) {
 
     const { physicsCore } = this.react.getState()
 
     const radius = 8
-    const mass = 0.1
+    const mass = 0.25
 
     const geometry = new THREE.SphereGeometry(
       radius, 18, 16)
@@ -232,9 +271,9 @@ class PhysicsExtension extends MultiModelExtensionBase {
 
     body.setLinearVelocity(
       new Ammo.btVector3(
-        ray.direction.x * 100,
-        ray.direction.y * 100,
-        ray.direction.z * 100))
+        ray.direction.x * 250,
+        ray.direction.y * 250,
+        ray.direction.z * 250))
 
     body.setFriction(0.8)
 
@@ -246,15 +285,6 @@ class PhysicsExtension extends MultiModelExtensionBase {
 
     this.viewer.impl.scene.add(mesh)
     this.viewer.impl.sceneUpdated(true)
-  }
-
-  createSoftBody () {
-
-    const geometry =
-      new SphereBufferGeometry(
-        1.5, 40, 25)
-
-    geometry.translate(5, 5, 0)
   }
 
   /////////////////////////////////////////////////////////
@@ -367,8 +397,6 @@ class PhysicsExtension extends MultiModelExtensionBase {
 
     this.viewer.autocam.setHomeViewFrom(
       nav.getCamera())
-
-    this.createSoftBody ()
   }
 
   /////////////////////////////////////////////////////////

@@ -60,6 +60,11 @@
    color: #040404;
  }
 
+.propertyPanel .propertyName,
+.propertyPanel .propertyValue {
+  text-align: left;
+}
+
 .propertyPanel:hover .propertyName,
 .propertyPanel:hover .propertyValue {
   background-color: #f8f8f8;

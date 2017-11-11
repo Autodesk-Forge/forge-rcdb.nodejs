@@ -673,7 +673,9 @@ class ViewerConfigurator extends BaseComponent {
       this.onGeometryLoaded)
 
     setTimeout(() => {
-      viewer.showViewCubeTriad(true)
+      if (viewer.viewCubeUi) {
+        viewer.showViewCubeTriad(true)
+      }
     }, 2000)
   }
 

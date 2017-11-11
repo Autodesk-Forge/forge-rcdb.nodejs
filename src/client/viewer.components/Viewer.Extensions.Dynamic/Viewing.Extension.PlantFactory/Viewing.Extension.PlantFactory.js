@@ -181,7 +181,7 @@ class PlantFactoryExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  async onGeometryLoaded () {
+  async onModelCompletedLoad () {
 
     this.componentIds = await Toolkit.getLeafNodes(
       this.viewer.model)

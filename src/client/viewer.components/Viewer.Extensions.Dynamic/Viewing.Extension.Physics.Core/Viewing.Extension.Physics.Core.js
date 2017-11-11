@@ -19,6 +19,8 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
 
     super (viewer, options)
 
+    this.softBodyHelpers = new Ammo.btSoftBodyHelpers()
+
     this.update = this.update.bind(this)
 
     this.timeSkew = options.timeSkew || 1.0
@@ -92,6 +94,8 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
 
       this.world.addRigidBody(rigidBody)
     })
+
+    this.softBodies = []
   }
 
   /////////////////////////////////////////////////////////
@@ -121,6 +125,17 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  addSoftBody (softBody) {
+
+    this.world.addSoftBody(softBody, 1, -1)
+
+    this.softBodies.push(softBody)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   createWorld (g) {
 
     const collisionConfiguration =
@@ -132,10 +147,16 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
 
     const broadphase = new Ammo.btDbvtBroadphase
 
+    const solver =
+      new Ammo.btSequentialImpulseConstraintSolver()
+
+    const softBodySolver =
+      new Ammo.btDefaultSoftBodySolver()
+
     const world = new Ammo.btSoftRigidDynamicsWorld(
-      dispatcher, broadphase,
-      new Ammo.btSequentialImpulseConstraintSolver,
-        collisionConfiguration)
+      dispatcher, broadphase, solver,
+      collisionConfiguration,
+      softBodySolver)
 
     const gravity = new Ammo.btVector3(0, 0, g)
 
@@ -632,6 +653,11 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
               break
           }
         }
+      })
+
+      this.softBodies.forEach((body) => {
+
+
       })
 
       this.viewer.impl.sceneUpdated(true)

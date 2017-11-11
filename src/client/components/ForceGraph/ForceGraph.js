@@ -69,8 +69,8 @@ class ForceGraph extends React.Component {
 
     const container = this.container
 
-    const height = $(this.container).height()
-    const width = $(this.container).width()
+    const height = container.offsetHeight
+    const width = container.offsetWidth
 
     var force = d3.layout.force()
       .size([width, height])

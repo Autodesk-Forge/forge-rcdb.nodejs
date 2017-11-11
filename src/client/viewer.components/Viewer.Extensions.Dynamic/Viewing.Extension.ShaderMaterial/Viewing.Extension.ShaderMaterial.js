@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////
-// ShaderMaterial Extension - Part 2
+// ShaderMaterial Extension
 // By Philippe Leefsma, February 2016
 //
 /////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ import Toolkit from 'Viewer.Toolkit'
 //  }
 //`
 
-class ShaderMaterialExtension2 extends ExtensionBase {
+class ShaderMaterialExtension extends ExtensionBase {
 
   /////////////////////////////////////////////////////////////////
   // Class constructor
@@ -44,7 +44,7 @@ class ShaderMaterialExtension2 extends ExtensionBase {
   /////////////////////////////////////////////////////////////////
   static get ExtensionId() {
 
-    return 'Viewing.Extension.ShaderMaterial2'
+    return 'Viewing.Extension.ShaderMaterial'
   }
 
   /////////////////////////////////////////////////////////////////
@@ -68,7 +68,7 @@ class ShaderMaterialExtension2 extends ExtensionBase {
 
     this.randomUpdate ()
 
-    console.log('Viewing.Extension.ShaderMaterial2 loaded')
+    console.log('Viewing.Extension.ShaderMaterial loaded')
 
     return true
   }
@@ -79,7 +79,7 @@ class ShaderMaterialExtension2 extends ExtensionBase {
   /////////////////////////////////////////////////////////////////
   unload() {
 
-    console.log('Viewing.Extension.ShaderMaterial2 unloaded')
+    console.log('Viewing.Extension.ShaderMaterial unloaded')
 
     return true
   }

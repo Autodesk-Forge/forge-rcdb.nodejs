@@ -6,7 +6,6 @@ import express from 'express'
 import {Buffer} from 'buffer'
 import config from'c0nfig'
 import path from 'path'
-import zlib from 'zlib'
 
 module.exports = function() {
 
@@ -638,23 +637,6 @@ module.exports = function() {
   })
 
   /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  const gzipImg = (res, img) => {
-
-    zlib.gzip(img, function (error, zip) {
-
-      res.set({
-        'content-type': 'image/png',
-        'content-encoding': 'gzip'
-      })
-
-      res.end(zip, 'binary')
-    })
-  }
-
-  /////////////////////////////////////////////////////////
   // GET /{collection}/model/{modelId}/thumbnail
   // Get model thumbnail
   //
@@ -686,7 +668,8 @@ module.exports = function() {
 
       const options = {
         height: req.query.size || 400,
-        width: req.query.size || 400
+        width: req.query.size || 400,
+        guid: req.query.guid
       }
 
       const token = await forgeSvc.get2LeggedToken()
@@ -706,7 +689,7 @@ module.exports = function() {
 
     } catch (ex) {
 
-      res.status(ex.statusCode || 500)
+      res.status(ex.statusCode || 404)
       res.json(ex)
     }
   })
@@ -821,141 +804,6 @@ module.exports = function() {
         bucketKey,
         objectKey,
         file, opts)
-
-      res.json(response)
-
-    } catch (error) {
-
-      res.status(error.statusCode || 500)
-      res.json(error)
-    }
-  })
-
-  /////////////////////////////////////////////////////////
-  // return states sequence
-  //
-  /////////////////////////////////////////////////////////
-  router.get('/:db/:modelId/states/sequence',
-    async(req, res) => {
-
-    try {
-
-      var db = req.params.db
-
-      var modelSvc = ServiceManager.getService(
-        db + '-ModelSvc')
-
-      var response = await modelSvc.getSequence(
-        req.params.modelId)
-
-      res.json(response)
-
-    } catch (error) {
-
-      res.status(error.statusCode || 500)
-      res.json(error)
-    }
-  })
-
-  /////////////////////////////////////////////////////////
-  // save states sequence
-  //
-  /////////////////////////////////////////////////////////
-  router.post('/:db/:modelId/states/sequence',
-    async(req, res)=> {
-
-    try {
-
-      var db = req.params.db
-
-      var modelSvc = ServiceManager.getService(
-        db + '-ModelSvc');
-
-      var sequence = req.body.sequence
-
-      var response = await modelSvc.setSequence(
-        req.params.modelId,
-        sequence)
-
-      res.json(response)
-
-    } catch (error) {
-
-      res.status(error.statusCode || 500)
-      res.json(error)
-    }
-  })
-
-  /////////////////////////////////////////////////////////
-  // return all states
-  //
-  /////////////////////////////////////////////////////////
-  router.get('/:db/:modelId/states', async(req, res)=> {
-
-    try {
-
-      var db = req.params.db
-
-      var modelSvc = ServiceManager.getService(
-        db + '-ModelSvc');
-
-      var response = await modelSvc.getStates(
-        req.params.modelId)
-
-      res.json(response)
-
-    } catch (error) {
-
-      res.status(error.statusCode || 500)
-      res.json(error)
-    }
-  })
-
-  /////////////////////////////////////////////////////////
-  // remove state
-  //
-  /////////////////////////////////////////////////////////
-  router.delete('/:db/:modelId/states/:stateId',
-    async(req, res)=> {
-
-    try {
-
-      var db = req.params.db
-
-      var modelSvc = ServiceManager.getService(
-        db + '-ModelSvc');
-
-      var response = await modelSvc.removeState(
-        req.params.modelId,
-        req.params.stateId)
-
-      res.json(response)
-
-    } catch (error) {
-
-      res.status(error.statusCode || 500)
-      res.json(error)
-    }
-  })
-
-  /////////////////////////////////////////////////////////
-  // adds new state
-  //
-  /////////////////////////////////////////////////////////
-  router.post('/:db/:modelId/states', async(req, res)=> {
-
-    try {
-
-      var db = req.params.db
-
-      var modelSvc = ServiceManager.getService(
-        db + '-ModelSvc');
-
-      var state = req.body.state
-
-      var response = await modelSvc.addState(
-        req.params.modelId,
-        state)
 
       res.json(response)
 
