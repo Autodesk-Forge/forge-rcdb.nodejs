@@ -110,7 +110,6 @@ if(process.env.NODE_ENV === 'development') {
   app.use(helmet())
 }
 
-app.use('/resources', express.static(__dirname + '/../../resources'))
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.set('trust proxy', 1)
@@ -224,9 +223,16 @@ if (process.env.HOT_RELOADING) {
 
   app.use(webpackHotMiddleware(compiler))
 
+  app.use('/resources', express.static(__dirname + '/../../resources'))
+
   app.get('*', express.static(path.resolve(process.cwd(), './dist')))
 
 } else {
+
+  if (process.env.SERVE_STATIC) {
+
+    app.use('/resources', express.static(__dirname + '/../../resources'))
+  }
 
   app.use(gzip(path.resolve(process.cwd(), './dist')))
 
