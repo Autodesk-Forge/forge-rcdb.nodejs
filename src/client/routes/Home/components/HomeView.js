@@ -77,8 +77,7 @@ class HomeView extends React.Component {
               this.state.models.map((model, idx) => {
 
                 const thumbnailUrl =
-                  this.modelSvc.getThumbnailUrl (
-                    'rcdb', model._id)
+                  `/resources/img/thumbnails/rcdb/${model.name}.png`
 
                 return (
                   <Link key={idx} to={`/database?id=${model._id}`}>
