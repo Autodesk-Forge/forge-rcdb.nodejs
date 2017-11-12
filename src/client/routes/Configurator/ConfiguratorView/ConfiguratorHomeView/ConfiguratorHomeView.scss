@@ -131,7 +131,7 @@
       }
 
       .description {
-        padding-right: 18px;
+        padding-right: 16px;
       }
     }
 
@@ -237,6 +237,11 @@
         }
 
         a {
+          transition-property: color;
+          transition-timing-function: ease;
+          transition-duration: 0.5s;
+          transition-delay: 0.0s;
+
           text-decoration: none;
           cursor: pointer;
           font-size: 28px;

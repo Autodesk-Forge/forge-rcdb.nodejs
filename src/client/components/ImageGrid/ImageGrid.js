@@ -22,7 +22,7 @@ class ImageGrid extends React.Component {
     })
 
     return (
-      <div className={"image-grid " + this.props.size}>
+      <div className="image-grid">
         {items}
       </div>
     )

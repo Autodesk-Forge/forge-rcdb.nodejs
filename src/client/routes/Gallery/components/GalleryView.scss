@@ -192,6 +192,8 @@
       transition-duration: 0.85s;
       transition-delay: 0.0s;
 
+      border: 2px solid white;
+      overflow: hidden;
       cursor: pointer;
       display: block;
       height: 100px;
@@ -199,6 +201,7 @@
 
     .content:hover {
       background: rgba(189, 217, 255, 0.80);
+      border: 2px solid #1bb1f4;
       text-decoration: none;
     }
 

@@ -16,10 +16,7 @@ class ConfiguratorItem extends BaseComponent {
   constructor () {
 
     super ()
-
-    this.modelSvc = ServiceManager.getService(
-      'ModelSvc')
-
+    
     this.state = {
       activeModel: null
     }
@@ -117,10 +114,10 @@ class ConfiguratorItem extends BaseComponent {
 
     const item = this.props.item
 
-    const thumbnailUrl = this.modelSvc.getThumbnailUrl(
-      'configurator', item._id)
-
     const href = `/configurator?id=${activeModel._id}`
+
+    const thumbnailUrl =
+      `/resources/img/configurator/${item.name}.png`
 
     return (
       <div className="item">
