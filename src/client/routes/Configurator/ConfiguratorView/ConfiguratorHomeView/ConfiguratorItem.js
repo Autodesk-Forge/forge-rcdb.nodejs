@@ -16,7 +16,7 @@ class ConfiguratorItem extends BaseComponent {
   constructor () {
 
     super ()
-    
+
     this.state = {
       activeModel: null
     }
