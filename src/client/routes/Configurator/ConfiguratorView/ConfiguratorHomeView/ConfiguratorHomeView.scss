@@ -89,6 +89,10 @@
     }
   }
 
+  .items {
+    padding-top: 2px;
+  }
+
   .item:last-child {
     padding-bottom: 100px;
   }
@@ -117,8 +121,18 @@
     }
 
     .content:hover {
-      background: rgba(255, 253, 60, 0.9);
+      background: rgba(255, 215, 0, 0.9);
+      border: 2px solid #d9701a;
       text-decoration: none;
+      margin: -2px 0px;
+
+      .image-container {
+        margin-left: 6px;
+      }
+
+      .description {
+        padding-right: 18px;
+      }
     }
 
     @media only screen and (max-width: 549px) {
