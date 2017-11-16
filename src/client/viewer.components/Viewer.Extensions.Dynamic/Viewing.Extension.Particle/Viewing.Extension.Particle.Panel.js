@@ -35,7 +35,7 @@ export default class ParticlePanel extends ToolPanelBase {
 
     this.maxParticleCtrl = folder.add(
       extension,
-      'maxParticles', 0, 50000).name(
+      'maxParticles', 0, 1000000).name(
         'Max Particles').step(1)
 
     this.maxParticleCtrl.onFinishChange((value) => {
@@ -67,10 +67,11 @@ export default class ParticlePanel extends ToolPanelBase {
   htmlContent (id) {
 
     return `
-     <div class="container">
-          <div id="${id}-gui">
-          </div>
-      </div>`
+       <div class="container">
+            <div id="${id}-gui">
+            </div>
+        </div>
+      `
   }
 
   /////////////////////////////////////////////////////////////
@@ -128,7 +129,7 @@ export default class ParticlePanel extends ToolPanelBase {
 
         emitterFolder.add(
           this.selectedObjectGUI,
-          'emissionRate', 10, 2000).name('Emission Rate').
+          'emissionRate', 10, 10000).name('Emission Rate').
           onChange(() => {
             this.selectedObjectGUI.update()
           })

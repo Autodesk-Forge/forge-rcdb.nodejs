@@ -49,7 +49,7 @@ class ParticleExtension extends MultiModelExtensionBase {
 
     this.activeParticleTool = this.particleToolMesh
 
-    this.tool = 'Mesh'
+    this.tool = 'Point Cloud'
   }
 
   /////////////////////////////////////////////////////////////////
@@ -131,13 +131,17 @@ class ParticleExtension extends MultiModelExtensionBase {
         fps.tick()
       })
 
+      this.particleToolPointCloud.on('fps.tick',()=>{
+        fps.tick()
+      })
+
       this.transformTool.activate()
 
-      this.activeParticleTool = this.particleToolMesh
+      this.activeParticleTool = this.particleToolPointCloud
 
       if (this.options.autoStart) {
 
-        this.particleToolMesh.activate()
+        this.particleToolPointCloud.activate()
       }
 
       this.loadPanel()

@@ -96,3 +96,7 @@
 .particle .dg .c .slider:hover {
     background: #eee;
 }
+
+.particle .dg .c {
+  background: #e9e9e9;
+}
