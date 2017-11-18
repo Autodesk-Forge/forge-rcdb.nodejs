@@ -5,6 +5,7 @@ import ManifestPlugin from 'webpack-manifest-plugin'
 import ImageminPlugin from 'imagemin-webpack-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import OptimizeJsPlugin from 'optimize-js-plugin'
+import BrotliPlugin from 'brotli-webpack-plugin'
 import WebpackMd5Hash from 'webpack-md5-hash'
 import webpack from 'webpack'
 import config from 'c0nfig'
@@ -190,6 +191,13 @@ module.exports = {
       test: /\.js$|\.css$|\.html$/,
       asset: "[path].gz[query]",
       algorithm: "gzip",
+      threshold: 10240,
+      minRatio: 0.8
+    }),
+
+    new BrotliPlugin({
+      test: /\.js$|\.css$|\.html$/,
+      asset: "[path].br[query]",
       threshold: 10240,
       minRatio: 0.8
     }),

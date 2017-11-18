@@ -154,11 +154,35 @@ class TestView extends React.Component {
 
     const path = 'resources/models/dev/office/Resource/3D_View/3D/office.svf'
 
-    viewer.loadModel(path)
-
-    viewer.disableHighlight(true)
-
     //viewer.loadExtension('Autodesk.Viewing.ZoomWindow')
+
+    viewer.addEventListener(Autodesk.Viewing.GEOMETRY_LOADED_EVENT, () => {
+
+      console.log('GEOMETRY_LOADED_EVENT')
+
+      setTimeout(() => {
+        var nav = viewer.navigation
+        
+        var pos = nav.getPosition()
+    
+        var target = nav.getTarget()
+        
+        var viewdir = new THREE.Vector3()
+    
+        viewdir.subVectors (pos, target).normalize()
+
+        // zooms out by 100 along the view direction
+        viewdir.multiplyScalar (100)
+
+        pos.add(viewdir)
+
+        nav.setPosition(pos)
+
+        console.log('done')
+      }, 2000)
+    })
+
+    viewer.loadModel(path)
   }
 
   /////////////////////////////////////////////////////////

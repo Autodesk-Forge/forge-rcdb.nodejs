@@ -234,9 +234,13 @@ if (process.env.HOT_RELOADING) {
     app.use('/resources', express.static(__dirname + '/../../resources'))
   }
 
-  app.use(gzip(path.resolve(process.cwd(), './dist')))
+  app.use(gzip(path.resolve(process.cwd(), './dist'), {
+    enableBrotli: true
+  }))
 
-  app.get('*', gzip(path.resolve(process.cwd(), './dist')))
+  app.get('*', gzip(path.resolve(process.cwd(), './dist'), {
+    enableBrotli: true
+  }))
 }
 
 /////////////////////////////////////////////////////////////////////

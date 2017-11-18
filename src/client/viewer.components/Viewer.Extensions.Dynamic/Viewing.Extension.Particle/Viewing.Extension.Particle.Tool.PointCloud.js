@@ -247,11 +247,12 @@ export default class ParticleToolPointCloud extends EventsEmitter {
   }
 
   /////////////////////////////////////////////////////////////
-  //
+  // Creates 1M vertices PointCloud supported by Forge Viewer
   //
   /////////////////////////////////////////////////////////////
   createPointCloud (maxPoints = 1000000) {
 
+    // Vertex Shader code
     const vertexShader = `
       attribute vec4 color;
       varying vec4 vColor;
@@ -263,6 +264,7 @@ export default class ParticleToolPointCloud extends EventsEmitter {
       }
     `
 
+    // Fragment Shader code
     const fragmentShader = `
       #ifdef GL_ES
       precision highp float;
@@ -273,6 +275,7 @@ export default class ParticleToolPointCloud extends EventsEmitter {
       }
     `
 
+    // Shader material parameters
     this.shader = {
       side: THREE.DoubleSide,
       depthWrite: false,
@@ -287,6 +290,8 @@ export default class ParticleToolPointCloud extends EventsEmitter {
       }
     }
 
+    // Initialize geometry vertices
+    // and shader attribute colors
     this.geometry = new THREE.Geometry()
 
     for(var i = 0; i < maxPoints; ++i) {
@@ -303,15 +308,19 @@ export default class ParticleToolPointCloud extends EventsEmitter {
       )
     }
 
+    // creates shader material
     const shaderMaterial =
       new THREE.ShaderMaterial(
         this.shader)
 
+    // creates THREE.PointCloud
     this.pointCloud = new THREE.PointCloud(
       this.geometry, shaderMaterial)
 
+    // adds to the viewer scene
     this.viewer.impl.scene.add(this.pointCloud)
 
+    // triggers refresh
     this.viewer.impl.invalidate(true)
   }
 }
