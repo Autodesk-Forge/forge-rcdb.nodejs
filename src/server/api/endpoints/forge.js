@@ -86,6 +86,11 @@ module.exports = function() {
       const forgeSvc = ServiceManager.getService(
         'ForgeSvc')
 
+      const expire = new Date(Date.now() + 2592000000).toUTCString()
+        
+      res.setHeader('Cache-Control', 'public, max-age=2592000')
+      res.setHeader('Expires', expire)
+
       res.json({
         clientId: forgeSvc.clientId
       })

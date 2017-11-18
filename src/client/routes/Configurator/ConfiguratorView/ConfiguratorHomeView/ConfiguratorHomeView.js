@@ -18,6 +18,9 @@ class ConfiguratorHomeView extends BaseComponent {
 
     super ()
 
+    this.storageSvc = ServiceManager.getService(
+      'StorageSvc')
+
     this.modelSvc = ServiceManager.getService(
       'ModelSvc')
 
@@ -33,12 +36,30 @@ class ConfiguratorHomeView extends BaseComponent {
   /////////////////////////////////////////////////////////
   async componentWillMount () {
 
-    const items = await this.modelSvc.getModels(
-      'configurator')
+    const items = this.storageSvc.load(
+      'configurator.models', [])
 
     this.assignState({
       items
     })
+    
+    this.modelSvc.getModels('configurator').then(
+      (dbItems) => {
+
+        const dbItemsStr = JSON.stringify(dbItems)
+        const itemsStr = JSON.stringify(items)
+
+        if (dbItemsStr !== itemsStr) {
+
+          this.storageSvc.save(
+            'configurator.models', 
+            dbItems)
+
+          this.assignState({
+            items: dbItems
+          })
+        }
+      })
   }
 
   /////////////////////////////////////////////////////////

@@ -1,66 +1,73 @@
+import BaseComponent from 'BaseComponent'
 import ServiceManager from 'SvcManager'
 import { Link } from 'react-router'
-import sortBy from 'lodash/sortBy'
 import Image from 'Image'
 import React from 'react'
 import './HomeView.scss'
 
-class HomeView extends React.Component {
+class HomeView extends BaseComponent {
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
-  state = {
-    models: []
+  /////////////////////////////////////////////////////////
+  constructor () {
+    
+    super ()
+
+    this.storageSvc = ServiceManager.getService(
+      'StorageSvc')
+
+    this.modelSvc = ServiceManager.getService(
+      'ModelSvc')
+
+    this.state = {
+      models: []
+    }
   }
-
-  /////////////////////////////////////////////////////////////////
+    
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   async componentWillMount () {
 
-    try {
+    const models = this.storageSvc.load(
+      'rcdb.models', [])
 
-      this.modelSvc = ServiceManager.getService('ModelSvc')
+    this.assignState({
+      models
+    })  
 
-      const models = await this.modelSvc.getModels('rcdb')
+    this.modelSvc.getModels('rcdb').then(
+      (dbModels) => {
 
-      const modelsbyName = sortBy(models,
-        (model) => {
-          return model.name
-        })
+        const dbModelsStr = JSON.stringify(dbModels)
+        const modelsStr = JSON.stringify(models)
 
-      this.setState(Object.assign({}, this.state, {
-        models: modelsbyName
-      }))
+        if (dbModelsStr !== modelsStr) {
 
-      this.props.setNavbarState({
-        links: {
-          settings: false
+          this.storageSvc.save(
+            'rcdb.models', 
+            dbModels)
+
+          this.assignState({
+            models: dbModels
+          })
         }
       })
 
-    } catch(ex) {
-
-      console.log(ex)
-    }
+    this.props.setNavbarState({
+      links: {
+        settings: false
+      }
+    })
   }
 
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   //
   //
-  /////////////////////////////////////////////////////////////////
-  async componentDidUpdate () {
-
-    $('svg').remove()
-  }
-
-  /////////////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   render() {
 
     return (
