@@ -1,9 +1,8 @@
-
 import ServiceManager from '../services/SvcManager'
 import compression from 'compression'
 import express from 'express'
 
-module.exports = function (getToken) {
+module.exports = function () {
 
   /////////////////////////////////////////////////////////
   //
@@ -28,10 +27,15 @@ module.exports = function (getToken) {
 
     try {
 
-      const token = await getToken(req.session)
+      const forgeSvc =
+        ServiceManager.getService(
+          'ForgeSvc')
 
-      const derivativesSvc = ServiceManager.getService(
-        'DerivativesSvc')
+      const token = await forgeSvc.get2LeggedToken()
+
+      const derivativesSvc =
+        ServiceManager.getService(
+          'DerivativesSvc')
 
       const response = await derivativesSvc.getFormats(token)
 
@@ -55,14 +59,18 @@ module.exports = function (getToken) {
 
       const urn = req.params.urn
 
-      const token = await getToken(req.session)
+      const forgeSvc =
+        ServiceManager.getService(
+          'ForgeSvc')
+
+      const token = await forgeSvc.get2LeggedToken()
 
       const derivativesSvc = ServiceManager.getService(
         'DerivativesSvc')
 
       const response =
         await derivativesSvc.getMetadata(
-          token, urn)
+        token, urn)
 
       res.json(response)
 
@@ -84,7 +92,11 @@ module.exports = function (getToken) {
 
       const urn = req.params.urn
 
-      const token = await getToken(req.session)
+      const forgeSvc =
+        ServiceManager.getService(
+          'ForgeSvc')
+
+      const token = await forgeSvc.get2LeggedToken()
 
       const derivativesSvc = ServiceManager.getService(
         'DerivativesSvc')
@@ -115,7 +127,11 @@ module.exports = function (getToken) {
 
       const guid = req.params.guid
 
-      const token = await getToken(req.session)
+      const forgeSvc =
+        ServiceManager.getService(
+          'ForgeSvc')
+
+      const token = await forgeSvc.get2LeggedToken()
 
       const derivativesSvc = ServiceManager.getService(
         'DerivativesSvc')
@@ -147,14 +163,18 @@ module.exports = function (getToken) {
 
       const guid = req.params.guid
 
-      const token = await getToken(req.session)
+      const forgeSvc =
+        ServiceManager.getService(
+          'ForgeSvc')
+
+      const token = await forgeSvc.get2LeggedToken()
 
       const derivativesSvc = ServiceManager.getService(
         'DerivativesSvc')
 
       const response =
         await derivativesSvc.getProperties(
-          token, urn, guid)
+        token, urn, guid)
 
       res.json(response)
 
@@ -182,7 +202,11 @@ module.exports = function (getToken) {
 
       const urn = req.query.urn
 
-      const token = await getToken(req.session)
+      const forgeSvc =
+        ServiceManager.getService(
+          'ForgeSvc')
+
+      const token = await forgeSvc.get2LeggedToken()
 
       const derivativesSvc = ServiceManager.getService(
         'DerivativesSvc')
@@ -217,7 +241,11 @@ module.exports = function (getToken) {
 
       const urn = req.params.urn
 
-      const token = await getToken(req.session)
+      const forgeSvc =
+        ServiceManager.getService(
+          'ForgeSvc')
+
+      const token = await forgeSvc.get2LeggedToken()
 
       const options = {
         height: req.query.size || 400,
@@ -231,7 +259,7 @@ module.exports = function (getToken) {
 
       const response =
         await derivativesSvc.getThumbnail(
-          token, urn, options)
+        token, urn, options)
 
       if (req.query.base64) {
 

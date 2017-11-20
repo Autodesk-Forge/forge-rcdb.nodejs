@@ -14,7 +14,8 @@ import util from 'util'
 import path from 'path'
 
 //Endpoints
-import DerivativesAPI from './api/endpoints/derivatives'
+import DerivativesAPI3Legged from './api/endpoints/derivatives3Legged'
+import DerivativesAPI2Legged from './api/endpoints/derivatives2Legged'
 import MaterialAPI from './api/endpoints/materials'
 import ExtractAPI from './api/endpoints/extract'
 import SocketAPI from './api/endpoints/socket'
@@ -146,25 +147,11 @@ ServiceManager.registerService(ossSvc)
 ServiceManager.registerService(dmSvc)
 
 /////////////////////////////////////////////////////////////////////
-// Token getters
-//
-/////////////////////////////////////////////////////////////////////
-const get2LeggedToken = () => {
-
-  return forgeSvc.get2LeggedToken()
-}
-
-const get3LeggedToken = (session) => {
-
-  return forgeSvc.get3LeggedTokenMaster(session)
-}
-
-/////////////////////////////////////////////////////////////////////
 // API Routes setup
 //
 /////////////////////////////////////////////////////////////////////
-app.use('/api/derivatives/2legged', DerivativesAPI(get2LeggedToken))
-app.use('/api/derivatives/3legged', DerivativesAPI(get3LeggedToken))
+app.use('/api/derivatives/3legged', DerivativesAPI3Legged())
+app.use('/api/derivatives/2legged', DerivativesAPI2Legged())
 app.use('/api/materials', MaterialAPI())
 app.use('/api/extract',   ExtractAPI())
 app.use('/api/socket',    SocketAPI())

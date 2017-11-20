@@ -41,18 +41,16 @@
 </head>
 
 <body>
-
   <!-- Google Tag Manager (noscript) -->
   <noscript>
     <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KNMW7M" height="0" width="0" style="display:none;visibility:hidden">
     </iframe>
   </noscript>
   <!-- End Google Tag Manager (noscript) -->
-
+  <div id="root"></div>
   <script src="<%=htmlWebpackPlugin.options.threeJS%>"></script>
   <script src="<%=htmlWebpackPlugin.options.viewer3D%>"></script>
   <%=htmlWebpackPlugin.files.webpackManifest%>
-  <div id="root"></div>
 </body>
 
 </html>
