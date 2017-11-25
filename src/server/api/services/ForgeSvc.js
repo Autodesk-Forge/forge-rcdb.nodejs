@@ -28,6 +28,13 @@ export default class ForgeSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////
+  static BASE_HOOKS_URL =
+    'https://developer.api.autodesk.com/webhooks/v1'
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   constructor (config) {
 
     super (config)
@@ -94,7 +101,7 @@ export default class ForgeSvc extends BaseSvc {
       `${this._config.oauth.baseUri}` +
       `/userprofile/v1/users/@me`
 
-    return requestAsync({
+    return this.requestAsync({
       token: token.access_token,
       json: true,
       url: url
@@ -367,7 +374,7 @@ export default class ForgeSvc extends BaseSvc {
 
     return new Promise((resolve, reject) => {
 
-      var url = this._config.oauth.baseUri +
+      const url = this._config.oauth.baseUri +
         this._config.oauth.refreshTokenUri
 
       request({
@@ -431,55 +438,169 @@ export default class ForgeSvc extends BaseSvc {
       }, ms)
     })
   }
-}
 
-/////////////////////////////////////////////////////////
-// Utils
-//
-/////////////////////////////////////////////////////////
-function requestAsync(params) {
+  /////////////////////////////////////////////////////////
+  // REST request wrapper
+  //
+  /////////////////////////////////////////////////////////
+  requestAsync(params) {
 
-  return new Promise((resolve, reject) => {
+    return new Promise( function(resolve, reject) {
 
-    request({
-      headers: params.headers || {
-        'Authorization': 'Bearer ' + params.token
-      },
-      method: params.method || 'GET',
-      json: params.json,
-      body: params.body,
-      url: params.url
+      request({
 
-    }, (err, response, body) => {
+        url: params.url,
+        method: params.method || 'GET',
+        headers: params.headers || {
+          'Authorization': 'Bearer ' + params.token
+        },
+        json: params.json,
+        body: params.body
 
-      try {
+      }, function (err, response, body) {
 
-        if (err) {
+        try {
 
-          return reject (err)
+          if (err) {
+
+            return reject(err)
+          }
+
+          if (body && body.errors) {
+
+            return reject(body.errors)
+          }
+
+          if (response && [200, 201, 202].indexOf(
+              response.statusCode) < 0) {
+
+            return reject(response.statusMessage)
+          }
+
+          return resolve(body ? (body.data || body) : {})
+
+        } catch(ex){
+
+          return reject(ex)
         }
-
-        if (body && body.errors) {
-
-          const error = Array.isArray(body.errors)
-            ? body.errors[0]
-            : body.errors
-
-          return reject(error)
-        }
-
-        if (response && [200, 201, 202].indexOf(
-            response.statusCode) < 0) {
-
-          return reject(response.statusMessage)
-        }
-
-        return resolve(body)
-
-      } catch (ex) {
-
-        return reject(ex)
-      }
+      })
     })
-  })
+  }
+
+  /////////////////////////////////////////////////////////
+  // GET systems/:system_id/events/:event_id/hooks/:hook_id
+  //
+  /////////////////////////////////////////////////////////
+  getHook (token, systemId, eventId, hookId) {
+
+    const url =
+      `${ForgeSvc.BASE_HOOKS_URL}/systems/` +
+      `${systemId}/events/${eventId}/hooks/${hookId}`
+
+    this.this.requestAsync({
+      token,
+      url
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // GET systems/:system_id/events/:event_id/hooks
+  //
+  /////////////////////////////////////////////////////////
+  getEventHooks (token, systemId, eventId) {
+
+    const url =
+      `${ForgeSvc.BASE_HOOKS_URL}/systems/` +
+      `${systemId}/events/${eventId}/hooks`
+
+    this.this.requestAsync({
+      token,
+      url
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // GET systems/:system_id/hooks
+  //
+  /////////////////////////////////////////////////////////
+  getSystemHooks (token, systemId) {
+
+    const url =
+      `${ForgeSvc.BASE_HOOKS_URL}/systems/${systemId}/hooks`
+
+    this.this.requestAsync({
+      token,
+      url
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // GET hooks
+  //
+  /////////////////////////////////////////////////////////
+  getHooks (token) {
+
+    const url = `${ForgeSvc.BASE_HOOKS_URL}/hooks`
+
+    this.this.requestAsync({
+      token,
+      url
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // POST systems/:system_id/events/:event_id/hooks
+  //
+  /////////////////////////////////////////////////////////
+  createEventHook (token, systemId, eventId, params) {
+
+    const url =
+      `${ForgeSvc.BASE_HOOKS_URL}/systems/` +
+      `${systemId}/events/${eventId}/hooks`
+
+    this.this.requestAsync({
+      method: 'POST',
+      body: params,
+      json: true,
+      token,
+      url
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // POST systems/:system_id/hooks
+  //
+  /////////////////////////////////////////////////////////
+  createSystemHook (token, systemId, params) {
+
+    const url =
+      `${ForgeSvc.BASE_HOOKS_URL}/systems/` +
+      `${systemId}/hooks`
+
+    this.this.requestAsync({
+      method: 'POST',
+      body: params,
+      json: true,
+      token,
+      url
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // DELETE systems/:system_id/events/:event_id/hooks/:hook_id
+  //
+  /////////////////////////////////////////////////////////
+  removeHook (token, systemId, eventId, hookId) {
+
+    const url =
+      `${ForgeSvc.BASE_HOOKS_URL}/systems/` +
+      `${systemId}/events/${eventId}/hooks/${hookId}`
+
+    this.this.requestAsync({
+      method: 'DELETE',
+      token,
+      url
+    })
+  }
 }
+

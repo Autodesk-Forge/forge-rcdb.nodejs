@@ -35,7 +35,7 @@ export default class DataTreeView extends BaseComponent {
 
     this.onInputChanged = this.onInputChanged.bind(this)
     this.onKeyDown = this.onKeyDown.bind(this)
-    this.onSearch = this.onSearch.bind(this)
+    this.onFilter = this.onFilter.bind(this)
 
     this.delegate = new DataTreeDelegate({
       derivativesAPI: props.derivativesAPI,
@@ -64,11 +64,11 @@ export default class DataTreeView extends BaseComponent {
       }
     })
 
-    this.delegate.on('item.load', (node) => {
+    this.delegate.on('load.viewable', (node) => {
 
-      if (this.props.onLoadItem) {
+      if (this.props.onLoadViewable) {
 
-        this.props.onLoadItem(node)
+        this.props.onLoadViewable(node)
       }
     })
 
@@ -80,8 +80,16 @@ export default class DataTreeView extends BaseComponent {
       }
     })
 
+    this.delegate.on('folder.search', (data) => {
+
+      if (this.props.onFolderSearch) {
+
+        this.props.onFolderSearch(data)
+      }
+    })
+
     this.state = {
-      search: ''
+      filter: ''
     }
   }
 
@@ -148,10 +156,10 @@ export default class DataTreeView extends BaseComponent {
   async onInputChanged (e) {
 
     await this.assignState({
-      search: e.target.value
+      filter: e.target.value
     })
 
-    this.onSearch()
+    this.onFilter()
   }
 
   /////////////////////////////////////////////////////////
@@ -165,7 +173,7 @@ export default class DataTreeView extends BaseComponent {
       e.stopPropagation()
       e.preventDefault()
 
-      this.onSearch()
+      this.onFilter()
     }
   }
 
@@ -173,11 +181,11 @@ export default class DataTreeView extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
-  onSearch () {
+  onFilter () {
 
-    const {search} = this.state
+    const {filter} = this.state
 
-    this.delegate.filterNodes(search)
+    this.delegate.filterNodes(filter)
   }
 
   /////////////////////////////////////////////////////////
@@ -186,19 +194,19 @@ export default class DataTreeView extends BaseComponent {
   /////////////////////////////////////////////////////////
   render() {
 
-    const {search} = this.state
+    const {filter} = this.state
 
     return (
       <div className="datatree-container" ref={
         (div) => this.treeContainer = div
         }>
-        <div className="search">
+        <div className="filter">
           <ContentEditable
             onChange={this.onInputChanged}
             onKeyDown={this.onKeyDown}
-            data-placeholder="Search ..."
-            className="input-search"
-            html={search}
+            data-placeholder="Filter ..."
+            className="input-filter"
+            html={filter}
           />
         </div>
       </div>

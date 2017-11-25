@@ -2,7 +2,7 @@
 import EventsEmitter from 'EventsEmitter'
 import ContextMenu from 'ContextMenu'
 
-export default class DataContextMenu extends
+export default class SearchContextMenu extends
   EventsEmitter.Composer (Autodesk.Viewing.UI.ObjectContextMenu) {
 
   /////////////////////////////////////////////////////////////////
@@ -25,84 +25,6 @@ export default class DataContextMenu extends
     var menu = []
 
     switch (node.type) {
-
-      case 'hubs':
-
-        menu.push({
-          title: 'Show details',
-          className: 'fa fa-share',
-          target: [{
-            title: 'Hub details',
-            className: 'fa fa-cloud',
-            target: () => {
-              this.emit('context.details', {
-                event, node, type: 'hubs'
-              })
-            }
-          }, {
-            title: 'Projects details',
-            className: 'fa fa-folder',
-            target: () => {
-              this.emit('context.details', {
-                event, node, type: 'hubs.projects'
-              })
-            }
-          }]
-        })
-
-        break
-
-      case 'projects':
-
-        menu.push({
-          title: 'Show details',
-          className: 'fa fa-share',
-          target: [{
-            title: 'Project details',
-            className: 'fa fa-clone',
-            target: () => {
-              this.emit('context.details', {
-                event, node, type: 'projects'
-              })
-            }
-          }, {
-            title: 'Root folder details',
-            className: 'fa fa-folder',
-            target: () => {
-              this.emit('context.details', {
-                event, node, type: 'folders'
-              })
-            }
-          }, {
-            title: 'Root folder content',
-            className: 'fa fa-folder-open',
-            target: () => {
-              this.emit('context.details', {
-                event, node, type: 'folders.content'
-              })
-            }
-          },{
-            title: 'Top folder content',
-            className: 'fa fa-folder-open',
-            target: () => {
-              this.emit('context.details', {
-                event, node, type: 'top.folders.content'
-              })
-            }
-          }]
-        })
-
-        //menu.push({
-        //  title: 'Create new folder',
-        //  className: 'fa fa-plus',
-        //  target: () => {
-        //    this.emit('context.folder.create', {
-        //      event, node
-        //    })
-        //  }
-        //})
-
-        break
 
       case 'folders':
 
@@ -159,7 +81,34 @@ export default class DataContextMenu extends
             className: 'fa fa-cubes',
             target: () => {
               this.emit('context.details', {
-                event, node, type: 'items.manifest'
+                event, node, type: 'manifest'
+              })
+            }
+          })
+        }
+
+        break
+
+      case 'versions':
+
+        menu.push({
+          title: 'Show version details',
+          className: 'fa fa-file-text',
+          target: () => {
+            this.emit('context.details', {
+              event, node, type: 'versions'
+            })
+          }
+        })
+
+        if (node.viewerUrn) {
+
+          menu.push({
+            title: 'Show manifest',
+            className: 'fa fa-cubes',
+            target: () => {
+              this.emit('context.details', {
+                event, node, type: 'manifest'
               })
             }
           })

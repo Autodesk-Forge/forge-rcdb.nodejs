@@ -10,6 +10,7 @@ import {ReactLoader as Loader} from 'Loader'
 import './Viewing.Extension.BarChart.scss'
 import transform from 'lodash/transform'
 import Toolkit from 'Viewer.Toolkit'
+import sortBy from 'lodash/sortBy'
 import BarChart from 'BarChart'
 import React from 'react'
 import d3 from 'd3'
@@ -341,9 +342,10 @@ class BarChartExtension extends MultiModelExtensionBase {
     const model = this.viewer.activeModel ||
       this.viewer.model
 
-    const componentsMap = await Toolkit.mapComponentsByProp(
-      model, propName,
-      this.componentIds)
+    const componentsMap =
+      await Toolkit.mapComponentsByProp(
+        model, propName,
+        this.componentIds)
 
     for (const key in componentsMap) {
 
@@ -353,7 +355,8 @@ class BarChartExtension extends MultiModelExtensionBase {
       }
     }
 
-    const groupedMap = this.groupMap(componentsMap, 'Other',
+    const groupedMap = this.groupMap(
+      componentsMap, 'Other',
       this.componentIds.length, 2.0)
 
     const keys = Object.keys (groupedMap)
@@ -368,7 +371,9 @@ class BarChartExtension extends MultiModelExtensionBase {
 
       const color = colors(idx)
 
-      const percent = 100 * dbIds.length / this.componentIds.length
+      const percent =
+        100 * dbIds.length /
+        this.componentIds.length
 
       return {
         label: `${key}: ${percent.toFixed(2)}% (${dbIds.length})`,
@@ -381,7 +386,7 @@ class BarChartExtension extends MultiModelExtensionBase {
       }
     })
 
-    return data
+    return sortBy(data, (entry) => -1 * entry.value)
   }
 
   /////////////////////////////////////////////////////////

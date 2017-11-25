@@ -1,9 +1,8 @@
-import ContextMenu from './DataContextMenu'
-import DataTreeNode from './DataTreeNode'
+import ContextMenu from './SearchContextMenu'
+import SearchTreeNode from './SearchTreeNode'
 import { TreeDelegate } from 'TreeView'
 
-
-export default class DataTreeDelegate extends TreeDelegate {
+export default class SearchTreeDelegate extends TreeDelegate {
 
   /////////////////////////////////////////////////////////
   //
@@ -41,46 +40,6 @@ export default class DataTreeDelegate extends TreeDelegate {
 
     switch (data.type) {
 
-      case 'hubs':
-        this.showPayload(
-          `${this.dmAPI.apiUrl}/hubs/` +
-          `${data.node.props.hubId}`)
-        break
-
-      case 'hubs.projects':
-        this.showPayload(
-          `${this.dmAPI.apiUrl}/hubs/` +
-          `${data.node.props.hubId}/projects`)
-        break
-
-      case 'projects':
-        this.showPayload(
-          `${this.dmAPI.apiUrl}/hubs/` +
-          `${data.node.props.hubId}/projects/` +
-          `${data.node.props.projectId}`)
-        break
-
-      case 'top.folders.content':
-        this.showPayload(
-          `${this.dmAPI.apiUrl}/hubs/` +
-          `${data.node.props.hubId}/projects/` +
-          `${data.node.props.projectId}/topFolders`)
-        break
-
-      case 'folders':
-        this.showPayload(
-          `${this.dmAPI.apiUrl}/projects/` +
-          `${data.node.props.projectId}/folders/` +
-          `${data.node.props.folderId}`)
-        break
-
-      case 'folders.content':
-        this.showPayload(
-          `${this.dmAPI.apiUrl}/projects/` +
-          `${data.node.props.projectId}/folders/` +
-          `${data.node.props.folderId}/content`)
-        break
-
       case 'items':
         this.showPayload(
           `${this.dmAPI.apiUrl}/projects/` +
@@ -88,7 +47,14 @@ export default class DataTreeDelegate extends TreeDelegate {
           `${data.node.props.itemId}`)
         break
 
-      case 'items.manifest':
+      case 'versions':
+        this.showPayload(
+          `${this.dmAPI.apiUrl}/projects/` +
+          `${data.node.props.projectId}/versions/` +
+          `${encodeURIComponent(data.node.props.versionId)}`)
+        break
+
+      case 'manifest':
         this.showPayload(
           `${this.derivativesAPI.apiUrl}/manifest/` +
           `${data.node.viewerUrn}`)
@@ -117,11 +83,20 @@ export default class DataTreeDelegate extends TreeDelegate {
   //
   //
   /////////////////////////////////////////////////////////
-  createRootNode (props) {
+  createNode (props) {
 
-    this.rootNode = new DataTreeNode(props)
+    const node = new SearchTreeNode(
+      Object.assign({}, props, {
+        delegate: this,
+        group: true
+      }))
 
-    return this.rootNode
+    if (props.id === 'root') {
+
+      this.rootNode = node
+    }
+
+    return node
   }
 
   /////////////////////////////////////////////////////////
@@ -180,51 +155,5 @@ export default class DataTreeDelegate extends TreeDelegate {
   forEachChild (node, addChild) {
 
     node.addChild = addChild
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  filterNodes (filter, node = this.rootNode) {
-
-    const name = node.name.toLowerCase()
-
-    let visibleItems = 0
-
-    if (node.children) {
-
-      node.children.forEach((child) => {
-
-        visibleItems += this.filterNodes(filter, child)
-      })
-
-      if (visibleItems) {
-
-        node.parentDomElement.style.display ='inline-block'
-
-      } else {
-
-        node.parentDomElement.style.display =
-          name.indexOf(filter) < 0
-            ? 'none'
-            : 'inline-block'
-      }
-
-    } else {
-
-      if (name.indexOf(filter) < 0) {
-
-        node.parentDomElement.style.display = 'none'
-
-      } else {
-
-        node.parentDomElement.style.display ='inline-block'
-
-        ++visibleItems
-      }
-    }
-
-    return visibleItems
   }
 }

@@ -83,6 +83,10 @@
     height: calc(100% - 28px);
     background: #fafafa;
     overflow-y: scroll;
+
+    .tab-pane {
+      height: 100%;
+    }
   }
 
   .tabs-container {

@@ -155,4 +155,38 @@ export default class UserSvc extends BaseSvc {
       }
     })
   }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  isModelOwner (collectionName, modelId, userId) {
+
+    return new Promise(async(resolve, reject) => {
+
+      try {
+
+        const dbSvc = ServiceManager.getService(
+          this._config.dbName)
+
+        await dbSvc.findOne(
+          collectionName, {
+            fieldQuery: {
+              _id: new mongo.ObjectId(modelId),
+              owner: userId
+            },
+            pageQuery: {
+              model: 1,
+              name: 1
+            }
+          })
+
+        return resolve(true)
+
+      } catch (ex) {
+
+        return reject(false)
+      }
+    })
+  }
 }

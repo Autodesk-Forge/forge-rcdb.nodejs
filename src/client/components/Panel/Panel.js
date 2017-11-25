@@ -173,15 +173,15 @@ class Panel extends EventsEmitter {
 
       event.preventDefault()
 
-      this.react.setState({
+      return this.react.setState({
 
         left: Math.min(
           Math.max(1, left),
-            bounds.width - state.width - 1),
+          bounds.width - state.width - 1),
 
         top: Math.min(
           Math.max(1, top),
-            bounds.height - state.height - 1)
+          bounds.height - state.height - 1)
       })
     }
 
@@ -193,13 +193,27 @@ class Panel extends EventsEmitter {
 
       const state = this.react.getState ()
 
+      const offsetX = pointer.pageX - this.pointer.pageX
+
+      const offsetY = pointer.pageY - this.pointer.pageY
+
+      const newWidth = state.width +
+        (offsetX > 0
+          ?  ((pointer.pageX - bounds.left) > (state.left + state.width)
+            ? offsetX : 0)
+          : offsetX)
+
+      const newHeight = state.height +
+        (offsetY > 0
+          ?  ((pointer.pageY - bounds.top) > (state.top + state.height)
+            ? offsetY : 0)
+          : offsetY)
+
       const width = Math.min(
-        state.width + pointer.pageX - this.pointer.pageX,
-        this.props.maxWidth)
+        newWidth, this.props.maxWidth)
 
       const height = Math.min(
-        state.height + pointer.pageY - this.pointer.pageY,
-        this.props.maxHeight)
+        newHeight, this.props.maxHeight)
 
       this.pointer = pointer
 
@@ -207,7 +221,7 @@ class Panel extends EventsEmitter {
 
       event.preventDefault()
 
-      this.react.setState({
+      return this.react.setState({
 
         width: Math.min(
           Math.max(this.props.minWidth, width),

@@ -411,5 +411,21 @@ export default class DataManagementAPI extends ClientAPI {
       url
     })
   }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  searchFolder (projectId, folderId, filter) {
+
+    const url =
+      `/projects/${projectId}/folders/${folderId}/` +
+      `search/${filter}`
+
+    return this.ajax({
+      rawBody: true,
+      url
+    })
+  }
 }
 

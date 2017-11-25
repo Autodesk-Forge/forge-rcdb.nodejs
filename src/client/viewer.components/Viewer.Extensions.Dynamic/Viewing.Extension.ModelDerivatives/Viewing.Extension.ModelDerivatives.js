@@ -9,11 +9,14 @@ import DerivativesAPI from './Derivatives.API'
 import WidgetContainer from 'WidgetContainer'
 import { browserHistory } from 'react-router'
 import { Tabs, Tab } from 'react-bootstrap'
+import ManifestView from './ManifestView'
+import ExportsView from './ExportsView'
 import ServiceManager from 'SvcManager'
 import { ReactLoader } from 'Loader'
 import Measure from 'react-measure'
 import DOMPurify from 'dompurify'
 import ReactDOM from 'react-dom'
+import JobView from './JobView'
 import Image from 'Image'
 import Label from 'Label'
 import React from 'react'
@@ -77,6 +80,7 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
     this.react.setState({
 
       selectedModel: null,
+      manifest: null,
       tabsWidth: 0,
       models: []
 
@@ -207,11 +211,28 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  selectModel (dbModel) {
+  async selectModel (dbModel) {
 
     this.react.setState({
-      selectedModel: dbModel
+      selectedModel: dbModel,
+      manifest: null
     })
+
+    const urn = dbModel.model.urn
+
+    try {
+
+      const manifest =
+        await this.derivativesAPI.getManifest(urn)
+
+      this.react.setState({
+        manifest
+      })
+
+    } catch (ex) {
+
+
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -350,10 +371,10 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderManifestTab () {
 
+    const {manifest} = this.react.getState()
+
     return (
-      <div>
-        Manifest
-      </div>
+      <ManifestView manifest={manifest}/>
     )
   }
 
@@ -377,9 +398,7 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
   renderExportsTab () {
 
     return (
-      <div>
-        Exports
-      </div>
+      <ExportsView/>
     )
   }
 
@@ -390,9 +409,7 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
   renderJobTab () {
 
     return (
-      <div>
-        Job
-      </div>
+      <JobView/>
     )
   }
 

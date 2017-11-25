@@ -133,17 +133,17 @@ module.exports = function () {
 
       const token = await forgeSvc.get2LeggedToken()
 
-      const derivativesSvc = ServiceManager.getService(
-        'DerivativesSvc')
+      const derivativesSvc =
+        ServiceManager.getService(
+          'DerivativesSvc')
 
-      const response = await derivativesSvc.getHierarchy(
-        token, urn, guid)
+      const response =
+        await derivativesSvc.getHierarchy(
+          token, urn, guid)
 
       res.json(response)
 
     } catch (ex) {
-
-      console.log(ex)
 
       res.status(ex.statusCode || 500)
       res.json(ex)
@@ -283,28 +283,51 @@ module.exports = function () {
   // Post a derivative job - generic
   //
   /////////////////////////////////////////////////////////
-  //router.post('/job', async (req, res) => {
-  //
-  //  try {
-  //
-  //    const payload = JSON.parse(req.body.payload)
-  //
-  //    const token = await getToken(req.session)
-  //
-  //    const derivativesSvc = ServiceManager.getService(
-  //      'DerivativesSvc')
-  //
-  //    const response = await derivativesSvc.postJob(
-  //      token, payload)
-  //
-  //    res.json(response)
-  //
-  //  } catch (ex) {
-  //
-  //    res.status(ex.statusCode || 500)
-  //    res.json(ex)
-  //  }
-  //})
+  router.post('/job/:db/:modelId', async (req, res) => {
+
+    try {
+
+      const userSvc = ServiceManager.getService(
+        'UserSvc')
+
+      const user = await userSvc.getCurrentUser(
+        req.session)
+
+      if (!user) {
+
+        res.status(401)
+        return res.json('Unauthorized')
+      }
+
+      const isOwner = await userSvc.isModelOwner(
+        req.params.db,
+        req.params.modelId,
+        user.userId)
+
+      if (!isOwner) {
+
+        res.status(401)
+        return res.json('Unauthorized')
+      }
+
+      const payload = JSON.parse(req.body.payload)
+
+      const token = await getToken(req.session)
+
+      const derivativesSvc = ServiceManager.getService(
+        'DerivativesSvc')
+
+      const response = await derivativesSvc.postJob(
+        token, payload)
+
+      res.json(response)
+
+    } catch (ex) {
+
+      res.status(ex.statusCode || 500)
+      res.json(ex)
+    }
+  })
 
   /////////////////////////////////////////////////////////
   // DELETE /manifest/{urn}

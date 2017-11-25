@@ -19,7 +19,7 @@ process.noDeprecation = true
 ///////////////////////////////////////////////////////////
 module.exports = {
 
-  devtool: 'eval',
+  devtool: 'source-map',
 
   context: path.join(__dirname, '..'),
 

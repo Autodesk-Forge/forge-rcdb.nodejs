@@ -10,6 +10,7 @@ import {ReactLoader as Loader} from 'Loader'
 import './Viewing.Extension.PieChart.scss'
 import transform from 'lodash/transform'
 import Toolkit from 'Viewer.Toolkit'
+import sortBy from 'lodash/sortBy'
 import PieChart from 'PieChart'
 import React from 'react'
 import d3 from 'd3'
@@ -379,7 +380,7 @@ class PieChartExtension extends MultiModelExtensionBase {
       }
     })
 
-    return data
+    return sortBy(data, (entry) => -1 * entry.value)
   }
 
   /////////////////////////////////////////////////////////

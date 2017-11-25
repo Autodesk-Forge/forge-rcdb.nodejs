@@ -4,6 +4,7 @@
 //
 ///////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
+import FolderSearchPanel from './FolderSearchPanel'
 import DerivativesAPI from './Derivatives.API'
 import WidgetContainer from 'WidgetContainer'
 import { browserHistory } from 'react-router'
@@ -32,11 +33,12 @@ class DataManagementExtension extends MultiModelExtensionBase {
     this.onItemNodeCreated = this.onItemNodeCreated.bind(this)
     this.onUploadComplete = this.onUploadComplete.bind(this)
     this.onUploadProgress = this.onUploadProgress.bind(this)
+    this.onFolderSearch = this.onFolderSearch.bind(this)
     this.onFolderUpload = this.onFolderUpload.bind(this)
     this.onTabSelected = this.onTabSelected.bind(this)
     this.onInitUpload = this.onInitUpload.bind(this)
     this.onDeleteItem = this.onDeleteItem.bind(this)
-    this.onLoadItem = this.onLoadItem.bind(this)
+    this.onLoadViewable = this.onLoadViewable.bind(this)
 
     this.socketSvc =
       ServiceManager.getService(
@@ -249,21 +251,27 @@ class DataManagementExtension extends MultiModelExtensionBase {
 
     const versionsRes =
       await this.dmAPI.getItemVersions(
-        node.props.projectId, node.props.itemId)
+        node.props.projectId,
+        node.props.itemId)
 
     const versions = versionsRes.data
 
     if (versions.length) {
 
-      node.setActiveVersion(versions[0])
+      const version = versions[0]
 
-      const urn = this.dmAPI.getVersionURN(
-        node.activeVersion)
+      node.setActiveVersion(version)
+
+      const urn = this.dmAPI.getVersionURN(version)
+
+      // fix for BIM Docs:
+      // displayName doesn't appear in item
 
       if (!node.name.length) {
 
-        // fix for BIM Docs - displayName doesn't appear in item
-        node.setName(node.activeVersion.attributes.displayName)
+        const {displayName} = version.attributes
+
+        node.setName(displayName)
       }
 
       await this.setNodeViewerUrn(node, urn)
@@ -272,6 +280,44 @@ class DataManagementExtension extends MultiModelExtensionBase {
 
       await this.setNodeThumbnail(node, urn)
     }
+
+    node.showLoader(false)
+
+    node.setLoaded(true)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async onVersionNodeCreated (node) {
+
+    node.showLoader(true)
+
+    const versionRes =
+      await this.dmAPI.getVersion(
+        node.props.projectId,
+        node.props.versionId)
+
+    const version = versionRes.data
+
+    node.setActiveVersion(version)
+
+    const urn = this.dmAPI.getVersionURN(version)
+
+    // fix for BIM Docs:
+    // displayName doesn't appear in item
+
+    if (!node.name.length) {
+
+      const {displayName} = version.attributes
+
+      node.setName(displayName)
+    }
+
+    await this.setNodeViewerUrn(node, urn)
+
+    await this.setNodeThumbnail(node, urn)
 
     node.showLoader(false)
 
@@ -306,7 +352,7 @@ class DataManagementExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  async onLoadItem (node) {
+  async onLoadViewable (node) {
 
     node.showLoader(true)
 
@@ -314,9 +360,10 @@ class DataManagementExtension extends MultiModelExtensionBase {
 
       const extId = 'Viewing.Extension.ModelLoader'
 
-      const options = Object.assign({}, this.options, {
-        database: 'gallery'
-      })
+      const options = Object.assign({},
+        this.options, {
+          database: 'gallery'
+        })
 
       const loader =
         this.viewer.getExtension(extId) ||
@@ -403,6 +450,46 @@ class DataManagementExtension extends MultiModelExtensionBase {
   onUploadComplete (data) {
 
     console.log(data)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onFolderSearch (data) {
+
+    const panel = new FolderSearchPanel(data, {
+      menuContainer: this.options.appContainer,
+      derivativesAPI: this.derivativesAPI,
+      dmAPI: this.dmAPI
+    })
+
+    panel.on('panel.close', (panelId) => {
+
+      this.react.popViewerPanel(panelId)
+    })
+
+    panel.on('version.created', (node) => {
+
+      this.onVersionNodeCreated(node)
+    })
+
+    panel.on('item.created', (node) => {
+
+      this.onItemNodeCreated(node)
+    })
+
+    panel.on('load.viewable', (node) => {
+
+      this.onLoadViewable(node)
+    })
+
+    this.react.pushViewerPanel(panel, {
+      className: panel.className,
+      minWidth: 435,
+      height: 480,
+      width: 450
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -563,9 +650,10 @@ class DataManagementExtension extends MultiModelExtensionBase {
             onItemNodeCreated={this.onItemNodeCreated}
             menuContainer={this.options.appContainer}
             onFolderUpload={this.onFolderUpload}
+            onFolderSearch={this.onFolderSearch}
             derivativesAPI={this.derivativesAPI}
             onDeleteItem={this.onDeleteItem}
-            onLoadItem={this.onLoadItem}
+            onLoadViewable={this.onLoadViewable}
             dmAPI={this.dmAPI}
             hub={hub}
           />

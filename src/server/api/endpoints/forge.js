@@ -87,7 +87,7 @@ module.exports = function() {
         'ForgeSvc')
 
       const expire = new Date(Date.now() + 2592000000).toUTCString()
-        
+
       res.setHeader('Cache-Control', 'public, max-age=2592000')
       res.setHeader('Expires', expire)
 
@@ -205,6 +205,14 @@ module.exports = function() {
           res.redirect(req.session.redirect)
         }
       })
+  })
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  router.get('/callback/hooks', async (req, res) => {
+
   })
 
   /////////////////////////////////////////////////////////

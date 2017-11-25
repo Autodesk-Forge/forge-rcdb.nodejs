@@ -733,11 +733,13 @@ module.exports = function() {
   })
 
   /////////////////////////////////////////////////////////
-  // POST /project/{projectId}/folders
-  // Create new folder
+  // GET /projects/:projectId/folders/:folderId/search/:filter
+  // Search a folder
   //
   /////////////////////////////////////////////////////////
-  router.get('/projects/:projectId/folders/:folderId/search/:filter', async (req, res) => {
+  router.get(
+    '/projects/:projectId/folders/:folderId/search/:filter',
+    async (req, res) => {
 
     try {
 

@@ -1,6 +1,6 @@
-.datatree-container {
+.searchtree-container {
 
-  background: #dcdcdc;
+  background: #ededed;
   overflow-x: hidden;
   overflow-y: scroll;
   text-align: left;
@@ -118,6 +118,7 @@
     color: #FF9800;
   }
 
+  .treeview lmvheader.versions,
   .treeview lmvheader.items {
 
     icon {
