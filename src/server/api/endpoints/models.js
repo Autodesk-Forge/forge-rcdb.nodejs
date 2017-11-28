@@ -121,6 +121,7 @@ module.exports = function() {
 
       await derivativesSvc.postJobWithProgress (
         data.getToken, job, {
+          waitResult: true,
           query: { outputType: 'svf' },
           onProgress: async(progress) => {
 
@@ -468,7 +469,6 @@ module.exports = function() {
 
     } catch (error) {
 
-      console.log(error)
       res.status(error.statusCode || 500)
       res.json(error)
     }

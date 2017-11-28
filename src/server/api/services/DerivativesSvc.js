@@ -348,13 +348,18 @@ export default class DerivativeSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////
-  postJobWithProgress (getToken, job, opts) {
+  postJobWithProgress (getToken, job, opts = {}) {
 
     return new Promise(async(resolve, reject) => {
 
       try {
 
         const jobRes = await this.postJob(getToken, job)
+
+        if (!opts.waitResult) {
+
+          resolve(jobRes)
+        }
 
         if (['success', 'created'].includes(jobRes.body.result)) {
 

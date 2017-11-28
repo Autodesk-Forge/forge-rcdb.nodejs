@@ -28,7 +28,7 @@ export default class SocketSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////
-  getSocketId() {
+  getSocketId () {
 
     return new Promise((resolve) => {
 
@@ -48,7 +48,7 @@ export default class SocketSvc extends BaseSvc {
   // Socket Connection handler
   //
   /////////////////////////////////////////////////////////
-  connect() {
+  connect () {
 
     return new Promise((resolve, reject) => {
 

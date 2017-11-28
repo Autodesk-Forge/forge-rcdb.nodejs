@@ -64,6 +64,9 @@ class CoreLayout extends React.Component {
     this.socketSvc.on('svf.progress',
       this.onForgeTranslateProgress)
 
+    this.socketSvc.on('job.progress',
+      this.onForgeJobProgress)
+
     this.socketSvc.on('svf.error',
       this.onForgeTranslateError)
 
@@ -109,6 +112,12 @@ class CoreLayout extends React.Component {
       this.onForgeTranslateProgress)
 
     this.socketSvc.off('svf.error',
+      this.onForgeTranslateError)
+
+    this.socketSvc.off('job.progress',
+      this.onForgeJobProgress)
+
+    this.socketSvc.off('job.error',
       this.onForgeTranslateError)
 
     this.socketSvc.off('model.added',
@@ -235,14 +244,14 @@ class CoreLayout extends React.Component {
       notification.message = `translation failed :(`
 
       notification.buttons = [{
-          name: 'Show error',
+          name: 'Show error in console',
           onClick: () => {
             console.log(msg.error)
             notification.dismissAfter = 1
             this.notifySvc.update(notification)
           }
         }, {
-          name: 'Hide',
+          name: 'Close',
           onClick: () => {
             notification.dismissAfter = 1
             this.notifySvc.update(notification)
@@ -251,6 +260,50 @@ class CoreLayout extends React.Component {
 
       this.notifySvc.update(notification)
     }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  @autobind
+  onForgeJobProgress (msg) {
+
+    let notification =
+      this.notifySvc.getNotification(
+        msg.jobId)
+
+    if (!notification) {
+
+      notification = this.notifySvc.add({
+        title: 'Processing Job: ' + msg.filename,
+        dismissible: false,
+        status: 'loading',
+        dismissAfter: 0,
+        position: 'tl',
+        id: msg.jobId
+      })
+
+      notification.buttons = [{
+        name: 'Hide',
+        onClick: () => {
+          notification.dismissAfter = 1
+          this.notifySvc.update(notification)
+        }
+      }]
+    }
+
+    notification.message = `progress: ${msg.progress}`
+
+    if (msg.progress === '100%') {
+
+      notification.title = 'Job completed: ' + msg.filename,
+      notification.dismissAfter = 2000
+      notification.dismissible = true
+      notification.status = 'success'
+    }
+
+    this.notifySvc.update(notification)
   }
 
   /////////////////////////////////////////////////////////

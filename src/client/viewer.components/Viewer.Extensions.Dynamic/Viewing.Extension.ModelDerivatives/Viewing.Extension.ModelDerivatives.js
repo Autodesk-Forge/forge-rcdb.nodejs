@@ -41,14 +41,6 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
       ServiceManager.getService(
         'ModelSvc')
 
-    this.socketSvc =
-      ServiceManager.getService(
-        'SocketSvc')
-
-    this.notifySvc =
-      ServiceManager.getService(
-      'NotifySvc')
-
     this.dialogSvc =
       ServiceManager.getService(
         'DialogSvc')
@@ -266,9 +258,7 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
         <div className={"model-item" + active}
           key={dbModel._id}
           onClick={() => {
-            if (!active) {
-              this.selectModel(dbModel)
-            }
+            this.selectModel(dbModel)
           }}>
           <Image src={thumbnailUrl}/>
           <Label text= {dbModel.name}/>
@@ -397,8 +387,13 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderExportsTab () {
 
+    const {selectedModel} = this.react.getState()
+
     return (
-      <ExportsView/>
+      <ExportsView
+        derivativesAPI={this.derivativesAPI}
+        dbModel={selectedModel}
+      />
     )
   }
 
@@ -408,8 +403,14 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderJobTab () {
 
+    const {selectedModel} = this.react.getState()
+
     return (
-      <JobView/>
+      <JobView
+        derivativesAPI={this.derivativesAPI}
+        database={this.options.database}
+        dbModel={selectedModel}
+      />
     )
   }
 

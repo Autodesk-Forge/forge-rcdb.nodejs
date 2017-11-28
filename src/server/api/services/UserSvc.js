@@ -78,7 +78,6 @@ export default class UserSvc extends BaseSvc {
 
       } catch(ex) {
 
-        console.log(ex)
         return reject(ex)
       }
     })
@@ -185,7 +184,9 @@ export default class UserSvc extends BaseSvc {
 
       } catch (ex) {
 
-        return reject(false)
+        return ((ex.statusCode === 404)
+          ? resolve(false)
+          : reject(ex))
       }
     })
   }

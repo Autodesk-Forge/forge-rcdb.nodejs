@@ -190,7 +190,10 @@ export default class DbSvc extends BaseSvc {
 
             if (!dbItem) {
 
-              return reject('Not Found')
+              return reject({
+                statusCode: 404,
+                msg: 'Not Found'
+              })
             }
 
             return resolve(dbItem)

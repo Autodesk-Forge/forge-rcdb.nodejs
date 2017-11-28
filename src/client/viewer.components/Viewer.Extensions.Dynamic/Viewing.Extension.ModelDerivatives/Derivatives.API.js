@@ -130,4 +130,25 @@ export default class DerivativesSvc extends ClientAPI {
 
     return derivatives.length > 0
   }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  postJob (db, modelId, job, opts = {}) {
+
+    const url = `/job/${db}/${modelId}`
+
+    const payload = {
+      socketId: opts.socketId,
+      job
+    }
+
+    return this.ajax({
+      data: JSON.stringify(payload),
+      method: 'POST',
+      rawBody: true,
+      url
+    })
+  }
 }

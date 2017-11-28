@@ -3,7 +3,7 @@ import ReactJson from 'react-json-view'
 import { ReactLoader } from 'Loader'
 import React from 'react'
 
-export default class ManifestView extends BaseComponent {
+export default class ExportsView extends BaseComponent {
 
   /////////////////////////////////////////////////////////
   //

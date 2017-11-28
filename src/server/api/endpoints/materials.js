@@ -18,6 +18,7 @@
 import ServiceManager from '../services/SvcManager'
 import compression from 'compression'
 import express from 'express'
+import mongo from 'mongodb'
 import config from 'c0nfig'
 
 module.exports = function () {
@@ -99,15 +100,14 @@ module.exports = function () {
       if (!materialsConfig) {
 
         res.status(404)
-        res.json('Invalid config')
-        return
+        return res.json('Invalid collection')
       }
-
-      const id = req.params.id
 
       const item = await dbSvc.findOne(
         materialsConfig.collection, {
-          _id: id
+          fieldQuery: {
+            _id: new mongo.ObjectId(req.params.id)
+          }
         })
 
       res.json (item)

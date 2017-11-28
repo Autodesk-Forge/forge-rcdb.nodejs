@@ -46,7 +46,7 @@
       border-radius: 4px;
       overflow: hidden;
       cursor: pointer;
-      height: 76px;
+      height: 48px;
       padding: 2px;
       margin: 5px;
     }
@@ -54,7 +54,6 @@
     .model-item.active {
       background: rgba(0, 115, 255, 0.16);
       border: 1px solid #1bb1f4;
-      cursor: default;
     }
 
     .model-item:hover:not(.active) {
@@ -63,16 +62,16 @@
     }
 
     .model-item img {
-      height: 70px;
-      width: 70px;
+      height: 42px;
+      width: 42px;
       float: left;
     }
 
     .model-item .label-container {
       font-weight: bold;
       text-align: left;
-      left: 20px;
-      top: 20px;
+      left: 4px;
+      top: 8px;
     }
   }
 

@@ -158,6 +158,10 @@ img.forge-hero {
   position: fixed;
   z-index: 99999;
   height: 0;
+
+  button {
+    border-radius: 0;
+  }
 }
 
 .notifications > div > div{

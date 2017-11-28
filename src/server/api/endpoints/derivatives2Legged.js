@@ -1,6 +1,8 @@
 import ServiceManager from '../services/SvcManager'
 import compression from 'compression'
 import express from 'express'
+import mongo from 'mongodb'
+import config from'c0nfig'
 
 module.exports = function () {
 
@@ -17,6 +19,25 @@ module.exports = function () {
   router.use(compression({
     filter: shouldCompress
   }))
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  const guid = (format = 'xxxxxxxxxx') => {
+
+    var d = new Date().getTime()
+
+    var guid = format.replace(
+      /[xy]/g,
+      function (c) {
+        var r = (d + Math.random() * 16) % 16 | 0
+        d = Math.floor(d / 16)
+        return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16)
+      })
+
+    return guid
+  }
 
   /////////////////////////////////////////////////////////
   // GET /formats
@@ -299,30 +320,86 @@ module.exports = function () {
         return res.json('Unauthorized')
       }
 
-      const isOwner = await userSvc.isModelOwner(
-        req.params.db,
-        req.params.modelId,
-        user.userId)
+      const modelId = req.params.modelId
 
-      if (!isOwner) {
+      const db = req.params.db
+
+      const modelsConfig =
+        config.database.models[db]
+
+      if (!modelsConfig) {
+
+        res.status(404)
+        return res.json('Invalid collection')
+      }
+
+      const modelSvc =
+        ServiceManager.getService(
+          db + '-ModelSvc')
+
+      const dbModel = await modelSvc.getModel({
+        fieldQuery: {
+          _id: new mongo.ObjectId(modelId)
+        }
+      })
+
+      if (dbModel.owner !== user.userId) {
 
         res.status(401)
         return res.json('Unauthorized')
       }
 
-      const payload = JSON.parse(req.body.payload)
+      const {job, socketId} = req.body
 
-      const token = await getToken(req.session)
+      if (job.input.urn !== dbModel.model.urn) {
 
-      const derivativesSvc = ServiceManager.getService(
-        'DerivativesSvc')
+        res.status(401)
+        return res.json('Unauthorized')
+      }
 
-      const response = await derivativesSvc.postJob(
-        token, payload)
+      const forgeSvc =
+        ServiceManager.getService(
+          'ForgeSvc')
+
+      const socketSvc =
+        ServiceManager.getService(
+          'SocketSvc')
+
+      const derivativesSvc =
+        ServiceManager.getService(
+          'DerivativesSvc')
+
+      const token = await forgeSvc.get2LeggedToken()
+
+      const jobId = guid()
+
+      const format = job.output.formats[0].type
+
+      const filename = dbModel.name + '.' + format
+
+      const response =
+        await derivativesSvc.postJobWithProgress(
+          token, job, {
+          query: {
+            outputType: format
+          },
+          onProgress: (progress) => {
+
+            socketSvc.broadcast (
+              'job.progress', {
+                progress,
+                filename,
+                jobId,
+                job
+              }, socketId)
+          }
+      })
 
       res.json(response)
 
     } catch (ex) {
+
+      console.log(ex)
 
       res.status(ex.statusCode || 500)
       res.json(ex)
