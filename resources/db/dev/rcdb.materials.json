@@ -58,8 +58,8 @@
     "_id" : ObjectId("583ec501c6bad5f3088806b6"), 
     "name" : "ABS Plastic", 
     "supplier" : "ADN", 
-    "currency" : "USD", 
-    "price" : NumberInt(5)
+    "currency" : "ARS", 
+    "price" : NumberInt(1)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806b7"), 

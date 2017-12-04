@@ -2,15 +2,15 @@
     "_id" : ObjectId("583ec501c6bad5f3088806ae"), 
     "name" : "Stainless Steel", 
     "supplier" : "Forge", 
-    "currency" : "BRL", 
-    "price" : NumberInt(50)
+    "currency" : "CAD", 
+    "price" : NumberInt(8)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806af"), 
     "name" : "Steel", 
     "supplier" : "Autodesk", 
-    "currency" : "CAD", 
-    "price" : NumberInt(200)
+    "currency" : "ARS", 
+    "price" : NumberInt(10)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806b0"), 
@@ -23,7 +23,7 @@
     "_id" : ObjectId("583ec501c6bad5f3088806b1"), 
     "name" : "Brass, Soft Yellow", 
     "supplier" : "Brassinc", 
-    "currency" : "ARS", 
+    "currency" : "BRL", 
     "price" : NumberInt(304)
 }
 { 
@@ -37,14 +37,14 @@
     "_id" : ObjectId("583ec501c6bad5f3088806b4"), 
     "name" : "Steel, High Strength Low Alloy", 
     "supplier" : "Autodesk", 
-    "currency" : "CAD", 
-    "price" : NumberInt(2)
+    "currency" : "GBP", 
+    "price" : NumberInt(2000)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806b3"), 
     "name" : "Steel, Mild", 
     "supplier" : "Autodesk", 
-    "currency" : "ARS", 
+    "currency" : "CAD", 
     "price" : NumberInt(38)
 }
 { 
@@ -58,8 +58,8 @@
     "_id" : ObjectId("583ec501c6bad5f3088806b6"), 
     "name" : "ABS Plastic", 
     "supplier" : "ADSK", 
-    "currency" : "ARS", 
-    "price" : NumberInt(500)
+    "currency" : "BRL", 
+    "price" : NumberInt(35000)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806b7"), 
@@ -72,8 +72,8 @@
     "_id" : ObjectId("583ec501c6bad5f3088806b8"), 
     "name" : "Acetal Resin, White", 
     "supplier" : "Autodessk", 
-    "currency" : "ARS", 
-    "price" : NumberInt(456)
+    "currency" : "CAD", 
+    "price" : NumberInt(40)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806b9"), 
@@ -87,7 +87,7 @@
     "name" : "Rubber", 
     "supplier" : "Autodesk", 
     "currency" : "INR", 
-    "price" : NumberInt(2000)
+    "price" : NumberInt(200)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806bb"), 
@@ -128,28 +128,28 @@
     "_id" : ObjectId("583ec501c6bad5f3088806c0"), 
     "name" : "Concrete - Cast-in-Place Concrete", 
     "supplier" : "Acme", 
-    "currency" : "EUR", 
-    "price" : NumberInt(100)
+    "currency" : "USD", 
+    "price" : NumberInt(150)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806c1"), 
     "name" : "Metal - Stud Layer", 
     "supplier" : "GMJC", 
-    "currency" : "CAD", 
+    "currency" : "USD", 
     "price" : NumberInt(40)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806c2"), 
     "name" : "Glass", 
     "supplier" : "Metro", 
-    "currency" : "ARS", 
-    "price" : NumberInt(150)
+    "currency" : "BRL", 
+    "price" : NumberInt(1)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806c3"), 
     "name" : "Default Floor", 
     "supplier" : "Floortech", 
-    "currency" : "BRL", 
+    "currency" : "USD", 
     "price" : NumberInt(100)
 }
 { 
@@ -170,78 +170,78 @@
     "_id" : ObjectId("583ec501c6bad5f3088806c6"), 
     "name" : "Wood - Cherry", 
     "supplier" : "Owner", 
-    "currency" : "RUB", 
+    "currency" : "USD", 
     "price" : NumberInt(8)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806c8"), 
     "name" : "Metal - Chrome", 
     "supplier" : "Eastern", 
-    "currency" : "PLN", 
-    "price" : NumberInt(100)
+    "currency" : "ARS", 
+    "price" : NumberInt(1)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806c9"), 
     "name" : "Wood - Birch", 
     "supplier" : "Owner", 
-    "currency" : "USD", 
+    "currency" : "ZAR", 
     "price" : NumberInt(15)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806cd"), 
     "name" : "Metal - Aluminum", 
     "supplier" : "Eastern", 
-    "currency" : "CAD", 
+    "currency" : "USD", 
     "price" : NumberInt(12)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806ce"), 
     "name" : "Plastic", 
     "supplier" : "Mat Dist", 
-    "currency" : "CAD", 
+    "currency" : "USD", 
     "price" : NumberInt(5)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806cf"), 
     "name" : "Copper", 
     "supplier" : "KF Mech", 
-    "currency" : "BRL", 
-    "price" : NumberInt(5)
+    "currency" : "ARS", 
+    "price" : NumberInt(11)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806d0"), 
     "name" : "Glass - Frosted", 
     "supplier" : "Metroedeeer", 
-    "currency" : "EUR", 
-    "price" : NumberInt(5)
+    "currency" : "USD", 
+    "price" : NumberInt(4)
 }
 { 
     "_id" : ObjectId("58470be47ffea21ed80ee8f2"), 
     "name" : "Concrete", 
     "supplier" : "ConcreteGuise", 
     "currency" : "BRL", 
-    "price" : NumberInt(2500)
+    "price" : NumberInt(2)
 }
 { 
     "_id" : ObjectId("58470be47ffea21ed80ee8f1"), 
     "name" : "Brick", 
     "supplier" : "Autodesk", 
-    "currency" : "BRL", 
-    "price" : NumberInt(12333)
+    "currency" : "CAD", 
+    "price" : NumberInt(30)
 }
 { 
     "_id" : ObjectId("58470be47ffea21ed80ee8f3"), 
     "name" : "Wood", 
     "supplier" : "Autodesk", 
-    "currency" : "USD", 
-    "price" : NumberInt(250)
+    "currency" : "ARS", 
+    "price" : NumberInt(25)
 }
 { 
     "_id" : ObjectId("58470be47ffea21ed80ee8f4"), 
     "name" : "Aluminum", 
     "supplier" : "Autodesk", 
-    "currency" : "EUR", 
-    "price" : NumberInt(1001)
+    "currency" : "USD", 
+    "price" : NumberInt(20)
 }
 { 
     "_id" : ObjectId("58472c897ffea21ed80ee8f5"), 
@@ -261,7 +261,7 @@
     "_id" : ObjectId("58472c897ffea21ed80ee8f7"), 
     "name" : "Steel, Carbon", 
     "supplier" : "abc", 
-    "currency" : "DKK", 
+    "currency" : "CAD", 
     "price" : NumberInt(1)
 }
 { 
@@ -275,7 +275,7 @@
     "_id" : ObjectId("58472c897ffea21ed80ee8f9"), 
     "name" : "Steel, Alloy", 
     "supplier" : "Autodesk", 
-    "currency" : "USD", 
+    "currency" : "ARS", 
     "price" : NumberInt(1)
 }
 { 

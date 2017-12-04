@@ -443,7 +443,7 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
           }
           {
             selectedModel &&
-            <ReflexElement minSize={39}>
+            <ReflexElement minSize={39} flex={0.72}>
               { this.renderDerivatives () }
             </ReflexElement>
           }

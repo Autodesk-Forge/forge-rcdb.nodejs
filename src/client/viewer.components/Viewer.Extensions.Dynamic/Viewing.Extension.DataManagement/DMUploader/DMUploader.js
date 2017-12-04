@@ -159,11 +159,12 @@ export default class DMUploader extends BaseComponent {
 
     const socketId = await this.socketSvc.getSocketId()
 
-    const {hubId, projectId, folderId} = this.props
+    const {hubId, projectId, folderId, nodeId} = this.props
 
     const data = Object.assign({
       socketId,
       uploadId,
+      nodeId,
       hubId
       }, !!composite
       ? {

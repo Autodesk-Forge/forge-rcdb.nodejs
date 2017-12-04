@@ -33,6 +33,7 @@ export default class DataTreeView extends BaseComponent {
 
     super (props)
 
+    this.onUploadComplete = this.onUploadComplete.bind(this)
     this.onInputChanged = this.onInputChanged.bind(this)
     this.onKeyDown = this.onKeyDown.bind(this)
     this.onFilter = this.onFilter.bind(this)
@@ -88,6 +89,20 @@ export default class DataTreeView extends BaseComponent {
       }
     })
 
+    this.delegate.on('folder.create', (data) => {
+
+      if (this.props.onCreateFolder) {
+
+        this.props.onCreateFolder(data)
+      }
+    })
+
+    this.dmEvents = props.dmEvents
+
+    this.dmEvents.on(
+      'upload.complete',
+      this.onUploadComplete)
+
     this.state = {
       filter: ''
     }
@@ -138,6 +153,10 @@ export default class DataTreeView extends BaseComponent {
     this.delegate.destroy()
 
     this.tree.destroy()
+
+    this.dmEvents.off(
+      'upload.complete',
+      this.onUploadComplete)
   }
 
   /////////////////////////////////////////////////////////
@@ -186,6 +205,24 @@ export default class DataTreeView extends BaseComponent {
     const {filter} = this.state
 
     this.delegate.filterNodes(filter)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onUploadComplete (data) {
+
+    if (data.hubId === this.props.hub.id) {
+
+      console.log(data)
+
+      const parentNode = this.tree.getNodeById(data.nodeId)
+
+      console.log(parentNode)
+
+      parentNode.insert()
+    }
   }
 
   /////////////////////////////////////////////////////////

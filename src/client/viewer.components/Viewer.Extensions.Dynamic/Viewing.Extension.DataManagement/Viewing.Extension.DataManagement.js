@@ -35,10 +35,11 @@ class DataManagementExtension extends MultiModelExtensionBase {
     this.onUploadProgress = this.onUploadProgress.bind(this)
     this.onFolderSearch = this.onFolderSearch.bind(this)
     this.onFolderUpload = this.onFolderUpload.bind(this)
+    this.onCreateFolder = this.onCreateFolder.bind(this)
+    this.onLoadViewable = this.onLoadViewable.bind(this)
     this.onTabSelected = this.onTabSelected.bind(this)
     this.onInitUpload = this.onInitUpload.bind(this)
     this.onDeleteItem = this.onDeleteItem.bind(this)
-    this.onLoadViewable = this.onLoadViewable.bind(this)
 
     this.socketSvc =
       ServiceManager.getService(
@@ -354,9 +355,9 @@ class DataManagementExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   async onLoadViewable (node) {
 
-    node.showLoader(true)
-
     try {
+
+      node.showLoader(true)
 
       const extId = 'Viewing.Extension.ModelLoader'
 
@@ -387,9 +388,11 @@ class DataManagementExtension extends MultiModelExtensionBase {
     } catch (ex) {
 
       console.log(ex)
-    }
 
-    node.showLoader(false)
+    } finally {
+
+      node.showLoader(false)
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -449,7 +452,7 @@ class DataManagementExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   onUploadComplete (data) {
 
-    console.log(data)
+    this.emit('upload.complete', data)
   }
 
   /////////////////////////////////////////////////////////
@@ -496,7 +499,7 @@ class DataManagementExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  async onFolderUpload (data) {
+  onFolderUpload (data) {
 
     const onClose = (result) => {
 
@@ -519,7 +522,36 @@ class DataManagementExtension extends MultiModelExtensionBase {
           projectId={data.projectId}
           folderId={data.folderId}
           hubId={data.hubId}
+          nodeId={data.id}
           api={this.dmAPI}
+        />,
+      showOK: false,
+      open: true
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onCreateFolder (data) {
+
+    const onClose = (result) => {
+
+      this.dialogSvc.off('dialog.close', onClose)
+
+      if (result === 'OK') {
+
+      }
+    }
+
+    this.dialogSvc.on('dialog.close', onClose)
+
+    this.dialogSvc.setState({
+      className: 'folder-create-dlg',
+      title: 'Create Folder ...',
+      content:
+        <div
         />,
       open: true
     })
@@ -651,10 +683,12 @@ class DataManagementExtension extends MultiModelExtensionBase {
             menuContainer={this.options.appContainer}
             onFolderUpload={this.onFolderUpload}
             onFolderSearch={this.onFolderSearch}
+            onCreateFolder={this.onCreateFolder}
             derivativesAPI={this.derivativesAPI}
-            onDeleteItem={this.onDeleteItem}
             onLoadViewable={this.onLoadViewable}
+            onDeleteItem={this.onDeleteItem}
             dmAPI={this.dmAPI}
+            dmEvents={this}
             hub={hub}
           />
         </Tab>

@@ -417,6 +417,7 @@ module.exports = function() {
               projectId,
               folderId,
               uploadId,
+              nodeId,
               hubId
             })
 
@@ -432,6 +433,8 @@ module.exports = function() {
               'SocketSvc')
 
             const dmError = {
+              projectId,
+              folderId,
               nodeId,
               error,
               hubId
@@ -449,6 +452,8 @@ module.exports = function() {
               'SocketSvc')
 
             const dmMsg = Object.assign({}, msg, {
+              projectId,
+              folderId,
               nodeId,
               hubId
             })

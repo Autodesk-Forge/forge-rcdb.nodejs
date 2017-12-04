@@ -70,8 +70,10 @@
 .pane-element > .title > .controls > button > span {
   margin: 1px auto 0 auto;
   pointer-events: none;
+  position: relative;
   color: #9b9b9b;
   padding: 0px;
   height: 100%;
   width: 100%;
+  left: -1px;
 }

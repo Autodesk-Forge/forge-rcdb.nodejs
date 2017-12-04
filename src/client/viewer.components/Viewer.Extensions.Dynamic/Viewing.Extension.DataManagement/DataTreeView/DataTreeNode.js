@@ -22,6 +22,7 @@ export default class DataTreeNode extends EventsEmitter {
     this.onFolderSearch = this.onFolderSearch.bind(this)
     this.onLoadViewable = this.onLoadViewable.bind(this)
     this.onDeleteItem = this.onDeleteItem.bind(this)
+    this.onCreateFolder = this.onCreateFolder.bind(this)
     this.onUpload = this.onUpload.bind(this)
     this.onReload = this.onReload.bind(this)
     this.onExpand = this.onExpand.bind(this)
@@ -43,6 +44,7 @@ export default class DataTreeNode extends EventsEmitter {
 
     this.renderProps = {
       onFolderSearch: this.onFolderSearch,
+      onCreateFolder: this.onCreateFolder,
       onDeleteItem: this.onDeleteItem,
       onUpload: this.onUpload,
       hubType
@@ -241,6 +243,17 @@ export default class DataTreeNode extends EventsEmitter {
   //
   //
   /////////////////////////////////////////////////////////
+  onCreateFolder () {
+
+    this.delegate.emit(
+      'folder.create',
+      this.props)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   onUpload () {
 
     this.delegate.emit(
@@ -377,7 +390,7 @@ export default class DataTreeNode extends EventsEmitter {
             type: project.type,
             details: project,
             folderId: rootId,
-            id: this.guid(),
+            id: project.id,
             parent: this
           })
 
@@ -425,7 +438,7 @@ export default class DataTreeNode extends EventsEmitter {
             folderId: folder.id,
             type: folder.type,
             details: folder,
-            id: this.guid(),
+            id: folder.id,
             parent: this
           })
 
@@ -474,7 +487,7 @@ export default class DataTreeNode extends EventsEmitter {
           folderId: folder.id,
           type: folder.type,
           details: folder,
-          id: this.guid(),
+          id: folder.id,
           parent: this
         })
 
@@ -495,9 +508,9 @@ export default class DataTreeNode extends EventsEmitter {
           level: this.level + 1,
           type: item.type,
           itemId: item.id,
-          id: this.guid(),
           details: item,
-          parent: this
+          parent: this,
+          id: item.id
         })
 
         const childNode = new DataTreeNode(childProps)
@@ -548,7 +561,7 @@ export default class DataTreeNode extends EventsEmitter {
           folderId: folder.id,
           type: folder.type,
           details: folder,
-          id: this.guid(),
+          id: folder.id,
           parent: this
         })
 
@@ -569,9 +582,9 @@ export default class DataTreeNode extends EventsEmitter {
           level: this.level + 1,
           type: item.type,
           itemId: item.id,
-          id: this.guid(),
           details: item,
-          parent: this
+          parent: this,
+          id: item.id
         })
 
         const childNode = new DataTreeNode(childProps)
@@ -603,6 +616,59 @@ export default class DataTreeNode extends EventsEmitter {
   onVersionSelected (version) {
 
     this.setActiveVersion(version)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  insert (nodeInfo)  {
+
+    const $group =
+      $(this.domContainer.parentElement.parentElement)
+
+    let index = -1
+
+    $group.find('> group').each(function(idx) {
+
+      if ($(this).find('lmvheader').hasClass(node.type)) {
+
+        const name =
+          $(this).find('.label-container').text().
+            replace(/^(?=\n)$|^\s*|\s*$|\n\n+/gm, '').
+            replace(/(\r\n|\n|\r)/gm, '')
+
+        if (node.name.localeCompare(name) > 0) {
+
+          index = idx
+        }
+
+      } else if (node.type === 'items') {
+
+        index = idx
+      }
+    })
+
+    const childProps = Object.assign({}, this.props, {
+      name: this.getNodeName(item),
+      level: this.level + 1,
+      type: item.type,
+      itemId: item.id,
+      details: item,
+      parent: this,
+      id: item.id
+    })
+
+    const node = new DataTreeNode(childProps)
+
+    this.children.push(node)
+
+    this.addChild(node)
+
+    const $element =
+      $(node.domContainer.parentElement.parentElement).detach()
+
+    $group.insertAt(index + 2, $element)
   }
 }
 
@@ -749,6 +815,20 @@ class ReactTreeNode extends React.Component {
             </ReactTooltip>
           </div>
         }
+        <div>
+          <span className="fa fa fa-plus"
+            data-for={`create-folder-${this.props.id}`}
+            onClick={this.props.onCreateFolder}
+            data-tip
+          />
+          <ReactTooltip id={`create-folder-${this.props.id}`}
+            className="tooltip-text"
+            effect="solid">
+            <div>
+                {`Create folder ...`}
+            </div>
+          </ReactTooltip>
+        </div>
         <div>
           <span className="fa fa fa-search"
             data-for={`search-${this.props.id}`}
@@ -938,3 +1018,8 @@ class ReactTreeNode extends React.Component {
     return this.renderers[this.props.type]()
   }
 }
+
+
+
+
+

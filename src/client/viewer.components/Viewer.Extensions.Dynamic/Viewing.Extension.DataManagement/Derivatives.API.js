@@ -76,47 +76,49 @@ export default class DerivativesSvc extends ClientAPI {
   /////////////////////////////////////////////////////////
   findDerivatives (parent, query) {
 
-    if(!parent) {
+    if (!parent) {
 
       return []
     }
 
     const derivatives = parent.derivatives || parent.children
 
-    if (derivatives) {
+    if (!derivatives) {
 
-      const matches = derivatives.filter((derivative) => {
-
-        derivative.parent = parent
-
-        if (typeof query === 'object') {
-
-          var match = true
-
-          for (const key in query) {
-
-            if (query[key] !== derivative[key]) {
-
-              match = false
-            }
-          }
-
-          return match
-
-        } else if (typeof query === 'function') {
-
-          return query (derivative)
-        }
-      })
-
-      const childResults = derivatives.map((derivative) => {
-
-        return this.findDerivatives (
-          derivative, query)
-      })
-
-      return flattenDeep([...matches, ...childResults])
+      return []
     }
+
+    const matches = derivatives.filter((derivative) => {
+
+      derivative.parent = parent
+
+      if (typeof query === 'object') {
+
+        var match = true
+
+        for (const key in query) {
+
+          if (query[key] !== derivative[key]) {
+
+            match = false
+          }
+        }
+
+        return match
+
+      } else if (typeof query === 'function') {
+
+        return query (derivative)
+      }
+    })
+
+    const childResults = derivatives.map((derivative) => {
+
+      return this.findDerivatives (
+        derivative, query)
+    })
+
+    return flattenDeep([...matches, ...childResults])
   }
 
   /////////////////////////////////////////////////////////

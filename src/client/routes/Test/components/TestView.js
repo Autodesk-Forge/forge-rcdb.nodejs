@@ -146,6 +146,8 @@ class TestView extends React.Component {
 
     const urn = 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LWRldi9vZmZpY2UucnZ0'
 
+    //const urn = 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LWRldi81NjU3LTUxMmUtOTRlYy5kd2Y'
+
     //const doc = await this.loadDocument(urn)
 
     //const path = this.getViewablePath(doc)
@@ -156,30 +158,13 @@ class TestView extends React.Component {
 
     //viewer.loadExtension('Autodesk.Viewing.ZoomWindow')
 
-    viewer.addEventListener(Autodesk.Viewing.GEOMETRY_LOADED_EVENT, () => {
+    viewer.addEventListener(Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT, () => {
 
-      console.log('GEOMETRY_LOADED_EVENT')
+      //console.log(viewer.model.getData().instanceTree.getRootId())
+    })
 
-      setTimeout(() => {
-        var nav = viewer.navigation
-        
-        var pos = nav.getPosition()
-    
-        var target = nav.getTarget()
-        
-        var viewdir = new THREE.Vector3()
-    
-        viewdir.subVectors (pos, target).normalize()
+    viewer.addEventListener(Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT, (e) => {
 
-        // zooms out by 100 along the view direction
-        viewdir.multiplyScalar (100)
-
-        pos.add(viewdir)
-
-        nav.setPosition(pos)
-
-        console.log('done')
-      }, 2000)
     })
 
     viewer.loadModel(path)
@@ -190,7 +175,6 @@ class TestView extends React.Component {
   //
   /////////////////////////////////////////////////////////
   onSelectionChanged (event) {
-
 
   }
 
