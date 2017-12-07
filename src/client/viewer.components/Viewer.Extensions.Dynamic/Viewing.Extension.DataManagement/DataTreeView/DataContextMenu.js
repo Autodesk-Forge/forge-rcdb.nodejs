@@ -30,10 +30,10 @@ export default class DataContextMenu extends
 
         menu.push({
           title: 'Show details',
-          className: 'fa fa-share',
+          icon: 'fa fa-share',
           target: [{
             title: 'Hub details',
-            className: 'fa fa-cloud',
+            icon: 'fa fa-cloud',
             target: () => {
               this.emit('context.details', {
                 event, node, type: 'hubs'
@@ -41,7 +41,7 @@ export default class DataContextMenu extends
             }
           }, {
             title: 'Projects details',
-            className: 'fa fa-folder',
+            icon: 'fa fa-folder',
             target: () => {
               this.emit('context.details', {
                 event, node, type: 'hubs.projects'
@@ -56,10 +56,10 @@ export default class DataContextMenu extends
 
         menu.push({
           title: 'Show details',
-          className: 'fa fa-share',
+          icon: 'fa fa-share',
           target: [{
             title: 'Project details',
-            className: 'fa fa-clone',
+            icon: 'fa fa-clone',
             target: () => {
               this.emit('context.details', {
                 event, node, type: 'projects'
@@ -67,7 +67,7 @@ export default class DataContextMenu extends
             }
           }, {
             title: 'Root folder details',
-            className: 'fa fa-folder',
+            icon: 'fa fa-folder',
             target: () => {
               this.emit('context.details', {
                 event, node, type: 'folders'
@@ -75,7 +75,7 @@ export default class DataContextMenu extends
             }
           }, {
             title: 'Root folder content',
-            className: 'fa fa-folder-open',
+            icon: 'fa fa-folder-open',
             target: () => {
               this.emit('context.details', {
                 event, node, type: 'folders.content'
@@ -83,7 +83,7 @@ export default class DataContextMenu extends
             }
           },{
             title: 'Top folder content',
-            className: 'fa fa-folder-open',
+            icon: 'fa fa-folder-open',
             target: () => {
               this.emit('context.details', {
                 event, node, type: 'top.folders.content'
@@ -94,7 +94,7 @@ export default class DataContextMenu extends
 
         //menu.push({
         //  title: 'Create new folder',
-        //  className: 'fa fa-plus',
+        //  icon: 'fa fa-plus',
         //  target: () => {
         //    this.emit('context.folder.create', {
         //      event, node
@@ -108,10 +108,10 @@ export default class DataContextMenu extends
 
         menu.push({
           title: 'Show details',
-          className: 'fa fa-share',
+          icon: 'fa fa-share',
           target: [{
             title: 'Folder details',
-            className: 'fa fa-folder',
+            icon: 'fa fa-folder',
             target: () => {
               this.emit('context.details', {
                 event, node, type: 'folders'
@@ -119,7 +119,7 @@ export default class DataContextMenu extends
             }
           }, {
             title: 'Folder content',
-            className: 'fa fa-folder-open',
+            icon: 'fa fa-folder-open',
             target: () => {
               this.emit('context.details', {
                 event, node, type: 'folders.content'
@@ -130,7 +130,7 @@ export default class DataContextMenu extends
 
         //menu.push({
         //  title: 'Create new folder',
-        //  className: 'fa fa-plus',
+        //  icon: 'fa fa-plus',
         //  target: () => {
         //    this.emit('context.folder.create', {
         //      event, node
@@ -144,7 +144,7 @@ export default class DataContextMenu extends
 
         menu.push({
           title: 'Show item details',
-          className: 'fa fa-file-text',
+          icon: 'fa fa-file-text',
           target: () => {
             this.emit('context.details', {
               event, node, type: 'items'
@@ -156,7 +156,7 @@ export default class DataContextMenu extends
 
           menu.push({
             title: 'Show manifest',
-            className: 'fa fa-cubes',
+            icon: 'fa fa-cubes',
             target: () => {
               this.emit('context.details', {
                 event, node, type: 'items.manifest'

@@ -217,36 +217,25 @@
 
 .menuItem {
   border: 1px solid rgb(162, 162, 162);
-  border-radius: 4px;
-  text-align: left;
+  color: #696969;
+}
+
+.menuItemText {
+  color: #696969;
 }
 
 .menuItem:hover {
   background-color: rgb(205, 205, 205);
+  color: black;
 }
 
-.menuItem .menuItemIcon {
-  padding: 8px 0 5px 8px;
-  color: dimgrey;
-}
-
-.menuItem .menuItemText {
-  padding: 5px 7px 5px 7px;
-  color: #696969;
-}
-
-.menuItem .menuItemText:hover {
+.menuItemText:hover {
   background-color: rgb(205, 205, 205);
   color: black;
 }
 
 .menuItem > span {
-  pointer-events: none;
-  position: relative;
-  margin-left: 8px;
   color: dimgrey;
-  float: left;
-  top: 8px;
 }
 
 .navbar-default {
