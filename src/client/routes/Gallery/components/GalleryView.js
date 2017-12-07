@@ -200,11 +200,9 @@ class GalleryView extends BaseComponent {
 
             <p>
               &nbsp;&nbsp;
-              If you are not an Autodesk employee,
-              you have a limit of 5 active models at
-              a time. Once reached that limit you
-              will not be able to upload more models
-              until one of them expire.
+              You have to be an Autodesk employee
+              in order to be able to upload
+              models to the gallery ...
             </p>
 
             <p>

@@ -103,9 +103,13 @@ export default class UserSvc extends BaseSvc {
                 uploadLimit: this._config.uploadLimit
               } : {})
 
+        const userData = {
+          userId: user.userId
+        }
+
         const item = Object.assign({}, {
           $setOnInsert: insertInfo,
-          $set: user
+          $set: userData
         })
 
         const res = await dbSvc.upsert (

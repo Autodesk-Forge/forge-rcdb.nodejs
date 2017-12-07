@@ -12,7 +12,7 @@ const config = {
 
   client: {
     theme: 'forge-white.css',
-    storageVersion: 2.1,
+    storageVersion: 3.0,
     host: `${HOST_URL}`,
     env: 'development',
     port: PORT

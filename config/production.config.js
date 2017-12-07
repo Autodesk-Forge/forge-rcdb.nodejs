@@ -15,7 +15,7 @@ const config = {
     // client socket to connect.
     // eg. https://myforgeapp.mydomain.com
     theme: 'forge-white.min.css',
-    storageVersion: 2.1,
+    storageVersion: 3.0,
     host: `${HOST_URL}`,
     env: 'production',
     port: PORT
@@ -23,7 +23,7 @@ const config = {
 
   gallery: {
     lifetime: 60 * 60 * 24 * 30, // 30 days
-    uploadLimit: 5,
+    uploadLimit: 0,
     bucket: {
       bucketKey: 'forge-rcdb-gallery-tmp-prod',
       policyKey: 'Persistent'
