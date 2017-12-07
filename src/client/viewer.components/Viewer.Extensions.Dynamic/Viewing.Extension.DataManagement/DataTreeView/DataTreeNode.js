@@ -622,14 +622,29 @@ export default class DataTreeNode extends EventsEmitter {
   //
   //
   /////////////////////////////////////////////////////////
-  insert (nodeInfo)  {
+  insertChildNode (nodeInfo)  {
 
-    const $group =
-      $(this.domContainer.parentElement.parentElement)
+    const childProps =
+      Object.assign({}, this.props, {
+        name: this.getNodeName(nodeInfo),
+        level: this.level + 1,
+        type: nodeInfo.type,
+        itemId: nodeInfo.id,
+        details: nodeInfo,
+        id: nodeInfo.id,
+        parent: this
+      })
+
+    const node = new DataTreeNode(childProps)
+
+    const parentDomElement =
+      this.domContainer.parentElement.parentElement
+
+    const $group = $(parentDomElement)
 
     let index = -1
 
-    $group.find('> group').each(function(idx) {
+    $group.find('> group').each(function (idx) {
 
       if ($(this).find('lmvheader').hasClass(node.type)) {
 
@@ -649,26 +664,18 @@ export default class DataTreeNode extends EventsEmitter {
       }
     })
 
-    const childProps = Object.assign({}, this.props, {
-      name: this.getNodeName(item),
-      level: this.level + 1,
-      type: item.type,
-      itemId: item.id,
-      details: item,
-      parent: this,
-      id: item.id
-    })
-
-    const node = new DataTreeNode(childProps)
-
     this.children.push(node)
 
     this.addChild(node)
 
-    const $element =
-      $(node.domContainer.parentElement.parentElement).detach()
+    const nodeDomElement =
+      node.domContainer.parentElement.parentElement
+
+    const $element = $(nodeDomElement).detach()
 
     $group.insertAt(index + 2, $element)
+
+    return node
   }
 }
 

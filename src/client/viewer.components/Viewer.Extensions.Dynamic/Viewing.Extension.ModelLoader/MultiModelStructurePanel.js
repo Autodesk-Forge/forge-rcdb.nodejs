@@ -1004,10 +1004,15 @@ ModelStructurePanel.prototype.createUI = function()
 
     delegate.getTreeNodeParentMaxSize = function()
     {
-      var width = that.container.clientWidth  | 0x0;
-      var height = that.container.style.maxHeight.replace('px', '') | 0x0;
+      if (that.container) {
 
-      return {width: width, height: height};
+        var width = that.container.clientWidth  | 0x0;
+        var height = that.container.style.maxHeight.replace('px', '') | 0x0;
+
+        return {width: width, height: height};
+      }
+
+      return {width: 0, height: 0}
     }
 
     delegate.getTreeNodeClientHeight = function (node)

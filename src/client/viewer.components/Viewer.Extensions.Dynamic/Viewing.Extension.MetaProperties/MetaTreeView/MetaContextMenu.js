@@ -24,13 +24,13 @@ export default class MetaContextMenu extends
 
     const menu = [{
       title: 'Edit property ...',
-      className: 'fa fa-edit',
+      icon: 'fa fa-edit',
       target: () => {
         this.emit('context.property.edit', node)
       }
     },{
       title: 'Delete property',
-      className: 'fa fa-times',
+      icon: 'fa fa-times',
       target: () => {
         this.emit('context.property.delete', node)
       }

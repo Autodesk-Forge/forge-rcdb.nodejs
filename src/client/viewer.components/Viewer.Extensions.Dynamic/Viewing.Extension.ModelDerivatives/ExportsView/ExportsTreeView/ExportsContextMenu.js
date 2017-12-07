@@ -30,10 +30,10 @@ export default class ExportsContextMenu extends
 
         menu.push({
           title: 'Show details',
-          className: 'fa fa-share',
+          icon: 'fa-share',
           target: [{
             title: 'Folder details',
-            className: 'fa fa-folder',
+            className: 'fa fa fa-folder',
             target: () => {
               this.emit('context.details', {
                 event, node, type: 'folders'
@@ -41,7 +41,7 @@ export default class ExportsContextMenu extends
             }
           }, {
             title: 'Folder content',
-            className: 'fa fa-folder-open',
+            icon: 'fa fa-folder-open',
             target: () => {
               this.emit('context.details', {
                 event, node, type: 'folders.content'
@@ -52,7 +52,7 @@ export default class ExportsContextMenu extends
 
         //menu.push({
         //  title: 'Create new folder',
-        //  className: 'fa fa-plus',
+        //  icon: 'fa fa-plus',
         //  target: () => {
         //    this.emit('context.folder.create', {
         //      event, node
@@ -66,7 +66,7 @@ export default class ExportsContextMenu extends
 
         menu.push({
           title: 'Show item details',
-          className: 'fa fa-file-text',
+          icon: 'fa fa-file-text',
           target: () => {
             this.emit('context.details', {
               event, node, type: 'items'
@@ -78,7 +78,7 @@ export default class ExportsContextMenu extends
 
           menu.push({
             title: 'Show manifest',
-            className: 'fa fa-cubes',
+            icon: 'fa fa-cubes',
             target: () => {
               this.emit('context.details', {
                 event, node, type: 'manifest'
@@ -93,7 +93,7 @@ export default class ExportsContextMenu extends
 
         menu.push({
           title: 'Show version details',
-          className: 'fa fa-file-text',
+          icon: 'fa fa-file-text',
           target: () => {
             this.emit('context.details', {
               event, node, type: 'versions'
@@ -105,7 +105,7 @@ export default class ExportsContextMenu extends
 
           menu.push({
             title: 'Show manifest',
-            className: 'fa fa-cubes',
+            icon: 'fa fa-cubes',
             target: () => {
               this.emit('context.details', {
                 event, node, type: 'manifest'

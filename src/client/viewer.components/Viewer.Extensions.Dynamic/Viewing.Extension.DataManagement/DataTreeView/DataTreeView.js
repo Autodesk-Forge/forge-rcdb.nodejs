@@ -215,13 +215,22 @@ export default class DataTreeView extends BaseComponent {
 
     if (data.hubId === this.props.hub.id) {
 
-      console.log(data)
-
       const parentNode = this.tree.getNodeById(data.nodeId)
 
-      console.log(parentNode)
+      if (data.version.attributes.versionNumber === 1) {
 
-      parentNode.insert()
+        if (parentNode.expanded) {
+
+          const node =
+            parentNode.insertChildNode(
+              data.item)
+
+          if (this.props.onItemNodeCreated) {
+
+            this.props.onItemNodeCreated(node)
+          }
+        }
+      }
     }
   }
 
