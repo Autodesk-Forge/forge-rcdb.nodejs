@@ -104,6 +104,7 @@ export default class UserSvc extends BaseSvc {
               } : {})
 
         const userData = {
+          profileImages: user.profileImages,
           userId: user.userId
         }
 
