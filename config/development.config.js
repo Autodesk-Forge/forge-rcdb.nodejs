@@ -20,7 +20,7 @@ const config = {
 
   gallery: {
     lifetime: 60 * 60 * 24 * 1, // 1 day
-    uploadLimit: 5,
+    uploadLimit: 0,
     bucket: {
         bucketKey: 'forge-rcdb-gallery-dev',
         policyKey: 'Transient'

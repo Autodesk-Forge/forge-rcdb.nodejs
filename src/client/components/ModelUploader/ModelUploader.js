@@ -201,7 +201,8 @@ export default class ModelUploader extends BaseComponent {
 
     if (user) {
 
-      if (user.allowedUploads === undefined || user.allowedUploads > 0) {
+      if (user.allowedUploads !== undefined &&
+          user.allowedUploads > 0) {
 
         return (
           <Dropzone className="content"

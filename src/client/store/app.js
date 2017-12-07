@@ -63,7 +63,7 @@ const getUserWithStats = async(user) => {
     ServiceManager.getService(
       'UserSvc')
 
-  if (user.uploadLimit) {
+  if (user.uploadLimit !== undefined) {
 
     const activeModels =
       await userSvc.getActiveModels(
