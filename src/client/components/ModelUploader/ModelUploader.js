@@ -202,36 +202,36 @@ export default class ModelUploader extends BaseComponent {
     if (user) {
 
       if (user.allowedUploads !== undefined &&
-          user.allowedUploads > 0) {
+          user.allowedUploads <= 0) {
 
         return (
-          <Dropzone className="content"
-            onDrop={this.onDrop}
-            multiple={false} >
+          <div className="limit">
             <p>
-              Drop a file here or click to browse ...
+              You have reached your maximum active models quota :(
             </p>
             <hr/>
             <p>
-              Your model will be available for
-              <br/>
-              <u>30 days</u>
+              Wait for your current models to expire
+              before being able to upload again ...
             </p>
-          </Dropzone>
+          </div>
         )
       }
 
       return (
-        <div className="limit">
+        <Dropzone className="content"
+          onDrop={this.onDrop}
+          multiple={false} >
           <p>
-            You have reached your maximum active models quota :(
+            Drop a file here or click to browse ...
           </p>
           <hr/>
           <p>
-            Wait for your current models to expire
-            before being able to upload again ...
+            Your model will be available for
+            <br/>
+            <u>30 days</u>
           </p>
-        </div>
+        </Dropzone>
       )
     }
 

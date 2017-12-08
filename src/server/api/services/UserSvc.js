@@ -39,8 +39,10 @@ export default class UserSvc extends BaseSvc {
 
         if (forgeUser) {
 
-          const user = await this.getByUserId(
+          const dbUser = await this.getByUserId(
             forgeUser.userId)
+
+          const user = Object.assign({}, forgeUser, dbUser)
 
           return resolve(user)
         }
@@ -104,9 +106,6 @@ export default class UserSvc extends BaseSvc {
               } : {})
 
         const userData = {
-          profileImages: user.profileImages,
-          firstName: user.firstName,
-          lastName: user.lastName,
           userId: user.userId
         }
 
