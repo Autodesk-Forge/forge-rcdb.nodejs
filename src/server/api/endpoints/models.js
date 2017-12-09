@@ -148,7 +148,7 @@ module.exports = function() {
         name : sanitizeHtml(data.name),
         env: 'AutodeskProduction',
         timestamp: new Date(),
-        owner: data.userId,
+        //owner: data.userId,
         model : {
           objectKey,
           fileId,

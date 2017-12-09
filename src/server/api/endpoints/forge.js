@@ -191,12 +191,13 @@ module.exports = function() {
           forgeSvc.set3LeggedTokenMaster(
             req.session, token)
 
-          const user = await forgeSvc.getUser(req.session)
+          //const user = await forgeSvc.getUser(req.session)
+          //
+          //const userSvc = ServiceManager.getService(
+          //  'UserSvc')
 
-          const userSvc = ServiceManager.getService(
-            'UserSvc')
-
-          await userSvc.save(user)
+          // GDPR Modification
+          //await userSvc.save(user)
 
           res.redirect(req.session.redirect)
 

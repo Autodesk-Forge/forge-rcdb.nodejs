@@ -1,0 +1,57 @@
+.hierarchy-tree-container {
+
+  .treeview lmvheader {
+    transition-property: background, border;
+    transition-timing-function: ease;
+    transition-duration: 1.5s;
+    transition-delay: 0.0s;
+
+    background: rgba(245, 245, 245, 0.5);
+    margin-bottom: -4px;
+    border: none;
+    height: 30px;
+  }
+
+  .treeview lmvheader:hover {
+    background: rgba(0, 105, 245, 0.35);
+  }
+
+  .treeview group > lmvheader > icon {
+    height: 20px;
+    float: left;
+  }
+
+  .treenode .switch-container {
+    border: 1px solid #9c9c9c;
+    border-radius: 12px;
+    margin: 0 8px 0 2px;
+    float: left;
+  }
+
+  .treenode .label-container {
+     pointer-events: none;
+  }
+
+  .treenode {
+    float: left;
+  }
+
+  input[type="checkbox"].switch + div {
+    width: 34px;
+    height: 16px;
+  }
+
+  input[type="checkbox"].switch:checked + div {
+    width: 34px;
+  }
+
+  input[type="checkbox"].switch:checked + div > div {
+    transform: translate3d(18px, 0, 0);
+  }
+
+  input[type="checkbox"].switch + div > div {
+    height: 16px;
+    width: 16px;
+    margin: 0;
+  }
+}

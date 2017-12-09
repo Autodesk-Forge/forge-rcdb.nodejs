@@ -39,12 +39,24 @@ export default class UserSvc extends BaseSvc {
 
         if (forgeUser) {
 
-          const dbUser = await this.getByUserId(
-            forgeUser.userId)
+          const uploadLimit =
+            !forgeUser.emailId.endsWith('@autodesk.com')
+              ? this._config.uploadLimit
+              : undefined
 
-          const user = Object.assign({}, forgeUser, dbUser)
+          const user = Object.assign({}, forgeUser, {
+            uploadLimit
+          })
 
           return resolve(user)
+
+          //const dbUser = await this.getByUserId(
+          //  forgeUser.userId)
+          //
+          //const adskUser = Object.assign({},
+          //  forgeUser, dbUser)
+          //
+          //return resolve(adskUser)
         }
 
         return resolve(null)
@@ -105,13 +117,9 @@ export default class UserSvc extends BaseSvc {
                 uploadLimit: this._config.uploadLimit
               } : {})
 
-        const userData = {
-          userId: user.userId
-        }
-
         const item = Object.assign({}, {
           $setOnInsert: insertInfo,
-          $set: userData
+          $set: user
         })
 
         const res = await dbSvc.upsert (

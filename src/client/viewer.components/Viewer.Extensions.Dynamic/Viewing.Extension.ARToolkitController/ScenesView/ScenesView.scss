@@ -1,0 +1,20 @@
+.ar-vr-toolkit {
+
+  .scenes {
+    position: relative;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    text-align: left;
+    background: white;
+    padding: 4px;
+    height: 100%;
+    width: 100%;
+
+    .scene-tabs {
+      height: calc(100% - 27px);
+      width: calc(100% + 12px);
+      position: relative;
+      left: -3px;
+    }
+  }
+}

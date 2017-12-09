@@ -30,6 +30,7 @@ class DataManagementExtension extends MultiModelExtensionBase {
 
 		super (viewer, options)
 
+    this.onVersionSelected = this.onVersionSelected.bind(this)
     this.onItemNodeCreated = this.onItemNodeCreated.bind(this)
     this.onUploadComplete = this.onUploadComplete.bind(this)
     this.onUploadProgress = this.onUploadProgress.bind(this)
@@ -280,6 +281,8 @@ class DataManagementExtension extends MultiModelExtensionBase {
       node.setVersions(versions)
 
       await this.setNodeThumbnail(node, urn)
+
+      this.emit('item.created', node)
     }
 
     node.showLoader(false)
@@ -323,6 +326,14 @@ class DataManagementExtension extends MultiModelExtensionBase {
     node.showLoader(false)
 
     node.setLoaded(true)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onVersionSelected (node) {
+
   }
 
   /////////////////////////////////////////////////////////

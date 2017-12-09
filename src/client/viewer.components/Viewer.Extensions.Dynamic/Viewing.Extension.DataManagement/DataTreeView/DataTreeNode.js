@@ -137,6 +137,17 @@ export default class DataTreeNode extends EventsEmitter {
   //
   //
   /////////////////////////////////////////////////////////
+  setControl (control) {
+
+    this.render({
+      control
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   showLoader (show) {
 
     this.render({
@@ -616,6 +627,8 @@ export default class DataTreeNode extends EventsEmitter {
   onVersionSelected (version) {
 
     this.setActiveVersion(version)
+
+    this.delegate.emit('version.selected', this)
   }
 
   /////////////////////////////////////////////////////////
@@ -958,6 +971,23 @@ class ReactTreeNode extends React.Component {
               effect="solid">
               <div>
                 {`Delete item ...`}
+              </div>
+            </ReactTooltip>
+          </div>
+        }
+        {
+          this.props.control &&
+          <div>
+            <span className={this.props.control.className}
+              data-for={`control-${this.props.id}`}
+              onClick={this.props.control.onClick}
+              data-tip
+            />
+            <ReactTooltip id={`control-${this.props.id}`}
+              className="tooltip-text"
+              effect="solid">
+              <div>
+                {this.props.control.tooltip}
               </div>
             </ReactTooltip>
           </div>

@@ -1,28 +1,28 @@
 ///////////////////////////////////////////////////////////
-// ModelDerivatives Viewer Extension
+// ARToolkitController Viewer Extension
 // By Philippe Leefsma, Autodesk Inc, July 2017
 //
 ///////////////////////////////////////////////////////////
 import {ReflexContainer, ReflexElement, ReflexSplitter} from 'react-reflex'
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
+import ARVRToolkitAPI from './ARVRToolkit.API'
 import DerivativesAPI from './Derivatives.API'
 import WidgetContainer from 'WidgetContainer'
 import { browserHistory } from 'react-router'
 import { Tabs, Tab } from 'react-bootstrap'
-import HierarchyView from './HierarchyView'
 import ManifestView from './ManifestView'
-import ExportsView from './ExportsView'
+import NewSceneView from './NewSceneView'
 import ServiceManager from 'SvcManager'
+import ScenesView from './ScenesView'
 import { ReactLoader } from 'Loader'
 import Measure from 'react-measure'
 import DOMPurify from 'dompurify'
 import ReactDOM from 'react-dom'
-import JobView from './JobView'
 import Image from 'Image'
 import Label from 'Label'
 import React from 'react'
 
-class ModelDerivativesExtension extends MultiModelExtensionBase {
+class ARToolkitControllerExtension extends MultiModelExtensionBase {
 
   /////////////////////////////////////////////////////////
 	// Class constructor
@@ -32,10 +32,15 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
 
 		super (viewer, options)
 
+    this.onItemNodeCreated = this.onItemNodeCreated.bind(this)
     this.onTabSelected = this.onTabSelected.bind(this)
 
     this.derivativesAPI = new DerivativesAPI({
-      apiUrl: this.options.apiUrl
+      apiUrl: this.options.derivativesApiUrl
+    })
+
+    this.arvrToolkitAPI = new ARVRToolkitAPI({
+      apiUrl: this.options.toolkitApiUrl
     })
 
     this.modelSvc =
@@ -77,40 +82,49 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
       manifest: null,
       tabsWidth: 0,
       models: [],
-      guid: null
+      guid: null,
+      scenes: []
 
     }).then (async() => {
 
       await this.react.pushRenderExtension(this)
 
-      const requiresLogin = this.options.requiresLogin
+      if (this.options.auth === '3legged') {
 
-      if (!this.options.appState.user && requiresLogin) {
+        const dmReactOptions = {
+          pushRenderExtension: () => {
+            return Promise.resolve()
+          },
+          popRenderExtension: () => {
+            return Promise.resolve()
+          }
+        }
 
-        try {
-
-          const user = await this.forgeSvc.getUser()
-
-          this.react.setState({
-            user
+        const dmExtension =
+          await this.viewer.loadDynamicExtension(
+            'Viewing.Extension.DataManagement', {
+            react: dmReactOptions
           })
 
-        } catch (ex) {
+        dmExtension.on('item.created', this.onItemNodeCreated)
 
-          return this.showLogin()
-        }
-      }
+        await this.react.setState({
+          dmExtension
+        })
 
-      const models =
-        await this.modelSvc.getModels(
+      } else {
+
+        const models =
+          await this.modelSvc.getModels(
           this.options.database)
 
-      this.react.setState({
-        models
-      })
+        this.react.setState({
+          models
+        })
+      }
     })
 
-    console.log('Viewing.Extension.ModelDerivatives loaded')
+    console.log('Viewing.Extension.ARToolkitController loaded')
 
 		return true
 	}
@@ -121,7 +135,7 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   get className() {
 
-    return 'model-derivatives'
+    return 'ar-vr-toolkit'
   }
 
   /////////////////////////////////////////////////////////
@@ -130,7 +144,7 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
 	static get ExtensionId () {
 
-		return 'Viewing.Extension.ModelDerivatives'
+		return 'Viewing.Extension.ARToolkitController'
 	}
 
   /////////////////////////////////////////////////////////
@@ -139,7 +153,7 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
 	unload () {
 
-    console.log('Viewing.Extension.ModelDerivatives loaded')
+    console.log('Viewing.Extension.ARToolkitController loaded')
 
     super.unload ()
 
@@ -152,7 +166,7 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   async setDocking (docked) {
 
-    const id = ModelDerivativesExtension.ExtensionId
+    const id = ARToolkitControllerExtension.ExtensionId
 
     if (docked) {
 
@@ -208,24 +222,47 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  selectModel (dbModel) {
+  onItemNodeCreated (node) {
+
+    node.setControl({
+      tooltip: 'Load AR/VR Toolkit scenes ...',
+      className: 'fa fa-cubes',
+      onClick: () => {
+        this.selectModel({
+          urn: node.viewerUrn,
+          name: node.name
+        })
+      }
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  selectModel (model) {
 
     this.react.setState({
-      selectedModel: dbModel,
+      selectedModel: model,
       hierarchy: null,
-      manifest: null
+      manifest: null,
+      scenes: []
     })
 
-    const urn = dbModel.model.urn
-
-    this.derivativesAPI.getManifest(urn).then(
+    this.arvrToolkitAPI.getManifest(model.urn).then(
       (manifest) => {
+
+        const scenes =
+          this.arvrToolkitAPI.getManifestScenes(
+            manifest)
+
         this.react.setState({
-          manifest
+          manifest,
+          scenes
         })
       })
 
-    this.derivativesAPI.getMetadata(urn).then(
+    this.derivativesAPI.getMetadata(model.urn).then(
       (metadata) => {
 
         if (metadata.data.metadata.length) {
@@ -233,7 +270,7 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
           const {guid} = metadata.data.metadata[0]
 
           this.derivativesAPI.getHierarchy(
-            urn, guid).then(
+            model.urn, guid).then(
             (hierarchy) => {
 
               this.react.setState({
@@ -276,7 +313,10 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
         <div className={"model-item" + active}
           key={dbModel._id}
           onClick={() => {
-            this.selectModel(dbModel)
+            this.selectModel({
+              urn: dbModel.model.urn,
+              name: dbModel.name
+            })
           }}>
           <Image src={thumbnailUrl}/>
           <Label text= {dbModel.name}/>
@@ -286,7 +326,7 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
 
     return (
       <WidgetContainer
-        title="Select a model to load its derivatives ..."
+        title="Select model to use with the AR/VR Toolkit"
         showTitle={true}>
 
         <div className="models">
@@ -301,15 +341,15 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  renderDerivatives () {
+  renderControls () {
 
     const {activeTabKey, selectedModel, tabsWidth} =
       this.react.getState()
 
-    const widgetTitle = 'Model Derivatives: ' +
+    const widgetTitle = 'Model: ' +
       selectedModel.name
 
-    const nbTabs = 4
+    const nbTabs = 3
 
     const style = {
       width:
@@ -345,25 +385,19 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
                   title={tabTitle('Manifest')}
                   eventKey="manifest"
                   key="manifest">
-                  { this.renderManifestTab() }
+                  { this.renderManifestTab ()}
                 </Tab>
                 <Tab className="tab-container"
-                  title={tabTitle('Hierarchy')}
-                  eventKey="hierarchy"
-                  key="hierarchy">
-                  { this.renderHierarchyTab() }
+                  title={tabTitle('Scenes')}
+                  eventKey="scenes"
+                  key="scenes">
+                  { this.renderScenesTab ()}
                 </Tab>
                 <Tab className="tab-container"
-                  title={tabTitle('Exports')}
-                  eventKey="exports"
-                  key="exports">
-                  { this.renderExportsTab() }
-                </Tab>
-                <Tab className="tab-container"
-                  title={tabTitle('Custom Job')}
-                  eventKey="job"
-                  key="job">
-                  { this.renderJobTab() }
+                  title={tabTitle('New Scene')}
+                  eventKey="new-scene"
+                  key="ew-scene">
+                  { this.renderNewSceneTab () }
                 </Tab>
               </Tabs>
             </div>
@@ -379,26 +413,11 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderManifestTab () {
 
-    const {manifest} = this.react.getState()
+    const {manifest, selectedModel} = this.react.getState()
 
     return (
-      <ManifestView manifest={manifest}/>
-    )
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  renderHierarchyTab () {
-
-    const {hierarchy, selectedModel} = this.react.getState()
-
-    return (
-      <HierarchyView
-        derivativesAPI={this.derivativesAPI}
-        dbModel={selectedModel}
-        hierarchy={hierarchy}
+      <ManifestView
+        manifest={manifest}
       />
     )
   }
@@ -407,14 +426,14 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  renderExportsTab () {
+  renderScenesTab () {
 
-    const {selectedModel} = this.react.getState()
+    const {scenes} = this.react.getState()
 
     return (
-      <ExportsView
+      <ScenesView
         derivativesAPI={this.derivativesAPI}
-        dbModel={selectedModel}
+        scenes={scenes}
       />
     )
   }
@@ -423,15 +442,14 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  renderJobTab () {
+  renderNewSceneTab () {
 
-    const {selectedModel} = this.react.getState()
+    const {hierarchy} = this.react.getState()
 
     return (
-      <JobView
-        derivativesAPI={this.derivativesAPI}
-        database={this.options.database}
-        dbModel={selectedModel}
+      <NewSceneView
+        arvrToolkitAPI={this.arvrToolkitAPI}
+        hierarchy= {hierarchy}
       />
     )
   }
@@ -442,11 +460,15 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderContent () {
 
-    const {models, selectedModel} = this.react.getState()
+    const {
+      selectedModel,
+      dmExtension,
+      models
+    } = this.react.getState()
 
-    const {showModelSelector} = this.options
+    const showModelSelector = (this.options.auth === '2legged')
 
-    const showLoader = !models.length
+    const showLoader = showModelSelector && !models.length
 
     return (
       <div className="content">
@@ -464,12 +486,48 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
             <ReflexSplitter/>
           }
           {
+            dmExtension &&
+            <ReflexElement minSize={37}>
+              { dmExtension.render() }
+            </ReflexElement>
+          }
+          {
+            selectedModel &&
+            dmExtension &&
+            <ReflexSplitter/>
+          }
+          {
             selectedModel &&
             <ReflexElement minSize={39} flex={0.72}>
-              { this.renderDerivatives () }
+              { this.renderControls () }
             </ReflexElement>
           }
         </ReflexContainer>
+      </div>
+    )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  renderTitle (docked) {
+
+    const spanClass = docked
+      ? 'fa fa-chain-broken'
+      : 'fa fa-chain'
+
+    return (
+      <div className="title">
+        <label>
+          AR/VR Toolkit
+        </label>
+        <div className="data-management-controls">
+          <button onClick={() => this.setDocking(docked)}
+            title="Toggle docking mode">
+            <span className={spanClass}/>
+          </button>
+        </div>
       </div>
     )
   }
@@ -484,16 +542,14 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
       <WidgetContainer
         className={this.className}
         showTitle={false}>
-
         { this.renderContent () }
-
       </WidgetContainer>
     )
   }
 }
 
 Autodesk.Viewing.theExtensionManager.registerExtension (
-  ModelDerivativesExtension.ExtensionId,
-  ModelDerivativesExtension)
+  ARToolkitControllerExtension.ExtensionId,
+  ARToolkitControllerExtension)
 
-export default 'Viewing.Extension.ModelDerivatives'
+export default 'Viewing.Extension.ARToolkitController'

@@ -16,6 +16,7 @@ import path from 'path'
 //Endpoints
 import DerivativesAPI3Legged from './api/endpoints/derivatives3Legged'
 import DerivativesAPI2Legged from './api/endpoints/derivatives2Legged'
+import ARVRToolkitAPI from './api/endpoints/ar-vr-toolkit'
 import MaterialAPI from './api/endpoints/materials'
 import ExtractAPI from './api/endpoints/extract'
 import SocketAPI from './api/endpoints/socket'
@@ -27,6 +28,7 @@ import UserAPI from './api/endpoints/user'
 import DMAPI from './api/endpoints/dm'
 
 //Services
+import ARVRToolkitSvc from './api/services/AR-VR-ToolkitSvc'
 import DerivativesSvc from './api/services/DerivativesSvc'
 import ServiceManager from './api/services/SvcManager'
 import ExtractorSvc from './api/services/ExtractorSvc'
@@ -134,11 +136,13 @@ const uploadSvc = new UploadSvc({
   tempStorage: path.join(__dirname, '/../../TMP')
 })
 
+const arvrToolkitSvc = new ARVRToolkitSvc()
 const extractorSvc = new ExtractorSvc()
 
 const ossSvc = new OssSvc()
 const dmSvc = new DMSvc()
 
+ServiceManager.registerService(arvrToolkitSvc)
 ServiceManager.registerService(derivativesSvc)
 ServiceManager.registerService(extractorSvc)
 ServiceManager.registerService(uploadSvc)
@@ -152,6 +156,7 @@ ServiceManager.registerService(dmSvc)
 /////////////////////////////////////////////////////////////////////
 app.use('/api/derivatives/3legged', DerivativesAPI3Legged())
 app.use('/api/derivatives/2legged', DerivativesAPI2Legged())
+app.use('/api/ar-vr-toolkit', ARVRToolkitAPI())
 app.use('/api/materials', MaterialAPI())
 app.use('/api/extract',   ExtractAPI())
 app.use('/api/socket',    SocketAPI())
