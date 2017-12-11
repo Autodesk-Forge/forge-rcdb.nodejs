@@ -44,6 +44,26 @@ export default class NewSceneView extends BaseComponent {
   /////////////////////////////////////////////////////////
   onNodeChecked (node) {
 
+    if (node.checked) {
+
+      this.includedDbIds.push(node.id)
+
+      this.removedDbIds =
+        this.removedDbIds.filter((id) => {
+
+          return id !== node.id
+        })
+
+    } else {
+
+      this.removedDbIds.push(node.id)
+
+      this.includedDbIds =
+        this.includedDbIds.filter((id) => {
+
+          return id !== node.id
+        })
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -65,18 +85,7 @@ export default class NewSceneView extends BaseComponent {
 
     try {
 
-      console.log(this.getEnabledDbIds())
-
-      const objectId = this.props.hierarchy.data.objects[0].objectid
-
       const {urn, projectId, versionId} = this.props.model
-
-      const sceneDef = {
-        prj: {
-          objectId,
-          urn
-        }
-      }
 
       const opts = {
 
@@ -84,14 +93,28 @@ export default class NewSceneView extends BaseComponent {
 
       if (projectId) {
 
+        const sceneDef3Legged = {
+          prj: {
+            projectId,
+            versionId,
+            urn
+          }
+        }
+
         await this.toolkitAPI.createScene3Legged(
           projectId, versionId,
-          sceneId, sceneDef, opts)
+          sceneId, sceneDef3Legged, opts)
 
       } else {
 
+        const sceneDef2Legged = {
+          prj: {
+            urn
+          }
+        }
+
         await this.toolkitAPI.createScene(
-          urn, sceneId, sceneDef, opts)
+          urn, sceneId, sceneDef2Legged, opts)
       }
 
       await this.toolkitAPI.processScene(
@@ -140,65 +163,25 @@ export default class NewSceneView extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  shouldComponentUpdate (nextProps) {
+
+    if (nextProps.guid !== this.props.guid) {
+
+      return true
+    }
+
+    return false
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   componentWillReceiveProps (props) {
 
-    if (props.hierarchy && (this.props.guid !== props.guid)) {
-      
-    }
-  }
+    this.includedDbIds = []
 
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  buildDbIdMapRec (node) {
-
-    const childrenIds = node.objects
-      ? node.objects.map((obj) => obj.objectid)
-      : []
-
-    this.dbIdMap[node.objectid] = {
-      enabled : true,
-      childrenIds
-    }
-
-    if (node.objects) {
-
-      node.objects.forEach((object) => {
-
-        this.buildDbIdMapRec(object)
-      })
-    }
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  setdDbIdMapRec (dbId, enabled) {
-
-    const node = this.dbIdMap[dbId]
-
-    if (enabled) {
-
-      node.enabled = enabled
-    }
-
-    node.childrenIds.forEach((childId) => {
-
-    })
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  getEnabledDbIds () {
-
-    return Object.keys(this.dbIdMap).filter((dbId) => {
-
-      return this.dbIdMap[dbId].enabled
-    })
+    this.removedDbId = []
   }
 
   /////////////////////////////////////////////////////////

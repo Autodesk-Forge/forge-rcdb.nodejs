@@ -438,19 +438,26 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
                   title={tabTitle('Manifest')}
                   eventKey="manifest"
                   key="manifest">
-                  { this.renderManifestTab ()}
+                  {
+                    (activeTabKey === 'manifest') &&
+                    this.renderManifestTab ()
+                  }
                 </Tab>
                 <Tab className="tab-container"
                   title={tabTitle('Scenes')}
                   eventKey="scenes"
                   key="scenes">
-                  { this.renderScenesTab ()}
+                  {
+                    this.renderScenesTab ()
+                  }
                 </Tab>
                 <Tab className="tab-container"
                   title={tabTitle('New Scene')}
                   eventKey="new-scene"
-                  key="ew-scene">
-                  { this.renderNewSceneTab () }
+                  key="new-scene">
+                  {
+                    this.renderNewSceneTab ()
+                  }
                 </Tab>
               </Tabs>
             </div>

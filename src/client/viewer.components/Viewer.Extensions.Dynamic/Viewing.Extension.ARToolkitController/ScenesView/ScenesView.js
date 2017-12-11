@@ -82,19 +82,28 @@ export default class ScenesView extends BaseComponent {
                   title={tabTitle('Scene Info')}
                   eventKey="scene-info"
                   key="scene-info">
-                  { this.renderSceneInfo() }
+                  {
+                    (activeTabKey === 'scene-info') &&
+                    this.renderSceneInfo()
+                  }
                 </Tab>
                 <Tab className="tab-container"
                   title={tabTitle('Instance Tree')}
                   eventKey="instanceTree"
                   key="instanceTree">
-                  { this.renderInstanceTree() }
+                  {
+                    (activeTabKey === 'instanceTree') &&
+                    this.renderInstanceTree()
+                  }
                 </Tab>
                 <Tab className="tab-container"
                   title={tabTitle('Resources')}
                   eventKey="resources"
                   key="resources">
-                  { this.renderResources() }
+                  {
+                    (activeTabKey === 'resources') &&
+                    this.renderResources()
+                  }
                 </Tab>
               </Tabs>
             </div>

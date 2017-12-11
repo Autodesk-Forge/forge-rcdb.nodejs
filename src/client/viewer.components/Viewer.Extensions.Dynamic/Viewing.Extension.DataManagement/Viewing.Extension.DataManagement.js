@@ -689,19 +689,21 @@ class DataManagementExtension extends MultiModelExtensionBase {
           eventKey={hub.id}
           title={title}
           key={hub.id}>
-          <DataTreeView
-            onItemNodeCreated={this.onItemNodeCreated}
-            menuContainer={this.options.appContainer}
-            onFolderUpload={this.onFolderUpload}
-            onFolderSearch={this.onFolderSearch}
-            onCreateFolder={this.onCreateFolder}
-            derivativesAPI={this.derivativesAPI}
-            onLoadViewable={this.onLoadViewable}
-            onDeleteItem={this.onDeleteItem}
-            dmAPI={this.dmAPI}
-            dmEvents={this}
-            hub={hub}
-          />
+          {
+            <DataTreeView
+              onItemNodeCreated={this.onItemNodeCreated}
+              menuContainer={this.options.appContainer}
+              onFolderUpload={this.onFolderUpload}
+              onFolderSearch={this.onFolderSearch}
+              onCreateFolder={this.onCreateFolder}
+              derivativesAPI={this.derivativesAPI}
+              onLoadViewable={this.onLoadViewable}
+              onDeleteItem={this.onDeleteItem}
+              dmAPI={this.dmAPI}
+              dmEvents={this}
+              hub={hub}
+            />
+          }
         </Tab>
       )
     })

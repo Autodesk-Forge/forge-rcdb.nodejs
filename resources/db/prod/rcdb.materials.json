@@ -9,7 +9,7 @@
     "_id" : ObjectId("583ec501c6bad5f3088806af"), 
     "name" : "Steel", 
     "supplier" : "Autodesk", 
-    "currency" : "ARS", 
+    "currency" : "CAD", 
     "price" : NumberInt(10)
 }
 { 
@@ -58,8 +58,8 @@
     "_id" : ObjectId("583ec501c6bad5f3088806b6"), 
     "name" : "ABS Plastic", 
     "supplier" : "ADSK", 
-    "currency" : "BRL", 
-    "price" : NumberInt(35000)
+    "currency" : "CAD", 
+    "price" : NumberInt(3000)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806b7"), 
@@ -72,14 +72,14 @@
     "_id" : ObjectId("583ec501c6bad5f3088806b8"), 
     "name" : "Acetal Resin, White", 
     "supplier" : "Autodessk", 
-    "currency" : "CAD", 
+    "currency" : "ARS", 
     "price" : NumberInt(40)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806b9"), 
     "name" : "Aluminum-6061", 
     "supplier" : "test", 
-    "currency" : "ARS", 
+    "currency" : "CAD", 
     "price" : NumberInt(300)
 }
 { 
@@ -128,8 +128,8 @@
     "_id" : ObjectId("583ec501c6bad5f3088806c0"), 
     "name" : "Concrete - Cast-in-Place Concrete", 
     "supplier" : "Acme", 
-    "currency" : "USD", 
-    "price" : NumberInt(150)
+    "currency" : "CAD", 
+    "price" : NumberInt(19)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806c1"), 
@@ -143,14 +143,14 @@
     "name" : "Glass", 
     "supplier" : "Metro", 
     "currency" : "BRL", 
-    "price" : NumberInt(1)
+    "price" : NumberInt(10)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806c3"), 
     "name" : "Default Floor", 
     "supplier" : "Floortech", 
     "currency" : "USD", 
-    "price" : NumberInt(100)
+    "price" : NumberInt(50)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806c4"), 
@@ -170,14 +170,14 @@
     "_id" : ObjectId("583ec501c6bad5f3088806c6"), 
     "name" : "Wood - Cherry", 
     "supplier" : "Owner", 
-    "currency" : "USD", 
-    "price" : NumberInt(8)
+    "currency" : "CHF", 
+    "price" : NumberInt(90)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806c8"), 
     "name" : "Metal - Chrome", 
     "supplier" : "Eastern", 
-    "currency" : "ARS", 
+    "currency" : "USD", 
     "price" : NumberInt(1)
 }
 { 
@@ -192,7 +192,7 @@
     "name" : "Metal - Aluminum", 
     "supplier" : "Eastern", 
     "currency" : "USD", 
-    "price" : NumberInt(12)
+    "price" : NumberInt(10)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806ce"), 
@@ -205,8 +205,8 @@
     "_id" : ObjectId("583ec501c6bad5f3088806cf"), 
     "name" : "Copper", 
     "supplier" : "KF Mech", 
-    "currency" : "ARS", 
-    "price" : NumberInt(11)
+    "currency" : "CAD", 
+    "price" : NumberInt(30)
 }
 { 
     "_id" : ObjectId("583ec501c6bad5f3088806d0"), 
@@ -219,21 +219,21 @@
     "_id" : ObjectId("58470be47ffea21ed80ee8f2"), 
     "name" : "Concrete", 
     "supplier" : "ConcreteGuise", 
-    "currency" : "BRL", 
-    "price" : NumberInt(2)
+    "currency" : "USD", 
+    "price" : NumberInt(20)
 }
 { 
     "_id" : ObjectId("58470be47ffea21ed80ee8f1"), 
     "name" : "Brick", 
     "supplier" : "Autodesk", 
-    "currency" : "CAD", 
+    "currency" : "USD", 
     "price" : NumberInt(30)
 }
 { 
     "_id" : ObjectId("58470be47ffea21ed80ee8f3"), 
     "name" : "Wood", 
     "supplier" : "Autodesk", 
-    "currency" : "ARS", 
+    "currency" : "BRL", 
     "price" : NumberInt(25)
 }
 { 
@@ -241,20 +241,20 @@
     "name" : "Aluminum", 
     "supplier" : "Autodesk", 
     "currency" : "USD", 
-    "price" : NumberInt(20)
+    "price" : NumberInt(30)
 }
 { 
     "_id" : ObjectId("58472c897ffea21ed80ee8f5"), 
     "name" : "Iron, Cast", 
     "supplier" : "Autodesk", 
-    "currency" : "USD", 
+    "currency" : "BRL", 
     "price" : NumberInt(1)
 }
 { 
     "_id" : ObjectId("58472c897ffea21ed80ee8f6"), 
     "name" : "Aluminum 6061", 
-    "supplier" : "Autodesk", 
-    "currency" : "USD", 
+    "supplier" : "ddsds", 
+    "currency" : "ARS", 
     "price" : NumberInt(1)
 }
 { 
@@ -282,7 +282,7 @@
     "_id" : ObjectId("58472c897ffea21ed80ee8fa"), 
     "name" : "CFRP", 
     "supplier" : "Autodesk", 
-    "currency" : "USD", 
+    "currency" : "ARS", 
     "price" : NumberInt(2)
 }
 { 

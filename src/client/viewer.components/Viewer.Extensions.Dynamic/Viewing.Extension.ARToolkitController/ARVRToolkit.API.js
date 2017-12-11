@@ -79,7 +79,7 @@ export default class ARVRToolkitAPI extends ClientAPI {
   getScene3Legged (projectId, versionId, sceneId) {
 
     const url = `/projects/${projectId}` +
-      `/versions/${versionId}` +
+      `/versions/${encodeURIComponent(versionId)}` +
       `/scenes/${sceneId}`
 
     return this.ajax({
@@ -95,7 +95,7 @@ export default class ARVRToolkitAPI extends ClientAPI {
   deleteScene3Legged (projectId, versionId, sceneId) {
 
     const url = `/projects/${projectId}` +
-      `/versions/${versionId}` +
+      `/versions/${encodeURIComponent(versionId)}` +
       `/scenes/${sceneId}`
 
     return this.ajax({

@@ -83,6 +83,20 @@ export default class HierarchyTreeView extends React.Component {
   //
   //
   /////////////////////////////////////////////////////////
+  shouldComponentUpdate (nextProps) {
+
+    if (nextProps.guid !== this.props.guid) {
+
+      return true
+    }
+
+    return false
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   componentWillReceiveProps (props) {
 
     if (this.props.guid !== props.guid) {

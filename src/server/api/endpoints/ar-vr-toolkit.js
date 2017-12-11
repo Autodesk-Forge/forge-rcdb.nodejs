@@ -226,18 +226,6 @@ module.exports = function () {
         urn
       } = req.body
 
-      const ossSvc =
-        ServiceManager.getService(
-          'OssSvc')
-
-      const bucket =
-        config.toolkit[auth].bucket
-
-      await ossSvc.createBucketIfNotExist(
-        token, bucket)
-
-      sceneDef.prj.bucketKey = bucket.bucketKey
-
       switch (auth) {
 
         case '2legged':
@@ -254,7 +242,7 @@ module.exports = function () {
           const scene3LeggedRes =
             await toolkitSvc.createScene3Legged (
               token.access_token,
-              projectId, versionId,
+              projectId, encodeURIComponent(versionId),
               sceneId, sceneDef, options)
 
           return res.json(scene3LeggedRes)
@@ -269,7 +257,6 @@ module.exports = function () {
 
     } catch (ex) {
 
-      console.log(ex)
       res.status(ex.statusCode || 500)
       res.json(ex)
     }

@@ -122,7 +122,8 @@ export default class ARVRToolkitSvc extends BaseSvc {
 
     const url =
       `${ARVRToolkitSvc.BASE_URL}/data/v1/` +
-      `projects/${projectId}/versions/${versionId}/` +
+      `projects/${projectId}/` +
+      `versions/${versionId}/` +
       `scenes/${sceneId}`
 
     return this.requestAsync({
@@ -144,7 +145,8 @@ export default class ARVRToolkitSvc extends BaseSvc {
 
     const url =
       `${ARVRToolkitSvc.BASE_URL}/data/v1/` +
-      `projects/${projectId}/versions/${versionId}/` +
+      `projects/${projectId}/` +
+      `versions/${versionId}/` +
       `scenes/${sceneId}`
 
     return this.requestAsync({
@@ -163,7 +165,8 @@ export default class ARVRToolkitSvc extends BaseSvc {
 
     const url =
       `${ARVRToolkitSvc.BASE_URL}/data/v1/` +
-      `projects/${projectId}/versions/${versionId}/` +
+      `projects/${projectId}/` +
+      `versions/${versionId}/` +
       `scenes/${sceneId}`
 
     return this.requestAsync({
