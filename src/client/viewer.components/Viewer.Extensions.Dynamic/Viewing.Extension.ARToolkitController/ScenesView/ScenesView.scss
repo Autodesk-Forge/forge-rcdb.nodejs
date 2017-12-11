@@ -2,16 +2,51 @@
 
   .scenes {
     position: relative;
-    overflow-y: scroll;
+    overflow-y: hidden;
     overflow-x: hidden;
-    text-align: left;
     background: white;
-    padding: 4px;
+    text-align: left;
+    padding: 10px;
     height: 100%;
     width: 100%;
 
+    .controls {
+      margin-bottom: 10px;
+      height: 26px;
+
+      .dropdown {
+        width: calc(100% - 162px);
+        margin-right: 2px;
+        float: left;
+
+        button {
+          border-radius: 0px;
+          padding: 2px 12px;
+          width: 100%;
+
+          .caret {
+            margin-left: 4px;
+          }
+        }
+      }
+
+      .del-btn {
+        background: whitesmoke;
+        border-radius: 0px;
+        color: dimgrey;
+        outline: none;
+        width: 160px;
+        height: 26px;
+        float: left;
+
+        span {
+          margin-right: 4px;
+        }
+      }
+    }
+
     .scene-tabs {
-      height: calc(100% - 27px);
+      height: calc(100% - 19px);
       width: calc(100% + 12px);
       position: relative;
       left: -3px;

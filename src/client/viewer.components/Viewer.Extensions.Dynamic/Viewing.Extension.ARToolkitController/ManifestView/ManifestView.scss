@@ -1,6 +1,7 @@
 .ar-vr-toolkit {
 
   .manifest {
+    background: #fafafa;
     position: relative;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -9,12 +10,5 @@
     padding: 10px;
     height: 100%;
     width: 100%;
-
-    .react-json-view {
-
-      .object-content {
-        white-space: nowrap;
-      }
-    }
   }
 }

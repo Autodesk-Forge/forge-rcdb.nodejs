@@ -396,6 +396,7 @@ export default class DataTreeNode extends EventsEmitter {
 
           const childProps = Object.assign({}, this.props, {
             name: this.getNodeName(project),
+            hubId: this.props.hubId,
             projectId: project.id,
             level: this.level + 1,
             type: project.type,
@@ -445,6 +446,7 @@ export default class DataTreeNode extends EventsEmitter {
           const childProps = Object.assign({}, this.props, {
             name: this.getNodeName(folder),
             projectId: folder.projectId,
+            hubId: this.props.hubId,
             level: this.level + 1,
             folderId: folder.id,
             type: folder.type,

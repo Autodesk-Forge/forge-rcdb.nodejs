@@ -21,6 +21,11 @@
 
   .content {
     height: 100%;
+
+    .datatree-container .filter {
+      right: 6px !important;
+      top: 4px !important;
+    }
   }
 
   .content > .controls {
@@ -81,6 +86,7 @@
     border-left: 1px solid #888888;
     height: calc(100% - 28px);
     background: #fafafa;
+    position: relative;
     overflow-y: scroll;
 
     .tab-pane {

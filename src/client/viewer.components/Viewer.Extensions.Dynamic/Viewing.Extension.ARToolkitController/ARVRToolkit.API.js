@@ -47,13 +47,112 @@ export default class ARVRToolkitAPI extends ClientAPI {
   //
   //
   /////////////////////////////////////////////////////////
-  postJob (db, modelId, job, opts = {}) {
+  getScene (urn, sceneId) {
 
-    const url = `/job/${db}/${modelId}`
+    const url = `/${urn}/scenes/${sceneId}`
+
+    return this.ajax({
+      rawBody: true,
+      url
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  deleteScene (urn, sceneId) {
+
+    const url = `/${urn}/scenes/${sceneId}`
+
+    return this.ajax({
+      method: 'DELETE',
+      rawBody: true,
+      url
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  getScene3Legged (projectId, versionId, sceneId) {
+
+    const url = `/projects/${projectId}` +
+      `/versions/${versionId}` +
+      `/scenes/${sceneId}`
+
+    return this.ajax({
+      rawBody: true,
+      url
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  deleteScene3Legged (projectId, versionId, sceneId) {
+
+    const url = `/projects/${projectId}` +
+      `/versions/${versionId}` +
+      `/scenes/${sceneId}`
+
+    return this.ajax({
+      method: 'DELETE',
+      rawBody: true,
+      url
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  getInstanceTree (urn, sceneId) {
+
+    const url = `/${urn}/instanceTree/${sceneId}`
+
+    return this.ajax({
+      rawBody: true,
+      url
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  createScene (urn, sceneId, sceneDef, options = {}) {
+
+    const url = `/scenes`
 
     const payload = {
-      socketId: opts.socketId,
-      job
+      sceneDef,
+      sceneId,
+      options,
+      urn
+    }
+
+    return this.ajax({
+      data: JSON.stringify(payload),
+      method: 'PUT',
+      rawBody: true,
+      url
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  processScene (urn, sceneId) {
+
+    const url = `/scenes`
+
+    const payload = {
+      sceneId,
+      urn
     }
 
     return this.ajax({

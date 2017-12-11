@@ -111,7 +111,7 @@ export default class ARVRToolkitSvc extends BaseSvc {
   //
   ///////////////////////////////////////////////////////
   createScene3Legged (
-    token, urn,
+    token,
     projectId, versionId,
     sceneId, sceneDef, opts = {}) {
 
@@ -140,7 +140,7 @@ export default class ARVRToolkitSvc extends BaseSvc {
   //
   ///////////////////////////////////////////////////////
   getScene3Legged (
-    token, urn, projectId, versionId, sceneId) {
+    token, projectId, versionId, sceneId) {
 
     const url =
       `${ARVRToolkitSvc.BASE_URL}/data/v1/` +
@@ -159,7 +159,7 @@ export default class ARVRToolkitSvc extends BaseSvc {
   //        {version_id}/scenes/{scene_id}
   //
   ///////////////////////////////////////////////////////
-  deleteScene3Legged (token, urn, sceneId) {
+  deleteScene3Legged (token, projectId, versionId, sceneId) {
 
     const url =
       `${ARVRToolkitSvc.BASE_URL}/data/v1/` +
@@ -177,13 +177,6 @@ export default class ARVRToolkitSvc extends BaseSvc {
   ///////////////////////////////////////////////////////
   // POST /modelderivative/v2/arkit/job
   //
-  // sceneDef: {
-  //  prj: {
-  //    bucketKey: "bucketKey",
-  //    urn: "dXhgdhdghj....",
-  //    objectId: 59
-  //  }
-  // }
   ///////////////////////////////////////////////////////
   processScene (token, urn, sceneId) {
 
@@ -386,25 +379,6 @@ export default class ARVRToolkitSvc extends BaseSvc {
       token,
       url
     })
-  }
-
-  ///////////////////////////////////////////////////////
-  //
-  //
-  ///////////////////////////////////////////////////////
-  guid (format = 'xxxxxxxxxxxx') {
-
-    var d = new Date().getTime()
-
-    const guid = format.replace(
-      /[xy]/g,
-      function (c) {
-        var r = (d + Math.random() * 16) % 16 | 0
-        d = Math.floor(d / 16)
-        return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16)
-      })
-
-    return guid
   }
 
   ///////////////////////////////////////////////////////

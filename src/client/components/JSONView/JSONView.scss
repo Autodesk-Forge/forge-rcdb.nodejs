@@ -1,0 +1,9 @@
+.json-view {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  height: 100%;
+
+  .jsonview .string {
+    white-space: nowrap;
+  }
+}

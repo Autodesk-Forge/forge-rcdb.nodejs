@@ -1,6 +1,6 @@
 import BaseComponent from 'BaseComponent'
-import ReactJson from 'react-json-view'
 import { ReactLoader } from 'Loader'
+import JSONView from 'JSONView'
 import React from 'react'
 
 export default class ManifestView extends BaseComponent {
@@ -25,10 +25,7 @@ export default class ManifestView extends BaseComponent {
         <ReactLoader show={!this.props.manifest}/>
         {
           this.props.manifest &&
-          <ReactJson
-            src={this.props.manifest}
-            name={false}
-          />
+          <JSONView src={this.props.manifest}/>
         }
       </div>
     )

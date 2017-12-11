@@ -37,11 +37,7 @@ export default class HierarchyTreeView extends React.Component {
 
       if (this.props.onNodeChecked) {
 
-        this.props.onNodeChecked({
-          model: props.model,
-          tree: this.tree,
-          node
-        })
+        this.props.onNodeChecked(node)
       }
     })
 

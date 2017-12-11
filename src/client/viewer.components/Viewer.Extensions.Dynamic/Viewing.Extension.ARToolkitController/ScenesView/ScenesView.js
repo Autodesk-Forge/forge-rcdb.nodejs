@@ -3,6 +3,7 @@ import { Tabs, Tab } from 'react-bootstrap'
 import BaseComponent from 'BaseComponent'
 import { ReactLoader } from 'Loader'
 import Measure from 'react-measure'
+import JSONView from 'JSONView'
 import React from 'react'
 
 export default class ScenesView extends BaseComponent {
@@ -16,9 +17,14 @@ export default class ScenesView extends BaseComponent {
     super (props)
 
     this.onTabSelected = this.onTabSelected.bind(this)
+    this.deleteScene = this.deleteScene.bind(this)
+
+    this.toolkitAPI = this.props.arvrToolkitAPI
 
     this.state = {
       activeTabKey: 'scene-info',
+      instanceTree: null,
+      sceneInfo: null,
       tabsWidth: 0,
       scene: null
     }
@@ -76,19 +82,19 @@ export default class ScenesView extends BaseComponent {
                   title={tabTitle('Scene Info')}
                   eventKey="scene-info"
                   key="scene-info">
-
+                  { this.renderSceneInfo() }
                 </Tab>
                 <Tab className="tab-container"
                   title={tabTitle('Instance Tree')}
                   eventKey="instanceTree"
                   key="instanceTree">
-
+                  { this.renderInstanceTree() }
                 </Tab>
                 <Tab className="tab-container"
                   title={tabTitle('Resources')}
                   eventKey="resources"
                   key="resources">
-
+                  { this.renderResources() }
                 </Tab>
               </Tabs>
             </div>
@@ -102,18 +108,193 @@ export default class ScenesView extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  guid (format = 'xxxx-xxxx-xxxx') {
+
+    var d = new Date().getTime()
+
+    const guid = format.replace(
+      /[xy]/g,
+      function (c) {
+        var r = (d + Math.random() * 16) % 16 | 0
+        d = Math.floor(d / 16)
+        return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16)
+      })
+
+    return guid
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async deleteScene () {
+
+    const {model} = this.props
+
+    const {scene} = this.state
+
+    const sceneId = scene.name
+
+    const {
+      projectId,
+      versionId,
+      urn
+    } = model
+
+    const notification = this.props.notifySvc.add({
+      title: 'Deleting scene ' + sceneId + '...',
+      dismissible: false,
+      status: 'loading',
+      id: this.guid(),
+      dismissAfter: 0,
+      position: 'tl'
+    })
+
+    if (projectId) {
+
+      await this.toolkitAPI.deleteScene3Legged (
+        projectId, versionId, sceneId)
+
+    } else {
+
+      await this.toolkitAPI.deleteScene (
+        urn, sceneId)
+    }
+
+    this.assignState({
+      instanceTree: null,
+      sceneInfo: null,
+      scene: null
+    })
+
+    notification.title = `Scene ${sceneId} deleted!`
+    notification.dismissAfter = 1500
+    notification.status = 'success'
+
+    this.props.notifySvc.update(notification)
+
+    this.props.onSceneDeleted()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  renderSceneInfo () {
+
+    const {scene, sceneInfo} = this.state
+
+    const showLoader = !sceneInfo && scene
+
+    return (
+      <div>
+        <ReactLoader show={showLoader}/>
+        {
+          sceneInfo &&
+          <JSONView src={sceneInfo}/>
+        }
+      </div>
+    )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  renderInstanceTree () {
+
+    const {scene, instanceTree} = this.state
+
+    const showLoader = !instanceTree && scene
+
+    return (
+      <div>
+        <ReactLoader show={showLoader}/>
+        {
+          instanceTree &&
+          <JSONView src={instanceTree}/>
+        }
+      </div>
+    )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  renderResources () {
+
+    const {scene, sceneInfo} = this.state
+
+    const showLoader = !sceneInfo && scene
+
+    return (
+      <div>
+        <ReactLoader show={showLoader}/>
+        {
+          sceneInfo &&
+          <JSONView src={sceneInfo}/>
+        }
+      </div>
+    )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   render () {
 
-    const {scenes} = this.props
-    const {scene} = this.state
+    const { scene, sceneInfo } = this.state
+
+    const { model, scenes } = this.props
 
     const menuItems = scenes.map((sc, idx) => {
       return (
         <MenuItem eventKey={idx} key={idx}
           onClick={() => {
+
             this.assignState({
+              instanceTree: null,
+              sceneInfo: null,
               scene: sc
             })
+
+            const urn = model.urn
+
+            if (model.projectId) {
+
+              const { projectId, versionId } = model
+
+              this.toolkitAPI.getScene3Legged(
+                projectId, versionId, sc.name).then(
+                (sceneInfo) => {
+
+                  this.assignState({
+                    sceneInfo
+                  })
+                })
+
+            } else {
+
+              this.toolkitAPI.getScene(
+                urn, sc.name).then(
+                (sceneInfo) => {
+
+                  this.assignState({
+                    sceneInfo
+                  })
+                })
+            }
+
+            this.toolkitAPI.getInstanceTree(
+              urn, sc.name).then(
+              (instanceTree) => {
+
+                this.assignState({
+                  instanceTree
+                })
+              })
           }}>
           { sc.name }
         </MenuItem>
@@ -122,14 +303,23 @@ export default class ScenesView extends BaseComponent {
 
     return(
       <div className="scenes">
-        <ReactLoader show={!scenes.length}/>
-        <DropdownButton
-          title={`Select scene: ${scene ? scene.name : ''}`}
-          key={'dropdown-scenes'}
-          id={'dropdown-scenes'}>
-            { menuItems }
-        </DropdownButton>
-        { this.renderTabs() }
+        <ReactLoader show={!scenes}/>
+        <div className="controls">
+          <DropdownButton
+            title={`Select scene: ${scene ? scene.name : ''}`}
+            key={'dropdown-scenes'}
+            id={'dropdown-scenes'}>
+              { menuItems }
+          </DropdownButton>
+          <button
+            onClick={this.deleteScene}
+            disabled={!sceneInfo}
+            className="del-btn">
+            <span className="fa fa-times"/>
+            Delete scene ...
+          </button>
+        </div>
+          { this.renderTabs() }
       </div>
     )
   }

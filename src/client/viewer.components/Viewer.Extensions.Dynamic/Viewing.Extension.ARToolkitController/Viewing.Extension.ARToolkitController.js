@@ -33,6 +33,7 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
 		super (viewer, options)
 
     this.onItemNodeCreated = this.onItemNodeCreated.bind(this)
+    this.onSceneDeleted = this.onSceneDeleted.bind(this)
     this.onTabSelected = this.onTabSelected.bind(this)
 
     this.derivativesAPI = new DerivativesAPI({
@@ -42,6 +43,10 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
     this.arvrToolkitAPI = new ARVRToolkitAPI({
       apiUrl: this.options.toolkitApiUrl
     })
+
+    this.notifySvc =
+      ServiceManager.getService(
+        'NotifySvc')
 
     this.modelSvc =
       ServiceManager.getService(
@@ -81,9 +86,9 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
       hierarchy: null,
       manifest: null,
       tabsWidth: 0,
+      scenes: null,
       models: [],
-      guid: null,
-      scenes: []
+      guid: null
 
     }).then (async() => {
 
@@ -225,10 +230,14 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
   onItemNodeCreated (node) {
 
     node.setControl({
+
       tooltip: 'Load AR/VR Toolkit scenes ...',
       className: 'fa fa-cubes',
       onClick: () => {
+
         this.selectModel({
+          versionId: node.activeVersion.id,
+          projectId: node.props.projectId,
           urn: node.viewerUrn,
           name: node.name
         })
@@ -246,7 +255,7 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
       selectedModel: model,
       hierarchy: null,
       manifest: null,
-      scenes: []
+      scenes: null
     })
 
     this.arvrToolkitAPI.getManifest(model.urn).then(
@@ -306,7 +315,9 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
       const thumbnailUrl = this.modelSvc.getThumbnailUrl(
         this.options.database, dbModel._id, 200)
 
-      const active = (selectedModel === dbModel)
+      const urn = selectedModel? selectedModel.urn : ''
+
+      const active = (urn === dbModel.model.urn)
         ? ' active' : ''
 
       return (
@@ -413,13 +424,40 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderManifestTab () {
 
-    const {manifest, selectedModel} = this.react.getState()
+    const {manifest} = this.react.getState()
 
     return (
-      <ManifestView
-        manifest={manifest}
-      />
+      <ManifestView manifest={manifest}/>
     )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onSceneDeleted () {
+
+    const {selectedModel} = this.react.getState()
+
+    this.react.setState({
+      manifest: null,
+      scenes: null
+    })
+
+    const urn = selectedModel.urn
+
+    this.arvrToolkitAPI.getManifest(urn).then(
+      (manifest) => {
+
+        const scenes =
+          this.arvrToolkitAPI.getManifestScenes(
+            manifest)
+
+        this.react.setState({
+          manifest,
+          scenes
+        })
+      })
   }
 
   /////////////////////////////////////////////////////////
@@ -428,11 +466,14 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderScenesTab () {
 
-    const {scenes} = this.react.getState()
+    const {scenes, selectedModel} = this.react.getState()
 
     return (
       <ScenesView
-        derivativesAPI={this.derivativesAPI}
+        onSceneDeleted={this.onSceneDeleted}
+        arvrToolkitAPI={this.arvrToolkitAPI}
+        notifySvc={this.notifySvc}
+        model={selectedModel}
         scenes={scenes}
       />
     )
@@ -444,12 +485,14 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderNewSceneTab () {
 
-    const {hierarchy} = this.react.getState()
+    const {hierarchy, selectedModel} = this.react.getState()
 
     return (
       <NewSceneView
         arvrToolkitAPI={this.arvrToolkitAPI}
+        notifySvc={this.notifySvc}
         hierarchy= {hierarchy}
+        model={selectedModel}
       />
     )
   }
@@ -487,8 +530,12 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
           }
           {
             dmExtension &&
-            <ReflexElement minSize={37}>
-              { dmExtension.render() }
+            <ReflexElement minSize={39}>
+              <WidgetContainer
+                title="Select item to use with the AR/VR Toolkit"
+                showTitle={true}>
+                { dmExtension.render() }
+              </WidgetContainer>
             </ReflexElement>
           }
           {
@@ -503,31 +550,6 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
             </ReflexElement>
           }
         </ReflexContainer>
-      </div>
-    )
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  renderTitle (docked) {
-
-    const spanClass = docked
-      ? 'fa fa-chain-broken'
-      : 'fa fa-chain'
-
-    return (
-      <div className="title">
-        <label>
-          AR/VR Toolkit
-        </label>
-        <div className="data-management-controls">
-          <button onClick={() => this.setDocking(docked)}
-            title="Toggle docking mode">
-            <span className={spanClass}/>
-          </button>
-        </div>
       </div>
     )
   }

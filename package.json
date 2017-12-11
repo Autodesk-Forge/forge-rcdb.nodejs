@@ -125,6 +125,7 @@
     "install": "^0.8.7",
     "intl": "^1.2.5",
     "jquery": "^3.1.1",
+    "jquery-jsonview": "1.2.3",
     "jquery-nice-select": "^1.1.0",
     "less": "^2.7.2",
     "lockr": "^0.8.4",
@@ -168,6 +169,7 @@
     "resolve-url-loader": "^2.0.0",
     "sass-loader": "^2.0.1",
     "snapsvg": "^0.5.1",
+    "snyk": "^1.36.2",
     "socket.io-client": "^1.7.3",
     "style-loader": "^0.12.4",
     "systemjs": "0.20.12",
@@ -181,7 +183,6 @@
     "webpack-hot-middleware": "^2.12.2",
     "webpack-manifest-plugin": "^1.1.0",
     "webpack-md5-hash": "0.0.5",
-    "worker-loader": "^0.8.0",
-    "snyk": "^1.36.2"
+    "worker-loader": "^0.8.0"
   }
 }
