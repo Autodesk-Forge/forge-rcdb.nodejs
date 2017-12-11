@@ -129,20 +129,14 @@ export default class ScenesView extends BaseComponent {
   /////////////////////////////////////////////////////////
   async deleteScene () {
 
-    const {model} = this.props
+    const {urn, projectId, versionId} = this.props.model
 
     const {scene} = this.state
 
     const sceneId = scene.name
 
-    const {
-      projectId,
-      versionId,
-      urn
-    } = model
-
     const notification = this.props.notifySvc.add({
-      title: 'Deleting scene ' + sceneId + '...',
+      title: 'Deleting scene ' + sceneId + ' ...',
       dismissible: false,
       status: 'loading',
       id: this.guid(),
@@ -224,17 +218,9 @@ export default class ScenesView extends BaseComponent {
   /////////////////////////////////////////////////////////
   renderResources () {
 
-    const {scene, sceneInfo} = this.state
-
-    const showLoader = !sceneInfo && scene
-
     return (
       <div>
-        <ReactLoader show={showLoader}/>
-        {
-          sceneInfo &&
-          <JSONView src={sceneInfo}/>
-        }
+        NOT IMPLEMENTED
       </div>
     )
   }
@@ -249,7 +235,8 @@ export default class ScenesView extends BaseComponent {
 
     const { model, scenes } = this.props
 
-    const menuItems = scenes.map((sc, idx) => {
+    const menuItems = !scenes
+      ? null : scenes.map((sc, idx) => {
       return (
         <MenuItem eventKey={idx} key={idx}
           onClick={() => {
@@ -307,6 +294,7 @@ export default class ScenesView extends BaseComponent {
         <div className="controls">
           <DropdownButton
             title={`Select scene: ${scene ? scene.name : ''}`}
+            disabled={!scenes || !scenes.length}
             key={'dropdown-scenes'}
             id={'dropdown-scenes'}>
               { menuItems }

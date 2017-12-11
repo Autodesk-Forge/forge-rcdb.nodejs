@@ -12,6 +12,7 @@ import { browserHistory } from 'react-router'
 import { Tabs, Tab } from 'react-bootstrap'
 import ManifestView from './ManifestView'
 import NewSceneView from './NewSceneView'
+import ReactTooltip from 'react-tooltip'
 import ServiceManager from 'SvcManager'
 import ScenesView from './ScenesView'
 import { ReactLoader } from 'Loader'
@@ -33,6 +34,7 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
 		super (viewer, options)
 
     this.onItemNodeCreated = this.onItemNodeCreated.bind(this)
+    this.onSceneCreated = this.onSceneCreated.bind(this)
     this.onSceneDeleted = this.onSceneDeleted.bind(this)
     this.onTabSelected = this.onTabSelected.bind(this)
 
@@ -94,24 +96,38 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
 
       await this.react.pushRenderExtension(this)
 
-      if (this.options.auth === '3legged') {
-
-        const dmReactOptions = {
+      const options = {
+        react: {
           pushRenderExtension: () => {
             return Promise.resolve()
           },
           popRenderExtension: () => {
             return Promise.resolve()
           }
+        },
+        transformer: {
+          parentControl: 'modelTools',
+          fullTransform: true,
+          hideControls: false
         }
+      }
+
+      this.viewer.loadDynamicExtension(
+        'Viewing.Extension.ModelLoader',
+        options).then((modelLoader) => {
+
+          this.modelLoader = modelLoader
+        })
+
+      if (this.options.auth === '3legged') {
 
         const dmExtension =
           await this.viewer.loadDynamicExtension(
-            'Viewing.Extension.DataManagement', {
-            react: dmReactOptions
-          })
+            'Viewing.Extension.DataManagement',
+            options)
 
-        dmExtension.on('item.created', this.onItemNodeCreated)
+        dmExtension.on('item.created',
+          this.onItemNodeCreated)
 
         await this.react.setState({
           dmExtension
@@ -232,7 +248,7 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
     node.setControl({
 
       tooltip: 'Load AR/VR Toolkit scenes ...',
-      className: 'fa fa-cubes',
+      className: 'ar-vr-toolkit icon',
       onClick: () => {
 
         this.selectModel({
@@ -306,9 +322,20 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  onLoadModel (e, dbModel) {
+
+    this.modelLoader.loadModel (dbModel)
+
+    e.stopPropagation()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   renderModels () {
 
-    const {models, selectedModel} = this.react.getState()
+    const { models, selectedModel } = this.react.getState()
 
     const modelItems = models.map((dbModel) => {
 
@@ -331,6 +358,21 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
           }}>
           <Image src={thumbnailUrl}/>
           <Label text= {dbModel.name}/>
+          <div className="hover-controls">
+            <span className="fa fa-eye"
+              data-for={`load-model-${dbModel._id}`}
+              style={{marginRight:'190px'}}
+              onClick={(e) => this.onLoadModel(e, dbModel)}
+              data-tip
+            />
+            <ReactTooltip id={`load-model-${dbModel._id}`}
+              className="tooltip-text"
+              effect="solid">
+              <div>
+                {`Load ${dbModel.name} in viewer ...`}
+              </div>
+            </ReactTooltip>
+          </div>
         </div>
       )
     })
@@ -464,14 +506,46 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  onSceneCreated () {
+
+    const {selectedModel} = this.react.getState()
+
+    this.react.setState({
+      manifest: null,
+      scenes: null
+    })
+
+    const urn = selectedModel.urn
+
+    this.arvrToolkitAPI.getManifest(urn).then(
+      (manifest) => {
+
+        const scenes =
+          this.arvrToolkitAPI.getManifestScenes(
+            manifest)
+
+        this.react.setState({
+          manifest,
+          scenes
+        })
+      })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   renderScenesTab () {
 
-    const {scenes, selectedModel} = this.react.getState()
+    const {
+      selectedModel,
+      scenes
+    } = this.react.getState()
 
     return (
       <ScenesView
-        onSceneDeleted={this.onSceneDeleted}
         arvrToolkitAPI={this.arvrToolkitAPI}
+        onSceneDeleted={this.onSceneDeleted}
         notifySvc={this.notifySvc}
         model={selectedModel}
         scenes={scenes}
@@ -485,14 +559,20 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderNewSceneTab () {
 
-    const {hierarchy, selectedModel} = this.react.getState()
+    const {
+      selectedModel,
+      hierarchy,
+      guid
+    } = this.react.getState()
 
     return (
       <NewSceneView
         arvrToolkitAPI={this.arvrToolkitAPI}
+        onSceneCreated={this.onSceneCreated}
         notifySvc={this.notifySvc}
         hierarchy= {hierarchy}
         model={selectedModel}
+        guid={guid}
       />
     )
   }

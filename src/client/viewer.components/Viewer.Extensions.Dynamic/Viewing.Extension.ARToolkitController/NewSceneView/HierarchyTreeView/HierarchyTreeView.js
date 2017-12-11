@@ -65,6 +65,9 @@ export default class HierarchyTreeView extends React.Component {
 
     this.rootNode.expand ()
     this.rootNode.setChecked (true)
+
+    this.props.onRootNodeCreated (
+      this.tree, this.rootNode)
   }
 
   /////////////////////////////////////////////////////////

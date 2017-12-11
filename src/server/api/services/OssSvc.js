@@ -125,6 +125,32 @@ export default class OssSvc extends BaseSvc {
   }
 
   /////////////////////////////////////////////////////////
+  // Creates a new bucket if doesnt exists
+  //
+  /////////////////////////////////////////////////////////
+  async createBucketIfNotExist (
+    token, bucketCreationData, opts = {}) {
+
+    try {
+
+      const details = await this.getBucketDetails (
+        token, bucketCreationData.bucketKey)
+
+      return details
+
+    } catch (ex) {
+
+      if (ex.statusCode === 404) {
+
+        return this.createBucket (
+          token, bucketCreationData, opts)
+      }
+
+      throw ex
+    }
+  }
+
+  /////////////////////////////////////////////////////////
   // Uploads object to bucket
   //
   /////////////////////////////////////////////////////////

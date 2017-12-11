@@ -37,6 +37,21 @@ const config = {
     }
   },
 
+  toolkit: {
+    ['2legged']: {
+      bucket: {
+        bucketKey: 'forge-rcdb-toolkit',
+        policyKey: 'Persistent'
+      }
+    },
+    ['3legged']: {
+      bucket: {
+        bucketKey: 'forge-rcdb-toolkit-3legged',
+        policyKey: 'Persistent'
+      }
+    }
+  },
+
   layouts: {
     index: 'index.analytics.ejs'
   },

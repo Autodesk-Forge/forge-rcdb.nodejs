@@ -216,6 +216,30 @@
 }
 
 .menuItem {
+  padding: 5px 10px 5px 10px;
+  width: calc(100% - 22px);
+  vertical-align: middle;
+  white-space: nowrap;
+  border-radius: 4px;
+  text-align: left;
+  display: table;
+}
+
+.menuItem .menuItemIcon {
+  padding: 8px 0 5px 8px;
+}
+
+.menuItem > span {
+  pointer-events: none;
+  position: relative;
+  margin-left: -2px;
+  margin-right: 5px;
+  font-size: 18px;
+  float: left;
+  top: 2px;
+}
+
+.menuItem {
   border: 1px solid rgb(162, 162, 162);
   color: #696969;
 }

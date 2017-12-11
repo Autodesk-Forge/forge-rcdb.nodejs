@@ -32,6 +32,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
 
     super (viewer, options)
 
+    this.onContextMenu = this.onContextMenu.bind(this)
     this.renderTitle = this.renderTitle.bind(this)
 
     this.dialogSvc =
@@ -127,9 +128,34 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
         }
       })
 
+    this.viewer.loadDynamicExtension(
+      'Viewing.Extension.ContextMenu').then(
+      (ctxMenuExtension) => {
+        ctxMenuExtension.addHandler(
+          this.onContextMenu)
+      })
+
     console.log('Viewing.Extension.ModelLoader loaded')
 
     return true
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onContextMenu (event) {
+
+    if (event.model) {
+
+      event.menu.push({
+        title: 'Unload model ...',
+        target: () => {
+
+          this.unloadModel ()
+        }
+      })
+    }
   }
 
   /////////////////////////////////////////////////////////

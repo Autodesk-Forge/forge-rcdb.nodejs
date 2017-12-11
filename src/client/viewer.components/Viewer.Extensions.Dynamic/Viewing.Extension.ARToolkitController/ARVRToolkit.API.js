@@ -146,6 +146,32 @@ export default class ARVRToolkitAPI extends ClientAPI {
   //
   //
   /////////////////////////////////////////////////////////
+  createScene3Legged (
+    projectId, versionId,
+    sceneId, sceneDef, options = {}) {
+
+    const url = `/scenes`
+
+    const payload = {
+      projectId,
+      versionId,
+      sceneDef,
+      sceneId,
+      options
+    }
+
+    return this.ajax({
+      data: JSON.stringify(payload),
+      method: 'PUT',
+      rawBody: true,
+      url
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   processScene (urn, sceneId) {
 
     const url = `/scenes`

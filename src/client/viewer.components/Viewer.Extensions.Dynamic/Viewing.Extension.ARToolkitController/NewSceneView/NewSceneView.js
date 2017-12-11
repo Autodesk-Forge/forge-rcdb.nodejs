@@ -13,6 +13,7 @@ export default class NewSceneView extends BaseComponent {
 
     super (props)
 
+    this.onRootNodeCreated = this.onRootNodeCreated.bind(this)
     this.onInputChanged = this.onInputChanged.bind(this)
     this.onNodeChecked = this.onNodeChecked.bind(this)
     this.createScene = this.createScene.bind(this)
@@ -33,26 +34,16 @@ export default class NewSceneView extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
-  onNodeChecked (node) {
+  onRootNodeCreated (tree, node) {
 
   }
 
   /////////////////////////////////////////////////////////
-  // parse urn into { bucketKey, objectKey }
+  //
   //
   /////////////////////////////////////////////////////////
-  parseURN (urn) {
+  onNodeChecked (node) {
 
-    const parts = atob(urn).split('/')
-
-    const bucketKey = parts[0].split(':').pop()
-
-    const objectKey = parts[1]
-
-    return {
-      bucketKey,
-      objectKey
-    }
   }
 
   /////////////////////////////////////////////////////////
@@ -61,21 +52,27 @@ export default class NewSceneView extends BaseComponent {
   /////////////////////////////////////////////////////////
   async createScene () {
 
-    let notification = null
+    const sceneId = this.sceneId || this.guid()
+
+    const notification = this.props.notifySvc.add({
+      title: 'Creating scene ' + sceneId + ' ...',
+      dismissible: false,
+      status: 'loading',
+      id: this.guid(),
+      dismissAfter: 0,
+      position: 'tl'
+    })
 
     try {
 
-      const sceneId = this.sceneId || this.guid()
-
-      const urn = this.props.model.urn
+      console.log(this.getEnabledDbIds())
 
       const objectId = this.props.hierarchy.data.objects[0].objectid
 
-      const {bucketKey} = this.parseURN(urn)
+      const {urn, projectId, versionId} = this.props.model
 
       const sceneDef = {
         prj: {
-          bucketKey,
           objectId,
           urn
         }
@@ -85,17 +82,17 @@ export default class NewSceneView extends BaseComponent {
 
       }
 
-      notification = this.props.notifySvc.add({
-        title: 'Creating scene ' + sceneId + '...',
-        dismissible: false,
-        status: 'loading',
-        id: this.guid(),
-        dismissAfter: 0,
-        position: 'tl'
-      })
+      if (projectId) {
 
-      await this.toolkitAPI.createScene(
-        urn, sceneId, sceneDef, opts)
+        await this.toolkitAPI.createScene3Legged(
+          projectId, versionId,
+          sceneId, sceneDef, opts)
+
+      } else {
+
+        await this.toolkitAPI.createScene(
+          urn, sceneId, sceneDef, opts)
+      }
 
       await this.toolkitAPI.processScene(
         urn, sceneId)
@@ -106,7 +103,11 @@ export default class NewSceneView extends BaseComponent {
 
       this.props.notifySvc.update(notification)
 
+      this.props.onSceneCreated()
+
     } catch (ex) {
+
+      console.log(ex)
 
       notification.title = `Scene ${sceneId} failed :(`
       notification.dismissAfter = 1500
@@ -139,6 +140,71 @@ export default class NewSceneView extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  componentWillReceiveProps (props) {
+
+    if (props.hierarchy && (this.props.guid !== props.guid)) {
+      
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  buildDbIdMapRec (node) {
+
+    const childrenIds = node.objects
+      ? node.objects.map((obj) => obj.objectid)
+      : []
+
+    this.dbIdMap[node.objectid] = {
+      enabled : true,
+      childrenIds
+    }
+
+    if (node.objects) {
+
+      node.objects.forEach((object) => {
+
+        this.buildDbIdMapRec(object)
+      })
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  setdDbIdMapRec (dbId, enabled) {
+
+    const node = this.dbIdMap[dbId]
+
+    if (enabled) {
+
+      node.enabled = enabled
+    }
+
+    node.childrenIds.forEach((childId) => {
+
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  getEnabledDbIds () {
+
+    return Object.keys(this.dbIdMap).filter((dbId) => {
+
+      return this.dbIdMap[dbId].enabled
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   render () {
 
     const {guid, hierarchy} = this.props
@@ -161,6 +227,7 @@ export default class NewSceneView extends BaseComponent {
               </button>
             </div>
             <HierarchyTreeView
+              onRootNodeCreated={this.onRootNodeCreated}
               onNodeChecked={this.onNodeChecked}
               hierarchy={hierarchy}
               showSwitch={true}

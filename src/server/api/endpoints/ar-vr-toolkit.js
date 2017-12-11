@@ -226,6 +226,18 @@ module.exports = function () {
         urn
       } = req.body
 
+      const ossSvc =
+        ServiceManager.getService(
+          'OssSvc')
+
+      const bucket =
+        config.toolkit[auth].bucket
+
+      await ossSvc.createBucketIfNotExist(
+        token, bucket)
+
+      sceneDef.prj.bucketKey = bucket.bucketKey
+
       switch (auth) {
 
         case '2legged':

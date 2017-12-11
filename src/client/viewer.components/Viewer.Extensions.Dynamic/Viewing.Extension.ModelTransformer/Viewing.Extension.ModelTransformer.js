@@ -92,10 +92,13 @@ class ModelTransformerExtension extends MultiModelExtensionBase {
       this.react.pushRenderExtension(this)
     })
 
+    const options = Object.assign({}, {
+      hideControls: true
+    }, this.options)
+
     this.viewer.loadDynamicExtension(
-      'Viewing.Extension.Transform', {
-        hideControls: true
-      }).then((transformExtension) => {
+      'Viewing.Extension.Transform',
+      options).then((transformExtension) => {
 
         transformExtension.setFullTransform (
           fullTransform)
