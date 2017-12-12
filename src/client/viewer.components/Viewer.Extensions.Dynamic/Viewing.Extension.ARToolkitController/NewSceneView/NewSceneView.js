@@ -44,24 +44,26 @@ export default class NewSceneView extends BaseComponent {
   /////////////////////////////////////////////////////////
   onNodeChecked (node) {
 
+    const nodeId = node.id.toString()
+
     if (node.checked) {
 
-      this.includedDbIds.push(node.id)
+      this.includedDbIds.push(nodeId)
 
       this.removedDbIds =
         this.removedDbIds.filter((id) => {
 
-          return id !== node.id
+          return id !== nodeId
         })
 
     } else {
 
-      this.removedDbIds.push(node.id)
+      this.removedDbIds.push(nodeId)
 
       this.includedDbIds =
         this.includedDbIds.filter((id) => {
 
-          return id !== node.id
+          return id !== nodeId
         })
     }
   }
@@ -95,6 +97,8 @@ export default class NewSceneView extends BaseComponent {
 
         const sceneDef3Legged = {
           prj: {
+            remove: this.removedDbIds,
+            list: this.includedDbIds,
             projectId,
             versionId,
             urn
@@ -109,6 +113,8 @@ export default class NewSceneView extends BaseComponent {
 
         const sceneDef2Legged = {
           prj: {
+            remove: this.removedDbIds,
+            list: this.includedDbIds,
             urn
           }
         }
@@ -167,21 +173,14 @@ export default class NewSceneView extends BaseComponent {
 
     if (nextProps.guid !== this.props.guid) {
 
+      this.includedDbIds = []
+
+      this.removedDbIds = []
+
       return true
     }
 
     return false
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  componentWillReceiveProps (props) {
-
-    this.includedDbIds = []
-
-    this.removedDbId = []
   }
 
   /////////////////////////////////////////////////////////

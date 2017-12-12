@@ -47,6 +47,19 @@
     overflow: scroll;
     height: 100%;
 
+    .filter {
+      position: absolute;
+      width: 220px;
+      right: 50px;
+      top: 17px;
+
+      input {
+        padding-left: 4px;
+        outline: none;
+        width: 100%;
+      }
+    }
+
     .model-item {
       transition-timing-function: ease;
       transition-duration: 1.5s;
@@ -69,7 +82,7 @@
         display: none;
         float: right;
         width: 30px;
-        top: 8px;
+        top: 12px;
 
         span {
           font-size: 20px;

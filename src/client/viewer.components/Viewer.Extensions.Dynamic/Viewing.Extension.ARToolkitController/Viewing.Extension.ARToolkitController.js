@@ -34,6 +34,7 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
 		super (viewer, options)
 
     this.onItemNodeCreated = this.onItemNodeCreated.bind(this)
+    this.onFilterChanged = this.onFilterChanged.bind(this)
     this.onSceneCreated = this.onSceneCreated.bind(this)
     this.onSceneDeleted = this.onSceneDeleted.bind(this)
     this.onTabSelected = this.onTabSelected.bind(this)
@@ -84,12 +85,14 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
 
     this.react.setState({
 
+      activeTabKey: 'manifest',
       selectedModel: null,
       hierarchy: null,
       manifest: null,
       tabsWidth: 0,
       scenes: null,
       models: [],
+      filter: '',
       guid: null
 
     }).then (async() => {
@@ -271,7 +274,8 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
       selectedModel: model,
       hierarchy: null,
       manifest: null,
-      scenes: null
+      scenes: null,
+      guid: null
     })
 
     this.arvrToolkitAPI.getManifest(model.urn).then(
@@ -333,11 +337,32 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  onFilterChanged (e) {
+
+    this.react.setState({
+      filter: e.target.value.toLowerCase()
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   renderModels () {
 
-    const { models, selectedModel } = this.react.getState()
+    const {
+      selectedModel,
+      filter,
+      models
+    } = this.react.getState()
 
-    const modelItems = models.map((dbModel) => {
+    const filteredModels = models.filter((model) => {
+      return filter.length
+        ? model.name.toLowerCase().indexOf(filter) > -1
+        : true
+    })
+
+    const modelItems = filteredModels.map((dbModel) => {
 
       const thumbnailUrl = this.modelSvc.getThumbnailUrl(
         this.options.database, dbModel._id, 200)
@@ -383,6 +408,13 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
         showTitle={true}>
 
         <div className="models">
+          <div className="filter">
+            <input
+              onChange={this.onFilterChanged}
+              placeholder="Filter models..."
+              type="text"
+            />
+          </div>
           { modelItems }
         </div>
 
