@@ -242,7 +242,7 @@ module.exports = function () {
           const scene3LeggedRes =
             await toolkitSvc.createScene3Legged (
               token.access_token,
-              projectId, encodeURIComponent(versionId),
+              projectId, versionId,
               sceneId, sceneDef, options)
 
           return res.json(scene3LeggedRes)

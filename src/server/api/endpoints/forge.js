@@ -228,6 +228,7 @@ module.exports = function() {
     try {
 
       const scope = [
+        'viewables:read',
         'data:write'
       ]
 
@@ -254,25 +255,25 @@ module.exports = function() {
   // 2-legged token
   //
   /////////////////////////////////////////////////////////
-  //router.get('/token/2legged', async (req, res) => {
-  //
-  //  const forgeSvc = ServiceManager.getService(
-  //    'ForgeSvc')
-  //
-  //  try {
-  //
-  //    const token =
-  //      await forgeSvc.request2LeggedToken(
-  //        'viewables:read')
-  //
-  //    res.json(token)
-  //
-  //  } catch (error) {
-  //
-  //    res.status(error.statusCode || 500)
-  //    res.json(error)
-  //  }
-  //})
+  router.get('/token/2legged', async (req, res) => {
+
+    const forgeSvc = ServiceManager.getService(
+      'ForgeSvc')
+
+    try {
+
+      const token =
+        await forgeSvc.request2LeggedToken(
+          'viewables:read')
+
+      res.json(token)
+
+    } catch (error) {
+
+      res.status(error.statusCode || 500)
+      res.json(error)
+    }
+  })
 
   return router
 }
