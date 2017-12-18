@@ -144,17 +144,17 @@ class TestView extends React.Component {
       `${window.location.origin}/${lmvProxy}`,
       'modelDerivativeV2')
 
-    const urn = 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LWRldi9vZmZpY2UucnZ0'
+    const urn = 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LWRldi84N2M4LWY1ZWQtMWYzZi5ydnQ'
 
     //const urn = 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LWRldi81NjU3LTUxMmUtOTRlYy5kd2Y'
 
-    //const doc = await this.loadDocument(urn)
+    const doc = await this.loadDocument(urn)
 
-    //const path = this.getViewablePath(doc)
+    const path = this.getViewablePath(doc, 14)
 
     viewer.start()
 
-    const path = 'resources/models/dev/office/Resource/3D_View/3D/office.svf'
+    //const path = 'resources/models/dev/office/Resource/3D_View/3D/office.svf'
 
     //viewer.loadExtension('Autodesk.Viewing.ZoomWindow')
 
@@ -165,6 +165,9 @@ class TestView extends React.Component {
 
     viewer.addEventListener(Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT, (e) => {
 
+      const metadata = viewer.model.getData().metadata
+
+      console.log(metadata)
     })
 
     viewer.loadModel(path)
@@ -241,8 +244,6 @@ class TestView extends React.Component {
 }
 
 export default TestView
-
-
 
 
 

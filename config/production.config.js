@@ -38,7 +38,7 @@ const config = {
   },
 
   layouts: {
-    index: 'index.analytics.ejs'
+    index: 'production.index.ejs'
   },
 
   forge: {

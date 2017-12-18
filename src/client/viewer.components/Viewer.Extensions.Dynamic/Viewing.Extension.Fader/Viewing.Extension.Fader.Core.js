@@ -21,14 +21,14 @@ const attenuationVertexShader = `
   //attribute vec2 uv;
   //attribute vec2 uv2;
 
-  uniform vec3 mycolor;
-  uniform float opacity;
-  varying vec4 vcolor;
-
   uniform vec3 strength[4];
+  uniform float opacity;
+  uniform vec3 mycolor;
+
   varying vec4 worldCoord;
   varying vec3 vPosition;
-   varying vec2 vUv;
+  varying vec4 vcolor;
+  varying vec2 vUv;
 
   void main() {
       vPosition = normalize(position);
@@ -46,19 +46,8 @@ const attenuationFragmentShader = `
   //uniform mat4 viewMatrix;
   //uniform vec3 cameraPosition;
 
-  #define pi 3.141592653589793238462643383279
-
-  varying vec4 vcolor;
-
-  uniform vec3 strength[4];
-  varying vec4 worldCoord;
-  varying vec3 vPosition;
-  varying vec2 vUv;
-
-  vec3 c2 = vec3(1., .2, .2);
-  vec4 c24 = vec4(1., .2, .2, .9);
-
   uniform sampler2D checkerboard;
+  varying vec2 vUv;
 
   void main() {
     gl_FragColor = texture2D(checkerboard, vUv);

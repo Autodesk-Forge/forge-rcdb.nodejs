@@ -148,7 +148,7 @@ export default class ARVRToolkitSvc extends BaseSvc {
       `projects/${projectId}/` +
       `versions/${encodeURIComponent(versionId)}/` +
       `scenes/${sceneId}`
-    
+
     return this.requestAsync({
       json: true,
       token,

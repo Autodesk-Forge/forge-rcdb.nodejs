@@ -87,7 +87,7 @@
 }
 
 .config-manager .content > .controls button:hover:not(:disabled) > span {
-  color: #FF9800;
+  color: orange;
 }
 
 .config-manager .content > .controls button:disabled > span {
@@ -226,7 +226,7 @@
   transition-property: all;
   transition-delay: 0.0s;
 
-  background: #f58b00;
+  background: orange;
   border-radius: 4px;
   position: relative;
   outline: none;
@@ -237,7 +237,7 @@
 }
 
 .config-manager .items > .item > button:hover {
-  background: #ff9000;
+  background: orange;
 }
 
 .config-manager .items > .item > button > span,
@@ -249,7 +249,7 @@
 
   position: relative;
   color: #505050;
-  top: -4px;
+  top: -2px;
 }
 
 .config-manager .items > .item > button:hover > span {

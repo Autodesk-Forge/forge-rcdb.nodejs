@@ -1,0 +1,179 @@
+.pointcloud-markup {
+
+  .title {
+    display: inline-flex;
+    float: left;
+  }
+
+  .title > label {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    white-space: nowrap;
+    font-weight: normal;
+    user-select: none;
+    margin-left: 27px;
+    margin-top: 10px;
+    select: none;
+    width: 144px;
+    float: left;
+  }
+
+  .items {
+
+    overflow: scroll;
+    height: 100%;
+
+    .item {
+      transition-timing-function: ease;
+      transition-duration: 1.5s;
+      transition-property: all;
+      transition-delay: 0.0s;
+
+      border: 1px solid #aeaeae;
+      width: calc(100% - 10px);
+      background: #ededed;
+      white-space: nowrap;
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      height: 28px;
+      padding: 2px;
+      margin: 5px;
+
+      &.active {
+        background: rgba(0, 115, 255, 0.16);
+        border: 1px solid #1bb1f4;
+      }
+
+      &:hover:not(.active) {
+        background: rgba(0, 105, 245, 0.35);
+        border: 1px solid #1bb1f4;
+      }
+
+      &:hover {
+        .hover-controls {
+          display: block;
+        }
+      }
+
+      .tooltip-text {
+        background-color: #ededed !important;
+        border: 1px solid grey;
+        color: grey !important;
+        padding: 4px;
+      }
+
+      .label-container {
+        font-weight: bold;
+        text-align: left;
+        left: 4px;
+      }
+
+      .remove {
+        float: right;
+
+        span {
+          margin-right: 4px;
+          font-size: 22px;
+          color: #aeaeae;
+
+          &:hover {
+            color:orange;
+          }
+        }
+      }
+
+      .settings-btn {
+        background: transparent;
+        position: relative;
+        outline: none;
+        border: none;
+        height: 24px;
+        float: left;
+        left: -1px;
+        top: 0px;
+
+        span {
+          font-size: 20px;
+          color: #7a7a7a;
+
+          &:hover {
+            color: orange;
+          }
+        }
+      }
+    }
+  }
+}
+
+.pointcloud-markup-item.settings {
+
+  label {
+    width: 80px;
+    float: left;
+  }
+
+  hr {
+    width: calc(100% - 52px);
+    margin: 12px 0 12px 26px;
+    float: left;
+  }
+
+  .rc-slider {
+    float: left;
+  }
+
+  .rc-slider-handle {
+    border: solid 2px orange;
+  }
+
+  .rc-slider-track {
+    background-color: orange;
+  }
+
+  .switch-container {
+    border: 1px solid #7a7a7a;
+    border-radius: 10px;
+    float: left;
+
+    input[type="checkbox"].switch + div {
+      width: 34px;
+      height: 16px;
+    }
+
+    input[type="checkbox"].switch:checked + div {
+      background-color: orange;
+      width: 34px;
+    }
+
+    input[type="checkbox"].switch:checked + div > div {
+      transform: translate3d(18px, 0, 0);
+    }
+
+    input[type="checkbox"].switch + div > div {
+      height: 16px;
+      width: 16px;
+      margin: 0;
+    }
+  }
+
+  .footer {
+    height: 20px;
+    float: left;
+    width: 100%;
+  }
+}
+
+.pointcloud-tooltip {
+  transition-timing-function: ease;
+  transition-property: opacity;
+  transition-duration: 1.0s;
+  transition-delay: 0.0s;
+
+  position: absolute;
+  font-weight: bold;
+  color: orange;
+  display: none;
+  opacity: 0;
+}

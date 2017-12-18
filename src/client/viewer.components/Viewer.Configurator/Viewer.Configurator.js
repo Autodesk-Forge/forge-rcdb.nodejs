@@ -1079,11 +1079,3 @@ export default ViewerConfigurator
 
 
 
-
-
-
-
-
-
-
-

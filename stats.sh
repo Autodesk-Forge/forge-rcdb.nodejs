@@ -1,2 +1,2 @@
-sloc#!/bin/sh
+#!/usr/bin/env bash
 sloc ./src
