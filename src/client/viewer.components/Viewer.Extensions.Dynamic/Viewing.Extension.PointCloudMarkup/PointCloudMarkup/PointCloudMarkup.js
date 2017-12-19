@@ -254,6 +254,21 @@ export default class PointCloudMarkup extends EventsEmitter {
     const markup = this.getMarkupById(markupId)
 
     markup.occlusion = occlusion
+
+    if (occlusion) {
+
+      const occluded = this.checkOcclusion(markup)
+
+      this.setMarkupSize (markup.id,
+        occluded ? 0.0 : markup.size,
+        true)
+
+    } else {
+
+      this.setMarkupSize (markup.id,
+        markup.size,
+        true)
+    }
   }
 
   /////////////////////////////////////////////////////////

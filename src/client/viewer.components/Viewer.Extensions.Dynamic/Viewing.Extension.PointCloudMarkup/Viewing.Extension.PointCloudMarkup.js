@@ -93,8 +93,6 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
 
     this.eventTool.on ('singleclick', this.onClick)
 
-    this.eventTool.activate()
-
     console.log('Viewing.Extension.PointCloudMarkup loaded')
 
     return true
@@ -139,6 +137,8 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
     this.react.setState({
       showLoader: false
     })
+
+    this.eventTool.activate()
 
     this.tooltip.activate()
   }
@@ -360,3 +360,5 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
 Autodesk.Viewing.theExtensionManager.registerExtension(
   PointCloudMarkupExtension.ExtensionId,
   PointCloudMarkupExtension)
+
+
