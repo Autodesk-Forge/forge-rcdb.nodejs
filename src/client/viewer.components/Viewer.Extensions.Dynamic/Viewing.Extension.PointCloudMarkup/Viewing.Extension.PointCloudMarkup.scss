@@ -173,7 +173,9 @@
 
   position: absolute;
   font-weight: bold;
+  overflow: hidden;
   color: orange;
   display: none;
+  height: 20px;
   opacity: 0;
 }

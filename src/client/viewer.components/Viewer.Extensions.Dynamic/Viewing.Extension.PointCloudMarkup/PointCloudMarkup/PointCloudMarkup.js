@@ -94,7 +94,7 @@ export default class PointCloudMarkup extends EventsEmitter {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Returns markup from markupId
   //
   /////////////////////////////////////////////////////////
   getMarkupById (markupId) {
@@ -108,7 +108,7 @@ export default class PointCloudMarkup extends EventsEmitter {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Set markup size
   //
   /////////////////////////////////////////////////////////
   setMarkupSize (markupId, size, override) {
@@ -117,20 +117,34 @@ export default class PointCloudMarkup extends EventsEmitter {
 
     const markup = this.getMarkupById(markupId)
 
-    pointSize.value[markup.index] = size
+    if (override) {
+
+      pointSize.value[markup.index] = size
+
+    } else if (markup.visible) {
+
+      if (markup.occlusion) {
+
+        if (!this.checkOcclusion(markup)) {
+
+          pointSize.value[markup.index] = size
+        }
+
+      } else {
+
+        pointSize.value[markup.index] = size
+      }
+    }
+
+    markup.size = !override ? size : markup.size
 
     pointSize.needsUpdate = true
-
-    if (!override) {
-
-      markup.size = size
-    }
 
     this.viewer.impl.invalidate (true)
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Adds new markup
   //
   /////////////////////////////////////////////////////////
   addMarkup (markupInfo) {
@@ -167,7 +181,7 @@ export default class PointCloudMarkup extends EventsEmitter {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Removes markup
   //
   /////////////////////////////////////////////////////////
   removeMarkup (markupId) {
@@ -209,7 +223,7 @@ export default class PointCloudMarkup extends EventsEmitter {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Clear all markups
   //
   /////////////////////////////////////////////////////////
   clearMarkups () {
@@ -231,22 +245,20 @@ export default class PointCloudMarkup extends EventsEmitter {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Set markup visibility: to hide markup, set size to 0
   //
   /////////////////////////////////////////////////////////
-  setMarkupVisibility (markupId, show) {
+  setMarkupVisibility (markupId, visible) {
 
     const markup = this.getMarkupById(markupId)
 
-    this.setMarkupSize (markupId,
-      show ? markup.size : 0.0,
-      true)
+    markup.visible = visible
 
-    markup.visible = show
+    this.updateMarkup (markup)
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Set markup occlusion property
   //
   /////////////////////////////////////////////////////////
   setMarkupOcclusion (markupId, occlusion) {
@@ -255,36 +267,52 @@ export default class PointCloudMarkup extends EventsEmitter {
 
     markup.occlusion = occlusion
 
-    if (occlusion) {
+    this.updateMarkup (markup)
+  }
 
-      const occluded = this.checkOcclusion(markup)
+  /////////////////////////////////////////////////////////
+  // Update markup
+  //
+  /////////////////////////////////////////////////////////
+  updateMarkup (markup) {
 
-      this.setMarkupSize (markup.id,
-        occluded ? 0.0 : markup.size,
-        true)
+    if (markup.visible) {
+
+      if (markup.occlusion) {
+
+        const occluded = this.checkOcclusion(markup)
+
+        this.setMarkupSize (markup.id,
+          occluded ? 0.0 : markup.size,
+          true)
+
+      } else {
+
+        this.setMarkupSize (markup.id,
+          markup.size,
+          true)
+      }
 
     } else {
 
       this.setMarkupSize (markup.id,
-        markup.size,
-        true)
+        0.0, true)
     }
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Get markups state
   //
   /////////////////////////////////////////////////////////
   getState () {
 
     return {
-      markups: this.markups,
-      options: this.options
+      markups: this.markups
     }
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Restore state
   //
   /////////////////////////////////////////////////////////
   restoreState (state = {}) {
@@ -301,7 +329,7 @@ export default class PointCloudMarkup extends EventsEmitter {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Camera Changed event handler
   //
   /////////////////////////////////////////////////////////
   onCameraChanged () {
@@ -361,7 +389,8 @@ export default class PointCloudMarkup extends EventsEmitter {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Occlusion check: return true if markup
+  // is being occluded
   //
   /////////////////////////////////////////////////////////
   checkOcclusion (markup) {
@@ -420,12 +449,13 @@ export default class PointCloudMarkup extends EventsEmitter {
     const {dbIdToIndex} = instanceTree.nodeAccess
 
     return Object.keys(dbIdToIndex).map((dbId) => {
+
       return parseInt(dbId)
     })
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Removes everything
   //
   /////////////////////////////////////////////////////////
   destroy () {
