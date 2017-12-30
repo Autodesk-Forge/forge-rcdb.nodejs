@@ -11,7 +11,7 @@ import './Viewing.Extension.PieChart.scss'
 import transform from 'lodash/transform'
 import Toolkit from 'Viewer.Toolkit'
 import sortBy from 'lodash/sortBy'
-import PieChart from 'PieChart'
+import PieChart from 'ReactPie'
 import React from 'react'
 import d3 from 'd3'
 
@@ -376,7 +376,8 @@ class PieChartExtension extends MultiModelExtensionBase {
         shortLabel: key,
         percent,
         dbIds,
-        color
+        color,
+        key
       }
     })
 
@@ -395,10 +396,6 @@ class PieChartExtension extends MultiModelExtensionBase {
       height: Math.min(
         $('.pie-chart').height() - 42,
         state.items.length * 26 + 16)
-    })
-
-    this.react.setState({
-      guid: this.guid()
     })
   }
 
@@ -466,9 +463,9 @@ class PieChartExtension extends MultiModelExtensionBase {
 
         <Loader show={state.showLoader}/>
 
-        <PieChart onGroupClicked={(e) => {
+        <PieChart onSegmentClicked={(data, expanded) => {
 
-            const dbIds = e.expanded ? [] : e.data.dbIds
+            const dbIds = expanded ? [] : data.dbIds
 
             Toolkit.isolateFull(
               this.viewer,
@@ -476,7 +473,7 @@ class PieChartExtension extends MultiModelExtensionBase {
 
             this.viewer.fitToView()
           }}
-          guid={state.guid}
+          dataGuid={state.guid}
           data={state.data}
         />
       </WidgetContainer>

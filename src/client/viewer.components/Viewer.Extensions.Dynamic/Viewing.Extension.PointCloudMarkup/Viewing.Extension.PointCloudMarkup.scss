@@ -3,6 +3,23 @@
   .title {
     display: inline-flex;
     float: left;
+
+    .settings-btn {
+      background: whitesmoke;
+      outline: none;
+      border: none;
+
+      span {
+        position: relative;
+        font-size: 23px;
+        color: gray;
+        top: 2px;
+
+        &:hover{
+          color: orange;
+        }
+      }
+    }
   }
 
   .title > label {
@@ -107,7 +124,9 @@
   }
 }
 
-.pointcloud-markup-item.settings {
+
+.pointcloud-markup-item.settings,
+.pointcloud-markup.settings {
 
   label {
     width: 80px;

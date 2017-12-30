@@ -37,6 +37,8 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
     this.onMarkupRemoved = this.onMarkupRemoved.bind(this)
     this.onMarkupClicked = this.onMarkupClicked.bind(this)
     this.onMarkupVisible = this.onMarkupVisible.bind(this)
+    this.onMouseMove = this.onMouseMove.bind(this)
+    this.animate = this.animate.bind(this)
     this.onClick = this.onClick.bind(this)
 
     this.tooltip = new ViewerTooltip(this.viewer, {
@@ -53,6 +55,8 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
       this.viewer)
 
     this.react = options.react
+
+    this.runAnimation = false
   }
 
   /////////////////////////////////////////////////////////
@@ -83,6 +87,7 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
 
     this.react.setState({
 
+      runAnimation: false,
       showLoader: true,
       markups: []
 
@@ -90,6 +95,8 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
 
       this.react.pushRenderExtension(this)
     })
+
+    this.eventTool.on ('mousemove', this.onMouseMove)
 
     this.eventTool.on ('singleclick', this.onClick)
 
@@ -112,9 +119,40 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
 
     this.eventTool.off ()
 
+    this.animate (false)
+
     super.unload ()
 
     return true
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async animate (run) {
+
+    await this.react.setState({
+      runAnimation: run
+    })
+
+    const loop = (t) => {
+
+      const {runAnimation} = this.react.getState()
+
+      if (runAnimation) {
+
+        window.requestAnimationFrame(loop)
+
+        this.pointCloudMarkup.update(t)
+
+      } else {
+
+        this.pointCloudMarkup.stopAnimation()
+      }
+    }
+
+    loop (0.0)
   }
 
   /////////////////////////////////////////////////////////
@@ -141,6 +179,20 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
     this.eventTool.activate()
 
     this.tooltip.activate()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onMouseMove(event) {
+
+    const markups = this.pointCloudMarkup.getSelection({
+      x:  event.clientX,
+      y:  event.clientY
+    })
+
+    markups.length && console.log(markups)
   }
 
   /////////////////////////////////////////////////////////
@@ -324,13 +376,49 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  renderSettings (animation) {
+
+    return (
+      <Popover
+        className="pointcloud-markup settings"
+        title="PointCloud Markup Settings"
+        id="settings">
+
+        <label>
+          Animation:
+        </label>
+
+        <Switch onChange={this.animate}
+          checked={animation}
+        />
+
+        <div className="footer"/>
+
+      </Popover>
+    )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   renderTitle () {
+
+    const {runAnimation} = this.react.getState()
 
     return (
       <div className="title">
         <label>
           PointCloud Markups
         </label>
+        <OverlayTrigger trigger="click"
+          overlay={this.renderSettings(runAnimation)}
+          placement="bottom"
+          rootClose>
+          <button className="settings-btn" title="Settings">
+            <span className="fa fa-cog"/>
+          </button>
+        </OverlayTrigger>
       </div>
     )
   }

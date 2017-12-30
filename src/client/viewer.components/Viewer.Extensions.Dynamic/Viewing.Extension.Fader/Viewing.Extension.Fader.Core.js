@@ -8,43 +8,31 @@ import Toolkit from 'Viewer.Toolkit'
 const attenuationVertexShader = `
   // See http://threejs.org/docs/api/renderers/webgl/WebGLProgram.html for variables
   // Default uniforms (do not add)
-  //uniform mat4 modelMatrix;
-  //uniform mat4 modelViewMatrix;
   //uniform mat4 projectionMatrix;
-  //uniform mat4 viewMatrix;
-  //uniform mat3 normalMatrix;
+  //uniform mat4 modelViewMatrix;
   //uniform vec3 cameraPosition;
+  //uniform mat3 normalMatrix;
+  //uniform mat4 modelMatrix;
+  //uniform mat4 viewMatrix;
 
   // Default attributes (do not add)
   //attribute vec3 position;
   //attribute vec3 normal;
-  //attribute vec2 uv;
   //attribute vec2 uv2;
+  //attribute vec2 uv;
 
-  uniform vec3 strength[4];
-  uniform float opacity;
-  uniform vec3 mycolor;
-
-  varying vec4 worldCoord;
-  varying vec3 vPosition;
-  varying vec4 vcolor;
   varying vec2 vUv;
 
   void main() {
-      vPosition = normalize(position);
-      vcolor = vec4(mycolor, opacity);
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
       vUv = uv;
-
-      vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-      worldCoord = modelMatrix * vec4(position, 1.0);
-      gl_Position = projectionMatrix * mvPosition;
   }
 `
 
 const attenuationFragmentShader = `
   // Default uniforms (do not add)
-  //uniform mat4 viewMatrix;
   //uniform vec3 cameraPosition;
+  //uniform mat4 viewMatrix;
 
   uniform sampler2D checkerboard;
   varying vec2 vUv;
@@ -496,8 +484,8 @@ class FaderExtension extends MultiModelExtensionBase {
       this._rayTraceGrid, this._rayTraceGrid,
       THREE.RGBAFormat,
       THREE.UnsignedByteType,
-      THREE.UVMapping
-    )
+      THREE.UVMapping)
+
     dataTexture.minFilter = THREE.LinearMipMapLinearFilter // THREE.LinearMipMapLinearFilter
     dataTexture.magFilter = this._texFilter // THREE.LinearFilter // THREE.NearestFilter
     dataTexture.needsUpdate = true
@@ -519,21 +507,6 @@ class FaderExtension extends MultiModelExtensionBase {
 
     const uniforms = {
       resolution: {
-        value: 1
-      },
-      mycolor: {
-        type: 'c',
-        value: {
-          r: 0.2,
-          g: 1,
-          b: 0.5
-        }
-      },
-      opacity: {
-        type: 'f',
-        value: 0.9
-      },
-      time: {
         value: 1
       }
     }

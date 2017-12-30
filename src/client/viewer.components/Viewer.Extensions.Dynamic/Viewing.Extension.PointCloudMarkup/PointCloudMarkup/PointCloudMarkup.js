@@ -1,5 +1,12 @@
+///////////////////////////////////////////////////////////
+// PointCloudMarkup: high-perf markup 3D for Forge Viewer
+// by Philippe Leefsma, December 2017
+//
+///////////////////////////////////////////////////////////
 import EventsEmitter from 'EventsEmitter'
+import throttle from 'lodash/throttle'
 import defaultTex from './texture.png'
+import Stopwatch from 'Stopwatch'
 
 export default class PointCloudMarkup extends EventsEmitter {
 
@@ -21,6 +28,39 @@ export default class PointCloudMarkup extends EventsEmitter {
       Autodesk.Viewing.CAMERA_CHANGE_EVENT,
       this.onCameraChanged)
 
+    // Initialize geometry vertices
+    // and shader attribute colors
+    this.geometry = new THREE.Geometry()
+
+    const maxPoints = options.maxPoints || 10000
+
+    for (var i = 0; i < maxPoints; ++i) {
+
+      this.geometry.vertices.push(new THREE.Vector3)
+    }
+
+    this.shader = this.createShader(options)
+
+    // creates THREE.PointCloud
+    this.pointCloud = new THREE.PointCloud(
+      this.geometry, this.shader.material)
+
+    // adds to the viewer scene
+    this.viewer.impl.sceneAfter.add(this.pointCloud)
+
+    //this.update = throttle(this.update, 10)
+
+    this.options = options
+
+    this.markups = []
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  createShader (options) {
+
     // Vertex Shader code
     const vertexShader = options.vertexShader || `
       attribute float pointSize;
@@ -36,7 +76,7 @@ export default class PointCloudMarkup extends EventsEmitter {
       uniform sampler2D texture;
       void main() {
         vec4 tex = texture2D(texture, gl_PointCoord);
-        if (tex.a < 0.5) discard;
+        if (tex.a < 0.2) discard;
         gl_FragColor = vec4(tex.r, tex.g, tex.b, tex.a);
       }
     `
@@ -45,52 +85,132 @@ export default class PointCloudMarkup extends EventsEmitter {
 
     // Shader material parameters
     const shaderParams = options.shaderParams || {
-      side: THREE.DoubleSide,
-      depthWrite: false,
-      depthTest: false,
-      fragmentShader,
-      vertexShader,
-      opacity: 0.5,
-      attributes: {
-        pointSize: {
-          type: 'f',
-          value: []
-        }
-      },
-      uniforms: {
-        texture: {
-          value: THREE.ImageUtils.loadTexture(texture),
-          type: 't'
+        side: THREE.DoubleSide,
+        depthWrite: false,
+        depthTest: false,
+        fragmentShader,
+        vertexShader,
+        opacity: 0.5,
+        attributes: {
+          pointSize: {
+            type: 'f',
+            value: []
+          }
+        },
+        uniforms: {
+          texture: {
+            value: THREE.ImageUtils.loadTexture(texture),
+            type: 't'
+          }
         }
       }
-    }
-
-    // Initialize geometry vertices
-    // and shader attribute colors
-    this.geometry = new THREE.Geometry()
-
-    const maxPoints = options.maxPoints || 10000
-
-    for (var i = 0; i < maxPoints; ++i) {
-
-      this.geometry.vertices.push(new THREE.Vector3)
-    }
 
     // creates shader material
-    const shaderMaterial =
+    const material =
       new THREE.ShaderMaterial(
         shaderParams)
 
-    // creates THREE.PointCloud
-    this.pointCloud = new THREE.PointCloud(
-      this.geometry, shaderMaterial)
+    const generateTexture = (size, radius) => {
 
-    // adds to the viewer scene
-    this.viewer.impl.sceneAfter.add(this.pointCloud)
+      const pixels = []
 
-    this.options = options
+      for (let u = 0; u < size; ++u) {
 
-    this.markups = []
+        for (let v = 0; v < size ; ++v) {
+
+          const dist = Math.sqrt(
+            (u/size - 0.5) * (u/size - 0.5) +
+            (v/size - 0.5) * (v/size - 0.5))
+
+         if (dist < 0.1) {
+
+           pixels.push(0xff, 0x00, 0x00, 0xff)
+
+         } else if (dist < (radius - 0.05)) {
+
+            pixels.push(0xff, 0x00, 0x00, 0x00)
+
+          } else if (dist < radius) {
+
+            pixels.push(0xff, 0x00, 0x00, 0xff)
+
+          } else {
+
+            pixels.push(0x00, 0x00, 0x00, 0x00)
+          }
+        }
+      }
+
+      const dataTexture = new THREE.DataTexture (
+        Uint8Array.from (pixels),
+        size, size,
+        THREE.RGBAFormat,
+        THREE.UnsignedByteType,
+        THREE.UVMapping
+      )
+
+      dataTexture.minFilter = THREE.LinearMipMapLinearFilter
+      dataTexture.magFilter = THREE.LinearFilter // THREE.NearestFilter
+      dataTexture.needsUpdate = true
+
+      return dataTexture
+    }
+
+    const stopwatch = new Stopwatch()
+
+    let radius = 0.0
+
+    return {
+      setTexture: (tex) => {
+
+        const {texture} = shaderParams.uniforms
+
+        texture.value = THREE.ImageUtils.loadTexture(tex)
+
+        texture.needsUpdate = true
+
+      },
+      update: () => {
+
+        const dt = stopwatch.getElapsedMs() * 0.001
+
+        radius += dt * 0.25
+
+        radius = radius > 0.5 ? 0.0 : radius
+
+        const {texture} = shaderParams.uniforms
+
+        texture.value = generateTexture(96, radius)
+
+        texture.needsUpdate = true
+
+      },
+      material
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  stopAnimation () {
+
+    const texture = this.options.texture || defaultTex
+
+    this.shader.setTexture(texture)
+
+    this.viewer.impl.invalidate (true)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  update (t) {
+
+    this.shader.update(t)
+
+    this.viewer.impl.invalidate (true)
   }
 
   /////////////////////////////////////////////////////////
@@ -389,6 +509,44 @@ export default class PointCloudMarkup extends EventsEmitter {
   }
 
   /////////////////////////////////////////////////////////
+  // Returns array of selected markups for given screenPoint
+  //
+  /////////////////////////////////////////////////////////
+  getSelection (screenPoint, treshold = 0.9) {
+
+    const rayCaster = this.pointToRaycaster(
+      this.viewer.impl.canvas,
+      this.viewer.impl.camera, {
+        x: screenPoint.x,
+        y: screenPoint.y
+      })
+
+    const res = rayCaster.intersectObjects(
+      [this.pointCloud], true)
+
+    if (res.length) {
+
+      return this.markups.filter((markup) => {
+
+        const diff = {
+          x: res[0].point.x - markup.point.x,
+          y: res[0].point.y - markup.point.y,
+          z: res[0].point.z - markup.point.z
+        }
+
+        const dist = Math.sqrt(
+          diff.x * diff.x +
+          diff.y * diff.y +
+          diff.z * diff.z)
+
+        return dist < treshold
+      })
+    }
+
+    return []
+  }
+
+  /////////////////////////////////////////////////////////
   // Occlusion check: return true if markup
   // is being occluded
   //
@@ -398,11 +556,13 @@ export default class PointCloudMarkup extends EventsEmitter {
     const clientPoint = this.viewer.worldToClient(
       markup.point)
 
+    const offset = $(this.viewer.container).offset()
+
     const rayCaster = this.pointToRaycaster(
       this.viewer.impl.canvas,
       this.viewer.impl.camera, {
-        y: clientPoint.y + 65,
-        x: clientPoint.x
+        x: clientPoint.x + offset.left,
+        y: clientPoint.y + offset.top
       })
 
     const hitTest = this.viewer.model.rayIntersect(

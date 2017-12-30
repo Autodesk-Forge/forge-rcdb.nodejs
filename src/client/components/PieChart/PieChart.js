@@ -34,7 +34,7 @@ class PieChart extends React.Component {
   /////////////////////////////////////////////////////////
   shouldComponentUpdate (nextProps) {
 
-    if (nextProps.guid !== this.props.guid) {
+    if (nextProps.dataGuid !== this.props.dataGuid) {
 
       return true
     }
@@ -123,9 +123,10 @@ class PieChart extends React.Component {
       callbacks: {
         onClickSegment: (event) => {
 
-          if (this.props.onGroupClicked) {
+          if (this.props.onSegmentClicked) {
 
-            this.props.onGroupClicked (event)
+            this.props.onSegmentClicked (
+              event.data, event.expanded)
           }
         }
       },

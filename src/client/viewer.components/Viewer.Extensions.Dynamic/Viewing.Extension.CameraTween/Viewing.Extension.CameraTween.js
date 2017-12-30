@@ -7,7 +7,7 @@ import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import ContentEditable from 'react-contenteditable'
 import WidgetContainer from 'WidgetContainer'
 import './Viewing.Extension.CameraTween.scss'
-import TWEEN from '@tweenjs/tween.js'
+import Tween from '@tweenjs/tween.js'
 import Toolkit from 'Viewer.Toolkit'
 import { ReactLoader } from 'Loader'
 import ReactDOM from 'react-dom'
@@ -23,73 +23,73 @@ class CameraTweenExtension extends MultiModelExtensionBase {
 
   static EASINGS = [
     {
-      id: TWEEN.Easing.Linear.None,
+      id: Tween.Easing.Linear.None,
       name: 'Linear'
     },
 
     {
-      id: TWEEN.Easing.Quadratic.In,
+      id: Tween.Easing.Quadratic.In,
       name: 'Quadratic.In'
     },
     {
-      id: TWEEN.Easing.Quadratic.Out,
+      id: Tween.Easing.Quadratic.Out,
       name: 'Quadratic.Out'
     },
     {
-      id: TWEEN.Easing.Quadratic.InOut,
+      id: Tween.Easing.Quadratic.InOut,
       name: 'Quadratic.InOut'
     },
 
     {
-      id: TWEEN.Easing.Cubic.In,
+      id: Tween.Easing.Cubic.In,
       name: 'Cubic.In'
     },
     {
-      id: TWEEN.Easing.Cubic.Out,
+      id: Tween.Easing.Cubic.Out,
       name: 'Cubic.Out'
     },
     {
-      id: TWEEN.Easing.Cubic.InOut,
+      id: Tween.Easing.Cubic.InOut,
       name: 'Cubic.InOut'
     },
 
 
     {
-      id: TWEEN.Easing.Quartic.In,
+      id: Tween.Easing.Quartic.In,
       name: 'Quartic.In'
     },
     {
-      id: TWEEN.Easing.Quartic.Out,
+      id: Tween.Easing.Quartic.Out,
       name: 'Quartic.Out'
     },
     {
-      id: TWEEN.Easing.Quartic.InOut,
+      id: Tween.Easing.Quartic.InOut,
       name: 'Quartic.InOut'
     },
 
     {
-      id: TWEEN.Easing.Quintic.In,
+      id: Tween.Easing.Quintic.In,
       name: 'Quintic.In'
     },
     {
-      id: TWEEN.Easing.Quintic.Out,
+      id: Tween.Easing.Quintic.Out,
       name: 'Quintic.Out'
     },
     {
-      id: TWEEN.Easing.Quintic.InOut,
+      id: Tween.Easing.Quintic.InOut,
       name: 'Quintic.InOut'
     },
 
     {
-      id: TWEEN.Easing.Exponential.In,
+      id: Tween.Easing.Exponential.In,
       name: 'Exponential.In'
     },
     {
-      id: TWEEN.Easing.Exponential.Out,
+      id: Tween.Easing.Exponential.Out,
       name: 'Exponential.Out'
     },
     {
-      id: TWEEN.Easing.Exponential.InOut,
+      id: Tween.Easing.Exponential.InOut,
       name: 'Exponential.InOut'
     }
   ]
@@ -120,15 +120,15 @@ class CameraTweenExtension extends MultiModelExtensionBase {
       upTweenDuration: 2500,
 
       targetTweenEasing: {
-        id: TWEEN.Easing.Linear.None,
+        id: Tween.Easing.Linear.None,
         name: 'Linear'
       },
       posTweenEasing: {
-        id: TWEEN.Easing.Linear.None,
+        id: Tween.Easing.Linear.None,
         name: 'Linear'
       },
       upTweenEasing: {
-        id: TWEEN.Easing.Linear.None,
+        id: Tween.Easing.Linear.None,
         name: 'Linear'
       },
 
@@ -224,7 +224,7 @@ class CameraTweenExtension extends MultiModelExtensionBase {
 
     return new Promise ((resolve) => {
 
-      new TWEEN.Tween(params.object)
+      new Tween.Tween(params.object)
         .to(params.to, params.duration)
         .onComplete(() => resolve())
         .onUpdate(params.onUpdate)
@@ -330,7 +330,7 @@ class CameraTweenExtension extends MultiModelExtensionBase {
       this.animId = window.requestAnimationFrame(
         this.runAnimation)
 
-      TWEEN.update()
+      Tween.update()
     }
   }
 

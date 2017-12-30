@@ -29,9 +29,9 @@ class PropertyPieChart extends React.Component {
           </label>
         </div>
 
-        <PieChart onGroupClicked={(e) => {
+        <PieChart onSegmentClicked={(data, expanded) => {
 
-            const dbIds = e.expanded ? [] : e.data.dbIds
+            const dbIds = expanded ? [] : data.dbIds
 
             Toolkit.isolateFull(
               viewer,
@@ -39,7 +39,7 @@ class PropertyPieChart extends React.Component {
 
             viewer.fitToView()
           }}
-          guid={guid}
+          dataGuid={guid}
           data={data}
         />
 

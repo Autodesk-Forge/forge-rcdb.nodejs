@@ -226,6 +226,17 @@ class DatabaseCostBreakdownExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  onStopResize () {
+
+    this.react.setState({
+      guid: this.guid()
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   onItemSelected (item) {
 
     this.emit('item.selected', item)
@@ -239,17 +250,6 @@ class DatabaseCostBreakdownExtension extends MultiModelExtensionBase {
 
     this.react.setState({
       selectedItem: item
-    })
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  onStopResize () {
-
-    this.react.setState({
-      guid: this.guid()
     })
   }
 
@@ -324,7 +324,7 @@ class CostGraphContainer extends BaseComponent {
 
     super ()
 
-    this.onPieGroupClicked = this.onPieGroupClicked.bind(this)
+    this.onSegmentClicked = this.onSegmentClicked.bind(this)
 
     this.state = {
       showPie: false
@@ -341,8 +341,10 @@ class CostGraphContainer extends BaseComponent {
 
     const height = domElement.offsetHeight
 
+    const showPie = !!(height > 220)
+
     this.assignState({
-      showPie: !!(height > 220)
+      showPie
     })
   }
 
@@ -350,10 +352,10 @@ class CostGraphContainer extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
-  onPieGroupClicked (group) {
+  onSegmentClicked (data, expanded) {
 
-    const item = !group.expanded
-      ? group.data.item
+    const item = !expanded
+      ? data.item
       : null
 
     this.props.onItemSelected (item)
@@ -368,8 +370,7 @@ class CostGraphContainer extends BaseComponent {
     const {
       onItemSelected,
       legendData,
-      pieData,
-      guid
+      pieData
     } = this.props
 
     return (
@@ -387,13 +388,14 @@ class CostGraphContainer extends BaseComponent {
           this.state.showPie &&
           <ReflexElement>
             <div style={{
+              background: '#fdfdfd',
               paddingTop:'10px',
               height: '100%'
               }}>
               <PieChart
-                onGroupClicked={this.onPieGroupClicked}
+                onSegmentClicked={this.onSegmentClicked}
+                dataGuid={this.props.guid}
                 data={pieData}
-                guid={guid}
               />
             </div>
           </ReflexElement>
