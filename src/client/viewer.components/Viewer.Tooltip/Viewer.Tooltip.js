@@ -161,8 +161,10 @@ export default class ViewerTooltip extends EventsEmitter {
 
       this.timeout = setTimeout(() => {
 
-        this.viewer.toolController.deactivateTool(
-          this.getName())
+        if (this.viewer.toolController) {
+          this.viewer.toolController.deactivateTool(
+            this.getName())
+        }
 
         $(this.tooltipSelector).css({
           display: 'none',
@@ -172,10 +174,6 @@ export default class ViewerTooltip extends EventsEmitter {
         this.active = false
 
       }, delay)
-
-      //$(this.tooltipSelector).velocity({
-      //
-      //})
 
       this.pointerVisible = false
 

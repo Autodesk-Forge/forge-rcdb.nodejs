@@ -10,9 +10,11 @@ import './Viewing.Extension.PointCloudMarkup.scss'
 import PointCloudMarkup from './PointCloudMarkup'
 import WidgetContainer from 'WidgetContainer'
 import {ReactLoader as Loader} from 'Loader'
+import { ChromePicker } from 'react-color'
 import ViewerTooltip from 'Viewer.Tooltip'
 import EventTool from 'Viewer.EventTool'
 import 'rc-tooltip/assets/bootstrap.css'
+import ServiceManager from 'SvcManager'
 import 'rc-slider/assets/index.css'
 import Tooltip from 'rc-tooltip'
 import Slider from 'rc-slider'
@@ -32,12 +34,15 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
 
     this.onMarkupSettingsChanged = this.onMarkupSettingsChanged.bind(this)
     this.onMarkupSizeChanged = this.onMarkupSizeChanged.bind(this)
+    this.onMarkupNameChanged = this.onMarkupNameChanged.bind(this)
     this.onMarkupOcclusion = this.onMarkupOcclusion.bind(this)
     this.onMarkupsUpdated = this.onMarkupsUpdated.bind(this)
     this.onMarkupRemoved = this.onMarkupRemoved.bind(this)
     this.onMarkupClicked = this.onMarkupClicked.bind(this)
     this.onMarkupVisible = this.onMarkupVisible.bind(this)
+    this.onClearMarkups = this.onClearMarkups.bind(this)
     this.onMouseMove = this.onMouseMove.bind(this)
+    this.onActivate = this.onActivate.bind(this)
     this.animate = this.animate.bind(this)
     this.onClick = this.onClick.bind(this)
 
@@ -50,6 +55,9 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
       <div id="pointcloud-tooltipId" class="pointcloud-tooltip">
           Specify markup position ...
       </div>`, '#pointcloud-tooltipId')
+
+    this.dialogSvc =
+      ServiceManager.getService('DialogSvc')
 
     this.eventTool = new EventTool(
       this.viewer)
@@ -83,22 +91,31 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   load () {
 
+    this.viewer.setProgressiveRendering(false)
+
     this.options.loader.show(false)
 
     this.react.setState({
 
-      runAnimation: false,
+      runAnimation: true,
       showLoader: true,
+      activated: true,
       markups: []
 
-    }).then (() => {
+    }).then (async() => {
 
-      this.react.pushRenderExtension(this)
+      await this.react.pushRenderExtension(this)
+
+      const model = this.viewer.activeModel ||
+        this.viewer.model
+
+      if (model) {
+
+        this.onObjectTreeCreated ()
+      }
     })
 
     this.eventTool.on ('mousemove', this.onMouseMove)
-
-    this.eventTool.on ('singleclick', this.onClick)
 
     console.log('Viewing.Extension.PointCloudMarkup loaded')
 
@@ -113,15 +130,15 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
 
     console.log('Viewing.Extension.PointCloudMarkup unloaded')
 
-    this.pointCloudMarkup.destroy ()
+    this.pointCloudMarkup.destroy()
 
-    this.eventTool.deactivate ()
+    this.eventTool.deactivate()
 
-    this.eventTool.off ()
+    this.tooltip.deactivate()
 
-    this.animate (false)
+    this.eventTool.off()
 
-    super.unload ()
+    super.unload()
 
     return true
   }
@@ -130,27 +147,47 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  async animate (run) {
+  onActivate (activated) {
 
-    await this.react.setState({
-      runAnimation: run
+    if (activated) {
+
+      this.eventTool.on ('singleclick', this.onClick)
+      this.tooltip.activate()
+
+    } else {
+
+      this.eventTool.off ('singleclick', this.onClick)
+      this.tooltip.deactivate()
+    }
+
+    this.react.setState({
+      activated
     })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  animate (run) {
+
+    run
+      ? this.pointCloudMarkup.startAnimation()
+      : this.pointCloudMarkup.stopAnimation()
 
     const loop = (t) => {
 
-      const {runAnimation} = this.react.getState()
-
-      if (runAnimation) {
+      if (this.pointCloudMarkup.runAnimation) {
 
         window.requestAnimationFrame(loop)
 
         this.pointCloudMarkup.update(t)
-
-      } else {
-
-        this.pointCloudMarkup.stopAnimation()
       }
     }
+
+    this.react.setState({
+      runAnimation: run
+    })
 
     loop (0.0)
   }
@@ -160,6 +197,11 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
   //
   /////////////////////////////////////////////////////////
   onObjectTreeCreated () {
+
+    const {
+      runAnimation,
+      activated
+    } = this.react.getState()
 
     this.pointCloudMarkup = new PointCloudMarkup(
       this.viewer, this.options.pointCloudMarkup)
@@ -176,9 +218,11 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
       showLoader: false
     })
 
-    this.eventTool.activate()
+    this.animate (runAnimation)
 
-    this.tooltip.activate()
+    this.onActivate(activated)
+
+    this.eventTool.activate()
   }
 
   /////////////////////////////////////////////////////////
@@ -295,6 +339,18 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  onMarkupNameChanged (markupId, name) {
+
+    this.pointCloudMarkup.setMarkupData (
+      markupId, {
+        name
+      })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   onMarkupSizeChanged (markupId, size) {
 
     this.pointCloudMarkup.setMarkupSize (
@@ -305,10 +361,10 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onMarkupVisible (markupId, show) {
+  onMarkupVisible (markupId, visible) {
 
     this.pointCloudMarkup.setMarkupVisibility (
-      markupId, show)
+      markupId, visible)
   }
 
   /////////////////////////////////////////////////////////
@@ -345,22 +401,97 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  onClearMarkups () {
+
+    this.pointCloudMarkup.clearMarkups()
+
+    this.react.setState({
+      markups: []
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onColorPick (markup) {
+
+    const clr = markup.color
+
+    const rgb =  `rgb(${clr.x*255},${clr.y*255},${clr.z*255})`
+
+    this.dialogSvc.setState({
+      className: 'color-picker-dlg',
+      title: 'Select Color ...',
+      showCancel: false,
+      content:
+        <div>
+          <ChromePicker
+            onChangeComplete={(c) => this.onColorPicked(markup, c)}
+            color={rgb}
+          />
+        </div>,
+      open: true
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onColorPicked (markup, color) {
+
+   const { r, g, b } = color.rgb
+
+    this.pointCloudMarkup.setMarkupColor (
+      markup.id,
+      new THREE.Vector4(r/255.0, g/255.0, b/255.0, 1))
+
+    this.onMarkupsUpdated()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onMarkupItemHover (markup, hover) {
+
+    if (this.pointCloudMarkup.runAnimation) {
+
+      const color = hover
+        ? new THREE.Vector4(0, 115/255, 1, 1)
+        : markup.color
+
+      this.pointCloudMarkup.setMarkupColor (
+        markup.id, color, true)
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   renderMarkups () {
 
-    const { markups } = this.react.getState()
+    const { markups, runAnimation } = this.react.getState()
 
     const items = markups.map((markup) => {
 
       return (
         <PointCloudMarkupItem
+          onMouseLeave={() => this.onMarkupItemHover(markup, false)}
+          onMouseEnter={() => this.onMarkupItemHover(markup, true)}
+          onIconClicked={() => this.onColorPick(markup)}
           onHideSettings={this.onMarkupSettingsChanged}
           onSizeChanged={this.onMarkupSizeChanged}
+          onNameChanged={this.onMarkupNameChanged}
           onOcclusion={this.onMarkupOcclusion}
           onVisible={this.onMarkupVisible}
           onRemove={this.onMarkupRemoved}
           onClick={this.onMarkupClicked}
-          key={markup.id}
+          animation={runAnimation}
           markup={markup}
+          key={markup.id}
         />
       )
     })
@@ -376,13 +507,23 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  renderSettings (animation) {
+  renderSettings (activated, animation) {
 
     return (
       <Popover
         className="pointcloud-markup settings"
         title="PointCloud Markup Settings"
         id="settings">
+
+        <label>
+          Activated:
+        </label>
+
+        <Switch onChange={this.onActivate}
+          checked={activated}
+        />
+
+        <hr/>
 
         <label>
           Animation:
@@ -404,21 +545,34 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderTitle () {
 
-    const {runAnimation} = this.react.getState()
+    const {
+      runAnimation,
+      activated,
+      markups
+    } = this.react.getState()
 
     return (
-      <div className="title">
+      <div className="title markup-controls">
         <label>
           PointCloud Markups
         </label>
         <OverlayTrigger trigger="click"
-          overlay={this.renderSettings(runAnimation)}
+          overlay={this.renderSettings(activated, runAnimation)}
           placement="bottom"
           rootClose>
           <button className="settings-btn" title="Settings">
             <span className="fa fa-cog"/>
           </button>
         </OverlayTrigger>
+        {
+          !!markups.length &&
+          <button
+            onClick={this.onClearMarkups}
+            title="Clear All Markups"
+            className="clear-btn">
+            <span className="fa fa-times"/>
+          </button>
+        }
       </div>
     )
   }

@@ -237,7 +237,7 @@ class CameraTweenExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  tweenCameraTo (state) {
+  tweenCameraTo (state, immediate) {
 
     const {
 
@@ -283,7 +283,7 @@ class CameraTweenExtension extends MultiModelExtensionBase {
       onUpdate: (v) => {
         nav.setTarget(v)
       },
-      duration: targetTweenDuration,
+      duration: immediate ? 0 : targetTweenDuration,
       object: target,
       to: targetEnd
     })
@@ -293,7 +293,7 @@ class CameraTweenExtension extends MultiModelExtensionBase {
       onUpdate: (v) => {
         nav.setPosition(v)
       },
-      duration: posTweenDuration,
+      duration: immediate ? 0 : posTweenDuration,
       object: pos,
       to: posEnd
     })
@@ -303,7 +303,7 @@ class CameraTweenExtension extends MultiModelExtensionBase {
       onUpdate: (v) => {
         nav.setCameraUpVector(v)
       },
-      duration: upTweenDuration,
+      duration: immediate ? 0 : upTweenDuration,
       object: up,
       to: upEnd
     })
@@ -354,11 +354,13 @@ class CameraTweenExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  restoreState (viewerState) {
+  restoreState (viewerState, immediate) {
 
     if (viewerState.cameraTween) {
 
-      this.tweenCameraTo(viewerState.cameraTween)
+      this.tweenCameraTo(
+        viewerState.cameraTween,
+        immediate)
     }
   }
 

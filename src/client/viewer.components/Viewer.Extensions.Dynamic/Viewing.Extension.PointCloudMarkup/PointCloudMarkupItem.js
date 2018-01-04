@@ -1,3 +1,4 @@
+import defaultTex from './PointCloudMarkup/texture.png'
 import {OverlayTrigger, Popover} from 'react-bootstrap'
 import BaseComponent from 'BaseComponent'
 import 'rc-tooltip/assets/bootstrap.css'
@@ -18,7 +19,13 @@ export default class PointCloudMarkupItem extends BaseComponent {
 
     super (props)
 
+    this.onNameChanged = this.onNameChanged.bind(this)
+    this.onIconClicked = this.onIconClicked.bind(this)
     this.onClick = this.onClick.bind(this)
+
+    this.state = {
+      name: props.markup.name
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -28,6 +35,23 @@ export default class PointCloudMarkupItem extends BaseComponent {
   onClick () {
 
     this.props.onClick(this.props.markup.id)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onNameChanged (e) {
+
+    const id = this.props.markup.id
+
+    const name = e.target.value
+
+    this.assignState({
+      name
+    })
+
+    this.props.onNameChanged(id, name)
   }
 
   /////////////////////////////////////////////////////////
@@ -44,7 +68,20 @@ export default class PointCloudMarkupItem extends BaseComponent {
       <Popover
         className="pointcloud-markup-item settings"
         title="Markup Settings"
-        id="settings">
+        id={"settings-"+id}>
+
+        <label>
+          Name:
+        </label>
+
+        <input
+          onChange={this.onNameChanged}
+          placeholder="Markup name ..."
+          value={this.state.name}
+          className="input-name"
+        />
+
+        <hr/>
 
         <label>
           Point Size:
@@ -114,31 +151,85 @@ export default class PointCloudMarkupItem extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  onIconClicked (e) {
+
+    if (this.props.animation) {
+
+      this.props.onIconClicked()
+
+      e.stopPropagation()
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  renderIcon () {
+
+    const getStyle = () => {
+
+      if (this.props.animation) {
+
+        const clr = this.props.markup.color
+
+        const background =
+          `rgba(${clr.x*255},${clr.y*255},${clr.z*255},0.2)`
+
+        const border = `solid 2px ` +
+          `rgba(${clr.x*255},${clr.y*255},${clr.z*255},1)`
+
+        return {
+          background,
+          border
+        }
+      }
+
+      return {
+        backgroundImage: `url(${defaultTex})`
+      }
+    }
+
+    return (
+      <div className="item-icon" onClick={this.onIconClicked}>
+        <div style={getStyle()}/>
+      </div>
+    )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   render () {
 
-    const id = this.props.markup.id
+    const markup = this.props.markup
 
     return(
       <div className="item"
+        onMouseEnter={this.props.onMouseEnter}
+        onMouseLeave={this.props.onMouseLeave}
         onClick={this.onClick}>
+        { this.renderIcon() }
+        <Label text= {markup.name}/>
+        <button className="remove hover-control"
+          title="Remove Markup"
+          onClick={(e) => {
+            this.props.onRemove(markup.id)
+            e.stopPropagation()
+          }}>
+          <span className="fa fa-times"/>
+        </button>
         <OverlayTrigger trigger="click"
           overlay={this.renderMarkupSettings()}
           onExited={this.props.onHideSettings}
           placement="left"
           rootClose>
-          <button className="settings-btn"
+          <button className="settings-btn hover-control"
             title="Markup Settings">
             <span className="fa fa-cog"/>
           </button>
         </OverlayTrigger>
-        <Label text= {"Markup " + id}/>
-        <div className="remove"
-          onClick={(e) => {
-            this.props.onRemove(id)
-            e.stopPropagation()
-          }}>
-          <span className="fa fa-times"/>
-        </div>
       </div>
     )
   }

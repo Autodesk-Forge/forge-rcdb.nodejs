@@ -35,6 +35,7 @@ class ConfigManagerExtension extends ExtensionBase {
 
     this.renderTitle = this.renderTitle.bind(this)
     this.toggleItem = this.toggleItem.bind(this)
+    this.addItem = this.addItem.bind(this)
 
     this.restoreFilter = options.restoreFilter || null
 
@@ -47,7 +48,7 @@ class ConfigManagerExtension extends ExtensionBase {
 
     this.react = options.react
 
-    this.restoreEvents = []
+    this.restoreStates = {}
 
     this.drake = null
 
@@ -411,7 +412,7 @@ class ConfigManagerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  addItem () {
+  async addItem () {
 
     const state = this.react.getState()
 
@@ -432,28 +433,23 @@ class ConfigManagerExtension extends ExtensionBase {
         viewerState)
     }
 
-    this.react.setState({
+    await this.react.setState({
       items: [...state.items, viewerState],
       newStateName: ''
     })
 
-    const event = `restoreState.${viewerState.id}`
+    this.restoreStates[viewerState.id] = viewerState
 
-    this.restoreEvents.push(event)
-
-    this.on(event, () => {
-
-      this.onRestoreState(viewerState)
-    })
+    this.onRestoreState (viewerState, true)
   }
 
   /////////////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////////////
-  onRestoreState (viewerState) {
+  onRestoreState (viewerState, immediate = this.options.restoreImmediate) {
 
-    this.viewer.getState (viewerState)
+    //this.viewer.getState (viewerState)
 
     const filteredState = this.filterState(
       viewerState,
@@ -463,7 +459,7 @@ class ConfigManagerExtension extends ExtensionBase {
     this.viewer.restoreState(
       filteredState,
       this.restoreFilter,
-      this.options.restoreImmediate)
+      immediate)
   }
 
   /////////////////////////////////////////////////////////////////
@@ -481,6 +477,8 @@ class ConfigManagerExtension extends ExtensionBase {
     })
 
     this.emit('state.deleted', id)
+
+    delete this.restoreStates[id]
 
     if (this.api) {
 
@@ -520,23 +518,21 @@ class ConfigManagerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   filterState (srcState, setNames, elementNames) {
 
-    const strObj = JSON.stringify(srcState)
+    const state = JSON.parse(JSON.stringify(srcState))
 
-    const state = JSON.parse(strObj)
+    const sets = Array.isArray(setNames)
+      ? setNames : [setNames]
 
-    const sets = Array.isArray(setNames) ?
-      setNames : [setNames]
+    const elements = Array.isArray(elementNames)
+      ? elementNames : [elementNames]
 
-    const elements = Array.isArray(elementNames) ?
-      elementNames : [elementNames]
-
-    sets.forEach((setName)=>{
+    sets.forEach((setName) => {
 
       if (state[setName]) {
 
-        elements.forEach((elementName)=>{
+        elements.forEach((elementName) => {
 
-          state[setName].forEach((element)=> {
+          state[setName].forEach((element) => {
 
             delete element[elementName]
           })
@@ -610,16 +606,11 @@ class ConfigManagerExtension extends ExtensionBase {
 
     clearTimeout(this.playTimeout)
 
+    this.restoreStates = {}
+
     this.playTimeout = null
 
     this.sequenceIdx = 0
-
-    this.restoreEvents.forEach((event) => {
-
-      this.off(event)
-    })
-
-    this.events = []
 
     this.react.setState({
       items: [],
@@ -645,12 +636,9 @@ class ConfigManagerExtension extends ExtensionBase {
           await this.api.getStates(
             sequence.id)
 
-        states.map((state) => {
+        states.forEach((state) => {
 
-          this.on(`restoreState.${state.id}`, () => {
-
-            this.onRestoreState(state)
-          })
+          this.restoreStates[state.id] = state
         })
 
         await this.react.setState({
@@ -688,7 +676,7 @@ class ConfigManagerExtension extends ExtensionBase {
 
       const state = this.react.getState()
 
-      this.emit(`restoreState.${stateId}`)
+      this.onRestoreState(this.restoreStates[stateId])
 
       this.react.setState({
         play: true,
@@ -893,7 +881,7 @@ class ConfigManagerExtension extends ExtensionBase {
           }
 
           <button disabled={stateCreationDisabled}
-            onClick={() => this.addItem()}
+            onClick={this.addItem}
             title="Save state">
             <span className="fa fa-database"/>
           </button>

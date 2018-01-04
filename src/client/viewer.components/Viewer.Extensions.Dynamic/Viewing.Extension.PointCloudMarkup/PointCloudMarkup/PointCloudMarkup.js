@@ -19,14 +19,35 @@ export default class PointCloudMarkup extends EventsEmitter {
     super()
 
     this.onCameraChanged = this.onCameraChanged.bind(this)
+    this.onVisibility = this.onVisibility.bind(this)
+    this.onExplode = this.onExplode.bind(this)
 
     this.viewer = viewer
 
     this.dbIds = this.getAllDbIds()
 
-    this.viewer.addEventListener(
-      Autodesk.Viewing.CAMERA_CHANGE_EVENT,
-      this.onCameraChanged)
+    this.eventHandlers = [{
+        event: Autodesk.Viewing.EXPLODE_CHANGE_EVENT,
+        handler: this.onExplode
+      }, {
+        event: Autodesk.Viewing.CAMERA_CHANGE_EVENT,
+        handler: this.onCameraChanged
+      }, {
+        event: Autodesk.Viewing.ISOLATE_EVENT,
+        handler: this.onVisibility
+      }, {
+        event: Autodesk.Viewing.HIDE_EVENT,
+        handler: this.onVisibility
+      }, {
+        event: Autodesk.Viewing.SHOW_EVENT,
+        handler: this.onVisibility
+      }]
+
+    this.eventHandlers.forEach((entry) => {
+
+      this.viewer.addEventListener(
+        entry.event, entry.handler)
+    })
 
     // Initialize geometry vertices
     // and shader attribute colors
@@ -64,24 +85,32 @@ export default class PointCloudMarkup extends EventsEmitter {
     // Vertex Shader code
     const vertexShader = options.vertexShader || `
       attribute float pointSize;
+      attribute vec4 color;
+      varying vec4 vColor;
       void main() {
         vec4 vPosition = modelViewMatrix * vec4(position, 1.0);
         gl_Position = projectionMatrix * vPosition;
         gl_PointSize = pointSize;
+        vColor = color;
       }
     `
 
     // Fragment Shader code
     const fragmentShader = options.fragmentShader || `
       uniform sampler2D texture;
+      varying vec4 vColor;
       void main() {
         vec4 tex = texture2D(texture, gl_PointCoord);
         if (tex.a < 0.2) discard;
-        gl_FragColor = vec4(tex.r, tex.g, tex.b, tex.a);
+        if (vColor.a == 0.0) {
+          gl_FragColor = vec4(tex.r, tex.g, tex.b, tex.a);
+        } else {
+          gl_FragColor = vColor;
+        }
       }
     `
 
-    const texture = options.texture || defaultTex
+    const tex = options.texture || defaultTex
 
     // Shader material parameters
     const shaderParams = options.shaderParams || {
@@ -95,11 +124,15 @@ export default class PointCloudMarkup extends EventsEmitter {
           pointSize: {
             type: 'f',
             value: []
+          },
+          color: {
+            type: 'v4',
+            value: []
           }
         },
         uniforms: {
           texture: {
-            value: THREE.ImageUtils.loadTexture(texture),
+            value: THREE.ImageUtils.loadTexture(tex),
             type: 't'
           }
         }
@@ -193,13 +226,39 @@ export default class PointCloudMarkup extends EventsEmitter {
   //
   //
   /////////////////////////////////////////////////////////
+  startAnimation () {
+
+    this.markups.forEach((markup) => {
+
+      this.setMarkupColor (markup.id,
+        markup.color)
+    })
+
+    this.viewer.impl.invalidate (true)
+
+    this.runAnimation = true
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   stopAnimation () {
 
     const texture = this.options.texture || defaultTex
 
     this.shader.setTexture(texture)
 
+    this.markups.forEach((markup) => {
+
+      this.setMarkupColor (markup.id,
+        new THREE.Vector4(0,0,0,0),
+        true)
+    })
+
     this.viewer.impl.invalidate (true)
+
+    this.runAnimation = false
   }
 
   /////////////////////////////////////////////////////////
@@ -237,11 +296,13 @@ export default class PointCloudMarkup extends EventsEmitter {
 
     const markup = this.getMarkupById(markupId)
 
+    const visible = markup.visible && markup.__visible
+
     if (override) {
 
       pointSize.value[markup.index] = size
 
-    } else if (markup.visible) {
+    } else if (visible) {
 
       if (markup.occlusion) {
 
@@ -264,6 +325,25 @@ export default class PointCloudMarkup extends EventsEmitter {
   }
 
   /////////////////////////////////////////////////////////
+  // Set markup color
+  //
+  /////////////////////////////////////////////////////////
+  setMarkupColor (markupId, clr, override) {
+
+    const {color} = this.pointCloud.material.attributes
+
+    const markup = this.getMarkupById(markupId)
+
+    color.value[markup.index] = clr
+
+    markup.color = !override ? clr : markup.color
+
+    color.needsUpdate = true
+
+    this.viewer.impl.invalidate (true)
+  }
+
+  /////////////////////////////////////////////////////////
   // Adds new markup
   //
   /////////////////////////////////////////////////////////
@@ -271,15 +351,20 @@ export default class PointCloudMarkup extends EventsEmitter {
 
     const size = markupInfo.size ||
       this.options.markupSize ||
-      25.0
+      40.0
+
+    const index = this.markups.length
 
     const markup = Object.assign({}, {
+      color: new THREE.Vector4(1,0,0,1),
+      name: 'Markup ' + (index + 1),
       id: this.guid('xxx-xxx-xxx'),
+      __visible: true,
       occlusion: true,
       visible: true,
       size
     }, markupInfo, {
-      index: this.markups.length
+      index
     })
 
     const vertex = this.geometry.vertices[markup.index]
@@ -294,6 +379,15 @@ export default class PointCloudMarkup extends EventsEmitter {
 
     this.setMarkupSize (
       markup.id, markup.size)
+
+    this.updateMarkup (markup)
+
+    this.setMarkupColor (
+      markup.id,
+      this.runAnimation
+        ? markup.color
+        : new THREE.Vector4(0,0,0,0),
+      !this.runAnimation)
 
     this.emit('markup.created', markup)
 
@@ -324,6 +418,8 @@ export default class PointCloudMarkup extends EventsEmitter {
       vertex.z = markup.point.z
 
       markup.index = idx
+
+      this.updateMarkup (markup)
     })
 
     for (let idx = this.markups.length;
@@ -365,6 +461,17 @@ export default class PointCloudMarkup extends EventsEmitter {
   }
 
   /////////////////////////////////////////////////////////
+  // Set markup data
+  //
+  /////////////////////////////////////////////////////////
+  setMarkupData (markupId, data) {
+
+    const markup = this.getMarkupById(markupId)
+
+    Object.assign(markup, data)
+  }
+
+  /////////////////////////////////////////////////////////
   // Set markup visibility: to hide markup, set size to 0
   //
   /////////////////////////////////////////////////////////
@@ -373,6 +480,19 @@ export default class PointCloudMarkup extends EventsEmitter {
     const markup = this.getMarkupById(markupId)
 
     markup.visible = visible
+
+    this.updateMarkup (markup)
+  }
+
+  /////////////////////////////////////////////////////////
+  // Set markup visibility internal
+  //
+  /////////////////////////////////////////////////////////
+  __setMarkupVisibility (markupId, __visible) {
+
+    const markup = this.getMarkupById(markupId)
+
+    markup.__visible = __visible
 
     this.updateMarkup (markup)
   }
@@ -396,7 +516,9 @@ export default class PointCloudMarkup extends EventsEmitter {
   /////////////////////////////////////////////////////////
   updateMarkup (markup) {
 
-    if (markup.visible) {
+    const visible = markup.visible && markup.__visible
+
+    if (visible) {
 
       if (markup.occlusion) {
 
@@ -452,17 +574,80 @@ export default class PointCloudMarkup extends EventsEmitter {
   // Camera Changed event handler
   //
   /////////////////////////////////////////////////////////
-  onCameraChanged () {
+  onCameraChanged (event) {
 
     this.markups.forEach((markup) => {
 
-      if (markup.visible && markup.occlusion) {
+      const visible = markup.visible && markup.__visible
+
+      if (visible && markup.occlusion) {
 
         const occluded = this.checkOcclusion(markup)
 
         this.setMarkupSize (markup.id,
           occluded ? 0.0 : markup.size,
           true)
+      }
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // Explode event handler
+  //
+  /////////////////////////////////////////////////////////
+  onExplode (event) {
+
+    this.markups.forEach((markup) => {
+
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // Visibility Changed event handler
+  //
+  /////////////////////////////////////////////////////////
+  onVisibility (event) {
+
+    this.markups.forEach((markup) => {
+
+      const dbIds = event.nodeIdArray
+
+      switch (event.type) {
+
+        case 'isolate':
+
+          // if this node is isolated or all nodes visible
+          if (dbIds.indexOf(markup.dbId) > -1 || !dbIds.length) {
+
+            this.__setMarkupVisibility(markup.id, true)
+
+            // if another node is isolated
+          } else if (dbIds.length) {
+
+            this.__setMarkupVisibility(markup.id, false)
+          }
+
+          break
+
+        case 'hide':
+
+          // this node is hidden
+          if (dbIds.indexOf(markup.dbId) > -1) {
+
+            this.__setMarkupVisibility(markup.id, false)
+          }
+
+          break
+
+        case 'show':
+
+          // this node is shown
+          if (dbIds.indexOf(markup.dbId) > -1) {
+
+            this.__setMarkupVisibility(markup.id, true)
+          }
+
+          break
       }
     })
   }
@@ -622,9 +807,13 @@ export default class PointCloudMarkup extends EventsEmitter {
 
     this.viewer.impl.sceneAfter.remove(this.pointCloud)
 
-    this.viewer.removeEventListener(
-      Autodesk.Viewing.CAMERA_CHANGE_EVENT,
-      this.onCameraChanged)
+    this.eventHandlers.forEach((entry) => {
+
+      this.viewer.removeEventListener(
+        entry.event, entry.handler)
+    })
+
+    this.runAnimation = false
 
     this.markups = []
 

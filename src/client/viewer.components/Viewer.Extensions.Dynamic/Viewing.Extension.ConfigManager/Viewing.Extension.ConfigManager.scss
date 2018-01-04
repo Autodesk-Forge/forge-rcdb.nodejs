@@ -18,7 +18,7 @@
 }
 
 .config-manager .content > .controls {
-  margin: 10px 10px 0px 10px;
+  margin: 6px 6px 0px 5px;
   display: inline-block;
   white-space: nowrap;
   height: 54px;
@@ -32,7 +32,7 @@
 }
 
 .config-manager .content > .controls .dropdown {
-  width: calc(100% - 121px);
+  width: calc(100% - 114px);
   margin-bottom: 6px;
   float: left;
 
@@ -102,7 +102,7 @@
 
 .config-manager .content > .controls .state-name-input {
   border: 1px solid #aeaeae;
-  width: calc(100% - 155px);
+  width: calc(100% - 148px);
   padding: 3px 0 0 10px;
   white-space: nowrap;
   border-radius: 4px;
@@ -159,8 +159,8 @@
 //
 ///////////////////////////////////////////////////////////
 .config-manager .items {
-  height: calc(100% - 82px);
-  margin: 10px 4px 4px 4px;
+  height: calc(100% - 74px);
+  margin: 10px 6px 0px 0px;
   overflow: scroll;
 }
 
@@ -176,7 +176,7 @@
   transition-delay: 0.0s;
 
   border: 1px solid #aeaeae;
-  width: calc(100% - 10px);
+  width: calc(100% - 6px);
   background: #ededed;
   white-space: nowrap;
   cursor: not-allowed;
