@@ -447,7 +447,8 @@ class ConfigManagerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////////////
-  onRestoreState (viewerState, immediate = this.options.restoreImmediate) {
+  onRestoreState (
+    viewerState, immediate = this.options.restoreImmediate) {
 
     //this.viewer.getState (viewerState)
 

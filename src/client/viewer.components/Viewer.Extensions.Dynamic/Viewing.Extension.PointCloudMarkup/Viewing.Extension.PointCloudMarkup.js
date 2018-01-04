@@ -92,6 +92,7 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
   load () {
 
     this.viewer.setProgressiveRendering(false)
+    this.viewer.setGhosting(false)
 
     this.options.loader.show(false)
 

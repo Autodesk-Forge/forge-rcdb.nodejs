@@ -347,6 +347,22 @@ export default class PointCloudMarkup extends EventsEmitter {
   // Adds new markup
   //
   /////////////////////////////////////////////////////////
+  getFragmentPos (fragId) {
+
+    const mesh = this.viewer.impl.getRenderProxy(
+      this.viewer.model, fragId)
+
+    const pos = new THREE.Vector3()
+
+    pos.setFromMatrixPosition(mesh.matrixWorld)
+
+    return pos
+  }
+
+  /////////////////////////////////////////////////////////
+  // Adds new markup
+  //
+  /////////////////////////////////////////////////////////
   addMarkup (markupInfo) {
 
     const size = markupInfo.size ||
@@ -356,6 +372,7 @@ export default class PointCloudMarkup extends EventsEmitter {
     const index = this.markups.length
 
     const markup = Object.assign({}, {
+      initialFragPos: this.getFragmentPos(markupInfo.fragId),
       color: new THREE.Vector4(1,0,0,1),
       name: 'Markup ' + (index + 1),
       id: this.guid('xxx-xxx-xxx'),
@@ -458,6 +475,23 @@ export default class PointCloudMarkup extends EventsEmitter {
     this.viewer.impl.invalidate (true)
 
     this.markups = []
+  }
+
+  /////////////////////////////////////////////////////////
+  // Set markup position
+  //
+  /////////////////////////////////////////////////////////
+  setMarkupPosition (markupId, point) {
+
+    const markup = this.getMarkupById(markupId)
+
+    const vertex = this.geometry.vertices[markup.index]
+
+    vertex.x = point.x
+    vertex.y = point.y
+    vertex.z = point.z
+
+    this.geometry.verticesNeedUpdate = true
   }
 
   /////////////////////////////////////////////////////////
@@ -599,6 +633,22 @@ export default class PointCloudMarkup extends EventsEmitter {
 
     this.markups.forEach((markup) => {
 
+      const visible = markup.visible && markup.__visible
+
+      if (visible) {
+
+        const fragPos = this.getFragmentPos(markup.fragId)
+
+        const {point, initialFragPos} = markup
+
+        const pos = {
+          x: point.x + fragPos.x - initialFragPos.x,
+          y: point.y + fragPos.y - initialFragPos.y,
+          z: point.z + fragPos.z - initialFragPos.z
+        }
+
+        this.setMarkupPosition(markup.id, pos)
+      }
     })
   }
 
@@ -820,3 +870,5 @@ export default class PointCloudMarkup extends EventsEmitter {
     this.off ()
   }
 }
+
+
