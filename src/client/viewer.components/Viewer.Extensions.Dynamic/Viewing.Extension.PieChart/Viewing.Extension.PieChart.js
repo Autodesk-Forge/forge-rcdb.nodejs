@@ -33,6 +33,10 @@ class PieChartExtension extends MultiModelExtensionBase {
 
     this.render = this.render.bind(this)
 
+    document.addEventListener(
+      'visibilitychange',
+      this.onTabActivated)
+
     this.react = options.react
   }
 
@@ -132,6 +136,9 @@ class PieChartExtension extends MultiModelExtensionBase {
     await this.react.setState({
       showLoader: true
     })
+
+    if (!model.getData().instanceTree)
+      return
 
     this.componentIds = await Toolkit.getLeafNodes(model)
 

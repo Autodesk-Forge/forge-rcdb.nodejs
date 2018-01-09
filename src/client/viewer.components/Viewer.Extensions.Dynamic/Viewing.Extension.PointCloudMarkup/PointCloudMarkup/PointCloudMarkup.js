@@ -77,7 +77,8 @@ export default class PointCloudMarkup extends EventsEmitter {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Generates custom shader using an updatable
+  // dynamic texture generated programmatically
   //
   /////////////////////////////////////////////////////////
   createShader (options) {

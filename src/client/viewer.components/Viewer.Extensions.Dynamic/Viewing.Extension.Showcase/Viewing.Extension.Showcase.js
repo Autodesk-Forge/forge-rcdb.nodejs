@@ -4,6 +4,9 @@
 //
 /////////////////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
+import EventTool from 'Viewer.EventTool'
+import Skybox from './Viewer.Skybox'
+import Stopwatch from 'Stopwatch'
 
 import xpos from './img/bridge/skybox-xpos.png'
 import xneg from './img/bridge/skybox-xneg.png'
@@ -12,17 +15,13 @@ import yneg from './img/bridge/skybox-yneg.png'
 import zpos from './img/bridge/skybox-zpos.png'
 import zneg from './img/bridge/skybox-zneg.png'
 
-import EventTool from 'Viewer.EventTool'
-import Skybox from 'Viewer.Skybox'
-import Stopwatch from 'Stopwatch'
-
 class ShowcaseExtension extends MultiModelExtensionBase {
 
   /////////////////////////////////////////////////////////
   // Class constructor
   //
   /////////////////////////////////////////////////////////
-  constructor(viewer, options) {
+  constructor (viewer, options) {
 
     super (viewer, options)
 

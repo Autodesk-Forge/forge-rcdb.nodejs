@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////
-// ReactPie
-// by Philippe Leefsma, Dec 2017
+// ReactPie: a responsive PieChart in pure React + SVG
+// by Philippe Leefsma, Jan 2017
 //
 /////////////////////////////////////////////////////////
 import PieSegment from './ReactPieSegment'
@@ -15,14 +15,15 @@ import './ReactPie.scss'
 export default class ReactPie extends React.Component {
 
   /////////////////////////////////////////////////////////
-  //
+  // Defines a few default properties
   //
   /////////////////////////////////////////////////////////
   static defaultProps = {
     innerRadius: 0.35,
     outerRadius: 0.90,
     fillOpacity: 0.95,
-    strokeWidth: 1.0
+    strokeWidth: 1.0,
+    data: []
   }
 
   /////////////////////////////////////////////////////////
@@ -35,16 +36,24 @@ export default class ReactPie extends React.Component {
 
     this.disableTooltip = this.disableTooltip.bind(this)
 
+    const size = { width:0, height:0 }
+
+    const segments = this.resizeSegments(
+      this.loadSegments(props.data),
+      size)
+
     this.state = {
-      size: { width:0, height:0 },
       tooltipActive: false,
       tooltip: '',
-      segments: []
+      segments,
+      size
     }
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Upon properties change, reload the pie only if
+  // dataGuid has changed. This is controlled by the
+  // parent component
   //
   /////////////////////////////////////////////////////////
   componentWillReceiveProps (props) {
@@ -75,7 +84,7 @@ export default class ReactPie extends React.Component {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Loads pie segments
   //
   /////////////////////////////////////////////////////////
   loadSegments (data) {
@@ -125,7 +134,8 @@ export default class ReactPie extends React.Component {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Resize pie segments after parent container
+  // has been resized for example
   //
   /////////////////////////////////////////////////////////
   resizeSegments (segments, size) {
@@ -158,7 +168,7 @@ export default class ReactPie extends React.Component {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Generates a guid
   //
   /////////////////////////////////////////////////////////
   guid (format = 'xxx-xxx-xxx') {
@@ -219,7 +229,7 @@ export default class ReactPie extends React.Component {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Mouse over segment handler
   //
   /////////////////////////////////////////////////////////
   onSegmentMouseOver (e, segment) {
@@ -239,7 +249,7 @@ export default class ReactPie extends React.Component {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Segment clicked handler
   //
   /////////////////////////////////////////////////////////
   onSegmentClicked (e, segment) {
@@ -296,7 +306,7 @@ export default class ReactPie extends React.Component {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Expands a segment
   //
   /////////////////////////////////////////////////////////
   expandSegment (segment) {
@@ -320,7 +330,7 @@ export default class ReactPie extends React.Component {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // Disable tooltip
   //
   /////////////////////////////////////////////////////////
   disableTooltip () {
@@ -332,7 +342,7 @@ export default class ReactPie extends React.Component {
   }
 
   /////////////////////////////////////////////////////////
-  //
+  // React render
   //
   /////////////////////////////////////////////////////////
   render () {

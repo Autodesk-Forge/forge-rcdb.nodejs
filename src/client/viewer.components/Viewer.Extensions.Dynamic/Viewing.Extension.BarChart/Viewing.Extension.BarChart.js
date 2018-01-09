@@ -134,6 +134,9 @@ class BarChartExtension extends MultiModelExtensionBase {
       showLoader: true
     })
 
+    if (!model.getData().instanceTree)
+      return
+
     this.componentIds = await Toolkit.getLeafNodes(model)
 
     const chartProperties =
