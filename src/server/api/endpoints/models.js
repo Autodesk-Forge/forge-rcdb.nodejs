@@ -446,6 +446,7 @@ module.exports = function() {
         fieldQuery,
         pageQuery: {
           extraModels: 1,
+          displayName: 1,
           timestamp: 1,
           lifetime: 1,
           model: 1,

@@ -1,0 +1,32 @@
+.web-hooks {
+
+  .create {
+    background: #fafafa;
+    position: relative;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    text-align: left;
+    padding: 10px;
+    height: 100%;
+    width: 100%;
+
+    hr {
+      margin: 10px 0;
+    }
+
+    .dropdown {
+
+      button {
+        border-radius: 0;
+        width: 290px;
+      }
+    }
+
+    .create-btn {
+      background: #fdfdfd;
+      outline: none;
+      width: 290px;
+      height: 34px;
+    }
+  }
+}

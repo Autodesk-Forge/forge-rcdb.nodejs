@@ -497,8 +497,23 @@ export default class ForgeSvc extends BaseSvc {
       `${ForgeSvc.BASE_HOOKS_URL}/systems/` +
       `${systemId}/events/${eventId}/hooks/${hookId}`
 
-    this.this.requestAsync({
-      token,
+    this.requestAsync({
+      token: token.access_token,
+      url
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // GET systems/:system_id/hooks
+  //
+  /////////////////////////////////////////////////////////
+  getSystemHooks (token, systemId) {
+
+    const url =
+      `${ForgeSvc.BASE_HOOKS_URL}/systems/${systemId}/hooks`
+
+    this.requestAsync({
+      token: token.access_token,
       url
     })
   }
@@ -513,23 +528,8 @@ export default class ForgeSvc extends BaseSvc {
       `${ForgeSvc.BASE_HOOKS_URL}/systems/` +
       `${systemId}/events/${eventId}/hooks`
 
-    this.this.requestAsync({
-      token,
-      url
-    })
-  }
-
-  /////////////////////////////////////////////////////////
-  // GET systems/:system_id/hooks
-  //
-  /////////////////////////////////////////////////////////
-  getSystemHooks (token, systemId) {
-
-    const url =
-      `${ForgeSvc.BASE_HOOKS_URL}/systems/${systemId}/hooks`
-
-    this.this.requestAsync({
-      token,
+    this.requestAsync({
+      token: token.access_token,
       url
     })
   }
@@ -542,8 +542,8 @@ export default class ForgeSvc extends BaseSvc {
 
     const url = `${ForgeSvc.BASE_HOOKS_URL}/hooks`
 
-    this.this.requestAsync({
-      token,
+    this.requestAsync({
+      token: token.access_token,
       url
     })
   }
@@ -558,11 +558,11 @@ export default class ForgeSvc extends BaseSvc {
       `${ForgeSvc.BASE_HOOKS_URL}/systems/` +
       `${systemId}/events/${eventId}/hooks`
 
-    this.this.requestAsync({
+    this.requestAsync({
+      token: token.access_token,
       method: 'POST',
       body: params,
       json: true,
-      token,
       url
     })
   }
@@ -577,11 +577,11 @@ export default class ForgeSvc extends BaseSvc {
       `${ForgeSvc.BASE_HOOKS_URL}/systems/` +
       `${systemId}/hooks`
 
-    this.this.requestAsync({
+    this.requestAsync({
+      token: token.access_token,
       method: 'POST',
       body: params,
       json: true,
-      token,
       url
     })
   }
@@ -596,11 +596,10 @@ export default class ForgeSvc extends BaseSvc {
       `${ForgeSvc.BASE_HOOKS_URL}/systems/` +
       `${systemId}/events/${eventId}/hooks/${hookId}`
 
-    this.this.requestAsync({
+    this.requestAsync({
+      token: token.access_token,
       method: 'DELETE',
-      token,
       url
     })
   }
 }
-

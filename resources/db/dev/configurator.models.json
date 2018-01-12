@@ -88,21 +88,72 @@
 }
 { 
     "_id" : ObjectId("5a113677647990151819a024"), 
-    "name" : "Model Derivatives", 
+    "name" : "Web Hooks", 
     "env" : "Local", 
-    "desc" : "Implements a control panel that lets interact with the Forge Model Derivatives API", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ModelDerivatives", 
+    "desc" : "", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.WebHooks", 
     "layout" : {
         "type" : "flexLayoutLeft", 
         "rightFlex" : 0.5
     }, 
     "dynamicExtensions" : [
         {
-            "id" : "Viewing.Extension.ModelDerivatives", 
+            "id" : "Viewing.Extension.WebHooks", 
             "options" : {
-                "apiUrl" : "/api/derivatives/2legged", 
-                "showModelSelector" : true, 
-                "database" : "gallery"
+
+            }
+        }
+    ]
+}
+{ 
+    "_id" : ObjectId("5a2a07e6d72f007fb27b7e0c"), 
+    "name" : "AR/VR Toolkit Controller", 
+    "displayName" : "3 Legged", 
+    "env" : "Local", 
+    "desc" : "Implements a control panel to interact with the Forge AR/VR Toolkit API", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ARToolkitController", 
+    "layout" : {
+        "type" : "flexLayoutLeft", 
+        "rightFlex" : 0.5
+    }, 
+    "extraModels" : [
+        {
+            "name" : "2 Legged", 
+            "_id" : "5a2b31ee58144b89730d6d5a"
+        }
+    ], 
+    "dynamicExtensions" : [
+        {
+            "id" : "Viewing.Extension.ARToolkitController", 
+            "enabled" : true, 
+            "options" : {
+                "derivativesApiUrl" : "/api/derivatives/3legged", 
+                "toolkitApiUrl" : "/api/ar-vr-toolkit/3legged", 
+                "auth" : "3legged"
+            }
+        }
+    ]
+}
+{ 
+    "_id" : ObjectId("5a2b31ee58144b89730d6d5a"), 
+    "name" : "AR/VR Toolkit Controller - 2 Legged", 
+    "env" : "Local", 
+    "private" : true, 
+    "desc" : "Implements a control panel to interact with the Forge AR/VR Toolkit API", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ARToolkitController", 
+    "layout" : {
+        "type" : "flexLayoutLeft", 
+        "rightFlex" : 0.5
+    }, 
+    "dynamicExtensions" : [
+        {
+            "id" : "Viewing.Extension.ARToolkitController", 
+            "enabled" : true, 
+            "options" : {
+                "derivativesApiUrl" : "/api/derivatives/2legged", 
+                "toolkitApiUrl" : "/api/ar-vr-toolkit/2legged", 
+                "database" : "gallery", 
+                "auth" : "2legged"
             }
         }
     ]
@@ -247,12 +298,18 @@
                         }
                     }, 
                     {
-                        "id" : "Viewing.Extension.ConstrainedPlacement", 
-                        "name" : "Constrained Placement", 
+                        "id" : "Viewing.Extension.PointCloudMarkup", 
+                        "name" : "PointCloud Markup", 
                         "enabled" : false, 
                         "options" : {
-                            "parentControl" : "modelTools"
+                            "pointCloudMarkup" : {
+                                "occlusionDist" : 5.0
+                            }
                         }
+                    }, 
+                    {
+                        "id" : "Viewing.Extension.ShaderMaterial", 
+                        "name" : "Shader Material"
                     }
                 ]
             }
@@ -559,14 +616,6 @@
                 "4084a6e2f50f", 
                 "e29c040269a6"
             ]
-        }, 
-        {
-            "id" : "805c2bcb3e68", 
-            "stateIds" : [
-                "48f8127eebe0", 
-                "8de681574431"
-            ], 
-            "name" : "test"
         }
     ], 
     "states" : [
@@ -4504,180 +4553,70 @@
             }, 
             "name" : "Thu Apr 20 2017 09:19:33 GMT+0800 (PHT)", 
             "id" : "e29c040269a6"
-        }, 
+        }
+    ]
+}
+{ 
+    "_id" : ObjectId("5a406e9a2471522a519497c7"), 
+    "name" : "PieChart Demo", 
+    "env" : "Local", 
+    "private" : true, 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ForceGraph", 
+    "desc" : "The MFG version of the Visual Reports demo. The extensions set is slightly different than its AEC counter-part: ForceGraph is a cool feature pulled out from D3, BarChart and PieChart represent visually the categorized selected model component properties.", 
+    "layout" : {
+        "type" : "flexLayoutRight", 
+        "rightFlex" : 0.45
+    }, 
+    "model" : {
+        "path" : "resources/models/dev/seat/0.svf", 
+        "name" : "Seat", 
+        "role" : "3d"
+    }, 
+    "dynamicExtensions" : [
         {
-            "seedURN" : "resources/models/dev/seat/0.svf", 
-            "objectSet" : [
-                {
-                    "id" : [
-
-                    ], 
-                    "isolated" : [
-
-                    ], 
-                    "hidden" : [
-
-                    ], 
-                    "explodeScale" : NumberInt(0), 
-                    "idType" : "lmv"
-                }
-            ], 
-            "viewport" : {
-                "name" : "", 
-                "eye" : [
-                    208.57446975530962, 
-                    213.19470329107625, 
-                    1.3471107482910156
-                ], 
-                "target" : [
-                    -4.588102340698242, 
-                    0.03213071823120117, 
-                    1.3471107482910156
-                ], 
-                "up" : [
-                    NumberInt(0), 
-                    NumberInt(0), 
-                    NumberInt(1)
-                ], 
-                "worldUpVector" : [
-                    NumberInt(0), 
-                    NumberInt(0), 
-                    NumberInt(1)
-                ], 
-                "pivotPoint" : [
-                    -4.588102340698242, 
-                    0.03213071823120117, 
-                    1.3471107482910156
-                ], 
-                "distanceToOrbit" : 301.4574007856818, 
-                "aspectRatio" : 1.3927406558533146, 
-                "projection" : "perspective", 
-                "isOrthographic" : false, 
-                "fieldOfView" : 37.359082288124156
-            }, 
-            "renderOptions" : {
-                "environment" : "Sharp Highlights", 
-                "ambientOcclusion" : {
-                    "enabled" : false, 
-                    "radius" : 7.074208366299121, 
-                    "intensity" : 0.4
-                }, 
-                "toneMap" : {
-                    "method" : NumberInt(1), 
-                    "exposure" : NumberInt(-9), 
-                    "lightMultiplier" : -0.00000000000000000001
-                }, 
-                "appearance" : {
-                    "ghostHidden" : true, 
-                    "ambientShadow" : false, 
-                    "antiAliasing" : true, 
-                    "progressiveDisplay" : true, 
-                    "swapBlackAndWhite" : false, 
-                    "displayLines" : true, 
-                    "displayPoints" : true
-                }
-            }, 
-            "cutplanes" : [
-
-            ], 
-            "explodeScale" : NumberInt(0), 
-            "transforms" : {
-
-            }, 
-            "Markup3D" : {
-                "MarkupCollection" : [
-
+            "id" : "Viewing.Extension.ExtensionManager", 
+            "options" : {
+                "extensions" : [
+                    {
+                        "id" : "Viewing.Extension.PieChart", 
+                        "enabled" : true, 
+                        "options" : {
+                            "displayIndex" : 2.0, 
+                            "defaultIndex" : 0.0, 
+                            "chartProperties" : [
+                                "Component Category", 
+                                "Date Created", 
+                                "Density", 
+                                "Description", 
+                                "Designer", 
+                                "Material", 
+                                "Part Number"
+                            ]
+                        }
+                    }
                 ]
-            }, 
-            "id" : "48f8127eebe0", 
-            "name" : "Sun Oct 15 2017 19:44:53 GMT+0200 (CEST)"
-        }, 
+            }
+        }
+    ]
+}
+{ 
+    "_id" : ObjectId("5a5490e1a44fa215b16c9898"), 
+    "name" : "Model Derivatives", 
+    "env" : "Local", 
+    "desc" : "Implements a control panel that lets interact with the Forge Model Derivatives API", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ModelDerivatives", 
+    "layout" : {
+        "type" : "flexLayoutLeft", 
+        "rightFlex" : 0.5
+    }, 
+    "dynamicExtensions" : [
         {
-            "seedURN" : "resources/models/dev/seat/0.svf", 
-            "objectSet" : [
-                {
-                    "id" : [
-
-                    ], 
-                    "isolated" : [
-
-                    ], 
-                    "hidden" : [
-
-                    ], 
-                    "explodeScale" : NumberInt(0), 
-                    "idType" : "lmv"
-                }
-            ], 
-            "viewport" : {
-                "name" : "", 
-                "eye" : [
-                    208.57446975530962, 
-                    213.19470329107625, 
-                    1.3471107482910156
-                ], 
-                "target" : [
-                    -4.588102340698242, 
-                    0.03213071823120117, 
-                    1.3471107482910156
-                ], 
-                "up" : [
-                    NumberInt(0), 
-                    NumberInt(0), 
-                    NumberInt(1)
-                ], 
-                "worldUpVector" : [
-                    NumberInt(0), 
-                    NumberInt(0), 
-                    NumberInt(1)
-                ], 
-                "pivotPoint" : [
-                    -4.588102340698242, 
-                    0.03213071823120117, 
-                    1.3471107482910156
-                ], 
-                "distanceToOrbit" : 301.4574007856818, 
-                "aspectRatio" : 1.3927406558533146, 
-                "projection" : "perspective", 
-                "isOrthographic" : false, 
-                "fieldOfView" : 37.359082288124156
-            }, 
-            "renderOptions" : {
-                "environment" : "Sharp Highlights", 
-                "ambientOcclusion" : {
-                    "enabled" : false, 
-                    "radius" : 7.074208366299121, 
-                    "intensity" : 0.4
-                }, 
-                "toneMap" : {
-                    "method" : NumberInt(1), 
-                    "exposure" : NumberInt(-9), 
-                    "lightMultiplier" : -0.00000000000000000001
-                }, 
-                "appearance" : {
-                    "ghostHidden" : true, 
-                    "ambientShadow" : false, 
-                    "antiAliasing" : true, 
-                    "progressiveDisplay" : true, 
-                    "swapBlackAndWhite" : false, 
-                    "displayLines" : true, 
-                    "displayPoints" : true
-                }
-            }, 
-            "cutplanes" : [
-
-            ], 
-            "explodeScale" : NumberInt(0), 
-            "transforms" : {
-
-            }, 
-            "Markup3D" : {
-                "MarkupCollection" : [
-
-                ]
-            }, 
-            "id" : "8de681574431", 
-            "name" : "Sun Oct 15 2017 19:44:54 GMT+0200 (CEST)"
+            "id" : "Viewing.Extension.ModelDerivatives", 
+            "options" : {
+                "apiUrl" : "/api/derivatives/2legged", 
+                "showModelSelector" : true, 
+                "database" : "gallery"
+            }
         }
     ]
 }
@@ -4746,6 +4685,10 @@
         {
             "name" : "Seat", 
             "_id" : "59857ae1feff342db5cb2fce"
+        }, 
+        {
+            "name" : "Responsive Pie", 
+            "_id" : "5a406e9a2471522a519497c7"
         }
     ], 
     "dynamicExtensions" : [
@@ -5699,10 +5642,10 @@
     "_id" : ObjectId("598957eed77eb159a67998ed"), 
     "name" : "Kinematics", 
     "env" : "Local", 
-    "desc" : "", 
+    "desc" : "Web Animation combined with hierarchical transforms.", 
     "layout" : {
         "type" : "flexLayoutRight", 
-        "rightFlex" : 0.25
+        "rightFlex" : 0.35
     }, 
     "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.Kinematics", 
     "model" : {
@@ -5711,10 +5654,1154 @@
     }, 
     "dynamicExtensions" : [
         {
-            "id" : "Viewing.Extension.Kinematics", 
+            "id" : "Viewing.Extension.ExtensionManager", 
             "options" : {
-
+                "extensions" : [
+                    {
+                        "id" : "Viewing.Extension.Kinematics", 
+                        "enabled" : true, 
+                        "options" : {
+                            "displayIndex" : NumberInt(0), 
+                            "flex" : 0.4, 
+                            "hierarchy" : {
+                                "centre" : {
+                                    "x" : -1531.7778454323443, 
+                                    "y" : -3066.921560568636, 
+                                    "z" : 103.18552620987555
+                                }, 
+                                "axis" : {
+                                    "x" : NumberInt(0), 
+                                    "y" : NumberInt(1), 
+                                    "z" : NumberInt(0)
+                                }, 
+                                "angle" : NumberInt(0), 
+                                "dbId" : NumberInt(12), 
+                                "bounds" : {
+                                    "min" : NumberInt(-175), 
+                                    "max" : NumberInt(170)
+                                }, 
+                                "children" : [
+                                    {
+                                        "centre" : {
+                                            "x" : -275.46734299564633, 
+                                            "y" : -1282.0783844528128, 
+                                            "z" : 695.3209230147719
+                                        }, 
+                                        "axis" : {
+                                            "x" : NumberInt(0), 
+                                            "y" : NumberInt(0), 
+                                            "z" : NumberInt(-1)
+                                        }, 
+                                        "angle" : NumberInt(0), 
+                                        "dbId" : NumberInt(13), 
+                                        "bounds" : {
+                                            "min" : NumberInt(-90), 
+                                            "max" : NumberInt(90)
+                                        }, 
+                                        "children" : [
+                                            {
+                                                "centre" : {
+                                                    "x" : -274.28775776026066, 
+                                                    "y" : 2544.220316276206, 
+                                                    "z" : 354.98556647844083
+                                                }, 
+                                                "axis" : {
+                                                    "x" : NumberInt(0), 
+                                                    "y" : NumberInt(0), 
+                                                    "z" : NumberInt(-1)
+                                                }, 
+                                                "angle" : NumberInt(0), 
+                                                "dbId" : NumberInt(9), 
+                                                "bounds" : {
+                                                    "min" : NumberInt(-180), 
+                                                    "max" : NumberInt(80)
+                                                }, 
+                                                "children" : [
+                                                    {
+                                                        "centre" : {
+                                                            "x" : -966.5434561316943, 
+                                                            "y" : 3330.847986354103, 
+                                                            "z" : 79.66191503637081
+                                                        }, 
+                                                        "axis" : {
+                                                            "x" : NumberInt(1), 
+                                                            "y" : NumberInt(0), 
+                                                            "z" : NumberInt(0)
+                                                        }, 
+                                                        "angle" : NumberInt(0), 
+                                                        "dbId" : NumberInt(14), 
+                                                        "bounds" : {
+                                                            "min" : NumberInt(-180), 
+                                                            "max" : NumberInt(180)
+                                                        }, 
+                                                        "children" : [
+                                                            {
+                                                                "centre" : {
+                                                                    "x" : 3217.6120336721715, 
+                                                                    "y" : 3330.9245884187817, 
+                                                                    "z" : 335.48933959375506
+                                                                }, 
+                                                                "axis" : {
+                                                                    "x" : NumberInt(0), 
+                                                                    "y" : NumberInt(0), 
+                                                                    "z" : NumberInt(-1)
+                                                                }, 
+                                                                "angle" : NumberInt(0), 
+                                                                "dbId" : NumberInt(15), 
+                                                                "bounds" : {
+                                                                    "min" : NumberInt(-130), 
+                                                                    "max" : NumberInt(130)
+                                                                }, 
+                                                                "children" : [
+                                                                    {
+                                                                        "centre" : {
+                                                                            "x" : 3956.6543579385616, 
+                                                                            "y" : 3330.6703223388813, 
+                                                                            "z" : 79.81803179126203
+                                                                        }, 
+                                                                        "axis" : {
+                                                                            "x" : NumberInt(1), 
+                                                                            "y" : NumberInt(0), 
+                                                                            "z" : NumberInt(0)
+                                                                        }, 
+                                                                        "angle" : NumberInt(0), 
+                                                                        "dbId" : NumberInt(16), 
+                                                                        "bounds" : {
+                                                                            "min" : NumberInt(-180), 
+                                                                            "max" : NumberInt(180)
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    }, 
+                    {
+                        "id" : "Viewing.Extension.ConfigManager", 
+                        "enabled" : true, 
+                        "options" : {
+                            "displayIndex" : NumberInt(1), 
+                            "playPeriod" : NumberInt(1200), 
+                            "restoreFilter" : {
+                                "kinematics" : true, 
+                                "viewport" : false
+                            }
+                        }
+                    }
+                ]
             }
+        }
+    ], 
+    "sequences" : [
+        {
+            "id" : "7c8356e1cba5", 
+            "stateIds" : [
+                "12e90effe876", 
+                "568dd93820ab", 
+                "7eef00be9bc0", 
+                "76be2d6bc413", 
+                "83796e4b4bd5"
+            ], 
+            "name" : "demo"
+        }
+    ], 
+    "states" : [
+        {
+            "seedURN" : "resources/models/prod/robot/0.svf", 
+            "objectSet" : [
+                {
+                    "id" : [
+
+                    ], 
+                    "isolated" : [
+
+                    ], 
+                    "hidden" : [
+
+                    ], 
+                    "explodeScale" : NumberInt(0), 
+                    "idType" : "lmv"
+                }
+            ], 
+            "viewport" : {
+                "name" : "", 
+                "eye" : [
+                    14680.981663341692, 
+                    11606.042678491838, 
+                    -2539.0553051368106
+                ], 
+                "target" : [
+                    -5540.922563193155, 
+                    -4479.431614846086, 
+                    365.6145641678586
+                ], 
+                "up" : [
+                    -0.6123392871739314, 
+                    0.7856871451992253, 
+                    0.08795628034434602
+                ], 
+                "worldUpVector" : [
+                    NumberInt(0), 
+                    NumberInt(1), 
+                    NumberInt(0)
+                ], 
+                "pivotPoint" : [
+                    0.000732421875, 
+                    -0.097412109375, 
+                    0.00017547607421875
+                ], 
+                "distanceToOrbit" : 18880.94817478216, 
+                "aspectRatio" : 1.2734907912687585, 
+                "projection" : "perspective", 
+                "isOrthographic" : false, 
+                "fieldOfView" : 42.879780760272894
+            }, 
+            "renderOptions" : {
+                "environment" : "Sharp Highlights", 
+                "ambientOcclusion" : {
+                    "enabled" : false, 
+                    "radius" : NumberInt(10), 
+                    "intensity" : 0.4
+                }, 
+                "toneMap" : {
+                    "method" : NumberInt(1), 
+                    "exposure" : NumberInt(-9), 
+                    "lightMultiplier" : -0.00000000000000000001
+                }, 
+                "appearance" : {
+                    "ghostHidden" : false, 
+                    "ambientShadow" : false, 
+                    "antiAliasing" : false, 
+                    "progressiveDisplay" : false, 
+                    "swapBlackAndWhite" : false, 
+                    "displayLines" : true, 
+                    "displayPoints" : true
+                }
+            }, 
+            "cutplanes" : [
+
+            ], 
+            "kinematics" : {
+                "hierarchy" : {
+                    "centre" : {
+                        "x" : -1531.7778454323443, 
+                        "y" : -3066.921560568636, 
+                        "z" : 103.18552620987555
+                    }, 
+                    "axis" : {
+                        "x" : NumberInt(0), 
+                        "y" : NumberInt(1), 
+                        "z" : NumberInt(0)
+                    }, 
+                    "angle" : 2.129301687433082, 
+                    "dbId" : NumberInt(12), 
+                    "bounds" : {
+                        "min" : NumberInt(-175), 
+                        "max" : NumberInt(170)
+                    }, 
+                    "children" : [
+                        {
+                            "centre" : {
+                                "x" : -275.46734299564633, 
+                                "y" : -1282.0783844528128, 
+                                "z" : 695.3209230147719
+                            }, 
+                            "axis" : {
+                                "x" : NumberInt(0), 
+                                "y" : NumberInt(0), 
+                                "z" : NumberInt(-1)
+                            }, 
+                            "angle" : -1.5707963267948966, 
+                            "dbId" : NumberInt(13), 
+                            "bounds" : {
+                                "min" : NumberInt(-90), 
+                                "max" : NumberInt(90)
+                            }, 
+                            "children" : [
+                                {
+                                    "centre" : {
+                                        "x" : -274.28775776026066, 
+                                        "y" : 2544.220316276206, 
+                                        "z" : 354.98556647844083
+                                    }, 
+                                    "axis" : {
+                                        "x" : NumberInt(0), 
+                                        "y" : NumberInt(0), 
+                                        "z" : NumberInt(-1)
+                                    }, 
+                                    "angle" : 1.3962634015954636, 
+                                    "dbId" : NumberInt(9), 
+                                    "bounds" : {
+                                        "min" : NumberInt(-180), 
+                                        "max" : NumberInt(80)
+                                    }, 
+                                    "children" : [
+                                        {
+                                            "centre" : {
+                                                "x" : -966.5434561316943, 
+                                                "y" : 3330.847986354103, 
+                                                "z" : 79.66191503637081
+                                            }, 
+                                            "axis" : {
+                                                "x" : NumberInt(1), 
+                                                "y" : NumberInt(0), 
+                                                "z" : NumberInt(0)
+                                            }, 
+                                            "angle" : -0.4328416544945937, 
+                                            "dbId" : NumberInt(14), 
+                                            "bounds" : {
+                                                "min" : NumberInt(-180), 
+                                                "max" : NumberInt(180)
+                                            }, 
+                                            "children" : [
+                                                {
+                                                    "centre" : {
+                                                        "x" : 3217.6120336721715, 
+                                                        "y" : 3330.9245884187817, 
+                                                        "z" : 335.48933959375506
+                                                    }, 
+                                                    "axis" : {
+                                                        "x" : NumberInt(0), 
+                                                        "y" : NumberInt(0), 
+                                                        "z" : NumberInt(-1)
+                                                    }, 
+                                                    "angle" : -0.05759586531581287, 
+                                                    "dbId" : NumberInt(15), 
+                                                    "bounds" : {
+                                                        "min" : NumberInt(-130), 
+                                                        "max" : NumberInt(130)
+                                                    }, 
+                                                    "children" : [
+                                                        {
+                                                            "centre" : {
+                                                                "x" : 3956.6543579385616, 
+                                                                "y" : 3330.6703223388813, 
+                                                                "z" : 79.81803179126203
+                                                            }, 
+                                                            "axis" : {
+                                                                "x" : NumberInt(1), 
+                                                                "y" : NumberInt(0), 
+                                                                "z" : NumberInt(0)
+                                                            }, 
+                                                            "angle" : -1.6406094968746698, 
+                                                            "dbId" : NumberInt(16), 
+                                                            "bounds" : {
+                                                                "min" : NumberInt(-180), 
+                                                                "max" : NumberInt(180)
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }, 
+            "id" : "568dd93820ab", 
+            "name" : "Fri Jan 12 2018 15:53:19 GMT+0000 (UTC)"
+        }, 
+        {
+            "seedURN" : "resources/models/prod/robot/0.svf", 
+            "objectSet" : [
+                {
+                    "id" : [
+
+                    ], 
+                    "isolated" : [
+
+                    ], 
+                    "hidden" : [
+
+                    ], 
+                    "explodeScale" : NumberInt(0), 
+                    "idType" : "lmv"
+                }
+            ], 
+            "viewport" : {
+                "name" : "", 
+                "eye" : [
+                    -17959.004560252764, 
+                    5361.5996385729495, 
+                    2325.2582825926625
+                ], 
+                "target" : [
+                    6797.687262741285, 
+                    -2146.5932603048323, 
+                    -289.7465382386131
+                ], 
+                "up" : [
+                    0.2871567195648519, 
+                    0.9574032574749771, 
+                    -0.030331847702637256
+                ], 
+                "worldUpVector" : [
+                    NumberInt(0), 
+                    NumberInt(1), 
+                    NumberInt(0)
+                ], 
+                "pivotPoint" : [
+                    0.000732421875, 
+                    -0.097412109375, 
+                    0.00017547607421875
+                ], 
+                "distanceToOrbit" : 18880.948174782163, 
+                "aspectRatio" : 1.2734907912687585, 
+                "projection" : "perspective", 
+                "isOrthographic" : false, 
+                "fieldOfView" : 42.879780760272894
+            }, 
+            "renderOptions" : {
+                "environment" : "Sharp Highlights", 
+                "ambientOcclusion" : {
+                    "enabled" : false, 
+                    "radius" : NumberInt(10), 
+                    "intensity" : 0.4
+                }, 
+                "toneMap" : {
+                    "method" : NumberInt(1), 
+                    "exposure" : NumberInt(-9), 
+                    "lightMultiplier" : -0.00000000000000000001
+                }, 
+                "appearance" : {
+                    "ghostHidden" : false, 
+                    "ambientShadow" : false, 
+                    "antiAliasing" : false, 
+                    "progressiveDisplay" : false, 
+                    "swapBlackAndWhite" : false, 
+                    "displayLines" : true, 
+                    "displayPoints" : true
+                }
+            }, 
+            "cutplanes" : [
+
+            ], 
+            "kinematics" : {
+                "hierarchy" : {
+                    "centre" : {
+                        "x" : -1531.7778454323443, 
+                        "y" : -3066.921560568636, 
+                        "z" : 103.18552620987555
+                    }, 
+                    "axis" : {
+                        "x" : NumberInt(0), 
+                        "y" : NumberInt(1), 
+                        "z" : NumberInt(0)
+                    }, 
+                    "angle" : -1.7715091907742444, 
+                    "dbId" : NumberInt(12), 
+                    "bounds" : {
+                        "min" : NumberInt(-175), 
+                        "max" : NumberInt(170)
+                    }, 
+                    "children" : [
+                        {
+                            "centre" : {
+                                "x" : -275.46734299564633, 
+                                "y" : -1282.0783844528128, 
+                                "z" : 695.3209230147719
+                            }, 
+                            "axis" : {
+                                "x" : NumberInt(0), 
+                                "y" : NumberInt(0), 
+                                "z" : NumberInt(-1)
+                            }, 
+                            "angle" : 0.03490658503988659, 
+                            "dbId" : NumberInt(13), 
+                            "bounds" : {
+                                "min" : NumberInt(-90), 
+                                "max" : NumberInt(90)
+                            }, 
+                            "children" : [
+                                {
+                                    "centre" : {
+                                        "x" : -274.28775776026066, 
+                                        "y" : 2544.220316276206, 
+                                        "z" : 354.98556647844083
+                                    }, 
+                                    "axis" : {
+                                        "x" : NumberInt(0), 
+                                        "y" : NumberInt(0), 
+                                        "z" : NumberInt(-1)
+                                    }, 
+                                    "angle" : -0.23387411976724018, 
+                                    "dbId" : NumberInt(9), 
+                                    "bounds" : {
+                                        "min" : NumberInt(-180), 
+                                        "max" : NumberInt(80)
+                                    }, 
+                                    "children" : [
+                                        {
+                                            "centre" : {
+                                                "x" : -966.5434561316943, 
+                                                "y" : 3330.847986354103, 
+                                                "z" : 79.66191503637081
+                                            }, 
+                                            "axis" : {
+                                                "x" : NumberInt(1), 
+                                                "y" : NumberInt(0), 
+                                                "z" : NumberInt(0)
+                                            }, 
+                                            "angle" : -0.4328416544945937, 
+                                            "dbId" : NumberInt(14), 
+                                            "bounds" : {
+                                                "min" : NumberInt(-180), 
+                                                "max" : NumberInt(180)
+                                            }, 
+                                            "children" : [
+                                                {
+                                                    "centre" : {
+                                                        "x" : 3217.6120336721715, 
+                                                        "y" : 3330.9245884187817, 
+                                                        "z" : 335.48933959375506
+                                                    }, 
+                                                    "axis" : {
+                                                        "x" : NumberInt(0), 
+                                                        "y" : NumberInt(0), 
+                                                        "z" : NumberInt(-1)
+                                                    }, 
+                                                    "angle" : -0.05759586531581287, 
+                                                    "dbId" : NumberInt(15), 
+                                                    "bounds" : {
+                                                        "min" : NumberInt(-130), 
+                                                        "max" : NumberInt(130)
+                                                    }, 
+                                                    "children" : [
+                                                        {
+                                                            "centre" : {
+                                                                "x" : 3956.6543579385616, 
+                                                                "y" : 3330.6703223388813, 
+                                                                "z" : 79.81803179126203
+                                                            }, 
+                                                            "axis" : {
+                                                                "x" : NumberInt(1), 
+                                                                "y" : NumberInt(0), 
+                                                                "z" : NumberInt(0)
+                                                            }, 
+                                                            "angle" : -1.6406094968746698, 
+                                                            "dbId" : NumberInt(16), 
+                                                            "bounds" : {
+                                                                "min" : NumberInt(-180), 
+                                                                "max" : NumberInt(180)
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }, 
+            "id" : "12e90effe876", 
+            "name" : "Fri Jan 12 2018 15:53:31 GMT+0000 (UTC)"
+        }, 
+        {
+            "seedURN" : "resources/models/prod/robot/0.svf", 
+            "objectSet" : [
+                {
+                    "id" : [
+
+                    ], 
+                    "isolated" : [
+
+                    ], 
+                    "hidden" : [
+
+                    ], 
+                    "explodeScale" : NumberInt(0), 
+                    "idType" : "lmv"
+                }
+            ], 
+            "viewport" : {
+                "name" : "", 
+                "eye" : [
+                    17556.25151284576, 
+                    185.39898240766277, 
+                    -3046.300493464209
+                ], 
+                "target" : [
+                    -7505.402931339202, 
+                    -3045.977948388796, 
+                    3083.681601926484
+                ], 
+                "up" : [
+                    -0.12071549181003327, 
+                    0.9922479296023611, 
+                    0.029526534454451532
+                ], 
+                "worldUpVector" : [
+                    NumberInt(0), 
+                    NumberInt(1), 
+                    NumberInt(0)
+                ], 
+                "pivotPoint" : [
+                    0.000732421875, 
+                    -0.097412109375, 
+                    0.00017547607421875
+                ], 
+                "distanceToOrbit" : 17662.546310202815, 
+                "aspectRatio" : 1.2733842087312415, 
+                "projection" : "perspective", 
+                "isOrthographic" : false, 
+                "fieldOfView" : 42.879780760272894
+            }, 
+            "renderOptions" : {
+                "environment" : "Sharp Highlights", 
+                "ambientOcclusion" : {
+                    "enabled" : false, 
+                    "radius" : NumberInt(10), 
+                    "intensity" : 0.4
+                }, 
+                "toneMap" : {
+                    "method" : NumberInt(1), 
+                    "exposure" : NumberInt(-9), 
+                    "lightMultiplier" : -0.00000000000000000001
+                }, 
+                "appearance" : {
+                    "ghostHidden" : false, 
+                    "ambientShadow" : false, 
+                    "antiAliasing" : false, 
+                    "progressiveDisplay" : false, 
+                    "swapBlackAndWhite" : false, 
+                    "displayLines" : true, 
+                    "displayPoints" : true
+                }
+            }, 
+            "cutplanes" : [
+
+            ], 
+            "kinematics" : {
+                "hierarchy" : {
+                    "centre" : {
+                        "x" : -1531.7778454323443, 
+                        "y" : -3066.921560568636, 
+                        "z" : 103.18552620987555
+                    }, 
+                    "axis" : {
+                        "x" : NumberInt(0), 
+                        "y" : NumberInt(1), 
+                        "z" : NumberInt(0)
+                    }, 
+                    "angle" : -2.3177972466484698, 
+                    "dbId" : NumberInt(12), 
+                    "bounds" : {
+                        "min" : NumberInt(-175), 
+                        "max" : NumberInt(170)
+                    }, 
+                    "children" : [
+                        {
+                            "centre" : {
+                                "x" : -275.46734299564633, 
+                                "y" : -1282.0783844528128, 
+                                "z" : 695.3209230147719
+                            }, 
+                            "axis" : {
+                                "x" : NumberInt(0), 
+                                "y" : NumberInt(0), 
+                                "z" : NumberInt(-1)
+                            }, 
+                            "angle" : -1.5707963267948966, 
+                            "dbId" : NumberInt(13), 
+                            "bounds" : {
+                                "min" : NumberInt(-90), 
+                                "max" : NumberInt(90)
+                            }, 
+                            "children" : [
+                                {
+                                    "centre" : {
+                                        "x" : -274.28775776026066, 
+                                        "y" : 2544.220316276206, 
+                                        "z" : 354.98556647844083
+                                    }, 
+                                    "axis" : {
+                                        "x" : NumberInt(0), 
+                                        "y" : NumberInt(0), 
+                                        "z" : NumberInt(-1)
+                                    }, 
+                                    "angle" : 1.3962634015954636, 
+                                    "dbId" : NumberInt(9), 
+                                    "bounds" : {
+                                        "min" : NumberInt(-180), 
+                                        "max" : NumberInt(80)
+                                    }, 
+                                    "children" : [
+                                        {
+                                            "centre" : {
+                                                "x" : -966.5434561316943, 
+                                                "y" : 3330.847986354103, 
+                                                "z" : 79.66191503637081
+                                            }, 
+                                            "axis" : {
+                                                "x" : NumberInt(1), 
+                                                "y" : NumberInt(0), 
+                                                "z" : NumberInt(0)
+                                            }, 
+                                            "angle" : -0.4328416544945937, 
+                                            "dbId" : NumberInt(14), 
+                                            "bounds" : {
+                                                "min" : NumberInt(-180), 
+                                                "max" : NumberInt(180)
+                                            }, 
+                                            "children" : [
+                                                {
+                                                    "centre" : {
+                                                        "x" : 3217.6120336721715, 
+                                                        "y" : 3330.9245884187817, 
+                                                        "z" : 335.48933959375506
+                                                    }, 
+                                                    "axis" : {
+                                                        "x" : NumberInt(0), 
+                                                        "y" : NumberInt(0), 
+                                                        "z" : NumberInt(-1)
+                                                    }, 
+                                                    "angle" : -0.05759586531581287, 
+                                                    "dbId" : NumberInt(15), 
+                                                    "bounds" : {
+                                                        "min" : NumberInt(-130), 
+                                                        "max" : NumberInt(130)
+                                                    }, 
+                                                    "children" : [
+                                                        {
+                                                            "centre" : {
+                                                                "x" : 3956.6543579385616, 
+                                                                "y" : 3330.6703223388813, 
+                                                                "z" : 79.81803179126203
+                                                            }, 
+                                                            "axis" : {
+                                                                "x" : NumberInt(1), 
+                                                                "y" : NumberInt(0), 
+                                                                "z" : NumberInt(0)
+                                                            }, 
+                                                            "angle" : -1.6406094968746698, 
+                                                            "dbId" : NumberInt(16), 
+                                                            "bounds" : {
+                                                                "min" : NumberInt(-180), 
+                                                                "max" : NumberInt(180)
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }, 
+            "id" : "7eef00be9bc0", 
+            "name" : "Fri Jan 12 2018 16:02:32 GMT+0000 (UTC)"
+        }, 
+        {
+            "seedURN" : "resources/models/prod/robot/0.svf", 
+            "objectSet" : [
+                {
+                    "id" : [
+
+                    ], 
+                    "isolated" : [
+
+                    ], 
+                    "hidden" : [
+
+                    ], 
+                    "explodeScale" : NumberInt(0), 
+                    "idType" : "lmv"
+                }
+            ], 
+            "viewport" : {
+                "name" : "", 
+                "eye" : [
+                    17556.25151284576, 
+                    185.39898240766277, 
+                    -3046.300493464209
+                ], 
+                "target" : [
+                    -7505.402931339202, 
+                    -3045.977948388796, 
+                    3083.681601926484
+                ], 
+                "up" : [
+                    -0.12071549181003327, 
+                    0.9922479296023611, 
+                    0.029526534454451532
+                ], 
+                "worldUpVector" : [
+                    NumberInt(0), 
+                    NumberInt(1), 
+                    NumberInt(0)
+                ], 
+                "pivotPoint" : [
+                    0.000732421875, 
+                    -0.097412109375, 
+                    0.00017547607421875
+                ], 
+                "distanceToOrbit" : 17662.546310202815, 
+                "aspectRatio" : 1.2733842087312415, 
+                "projection" : "perspective", 
+                "isOrthographic" : false, 
+                "fieldOfView" : 42.879780760272894
+            }, 
+            "renderOptions" : {
+                "environment" : "Sharp Highlights", 
+                "ambientOcclusion" : {
+                    "enabled" : false, 
+                    "radius" : NumberInt(10), 
+                    "intensity" : 0.4
+                }, 
+                "toneMap" : {
+                    "method" : NumberInt(1), 
+                    "exposure" : NumberInt(-9), 
+                    "lightMultiplier" : -0.00000000000000000001
+                }, 
+                "appearance" : {
+                    "ghostHidden" : false, 
+                    "ambientShadow" : false, 
+                    "antiAliasing" : false, 
+                    "progressiveDisplay" : false, 
+                    "swapBlackAndWhite" : false, 
+                    "displayLines" : true, 
+                    "displayPoints" : true
+                }
+            }, 
+            "cutplanes" : [
+
+            ], 
+            "kinematics" : {
+                "hierarchy" : {
+                    "centre" : {
+                        "x" : -1531.7778454323443, 
+                        "y" : -3066.921560568636, 
+                        "z" : 103.18552620987555
+                    }, 
+                    "axis" : {
+                        "x" : NumberInt(0), 
+                        "y" : NumberInt(1), 
+                        "z" : NumberInt(0)
+                    }, 
+                    "angle" : -0.6789330790257941, 
+                    "dbId" : NumberInt(12), 
+                    "bounds" : {
+                        "min" : NumberInt(-175), 
+                        "max" : NumberInt(170)
+                    }, 
+                    "children" : [
+                        {
+                            "centre" : {
+                                "x" : -275.46734299564633, 
+                                "y" : -1282.0783844528128, 
+                                "z" : 695.3209230147719
+                            }, 
+                            "axis" : {
+                                "x" : NumberInt(0), 
+                                "y" : NumberInt(0), 
+                                "z" : NumberInt(-1)
+                            }, 
+                            "angle" : -1.5707963267948966, 
+                            "dbId" : NumberInt(13), 
+                            "bounds" : {
+                                "min" : NumberInt(-90), 
+                                "max" : NumberInt(90)
+                            }, 
+                            "children" : [
+                                {
+                                    "centre" : {
+                                        "x" : -274.28775776026066, 
+                                        "y" : 2544.220316276206, 
+                                        "z" : 354.98556647844083
+                                    }, 
+                                    "axis" : {
+                                        "x" : NumberInt(0), 
+                                        "y" : NumberInt(0), 
+                                        "z" : NumberInt(-1)
+                                    }, 
+                                    "angle" : 1.3962634015954636, 
+                                    "dbId" : NumberInt(9), 
+                                    "bounds" : {
+                                        "min" : NumberInt(-180), 
+                                        "max" : NumberInt(80)
+                                    }, 
+                                    "children" : [
+                                        {
+                                            "centre" : {
+                                                "x" : -966.5434561316943, 
+                                                "y" : 3330.847986354103, 
+                                                "z" : 79.66191503637081
+                                            }, 
+                                            "axis" : {
+                                                "x" : NumberInt(1), 
+                                                "y" : NumberInt(0), 
+                                                "z" : NumberInt(0)
+                                            }, 
+                                            "angle" : -0.4328416544945937, 
+                                            "dbId" : NumberInt(14), 
+                                            "bounds" : {
+                                                "min" : NumberInt(-180), 
+                                                "max" : NumberInt(180)
+                                            }, 
+                                            "children" : [
+                                                {
+                                                    "centre" : {
+                                                        "x" : 3217.6120336721715, 
+                                                        "y" : 3330.9245884187817, 
+                                                        "z" : 335.48933959375506
+                                                    }, 
+                                                    "axis" : {
+                                                        "x" : NumberInt(0), 
+                                                        "y" : NumberInt(0), 
+                                                        "z" : NumberInt(-1)
+                                                    }, 
+                                                    "angle" : -0.05759586531581287, 
+                                                    "dbId" : NumberInt(15), 
+                                                    "bounds" : {
+                                                        "min" : NumberInt(-130), 
+                                                        "max" : NumberInt(130)
+                                                    }, 
+                                                    "children" : [
+                                                        {
+                                                            "centre" : {
+                                                                "x" : 3956.6543579385616, 
+                                                                "y" : 3330.6703223388813, 
+                                                                "z" : 79.81803179126203
+                                                            }, 
+                                                            "axis" : {
+                                                                "x" : NumberInt(1), 
+                                                                "y" : NumberInt(0), 
+                                                                "z" : NumberInt(0)
+                                                            }, 
+                                                            "angle" : -1.6406094968746698, 
+                                                            "dbId" : NumberInt(16), 
+                                                            "bounds" : {
+                                                                "min" : NumberInt(-180), 
+                                                                "max" : NumberInt(180)
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }, 
+            "id" : "76be2d6bc413", 
+            "name" : "Fri Jan 12 2018 16:02:48 GMT+0000 (UTC)"
+        }, 
+        {
+            "seedURN" : "resources/models/prod/robot/0.svf", 
+            "objectSet" : [
+                {
+                    "id" : [
+
+                    ], 
+                    "isolated" : [
+
+                    ], 
+                    "hidden" : [
+
+                    ], 
+                    "explodeScale" : NumberInt(0), 
+                    "idType" : "lmv"
+                }
+            ], 
+            "viewport" : {
+                "name" : "", 
+                "eye" : [
+                    17556.25151284576, 
+                    185.39898240766277, 
+                    -3046.300493464209
+                ], 
+                "target" : [
+                    -7505.402931339202, 
+                    -3045.977948388796, 
+                    3083.681601926484
+                ], 
+                "up" : [
+                    -0.12071549181003327, 
+                    0.9922479296023611, 
+                    0.029526534454451532
+                ], 
+                "worldUpVector" : [
+                    NumberInt(0), 
+                    NumberInt(1), 
+                    NumberInt(0)
+                ], 
+                "pivotPoint" : [
+                    0.000732421875, 
+                    -0.097412109375, 
+                    0.00017547607421875
+                ], 
+                "distanceToOrbit" : 17662.546310202815, 
+                "aspectRatio" : 1.2733842087312415, 
+                "projection" : "perspective", 
+                "isOrthographic" : false, 
+                "fieldOfView" : 42.879780760272894
+            }, 
+            "renderOptions" : {
+                "environment" : "Sharp Highlights", 
+                "ambientOcclusion" : {
+                    "enabled" : false, 
+                    "radius" : NumberInt(10), 
+                    "intensity" : 0.4
+                }, 
+                "toneMap" : {
+                    "method" : NumberInt(1), 
+                    "exposure" : NumberInt(-9), 
+                    "lightMultiplier" : -0.00000000000000000001
+                }, 
+                "appearance" : {
+                    "ghostHidden" : false, 
+                    "ambientShadow" : false, 
+                    "antiAliasing" : false, 
+                    "progressiveDisplay" : false, 
+                    "swapBlackAndWhite" : false, 
+                    "displayLines" : true, 
+                    "displayPoints" : true
+                }
+            }, 
+            "cutplanes" : [
+
+            ], 
+            "kinematics" : {
+                "hierarchy" : {
+                    "centre" : {
+                        "x" : -1531.7778454323443, 
+                        "y" : -3066.921560568636, 
+                        "z" : 103.18552620987555
+                    }, 
+                    "axis" : {
+                        "x" : NumberInt(0), 
+                        "y" : NumberInt(1), 
+                        "z" : NumberInt(0)
+                    }, 
+                    "angle" : 0.8552113334772214, 
+                    "dbId" : NumberInt(12), 
+                    "bounds" : {
+                        "min" : NumberInt(-175), 
+                        "max" : NumberInt(170)
+                    }, 
+                    "children" : [
+                        {
+                            "centre" : {
+                                "x" : -275.46734299564633, 
+                                "y" : -1282.0783844528128, 
+                                "z" : 695.3209230147719
+                            }, 
+                            "axis" : {
+                                "x" : NumberInt(0), 
+                                "y" : NumberInt(0), 
+                                "z" : NumberInt(-1)
+                            }, 
+                            "angle" : -1.5707963267948966, 
+                            "dbId" : NumberInt(13), 
+                            "bounds" : {
+                                "min" : NumberInt(-90), 
+                                "max" : NumberInt(90)
+                            }, 
+                            "children" : [
+                                {
+                                    "centre" : {
+                                        "x" : -274.28775776026066, 
+                                        "y" : 2544.220316276206, 
+                                        "z" : 354.98556647844083
+                                    }, 
+                                    "axis" : {
+                                        "x" : NumberInt(0), 
+                                        "y" : NumberInt(0), 
+                                        "z" : NumberInt(-1)
+                                    }, 
+                                    "angle" : 1.3962634015954636, 
+                                    "dbId" : NumberInt(9), 
+                                    "bounds" : {
+                                        "min" : NumberInt(-180), 
+                                        "max" : NumberInt(80)
+                                    }, 
+                                    "children" : [
+                                        {
+                                            "centre" : {
+                                                "x" : -966.5434561316943, 
+                                                "y" : 3330.847986354103, 
+                                                "z" : 79.66191503637081
+                                            }, 
+                                            "axis" : {
+                                                "x" : NumberInt(1), 
+                                                "y" : NumberInt(0), 
+                                                "z" : NumberInt(0)
+                                            }, 
+                                            "angle" : -0.4328416544945937, 
+                                            "dbId" : NumberInt(14), 
+                                            "bounds" : {
+                                                "min" : NumberInt(-180), 
+                                                "max" : NumberInt(180)
+                                            }, 
+                                            "children" : [
+                                                {
+                                                    "centre" : {
+                                                        "x" : 3217.6120336721715, 
+                                                        "y" : 3330.9245884187817, 
+                                                        "z" : 335.48933959375506
+                                                    }, 
+                                                    "axis" : {
+                                                        "x" : NumberInt(0), 
+                                                        "y" : NumberInt(0), 
+                                                        "z" : NumberInt(-1)
+                                                    }, 
+                                                    "angle" : -0.05759586531581287, 
+                                                    "dbId" : NumberInt(15), 
+                                                    "bounds" : {
+                                                        "min" : NumberInt(-130), 
+                                                        "max" : NumberInt(130)
+                                                    }, 
+                                                    "children" : [
+                                                        {
+                                                            "centre" : {
+                                                                "x" : 3956.6543579385616, 
+                                                                "y" : 3330.6703223388813, 
+                                                                "z" : 79.81803179126203
+                                                            }, 
+                                                            "axis" : {
+                                                                "x" : NumberInt(1), 
+                                                                "y" : NumberInt(0), 
+                                                                "z" : NumberInt(0)
+                                                            }, 
+                                                            "angle" : -1.6406094968746698, 
+                                                            "dbId" : NumberInt(16), 
+                                                            "bounds" : {
+                                                                "min" : NumberInt(-180), 
+                                                                "max" : NumberInt(180)
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }, 
+            "id" : "83796e4b4bd5", 
+            "name" : "Fri Jan 12 2018 16:02:50 GMT+0000 (UTC)"
         }
     ]
 }
@@ -7519,17 +8606,6 @@
                 "046bd083fbf5"
             ], 
             "name" : "Demo"
-        }, 
-        {
-            "id" : "7ee1368213d5", 
-            "stateIds" : [
-                "f00a0acc6ae7", 
-                "c6fcd81a106d", 
-                "3341ccd14ac7", 
-                "aaeb416c5733", 
-                "ce83125a8a80"
-            ], 
-            "name" : "s2"
         }
     ], 
     "states" : [
@@ -10457,591 +11533,60 @@
             }, 
             "id" : "046bd083fbf5", 
             "name" : "Sun Oct 15 2017 19:36:18 GMT+0200 (CEST)"
-        }, 
-        {
-            "seedURN" : "resources/models/dev/office/Resource/3D_View/3D/office.svf", 
-            "objectSet" : [
-                {
-                    "id" : [
-                        NumberInt(961)
-                    ], 
-                    "isolated" : [
-
-                    ], 
-                    "hidden" : [
-
-                    ], 
-                    "explodeScale" : NumberInt(0), 
-                    "idType" : "lmv"
-                }
-            ], 
-            "viewport" : {
-                "name" : "", 
-                "eye" : [
-                    1.1160256163654267, 
-                    8.932183654692665, 
-                    30.443505914449105
-                ], 
-                "target" : [
-                    -28.40693062979775, 
-                    65.22589021974399, 
-                    4.265123625402545
-                ], 
-                "up" : [
-                    -0.17686360067938853, 
-                    0.3372395215325984, 
-                    0.9246560289487038
-                ], 
-                "worldUpVector" : [
-                    NumberInt(0), 
-                    NumberInt(0), 
-                    NumberInt(1)
-                ], 
-                "pivotPoint" : [
-                    7.661362648010254, 
-                    3.3423211574554443, 
-                    2.9431896209716797
-                ], 
-                "distanceToOrbit" : 3.083883750897609, 
-                "aspectRatio" : 1.1147664835164834, 
-                "projection" : "perspective", 
-                "isOrthographic" : false, 
-                "fieldOfView" : 53.13010235415598
-            }, 
-            "renderOptions" : {
-                "environment" : "Sharp Highlights", 
-                "ambientOcclusion" : {
-                    "enabled" : false, 
-                    "radius" : 5.951773971947409, 
-                    "intensity" : 0.4
-                }, 
-                "toneMap" : {
-                    "method" : NumberInt(1), 
-                    "exposure" : NumberInt(-9), 
-                    "lightMultiplier" : -0.00000000000000000001
-                }, 
-                "appearance" : {
-                    "ghostHidden" : true, 
-                    "ambientShadow" : false, 
-                    "antiAliasing" : true, 
-                    "progressiveDisplay" : true, 
-                    "swapBlackAndWhite" : false, 
-                    "displayLines" : true, 
-                    "displayPoints" : true
-                }
-            }, 
-            "cutplanes" : [
-
-            ], 
-            "cameraTween" : {
-                "viewport" : {
-                    "name" : "", 
-                    "eye" : [
-                        1.1160256163654267, 
-                        8.932183654692665, 
-                        30.443505914449105
-                    ], 
-                    "target" : [
-                        -28.40693062979775, 
-                        65.22589021974399, 
-                        4.265123625402545
-                    ], 
-                    "up" : [
-                        -0.17686360067938853, 
-                        0.3372395215325984, 
-                        0.9246560289487038
-                    ], 
-                    "worldUpVector" : [
-                        NumberInt(0), 
-                        NumberInt(0), 
-                        NumberInt(1)
-                    ], 
-                    "pivotPoint" : [
-                        7.661362648010254, 
-                        3.3423211574554443, 
-                        2.9431896209716797
-                    ], 
-                    "distanceToOrbit" : 3.083883750897609, 
-                    "aspectRatio" : 1.1147664835164834, 
-                    "projection" : "perspective", 
-                    "isOrthographic" : false, 
-                    "fieldOfView" : 53.13010235415598
-                }
-            }, 
-            "explodeScale" : NumberInt(0), 
-            "transforms" : {
-
-            }, 
-            "id" : "f00a0acc6ae7", 
-            "name" : "Tue Oct 17 2017 14:32:05 GMT+0200 (CEST)"
-        }, 
-        {
-            "seedURN" : "resources/models/dev/office/Resource/3D_View/3D/office.svf", 
-            "objectSet" : [
-                {
-                    "id" : [
-                        NumberInt(961)
-                    ], 
-                    "isolated" : [
-
-                    ], 
-                    "hidden" : [
-
-                    ], 
-                    "explodeScale" : NumberInt(0), 
-                    "idType" : "lmv"
-                }
-            ], 
-            "viewport" : {
-                "name" : "", 
-                "eye" : [
-                    39.534861600049766, 
-                    96.01888962325951, 
-                    -2.878084259603302
-                ], 
-                "target" : [
-                    -4.1386560035329865, 
-                    47.36397907836418, 
-                    18.36379851039175
-                ], 
-                "up" : [
-                    0.20640374150130003, 
-                    0.2299461121962299, 
-                    0.9510637628361748
-                ], 
-                "worldUpVector" : [
-                    NumberInt(0), 
-                    NumberInt(0), 
-                    NumberInt(1)
-                ], 
-                "pivotPoint" : [
-                    7.661362648010254, 
-                    3.3423211574554443, 
-                    2.9431896209716797
-                ], 
-                "distanceToOrbit" : 87.64041981491857, 
-                "aspectRatio" : 1.1147664835164834, 
-                "projection" : "perspective", 
-                "isOrthographic" : false, 
-                "fieldOfView" : 53.13010235415598
-            }, 
-            "renderOptions" : {
-                "environment" : "Sharp Highlights", 
-                "ambientOcclusion" : {
-                    "enabled" : false, 
-                    "radius" : 5.951773971947409, 
-                    "intensity" : 0.4
-                }, 
-                "toneMap" : {
-                    "method" : NumberInt(1), 
-                    "exposure" : NumberInt(-9), 
-                    "lightMultiplier" : -0.00000000000000000001
-                }, 
-                "appearance" : {
-                    "ghostHidden" : true, 
-                    "ambientShadow" : false, 
-                    "antiAliasing" : true, 
-                    "progressiveDisplay" : true, 
-                    "swapBlackAndWhite" : false, 
-                    "displayLines" : true, 
-                    "displayPoints" : true
-                }
-            }, 
-            "cutplanes" : [
-
-            ], 
-            "cameraTween" : {
-                "viewport" : {
-                    "name" : "", 
-                    "eye" : [
-                        39.534861600049766, 
-                        96.01888962325951, 
-                        -2.878084259603302
-                    ], 
-                    "target" : [
-                        -4.1386560035329865, 
-                        47.36397907836418, 
-                        18.36379851039175
-                    ], 
-                    "up" : [
-                        0.20640374150130003, 
-                        0.2299461121962299, 
-                        0.9510637628361748
-                    ], 
-                    "worldUpVector" : [
-                        NumberInt(0), 
-                        NumberInt(0), 
-                        NumberInt(1)
-                    ], 
-                    "pivotPoint" : [
-                        7.661362648010254, 
-                        3.3423211574554443, 
-                        2.9431896209716797
-                    ], 
-                    "distanceToOrbit" : 87.64041981491857, 
-                    "aspectRatio" : 1.1147664835164834, 
-                    "projection" : "perspective", 
-                    "isOrthographic" : false, 
-                    "fieldOfView" : 53.13010235415598
-                }
-            }, 
-            "explodeScale" : NumberInt(0), 
-            "transforms" : {
-
-            }, 
-            "id" : "c6fcd81a106d", 
-            "name" : "Tue Oct 17 2017 14:32:13 GMT+0200 (CEST)"
-        }, 
-        {
-            "seedURN" : "resources/models/dev/office/Resource/3D_View/3D/office.svf", 
-            "objectSet" : [
-                {
-                    "id" : [
-                        NumberInt(961)
-                    ], 
-                    "isolated" : [
-
-                    ], 
-                    "hidden" : [
-
-                    ], 
-                    "explodeScale" : NumberInt(0), 
-                    "idType" : "lmv"
-                }
-            ], 
-            "viewport" : {
-                "name" : "", 
-                "eye" : [
-                    -74.61810128376793, 
-                    27.545024097442344, 
-                    22.171325489914956
-                ], 
-                "target" : [
-                    -12.136666705102193, 
-                    3.8705115597591337, 
-                    6.00092559654712
-                ], 
-                "up" : [
-                    0.21996197916345298, 
-                    -0.08334463938984012, 
-                    0.9719415614158469
-                ], 
-                "worldUpVector" : [
-                    NumberInt(0), 
-                    NumberInt(0), 
-                    NumberInt(1)
-                ], 
-                "pivotPoint" : [
-                    7.661362648010254, 
-                    3.3423211574554443, 
-                    2.9431896209716797
-                ], 
-                "distanceToOrbit" : 87.6404198149186, 
-                "aspectRatio" : 1.1147664835164834, 
-                "projection" : "perspective", 
-                "isOrthographic" : false, 
-                "fieldOfView" : 53.13010235415598
-            }, 
-            "renderOptions" : {
-                "environment" : "Sharp Highlights", 
-                "ambientOcclusion" : {
-                    "enabled" : false, 
-                    "radius" : 5.951773971947409, 
-                    "intensity" : 0.4
-                }, 
-                "toneMap" : {
-                    "method" : NumberInt(1), 
-                    "exposure" : NumberInt(-9), 
-                    "lightMultiplier" : -0.00000000000000000001
-                }, 
-                "appearance" : {
-                    "ghostHidden" : true, 
-                    "ambientShadow" : false, 
-                    "antiAliasing" : true, 
-                    "progressiveDisplay" : true, 
-                    "swapBlackAndWhite" : false, 
-                    "displayLines" : true, 
-                    "displayPoints" : true
-                }
-            }, 
-            "cutplanes" : [
-
-            ], 
-            "cameraTween" : {
-                "viewport" : {
-                    "name" : "", 
-                    "eye" : [
-                        -74.61810128376793, 
-                        27.545024097442344, 
-                        22.171325489914956
-                    ], 
-                    "target" : [
-                        -12.136666705102193, 
-                        3.8705115597591337, 
-                        6.00092559654712
-                    ], 
-                    "up" : [
-                        0.21996197916345298, 
-                        -0.08334463938984012, 
-                        0.9719415614158469
-                    ], 
-                    "worldUpVector" : [
-                        NumberInt(0), 
-                        NumberInt(0), 
-                        NumberInt(1)
-                    ], 
-                    "pivotPoint" : [
-                        7.661362648010254, 
-                        3.3423211574554443, 
-                        2.9431896209716797
-                    ], 
-                    "distanceToOrbit" : 87.6404198149186, 
-                    "aspectRatio" : 1.1147664835164834, 
-                    "projection" : "perspective", 
-                    "isOrthographic" : false, 
-                    "fieldOfView" : 53.13010235415598
-                }
-            }, 
-            "explodeScale" : NumberInt(0), 
-            "transforms" : {
-
-            }, 
-            "id" : "3341ccd14ac7", 
-            "name" : "Tue Oct 17 2017 14:32:19 GMT+0200 (CEST)"
-        }, 
-        {
-            "seedURN" : "resources/models/dev/office/Resource/3D_View/3D/office.svf", 
-            "objectSet" : [
-                {
-                    "id" : [
-
-                    ], 
-                    "isolated" : [
-
-                    ], 
-                    "hidden" : [
-                        NumberInt(911)
-                    ], 
-                    "explodeScale" : NumberInt(0), 
-                    "idType" : "lmv"
-                }
-            ], 
-            "viewport" : {
-                "name" : "", 
-                "eye" : [
-                    -55.17721985668643, 
-                    -46.92089029240549, 
-                    38.303115342663695
-                ], 
-                "target" : [
-                    -3.413869670262393, 
-                    -11.996458272534447, 
-                    9.550138641398881
-                ], 
-                "up" : [
-                    0.346719006660687, 
-                    0.23392930199665074, 
-                    0.9083297925795378
-                ], 
-                "worldUpVector" : [
-                    NumberInt(0), 
-                    NumberInt(0), 
-                    NumberInt(1)
-                ], 
-                "pivotPoint" : [
-                    7.661362648010254, 
-                    3.3423211574554443, 
-                    2.9431896209716797
-                ], 
-                "distanceToOrbit" : 87.64041981491859, 
-                "aspectRatio" : 1.1147664835164834, 
-                "projection" : "perspective", 
-                "isOrthographic" : false, 
-                "fieldOfView" : 53.13010235415598
-            }, 
-            "renderOptions" : {
-                "environment" : "Sharp Highlights", 
-                "ambientOcclusion" : {
-                    "enabled" : false, 
-                    "radius" : 5.951773971947409, 
-                    "intensity" : 0.4
-                }, 
-                "toneMap" : {
-                    "method" : NumberInt(1), 
-                    "exposure" : NumberInt(-9), 
-                    "lightMultiplier" : -0.00000000000000000001
-                }, 
-                "appearance" : {
-                    "ghostHidden" : true, 
-                    "ambientShadow" : false, 
-                    "antiAliasing" : true, 
-                    "progressiveDisplay" : true, 
-                    "swapBlackAndWhite" : false, 
-                    "displayLines" : true, 
-                    "displayPoints" : true
-                }
-            }, 
-            "cutplanes" : [
-
-            ], 
-            "cameraTween" : {
-                "viewport" : {
-                    "name" : "", 
-                    "eye" : [
-                        -55.17721985668643, 
-                        -46.92089029240549, 
-                        38.303115342663695
-                    ], 
-                    "target" : [
-                        -3.413869670262393, 
-                        -11.996458272534447, 
-                        9.550138641398881
-                    ], 
-                    "up" : [
-                        0.346719006660687, 
-                        0.23392930199665074, 
-                        0.9083297925795378
-                    ], 
-                    "worldUpVector" : [
-                        NumberInt(0), 
-                        NumberInt(0), 
-                        NumberInt(1)
-                    ], 
-                    "pivotPoint" : [
-                        7.661362648010254, 
-                        3.3423211574554443, 
-                        2.9431896209716797
-                    ], 
-                    "distanceToOrbit" : 87.64041981491859, 
-                    "aspectRatio" : 1.1147664835164834, 
-                    "projection" : "perspective", 
-                    "isOrthographic" : false, 
-                    "fieldOfView" : 53.13010235415598
-                }
-            }, 
-            "explodeScale" : NumberInt(0), 
-            "transforms" : {
-
-            }, 
-            "id" : "aaeb416c5733", 
-            "name" : "Tue Oct 17 2017 14:32:26 GMT+0200 (CEST)"
-        }, 
-        {
-            "seedURN" : "resources/models/dev/office/Resource/3D_View/3D/office.svf", 
-            "objectSet" : [
-                {
-                    "id" : [
-
-                    ], 
-                    "isolated" : [
-
-                    ], 
-                    "hidden" : [
-                        NumberInt(911)
-                    ], 
-                    "explodeScale" : NumberInt(0), 
-                    "idType" : "lmv"
-                }
-            ], 
-            "viewport" : {
-                "name" : "", 
-                "eye" : [
-                    -15.766826755785019, 
-                    -16.604081812916316, 
-                    16.228111156973956
-                ], 
-                "target" : [
-                    49.81168760451354, 
-                    -15.080612159862834, 
-                    -4.3396193480861065
-                ], 
-                "up" : [
-                    0.2991074445472661, 
-                    0.006948634308282015, 
-                    0.9541941380545439
-                ], 
-                "worldUpVector" : [
-                    NumberInt(0), 
-                    NumberInt(0), 
-                    NumberInt(1)
-                ], 
-                "pivotPoint" : [
-                    7.661362648010254, 
-                    3.3423211574554443, 
-                    2.9431896209716797
-                ], 
-                "distanceToOrbit" : 26.76573682989725, 
-                "aspectRatio" : 1.1147664835164834, 
-                "projection" : "perspective", 
-                "isOrthographic" : false, 
-                "fieldOfView" : 53.13010235415598
-            }, 
-            "renderOptions" : {
-                "environment" : "Sharp Highlights", 
-                "ambientOcclusion" : {
-                    "enabled" : false, 
-                    "radius" : 5.951773971947409, 
-                    "intensity" : 0.4
-                }, 
-                "toneMap" : {
-                    "method" : NumberInt(1), 
-                    "exposure" : NumberInt(-9), 
-                    "lightMultiplier" : -0.00000000000000000001
-                }, 
-                "appearance" : {
-                    "ghostHidden" : true, 
-                    "ambientShadow" : false, 
-                    "antiAliasing" : true, 
-                    "progressiveDisplay" : true, 
-                    "swapBlackAndWhite" : false, 
-                    "displayLines" : true, 
-                    "displayPoints" : true
-                }
-            }, 
-            "cutplanes" : [
-
-            ], 
-            "cameraTween" : {
-                "viewport" : {
-                    "name" : "", 
-                    "eye" : [
-                        -15.766826755785019, 
-                        -16.604081812916316, 
-                        16.228111156973956
-                    ], 
-                    "target" : [
-                        49.81168760451354, 
-                        -15.080612159862834, 
-                        -4.3396193480861065
-                    ], 
-                    "up" : [
-                        0.2991074445472661, 
-                        0.006948634308282015, 
-                        0.9541941380545439
-                    ], 
-                    "worldUpVector" : [
-                        NumberInt(0), 
-                        NumberInt(0), 
-                        NumberInt(1)
-                    ], 
-                    "pivotPoint" : [
-                        7.661362648010254, 
-                        3.3423211574554443, 
-                        2.9431896209716797
-                    ], 
-                    "distanceToOrbit" : 26.76573682989725, 
-                    "aspectRatio" : 1.1147664835164834, 
-                    "projection" : "perspective", 
-                    "isOrthographic" : false, 
-                    "fieldOfView" : 53.13010235415598
-                }
-            }, 
-            "explodeScale" : NumberInt(0), 
-            "transforms" : {
-
-            }, 
-            "id" : "ce83125a8a80", 
-            "name" : "Tue Oct 17 2017 14:32:30 GMT+0200 (CEST)"
         }
+    ]
+}
+{ 
+    "_id" : ObjectId("5a361b2b58144b5ed2936ddf"), 
+    "name" : "PointCloud Markup", 
+    "env" : "AutodeskProduction", 
+    "desc" : "A high-performance 3D Markup demo based on a PointCloud entity using custom shader with animated dynamic texture.", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.PointCloudMarkup", 
+    "layout" : {
+        "type" : "flexLayoutRight", 
+        "rightFlex" : 0.3
+    }, 
+    "model" : {
+        "path" : "resources/models/dev/seat/0.svf", 
+        "name" : "Seat"
+    }, 
+    "dynamicExtensions" : [
+        {
+            "id" : "Viewing.Extension.ExtensionManager", 
+            "options" : {
+                "extensions" : [
+                    {
+                        "id" : "Viewing.Extension.PointCloudMarkup", 
+                        "enabled" : true, 
+                        "options" : {
+                            "displayIndex" : NumberInt(0), 
+                            "flex" : 0.6, 
+                            "pointCloudMarkup" : {
+                                "occlusionDist" : 5.0
+                            }
+                        }
+                    }, 
+                    {
+                        "id" : "Viewing.Extension.ConfigManager", 
+                        "enabled" : true, 
+                        "options" : {
+                            "displayIndex" : NumberInt(1)
+                        }
+                    }
+                ]
+            }
+        }
+    ], 
+    "sequences" : [
+        {
+            "id" : "5bf2bf1322cc", 
+            "stateIds" : [
+
+            ], 
+            "name" : "s1"
+        }
+    ], 
+    "states" : [
+
     ]
 }

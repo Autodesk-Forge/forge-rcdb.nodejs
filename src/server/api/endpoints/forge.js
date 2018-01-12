@@ -212,8 +212,11 @@ module.exports = function() {
   //
   //
   /////////////////////////////////////////////////////////
-  router.get('/callback/hooks', async (req, res) => {
+  router.post('/callback/hooks', async (req, res) => {
 
+    console.log('/callback/hooks')
+
+    res.send()
   })
 
   /////////////////////////////////////////////////////////

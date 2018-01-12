@@ -1,206 +1,53 @@
-.kinematics .title {
-  display: inline-flex;
-  float: left;
-}
+.kinematics {
 
-.kinematics .title > label {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  white-space: nowrap;
-  font-weight: normal;
-  user-select: none;
-  margin-left: 27px;
-  margin-top: 10px;
-  select: none;
-  width: 144px;
-  float: left;
-}
-
-.kinematics .content > .controls {
-  margin: 10px 10px 0px 10px;
-  display: inline-block;
-  white-space: nowrap;
-  width: 100%;
-}
-
-.kinematics .content > .controls > .row {
-  width: 100%;
-  margin: 0;
-}
-
-.kinematics .content > .controls .dropdown {
-  width: calc(100% - 88px);
-  margin-bottom: 6px;
-  float: left;
-}
-
-.kinematics .content > .controls .dropdown > button {
-  padding: 0 10px 0 10px;
-  overflow: hidden;
-  height: 26px;
-  width: 100%;
-  margin: 0;
-}
-
-.kinematics .content > .controls button {
-  background: whitesmoke;
-  border-radius: 4px;
-  margin-left: 4px;
-  outline: none;
-  height: 26px;
-  width: 30px;
-  float: left;
-}
-
-.kinematics .content > .controls button > span {
-  position: relative;
-  font-size: 16px;
-  color: #9b9b9b;
-  top: -1px;
-}
-
-.kinematics .content > .controls button:disabled > span {
-  color: #d0d0d0;
-}
-
-.kinematics .content > .controls button:hover:not(:disabled) > span {
-  color: #FF9800;
-}
-
-.kinematics .content > .controls button:disabled > span {
-  color: #d0d0d0;
-}
-
-.kinematics .content > .controls label {
-  margin: 4px 10px 0 10px;
-  font-weight: normal;
-  float: left;
-}
-
-.kinematics .control-element:first-child {
-  margin-top: 16px;
-}
-
-.kinematics .control-element {
-  width: calc(100% - 46px);
-  margin: 0 0 0 16px;
-  text-align: left;
-  float: left;
-
-  .switch-container {
-    border: 1px solid #cdcdcd;
-    border-radius: 10px;
-    position: relative;
-    margin-right: 6px;
-    float: left;
-    top: 4px;
-  }
-
-  input[type="checkbox"].switch + div {
-    width: 34px;
-    height: 16px;
-  }
-
-  input[type="checkbox"].switch:checked + div {
-    width: 34px;
-  }
-
-  input[type="checkbox"].switch:checked + div > div {
-    transform: translate3d(18px, 0, 0);
-  }
-
-  input[type="checkbox"].switch + div > div {
-    height: 16px;
-    width: 16px;
-    margin: 0;
-  }
-
-  input[type="checkbox"].switch:checked + div {
-    background-color: #FF9800;
-  }
-
-  label:first-child {
-    margin: 0 0 10px 0;
-    color: #000000;
-  }
-
-  .reset {
-    background: whitesmoke;
-    position: relative;
-    border-radius: 4px;
-    margin-left: 20px;
-    height: 26px;
-    float: none;
-    width: 80px;
-    top: 2px;
-  }
-
-  .row {
-    width: 100%;
-    margin: 0;
-  }
-
-  .row > .label-container {
-    margin: 2px 0 0 9px;
-    width: 78px;
-  }
-
-  button {
-    background: whitesmoke;
-    border-radius: 4px;
-    margin-left: 4px;
-    outline: none;
-    height: 26px;
-    width: 30px;
+  .title {
+    display: inline-flex;
     float: left;
   }
 
-  button > span {
-    position: relative;
-    font-size: 16px;
-    color: #9b9b9b;
-    top: -1px;
+  .title > label {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    white-space: nowrap;
+    font-weight: normal;
+    user-select: none;
+    margin-left: 27px;
+    margin-top: 10px;
+    select: none;
+    width: 144px;
+    float: left;
   }
 
-  button:hover > span {
-    color: #FF9800;
-  }
-
-  button > label {
-    position: relative;
-    margin: 0 0 0 6px;
-    top: -2px;
-  }
-
-  .rc-slider-handle {
-    border: solid 2px #FF9800;
-  }
-
-  .rc-slider-track {
-    background-color: #FF9800;
-  }
-
-  .input-vel {
-    border: 1px solid #dedede;
-    width: calc(33% - 48px);
-    padding: 2px 0 0 4px;
-    background: #eaeaea;
-    border-radius: 4px;
-    margin: 0 0 6px 5px;
-    overflow: hidden;
+  .ui-controls {
+    height: calc(100% - 10px);
+    width: calc(100% - 24px);
+    margin: 10px 0 0 8px;
     text-align: left;
-    color: #000000;
-    height: 26px;
-    float: left;
-  }
-}
 
-.kinematics hr {
-  border-top: 1px solid #cdcdcd;
-  margin: 20px 10px 16px 45px;
-  width: calc(100% - 120px);
-  float: left;
+    label {
+      margin: 0 0 10px 4px;
+    }
+
+    .sliders {
+      height: calc(100% - 44px);
+      overflow: scroll;
+      width: 100%;
+
+      .rc-slider {
+        width: calc(100% - 16px);
+        margin: 0 0 18px 8px;
+      }
+
+      .rc-slider-handle {
+        border: solid 2px #FF9800;
+      }
+
+      .rc-slider-track {
+        background-color: #FF9800;
+      }
+    }
+  }
 }
 
 /////////////////////////////////////////////////////////

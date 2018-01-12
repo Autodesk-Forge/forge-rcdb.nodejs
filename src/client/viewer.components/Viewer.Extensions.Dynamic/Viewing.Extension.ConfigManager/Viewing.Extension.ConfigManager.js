@@ -311,6 +311,8 @@ class ConfigManagerExtension extends ExtensionBase {
 
       if (result === 'OK') {
 
+        clearTimeout(this.playTimeout)
+
         if (this.api) {
 
           this.api.deleteSequence(state.sequence.id)
@@ -327,6 +329,7 @@ class ConfigManagerExtension extends ExtensionBase {
           sequences[0] : null
 
         this.react.setState({
+          play: false,
           sequences
         })
 
@@ -435,12 +438,16 @@ class ConfigManagerExtension extends ExtensionBase {
 
     await this.react.setState({
       items: [...state.items, viewerState],
-      newStateName: ''
+      newStateName: '',
+      play: false
     })
 
-    this.restoreStates[viewerState.id] = viewerState
+    this.restoreStates[viewerState.id] =
+      viewerState
 
-    this.onRestoreState (viewerState, true)
+    this.onRestoreState(viewerState, true)
+
+    clearTimeout(this.playTimeout)
   }
 
   /////////////////////////////////////////////////////////////////
@@ -474,7 +481,8 @@ class ConfigManagerExtension extends ExtensionBase {
     this.react.setState({
       items: state.items.filter((item) => {
         return item.id !== id
-      })
+      }),
+      play: false
     })
 
     this.emit('state.deleted', id)
@@ -485,6 +493,8 @@ class ConfigManagerExtension extends ExtensionBase {
 
       this.api.deleteState(state.sequence.id, id)
     }
+
+    clearTimeout(this.playTimeout)
   }
 
   /////////////////////////////////////////////////////////
@@ -614,6 +624,7 @@ class ConfigManagerExtension extends ExtensionBase {
     this.sequenceIdx = 0
 
     this.react.setState({
+      play: false,
       items: [],
       sequence
     })
@@ -711,6 +722,16 @@ class ConfigManagerExtension extends ExtensionBase {
 
         this.sequenceIdx = 0
       }
+
+      setTimeout(() => {
+        const {items} = this.react.getState()
+        this.react.setState({
+          items: items.map((item) => {
+            item.active = false
+            return item
+          })
+        })
+      }, this.playPeriod * 0.8)
 
       return setTimeout(() => {
 

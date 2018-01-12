@@ -1,0 +1,85 @@
+.web-hooks {
+
+  .title {
+    display: inline-flex;
+    float: left;
+  }
+
+  .title > label {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    white-space: nowrap;
+    font-weight: normal;
+    user-select: none;
+    margin-left: 27px;
+    margin-top: 10px;
+    select: none;
+    width: 142px;
+    float: left;
+  }
+
+  .content {
+    height: 100%;
+  }
+
+  .content > .controls {
+    position: absolute;
+    width: 100%;
+  }
+
+  .tab-content {
+    border-bottom: 1px solid #888888;
+    border-right: 1px solid #888888;
+    border-left: 1px solid #888888;
+    height: calc(100% - 28px);
+    background: #fafafa;
+    position: relative;
+    overflow-y: scroll;
+
+    .tab-pane {
+      height: 100%;
+    }
+  }
+
+  .tabs-container {
+    height: calc(100% - 8px);
+    width: calc(100% - 8px);
+    margin: 4px;
+
+    .tabs {
+      height: 100%;
+    }
+  }
+
+  .nav-tabs {
+    border-bottom: 1px solid #ddd;
+    overflow: scroll;
+    height: 30px;
+
+    li {
+      overflow: hidden;
+      height: 30px;
+      float: left;
+
+      &.active > a {
+        background-color: #ffffff;
+        border-bottom: none;
+      }
+    }
+  }
+
+  .nav-tabs > li > a {
+    background-color: #fafafa;
+    border: 1px solid #888888;
+    white-space: nowrap;
+    padding: 4px 6px;
+    outline: none;
+    height: 100%;
+
+    label {
+      pointer-events: none;
+      overflow: hidden;
+    }
+  }
+}

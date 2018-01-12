@@ -1406,6 +1406,7 @@ function MultiModelStructurePanel(viewer, title, options) {
   ModelStructurePanel.call(this, viewer.container, viewer.container.id + 'MultiModelStructurePanel', title, options);
 
   this.clickConfig = (options && options.docStructureConfig) ? options.docStructureConfig : kDefaultDocStructureConfig;
+
   this.isMac = (navigator.userAgent.search("Mac OS") !== -1);
 
   this.initSearchBox();
@@ -1557,19 +1558,25 @@ MultiModelStructurePanel.prototype.onClick = function (node, event) {
   var that = this;
 
   var key = "click";
+
   if (that.ctrlDown(event)) {
     key += "Ctrl";
   }
+
   if (event.shiftKey) {
     key += "Shift";
   }
+
   if (event.altKey) {
     key += "Alt";
   }
 
   if (this.clickConfig && this.clickConfig[key]) {
+
     that.handleAction(this.clickConfig[key]["onObject"], node);
+
   } else {
+
     this.viewer.select(node);
   }
 };

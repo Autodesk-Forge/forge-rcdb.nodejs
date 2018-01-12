@@ -39,12 +39,14 @@ class ConfiguratorItem extends BaseComponent {
   /////////////////////////////////////////////////////////
   componentWillMount () {
 
-    const name =  this.props.item.model
-      ? this.props.item.model.name
-      : this.props.item.name
+    const item = this.props.item
+
+    const name =  !item.model
+      ? (item.displayName || item.name)
+      : item.model.name
 
     const activeModel = {
-      _id: this.props.item._id,
+      _id: item._id,
       name
     }
 
@@ -52,10 +54,10 @@ class ConfiguratorItem extends BaseComponent {
       activeModel
     })
 
-    if (this.props.item.extraModels) {
+    if (item.extraModels) {
 
       const extraModels = [
-        ...this.props.item.extraModels
+        ...item.extraModels
       ]
 
       extraModels.unshift(activeModel)

@@ -23,6 +23,7 @@ import SocketAPI from './api/endpoints/socket'
 import ConfigAPI from './api/endpoints/config'
 import ModelAPI from './api/endpoints/models'
 import ForgeAPI from './api/endpoints/forge'
+import HooksAPI from './api/endpoints/hooks'
 import MetaAPI from './api/endpoints/meta'
 import UserAPI from './api/endpoints/user'
 import DMAPI from './api/endpoints/dm'
@@ -163,6 +164,7 @@ app.use('/api/socket',    SocketAPI())
 app.use('/api/config',    ConfigAPI())
 app.use('/api/models',    ModelAPI())
 app.use('/api/forge',     ForgeAPI())
+app.use('/api/hooks',     HooksAPI())
 app.use('/api/meta',      MetaAPI())
 app.use('/api/user',      UserAPI())
 app.use('/api/dm',        DMAPI())

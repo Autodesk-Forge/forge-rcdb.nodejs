@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////
 // Viewing.Extension.Kinematics
-// by Philippe Leefsma, July 2017
+// by Philippe Leefsma, January 2017
 //
 /////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
@@ -13,68 +13,13 @@ import ServiceManager from 'SvcManager'
 import { ReactLoader } from 'Loader'
 import Toolkit from 'Viewer.Toolkit'
 import 'rc-slider/assets/index.css'
+import Stopwatch from 'Stopwatch'
 import ReactDOM from 'react-dom'
 import Tooltip from 'rc-tooltip'
 import Slider from 'rc-slider'
 import Switch from 'Switch'
 import Label from 'Label'
 import React from 'react'
-
-const root = {
-  centreInit: new THREE.Vector3(
-    -1531.7778454323443,
-    -3066.921560568636,
-    103.18552620987555),
-  axisInit: new THREE.Vector3(0, 1, 0),
-  angle: 0,
-  dbId: 12,
-  children: [{
-    centreInit: new THREE.Vector3(
-      -275.46734299564633,
-      -1282.0783844528128,
-      695.3209230147719),
-    axisInit: new THREE.Vector3(0, 0, -1),
-    angle: 0,
-    dbId: 13,
-    children: [{
-      centreInit: new THREE.Vector3(
-        -274.28775776026066,
-        2544.220316276206,
-        354.98556647844083),
-      axisInit: new THREE.Vector3(0, 0, -1),
-      angle: 0,
-      dbId: 9,
-      children: [{
-        centreInit: new THREE.Vector3(
-          -966.5434561316943,
-          3330.847986354103,
-          79.66191503637081),
-        axisInit: new THREE.Vector3(1, 0, 0),
-        angle: 0,
-        dbId: 14,
-        children: [{
-          centreInit: new THREE.Vector3(
-            3217.6120336721715,
-            3330.9245884187817,
-            335.48933959375506),
-          axisInit: new THREE.Vector3(0, 0, -1),
-          angle: 0,
-          dbId: 15,
-          children: [{
-            centreInit: new THREE.Vector3(
-              3956.6543579385616,
-              3330.6703223388813,
-              79.81803179126203),
-            axisInit: new THREE.Vector3(1, 0, 0),
-            angle: 0,
-            dbId: 16
-          }]
-        }]
-      }]
-    }]
-  }]
-}
-
 
 class KinematicsExtension extends MultiModelExtensionBase {
 
@@ -86,12 +31,11 @@ class KinematicsExtension extends MultiModelExtensionBase {
 
     super (viewer, options)
 
-    this.onScriptLoaded = this.onScriptLoaded.bind(this)
-    this.renderTitle = this.renderTitle.bind(this)
-
     this.eventTool = new EventTool(this.viewer)
 
     this.react = options.react
+
+    this.meshMap = {}
   }
 
   /////////////////////////////////////////////////////////
@@ -124,8 +68,7 @@ class KinematicsExtension extends MultiModelExtensionBase {
 
     this.react.setState({
 
-      activateControls: false,
-      physicsCore: null,
+      UIHierarchy: null,
       showLoader: true
 
     }).then (() => {
@@ -155,21 +98,53 @@ class KinematicsExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  getComponent (dbId, compInit = root) {
+  toVector3 (xyz) {
 
-    if (compInit.dbId === dbId) {
+    return new THREE.Vector3(xyz.x, xyz.y, xyz.z)
+  }
 
-      return compInit
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  loadHierarchy (component) {
+
+    const mesh = Toolkit.buildComponentMesh(
+      this.viewer,
+      this.viewer.model,
+      component.dbId, null, null)
+
+    this.meshMap[component.dbId] = mesh
+
+    mesh.origin = this.toVector3(mesh.position)
+
+    const children = component.children || []
+
+    children.forEach((child) => {
+
+      mesh.add(this.loadHierarchy(child))
+    })
+
+    return mesh
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  getComponent (dbId, parent) {
+
+    if (parent.dbId === dbId) {
+
+      return parent
     }
 
-    if (compInit.children) {
+    if (parent.children) {
 
-      for (let component of compInit.children) {
+      for (let component of parent.children) {
 
         const res = this.getComponent(
           dbId, component)
-
-        component.parent = compInit
 
         if (res) {
 
@@ -197,31 +172,6 @@ class KinematicsExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  // Panel docking mode
-  //
-  /////////////////////////////////////////////////////////
-  async setDocking (docked) {
-
-    const id = KinematicsExtension.ExtensionId
-
-    if (docked) {
-
-      await this.react.popRenderExtension(id)
-
-      await this.react.pushViewerPanel(this, {
-        height: 250,
-        width: 350
-      })
-
-    } else {
-
-      await this.react.popViewerPanel(id)
-
-      this.react.pushRenderExtension(this)
-    }
-  }
-
-  /////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////
@@ -230,13 +180,6 @@ class KinematicsExtension extends MultiModelExtensionBase {
     super.onModelRootLoaded()
 
     this.options.loader.show(false)
-
-    const nav = this.viewer.navigation
-
-    nav.toPerspective()
-
-    this.viewer.autocam.setHomeViewFrom(
-      nav.getCamera())
   }
 
   /////////////////////////////////////////////////////////
@@ -245,28 +188,19 @@ class KinematicsExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   onModelCompletedLoad (event) {
 
-    this.react.setState({
-      activateControls: true
-    })
-  }
+    this.hierarchy = this.options.hierarchy
 
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  async onScriptLoaded () {
+    const rootMesh = this.loadHierarchy(
+      this.hierarchy)
 
-    const physicsCore =
-      await this.viewer.loadDynamicExtension(
-      'Viewing.Extension.Physics.Core',
-      this.options)
+    this.viewer.impl.scene.add(rootMesh)
+
+    rootMesh.visible = false
 
     this.react.setState({
-      showLoader: false,
-      physicsCore
+      UIHierarchy: this.hierarchy,
+      showLoader: false
     })
-
-    this.options.loader.show(false)
   }
 
   /////////////////////////////////////////////////////////
@@ -275,14 +209,11 @@ class KinematicsExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   async onSelection (event) {
 
-    this.component = null
-
     if (event.selections.length) {
 
-      const dbId =
-        event.selections[0].dbIdArray[0]
+      //const dbId = event.selections[0].dbIdArray[0]
 
-      this.component = this.getComponent(dbId)
+      //const component = this.getComponent(dbId)
     }
   }
 
@@ -290,158 +221,57 @@ class KinematicsExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  getNodeTransform (dbId, model = this.viewer.model) {
-
-    const fragIds = Toolkit.getLeafFragIds(model, dbId)
-
-    const fragProxy =
-      this.viewer.impl.getFragmentProxy(
-        model, fragIds[0])
-
-    fragProxy.getAnimTransform()
-
-    return {
-      quaternion: fragProxy.quaternion.clone(),
-      position: fragProxy.position.clone(),
-      scale: fragProxy.scale.clone()
-    }
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  getComponentTransform (component) {
-
-    const angle = component.angle
-
-    const centre =
-      component.centre ||
-      component.centreInit
-
-    const axis =
-      component.axis ||
-      component.axisInit
-
-    return {
-      centre,
-      angle,
-      axis
-    }
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  getParentTransforms (component) {
-
-    let transforms = []
-
-    let comp = component
-
-    while (comp.parent) {
-
-      const parentTransform =
-        this.getComponentTransform(
-          comp.parent)
-
-      transforms = [
-        parentTransform,
-        ...transforms
-      ]
-
-      comp = comp.parent
-    }
-
-    return transforms
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  cloneVector (v) {
-
-    return new THREE.Vector3(v.x, v.y, v.z)
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  rotatePoint (p, transform) {
-
-    const matrix = new THREE.Matrix4()
-
-    matrix.makeRotationAxis(
-      transform.axis,
-      transform.angle)
-
-    const offset = new THREE.Vector3(
-      p.x - transform.centre.x,
-      p.y - transform.centre.y,
-      p.z - transform.centre.z)
-
-    offset.applyMatrix4(matrix)
-
-    p.x = transform.centre.x + offset.x
-    p.y = transform.centre.y + offset.y
-    p.z = transform.centre.z + offset.z
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  rotateAxis (a, transform) {
-
-    const matrix = new THREE.Matrix4()
-
-    matrix.makeRotationAxis(
-      transform.axis,
-      transform.angle)
-
-    a.applyMatrix4(matrix)
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  rotateNode (model, dbId, transform,
-              posRef = new THREE.Vector3,
-              qRef = new THREE.Quaternion) {
+  rotateMesh (mesh, {axis, centre, angle}) {
 
     const quaternion = new THREE.Quaternion()
 
-    quaternion.setFromAxisAngle(
-      transform.axis,
-      transform.angle)
+    quaternion.setFromAxisAngle(axis, angle)
 
-    const fragIds = Toolkit.getLeafFragIds(model, dbId)
+    mesh.rotation.x = axis.x * angle
+    mesh.rotation.y = axis.y * angle
+    mesh.rotation.z = axis.z * angle
+
+    const position = new THREE.Vector3(
+      mesh.origin.x - centre.x,
+      mesh.origin.y - centre.y,
+      mesh.origin.z - centre.z)
+
+    position.applyQuaternion(quaternion)
+
+    position.add(centre)
+
+    mesh.position.x = position.x
+    mesh.position.y = position.y
+    mesh.position.z = position.z
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  assignMeshTransform (mesh, dbId) {
+
+    const quaternion = new THREE.Quaternion()
+    const position = new THREE.Vector3()
+    const scale = new THREE.Vector3()
+
+    mesh.matrixWorld.decompose(
+      position, quaternion, scale)
+
+    const fragIds =
+      Toolkit.getLeafFragIds (
+        this.viewer.model, dbId)
 
     fragIds.forEach((fragId) => {
 
       const fragProxy =
         this.viewer.impl.getFragmentProxy(
-          model, fragId)
+          this.viewer.model, fragId)
 
       fragProxy.getAnimTransform()
 
-      fragProxy.quaternion.multiplyQuaternions(
-        quaternion, qRef)
-
-      const position = new THREE.Vector3(
-        posRef.x - transform.centre.x,
-        posRef.y - transform.centre.y,
-        posRef.z - transform.centre.z)
-
-      position.applyQuaternion(fragProxy.quaternion)
-
-      position.add(transform.centre)
-
       fragProxy.position = position
+      fragProxy.quaternion = quaternion
 
       fragProxy.updateAnimTransform()
     })
@@ -451,58 +281,170 @@ class KinematicsExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  rotateComponent (component, transforms) {
+  assignMeshTransformRec (mesh, component) {
 
-    let posRef = new THREE.Vector3
-    let qRef = new THREE.Quaternion
+    this.assignMeshTransform (
+      mesh, component.dbId)
 
-    transforms.forEach((transform) => {
+    const children = component.children || []
 
-      this.rotateNode (
-        this.viewer.model,
-        component.dbId,
-        transform,
-        posRef, qRef)
+    children.forEach((child) => {
 
-      const nodeTransform =
-        this.getNodeTransform(
-          component.dbId)
-
-      //posRef = nodeTransform.position
-      //qRef = nodeTransform.quaternion
+      this.assignMeshTransformRec (
+        this.meshMap[child.dbId], child)
     })
+  }
 
-    if (component.children) {
+  /////////////////////////////////////////////////////////
+  // Animation: {
+  //  onUpdate,
+  //  duration,
+  //  easing
+  // }
+  //
+  /////////////////////////////////////////////////////////
+  animate ({onComplete, onUpdate, duration, easing}) {
 
-        component.children.forEach((child) => {
+    const stopwatch = new Stopwatch()
 
-          const centre = this.cloneVector(
-            child.centreInit)
+    let dt = 0.0
 
-          const axis = this.cloneVector(
-            child.axisInit)
+    const animationStep = () => {
 
-          transforms.forEach((transform) => {
+      dt += stopwatch.getElapsedMs()
 
-            this.rotatePoint(
-              centre, transform)
+      if (dt >= duration) {
 
-            this.rotateAxis(
-              axis, transform)
-          })
+        onUpdate(1.0)
 
-          child.centre = centre
-          child.axis = axis
+      } else {
 
-          const childTransform =
-            this.getComponentTransform(child)
+        const param = dt/duration
 
-          this.rotateComponent(
-            child, [
-              childTransform,
-              ...transforms,
-            ])
+        const animParam = easing
+          ? easing(param, duration/1000)
+          : param
+
+        onUpdate(animParam)
+      }
+
+      if (dt < duration) {
+
+        requestAnimationFrame(animationStep)
+
+      } else {
+
+        onComplete()
+      }
+    }
+
+    animationStep()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  restoreHierarchy (targetHierarchy, param = 1.0) {
+
+    const restoreTransformRec = (targetComp) => {
+
+      const mesh = this.meshMap[targetComp.dbId]
+
+      const component = this.getComponent(
+        targetComp.dbId, this.hierarchy)
+
+      const angle =
+        (1.0 - param) * component.angle +
+        param * targetComp.angle
+
+      this.rotateMesh(mesh, {
+        centre: this.toVector3(component.centre),
+        axis: this.toVector3(component.axis),
+        angle
       })
+
+      this.assignMeshTransformRec(
+        mesh, component)
+
+      const children = targetComp.children || []
+
+      children.forEach((child) => {
+
+        restoreTransformRec(child)
+      })
+    }
+
+    restoreTransformRec(targetHierarchy)
+
+    this.viewer.impl.sceneUpdated(true)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //  From viewer.getState:
+  //  Allow extensions to inject their state data
+  //
+  //  for (var extensionName in viewer.loadedExtensions) {
+  //    viewer.loadedExtensions[extensionName].getState(
+  //      viewerState);
+  //  }
+  /////////////////////////////////////////////////////////
+  getState (state) {
+
+    state.kinematics = {
+      hierarchy: this.hierarchy
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //    From viewer.restoreState:
+  //    Allow extensions to restore their data
+  //
+  //    for (var extensionName in viewer.loadedExtensions) {
+  //      viewer.loadedExtensions[extensionName].restoreState(
+  //        viewerState, immediate);
+  //    }
+  /////////////////////////////////////////////////////////
+  restoreState (state, immediate) {
+
+    if (state.kinematics) {
+
+      const targetHierarchy = state.kinematics.hierarchy
+
+      if (immediate) {
+
+        this.restoreHierarchy(targetHierarchy)
+
+        this.hierarchy = targetHierarchy
+
+        this.react.setState({
+          UIHierarchy: this.hierarchy
+        })
+
+      } else {
+
+        this.animate({
+
+          onUpdate: (param) => {
+
+            this.restoreHierarchy(
+              targetHierarchy,
+              param)
+          },
+          onComplete: () => {
+
+            this.hierarchy = targetHierarchy
+
+            this.react.setState({
+              UIHierarchy: this.hierarchy
+            })
+          },
+          duration: 900,
+          easing: null
+        })
+      }
     }
   }
 
@@ -514,34 +456,21 @@ class KinematicsExtension extends MultiModelExtensionBase {
 
     const { value, dragging, offset } = props
 
-    const component = this.getComponent(dbId)
+    const component = this.getComponent(
+      dbId, this.hierarchy)
 
-    const angle = value * Math.PI / 180
+    component.angle = value * Math.PI / 180
 
-    const centre =
-      component.centre ||
-      component.centreInit
+    const mesh = this.meshMap[dbId]
 
-    const axis =
-      component.axis ||
-      component.axisInit
+    this.rotateMesh(mesh, {
+      centre: this.toVector3(component.centre),
+      axis: this.toVector3(component.axis),
+      angle: component.angle
+    })
 
-    const componentTransform = {
-      centre,
-      angle,
-      axis
-    }
-
-    const parentTransforms =
-      this.getParentTransforms(
-        component)
-
-    this.rotateComponent(component, [
-      ...parentTransforms,
-      componentTransform
-    ])
-
-    component.angle = value
+    this.assignMeshTransformRec(
+      mesh, component)
 
     this.viewer.impl.sceneUpdated(true)
 
@@ -561,23 +490,72 @@ class KinematicsExtension extends MultiModelExtensionBase {
   // React method - render panel title
   //
   /////////////////////////////////////////////////////////
-  renderTitle (docked) {
-
-    const spanClass = docked
-      ? 'fa fa-chain-broken'
-      : 'fa fa-chain'
+  renderTitle () {
 
     return (
       <div className="title">
         <label>
           Kinematics
         </label>
-        <div className="kinematics-controls">
-          <button onClick={() => this.setDocking(docked)}
-            title="Toggle docking mode">
-            <span className={spanClass}/>
-          </button>
-        </div>
+      </div>
+    )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  hierarchyToArray (root) {
+
+    const result = []
+
+    const hierarchyToArrayRec = (component) => {
+
+      result.push(component)
+
+      const children = component.children || []
+
+      children.forEach((child) => {
+
+        hierarchyToArrayRec(child)
+      })
+    }
+
+    hierarchyToArrayRec(root)
+
+    return result.reverse()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  renderSliders () {
+
+    const { UIHierarchy } = this.react.getState()
+
+    const items = this.hierarchyToArray(UIHierarchy)
+
+    // forces a re-render of new sliders
+    const guid = this.guid()
+
+    const sliderItems = items.map((item) => {
+
+      return (
+        <Slider
+          handle={(props) => this.onSliderChanged(props, item.dbId)}
+          defaultValue={item.angle * 180.0/Math.PI}
+          key={guid + item.dbId}
+          min={item.bounds.min}
+          max={item.bounds.max}
+          step={0.1}
+        />
+      )
+    })
+
+    return (
+      <div className="sliders">
+        { sliderItems }
       </div>
     )
   }
@@ -588,81 +566,15 @@ class KinematicsExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderControls () {
 
-    const {
-      activateControls,
-      physicsCore,
-      showLoader
-    } = this.react.getState()
+    const { showLoader } = this.react.getState()
 
     return (
-      <div style={{overflow: 'scroll', height: '100%'}}>
+      <div className="ui-controls">
         <ReactLoader show={showLoader}/>
-        {
-          activateControls &&
-          <ScriptLoader onLoaded={this.onScriptLoaded}
-            url={['/resources/libs/ammo/ammo.js']}
-          />
-        }
-        {
-          physicsCore &&
-          <div className="controls">
-            <div className="control-element">
-              <label>
-                Angles:
-              </label>
-
-              <Slider
-                handle={(props) => this.onSliderChanged(props, 16)}
-                defaultValue={0.0}
-                step={0.1}
-                min={-180}
-                max={180}
-              />
-              <br/>
-              <Slider
-                handle={(props) => this.onSliderChanged(props, 15)}
-                defaultValue={0.0}
-                step={0.1}
-                min={-130}
-                max={130}
-              />
-              <br/>
-              <Slider
-                handle={(props) => this.onSliderChanged(props, 14)}
-                defaultValue={0.0}
-                step={0.1}
-                min={-180}
-                max={180}
-              />
-              <br/>
-              <Slider
-                handle={(props) => this.onSliderChanged(props, 9)}
-                defaultValue={0.0}
-                step={0.1}
-                min={-180}
-                max={80}
-              />
-              <br/>
-              <Slider
-                handle={(props) => this.onSliderChanged(props, 13)}
-                defaultValue={0.0}
-                step={0.1}
-                min={-90}
-                max={90}
-              />
-              <br/>
-              <Slider
-                handle={(props) => this.onSliderChanged(props, 12)}
-                defaultValue={0.0}
-                step={0.1}
-                min={-175}
-                max={170}
-              />
-            </div>
-
-          </div>
-        }
-
+          <label>
+            Angles:
+          </label>
+          { !showLoader && this.renderSliders ()}
       </div>
     )
   }
@@ -675,7 +587,7 @@ class KinematicsExtension extends MultiModelExtensionBase {
 
     return (
       <WidgetContainer
-        renderTitle={() => this.renderTitle(opts.docked)}
+        renderTitle={() => this.renderTitle()}
         showTitle={opts.showTitle}
         className={this.className}>
         {this.renderControls()}
