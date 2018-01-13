@@ -26,6 +26,24 @@ export default class UserSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////
+  getUploadLimit (forgeUser) {
+
+    const emailId = forgeUser.emailId
+
+    const matches = 
+      this._config.whiteList.filter((email) => {
+        return emailId.match(new RegExp(email))
+      })
+      
+    return (matches.length === 0) 
+      ? this._config.uploadLimit
+      : undefined
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   getCurrentUser (session) {
 
     return new Promise(async(resolve, reject) => {
@@ -39,11 +57,8 @@ export default class UserSvc extends BaseSvc {
 
         if (forgeUser) {
 
-          const uploadLimit =
-            !forgeUser.emailId.endsWith('@autodesk.com')
-              ? this._config.uploadLimit
-              : undefined
-
+          const uploadLimit = this.getUploadLimit(forgeUser)
+            
           const user = Object.assign({}, forgeUser, {
             uploadLimit
           })
@@ -101,7 +116,7 @@ export default class UserSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////
-  save (user) {
+  save (forgeUser) {
 
     return new Promise(async(resolve, reject) => {
 
@@ -110,12 +125,12 @@ export default class UserSvc extends BaseSvc {
         const dbSvc = ServiceManager.getService(
           this._config.dbName)
 
+        const uploadLimit = this.getUploadLimit(forgeUser)
+
         // Autodesk accounts have unlimited uploads
-        const insertInfo = Object.assign({}, {
-            created: new Date()
-          }, !user.emailId.endsWith('@autodesk.com') ? {
-                uploadLimit: this._config.uploadLimit
-              } : {})
+        const insertInfo = Object.assign({}, 
+          { created: new Date() }, 
+          { uploadLimit })
 
         const item = Object.assign({}, {
           $setOnInsert: insertInfo,

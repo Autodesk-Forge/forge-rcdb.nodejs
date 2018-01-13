@@ -20,6 +20,13 @@ const config = {
 
   gallery: {
     lifetime: 60 * 60 * 24 * 7, // 7 days
+    // whiteList of user emails who can upload
+    // to the gallery without limit
+    whiteList:[ 
+      '.*' // match any
+    ],
+    // number of active models for 
+    // non white-listed user
     uploadLimit: 0,
     bucket: {
         bucketKey: 'forge-rcdb-gallery-dev',

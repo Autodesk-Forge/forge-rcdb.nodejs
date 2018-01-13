@@ -290,6 +290,7 @@ const runServer = (app) => {
       const userCfg = Object.assign({},
         dbConfig.users, {
           uploadLimit: config.gallery.uploadLimit,
+          whiteList: config.gallery.whiteList,
           dbName: dbConfig.dbName
         })
 

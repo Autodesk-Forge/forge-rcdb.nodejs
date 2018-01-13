@@ -572,7 +572,7 @@ class KinematicsExtension extends MultiModelExtensionBase {
       <div className="ui-controls">
         <ReactLoader show={showLoader}/>
           <label>
-            Angles:
+            Controls:
           </label>
           { !showLoader && this.renderSliders ()}
       </div>

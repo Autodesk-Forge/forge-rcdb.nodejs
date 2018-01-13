@@ -23,6 +23,13 @@ const config = {
 
   gallery: {
     lifetime: 60 * 60 * 24 * 30, // 30 days
+    // whiteList of user emails who can upload
+    // to the gallery without limit
+    whiteList:[ 
+      /@autodesk.com/ // match only @autodesk.com accounts
+    ],
+    // number of active models for 
+    // non white-listed user
     uploadLimit: 0,
     bucket: {
       bucketKey: 'forge-rcdb-gallery-tmp-prod',
