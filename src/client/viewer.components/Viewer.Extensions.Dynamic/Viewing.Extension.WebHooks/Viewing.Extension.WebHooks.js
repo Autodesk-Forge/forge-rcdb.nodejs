@@ -30,6 +30,7 @@ class WebHooksExtension extends MultiModelExtensionBase {
 		super (viewer, options)
 
     this.onWebHookMessage = this.onWebHookMessage.bind(this)
+    this.onSystemSelected = this.onSystemSelected.bind(this)
     this.onTabSelected = this.onTabSelected.bind(this)
     this.onCreateHook = this.onCreateHook.bind(this)
 
@@ -199,7 +200,7 @@ class WebHooksExtension extends MultiModelExtensionBase {
     const callbackUrl = 'https://b1ab9c4d.ngrok.io/api/forge/callback/hooks'
 
     const scope =  {
-      folder: 'urn:adsk.wipprod:fs.folder:co.XRaMujM2Q-qQARnuF05FuA'
+      folder: 'urn:adsk.wipprod:fs.folder:co.OmpMK8qARGWVAaE36R_JiQ'  
     }
 
     if (event.id) {
@@ -222,12 +223,28 @@ class WebHooksExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  async onSystemSelected (system) {
+
+    const hooks = 
+      await this.webHooksAPI.getSystemHooks(
+        system.id)
+
+    this.react.setState({
+      hooks
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   renderManageTab () {
 
     const {hooks} = this.react.getState()
 
     return (
       <ManageView
+        onSystemSelected={this.onSystemSelected}
         hooks={hooks}
       />
     )

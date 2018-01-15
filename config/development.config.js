@@ -66,7 +66,8 @@ const config = {
         'data:search',
         'bucket:read',
         'bucket:create',
-        'bucket:delete'
+        'bucket:delete',
+        'viewables:read'
       ]
     },
 

@@ -6,7 +6,6 @@
 import PieSegment from './ReactPieSegment'
 import ReactTooltip from 'react-tooltip'
 import Measure from 'react-measure'
-import PropTypes from 'prop-types'
 import Stopwatch from 'Stopwatch'
 import easing from 'easing-js'
 import React from 'react'

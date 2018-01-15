@@ -159,7 +159,7 @@ class HFDMCoreExtension extends MultiModelExtensionBase {
 
         // share workspace for write to everybody *
 
-        //await this.hfdm.share([branchUrn], ['*'])
+        await this.hfdm.share([branchUrn], ['*'])
 
         const colaborateURL =
           `${window.location.href}&branchUrn=${branchUrn}`

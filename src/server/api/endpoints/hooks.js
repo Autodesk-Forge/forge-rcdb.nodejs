@@ -28,8 +28,6 @@ module.exports = function () {
 
     try {
 
-      console.log('GET HOOKS')
-
       const forgeSvc =
         ServiceManager.getService(
           'ForgeSvc')
@@ -43,8 +41,6 @@ module.exports = function () {
       res.json(response)
 
     } catch (ex) {
-
-      console.log(ex)
 
       res.status(ex.statusCode || 500)
       res.json(ex)

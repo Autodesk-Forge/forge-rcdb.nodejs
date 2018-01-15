@@ -497,8 +497,9 @@ export default class ForgeSvc extends BaseSvc {
       `${ForgeSvc.BASE_HOOKS_URL}/systems/` +
       `${systemId}/events/${eventId}/hooks/${hookId}`
 
-    this.requestAsync({
+    return this.requestAsync({
       token: token.access_token,
+      json: true,
       url
     })
   }
@@ -512,8 +513,9 @@ export default class ForgeSvc extends BaseSvc {
     const url =
       `${ForgeSvc.BASE_HOOKS_URL}/systems/${systemId}/hooks`
 
-    this.requestAsync({
+    return this.requestAsync({
       token: token.access_token,
+      json: true,
       url
     })
   }
@@ -528,8 +530,9 @@ export default class ForgeSvc extends BaseSvc {
       `${ForgeSvc.BASE_HOOKS_URL}/systems/` +
       `${systemId}/events/${eventId}/hooks`
 
-    this.requestAsync({
+    return this.requestAsync({
       token: token.access_token,
+      json: true,
       url
     })
   }
@@ -542,8 +545,9 @@ export default class ForgeSvc extends BaseSvc {
 
     const url = `${ForgeSvc.BASE_HOOKS_URL}/hooks`
 
-    this.requestAsync({
+    return this.requestAsync({
       token: token.access_token,
+      json: true,
       url
     })
   }
@@ -558,7 +562,7 @@ export default class ForgeSvc extends BaseSvc {
       `${ForgeSvc.BASE_HOOKS_URL}/systems/` +
       `${systemId}/events/${eventId}/hooks`
 
-    this.requestAsync({
+    return this.requestAsync({
       token: token.access_token,
       method: 'POST',
       body: params,
@@ -577,7 +581,7 @@ export default class ForgeSvc extends BaseSvc {
       `${ForgeSvc.BASE_HOOKS_URL}/systems/` +
       `${systemId}/hooks`
 
-    this.requestAsync({
+    return this.requestAsync({
       token: token.access_token,
       method: 'POST',
       body: params,
@@ -596,9 +600,10 @@ export default class ForgeSvc extends BaseSvc {
       `${ForgeSvc.BASE_HOOKS_URL}/systems/` +
       `${systemId}/events/${eventId}/hooks/${hookId}`
 
-    this.requestAsync({
+    return this.requestAsync({
       token: token.access_token,
       method: 'DELETE',
+      json: true,
       url
     })
   }

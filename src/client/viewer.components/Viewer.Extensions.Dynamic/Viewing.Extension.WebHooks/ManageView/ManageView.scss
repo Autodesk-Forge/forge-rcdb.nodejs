@@ -3,11 +3,46 @@
   .manage {
     background: #fafafa;
     position: relative;
-    overflow-y: scroll;
-    overflow-x: hidden;
     text-align: left;
     padding: 10px;
     height: 100%;
     width: 100%;
+
+    hr {
+      margin: 10px 0;
+    }
+
+    .dropdown {
+      width: 100%;
+
+      button {
+        border-radius: 0;
+        width: 290px;
+      }
+    }
+  }
+
+  .hooks {
+    border: 1px solid #dddddd;
+    height: calc(100% - 32px);
+    margin: 4px 0 0 0;
+    overflow: scroll;
+    width: 290px;
+    float: left;
+
+    .hook {
+      border: 1px solid #cccccc;
+      cursor:pointer;
+      padding: 4px;
+      margin: 4px;
+    }
+  }
+
+  .hook-details {
+    border: 1px solid #dddddd;
+    height: calc(100% - 32px);
+    width: calc(100% - 294px);
+    margin: 4px 0 0 4px;
+    float: left;
   }
 }

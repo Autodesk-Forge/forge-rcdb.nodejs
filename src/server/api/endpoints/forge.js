@@ -232,7 +232,8 @@ module.exports = function() {
 
       const scope = [
         'viewables:read',
-        'data:write'
+        'data:write',
+        'data:read'
       ]
 
       const token =
@@ -246,8 +247,6 @@ module.exports = function() {
       })
 
     } catch (error) {
-
-      forgeSvc.delete3LeggedToken(req.session)
 
       res.status(error.statusCode || 500)
       res.json(error)
