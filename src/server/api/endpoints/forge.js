@@ -214,9 +214,12 @@ module.exports = function() {
   /////////////////////////////////////////////////////////
   router.post('/callback/hooks', async (req, res) => {
 
-    console.log('/callback/hooks')
+    const socketSvc = ServiceManager.getService(
+      'SocketSvc')
 
-    res.send()
+    socketSvc.broadcast('forge.hook', req.body)
+
+    res.status(200).end()
   })
 
   /////////////////////////////////////////////////////////

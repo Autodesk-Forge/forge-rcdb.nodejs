@@ -71,6 +71,10 @@ const config = {
       ]
     },
 
+    hooks: {
+      callbackUrl: `https://77b75314.ngrok.io/api/forge/callback/hooks`
+    },
+
     viewer: {
       //viewer3D: 'https://developer.api.autodesk.com/derivativeservice/v2/viewers/viewer3D.js?v=3.3',
       //threeJS:  'https://developer.api.autodesk.com/derivativeservice/v2/viewers/three.js?v=3.3',

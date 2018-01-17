@@ -57,12 +57,11 @@ export default class WebHooksAPI extends ClientAPI {
   //
   //
   /////////////////////////////////////////////////////////
-  createSystemHook (systemId, callbackUrl, scope) {
+  createSystemHook (systemId, scope) {
 
     const url = `/systems/${systemId}`
 
     const payload = {
-      callbackUrl,
       scope
     }
 
@@ -78,18 +77,32 @@ export default class WebHooksAPI extends ClientAPI {
   //
   //
   /////////////////////////////////////////////////////////
-  createEventHook (systemId, eventId, callbackUrl, scope) {
+  createEventHook (systemId, eventId, scope) {
 
     const url = `/systems/${systemId}/events/${eventId}`
 
     const payload = {
-      callbackUrl,
       scope
     }
 
     return this.ajax({
       data: JSON.stringify(payload),
       method: 'POST',
+      rawBody: true,
+      url
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  removeHook (systemId, eventId, hookId) {
+
+    const url = `/systems/${systemId}/events/${eventId}/${hookId}`
+    
+    return this.ajax({
+      method: 'DELETE',
       rawBody: true,
       url
     })

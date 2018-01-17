@@ -34,7 +34,7 @@ module.exports = function () {
 
       const token =
         await forgeSvc.get3LeggedTokenMaster(
-        req.session)
+          req.session)
 
       const response = await forgeSvc.getHooks(token)
 
@@ -64,7 +64,7 @@ module.exports = function () {
 
       const token =
         await forgeSvc.get3LeggedTokenMaster(
-        req.session)
+          req.session)
 
       const response =
         await forgeSvc.getSystemHooks(
@@ -96,7 +96,7 @@ module.exports = function () {
 
       const token =
         await forgeSvc.get3LeggedTokenMaster(
-        req.session)
+          req.session)
 
       const response =
         await forgeSvc.getEventHooks(
@@ -130,22 +130,15 @@ module.exports = function () {
 
       const token =
         await forgeSvc.get3LeggedTokenMaster(
-        req.session)
+          req.session)
 
       const response =
         await forgeSvc.createSystemHook(
-        token, systemId, params)
+          token, systemId, params)
 
       res.json(response)
 
     } catch (ex) {
-
-      console.log(ex)
-
-      console.log('------------------------------')
-
-      console.log(ex[0].detail)
-      console.log(ex[0].source)
 
       res.status(ex.statusCode || 500)
       res.json(ex)
@@ -172,11 +165,44 @@ module.exports = function () {
 
       const token =
         await forgeSvc.get3LeggedTokenMaster(
-        req.session)
+          req.session)
 
       const response =
         await forgeSvc.createEventHook(
-        token, systemId, eventId, params)
+          token, systemId, eventId, params)
+
+      res.json(response)
+
+    } catch (ex) {
+
+      res.status(ex.statusCode || 500)
+      res.json(ex)
+    }
+  })
+
+  /////////////////////////////////////////////////////////
+  // DELETE /hooks/systems/:systemId/events/:eventId/:hookId
+  // Delete Hook
+  //
+  /////////////////////////////////////////////////////////
+  router.delete('/systems/:systemId/events/:eventId/:hookId',
+    async (req, res) => {
+
+    try {
+
+      const { systemId, eventId, hookId } = req.params
+
+      const forgeSvc =
+        ServiceManager.getService(
+          'ForgeSvc')
+
+      const token =
+        await forgeSvc.get3LeggedTokenMaster(
+          req.session)
+
+      const response =
+        await forgeSvc.removeHook(
+          token, systemId, eventId, hookId)
 
       res.json(response)
 

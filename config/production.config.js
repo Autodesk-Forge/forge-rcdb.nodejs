@@ -74,6 +74,10 @@ const config = {
       ]
     },
 
+    hooks: {
+      callbackUrl: `${HOST_URL}/api/forge/callback/hooks`
+    },
+
     viewer: {
       viewer3D: 'https://developer.api.autodesk.com/derivativeservice/v2/viewers/viewer3D.min.js?v=3.3',
       threeJS:  'https://developer.api.autodesk.com/derivativeservice/v2/viewers/three.min.js?v=3.3',

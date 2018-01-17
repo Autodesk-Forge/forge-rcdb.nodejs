@@ -471,7 +471,7 @@ export default class ForgeSvc extends BaseSvc {
             return reject(body.errors)
           }
 
-          if (response && [200, 201, 202].indexOf(
+          if (response && [200, 201, 202, 204].indexOf(
               response.statusCode) < 0) {
 
             return reject(response.statusMessage)
@@ -479,7 +479,7 @@ export default class ForgeSvc extends BaseSvc {
 
           return resolve(body ? (body.data || body) : {})
 
-        } catch(ex){
+        } catch (ex) {
 
           return reject(ex)
         }
@@ -562,11 +562,15 @@ export default class ForgeSvc extends BaseSvc {
       `${ForgeSvc.BASE_HOOKS_URL}/systems/` +
       `${systemId}/events/${eventId}/hooks`
 
+    const body = Object.assign({}, params, {
+      callbackUrl: this._config.hooks.callbackUrl
+    })
+
     return this.requestAsync({
       token: token.access_token,
       method: 'POST',
-      body: params,
       json: true,
+      body,
       url
     })
   }
@@ -581,11 +585,15 @@ export default class ForgeSvc extends BaseSvc {
       `${ForgeSvc.BASE_HOOKS_URL}/systems/` +
       `${systemId}/hooks`
 
+    const body = Object.assign({}, params, {
+      callbackUrl: this._config.hooks.callbackUrl
+    })
+    
     return this.requestAsync({
       token: token.access_token,
       method: 'POST',
-      body: params,
       json: true,
+      body,
       url
     })
   }
@@ -596,14 +604,13 @@ export default class ForgeSvc extends BaseSvc {
   /////////////////////////////////////////////////////////
   removeHook (token, systemId, eventId, hookId) {
 
-    const url =
+    const url = 
       `${ForgeSvc.BASE_HOOKS_URL}/systems/` +
       `${systemId}/events/${eventId}/hooks/${hookId}`
 
     return this.requestAsync({
       token: token.access_token,
       method: 'DELETE',
-      json: true,
       url
     })
   }

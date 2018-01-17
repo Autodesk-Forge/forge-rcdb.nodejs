@@ -15,9 +15,12 @@ export default class ManageView extends BaseComponent {
 
     super (props)
 
+    this.webHooksAPI = this.props.webHooksAPI
+
     this.state = {
       hookDetails: null,
-      system: null
+      system: null,
+      hooks: []
     }
   }
 
@@ -36,14 +39,42 @@ export default class ManageView extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  onRemoveHook (hook) {
+  
+    const hooks = this.state.hooks.filter((hk) => {
+      return hk.hookId !== hook.hookId
+    })
+
+    this.assignState({
+      hooks
+    })
+
+    this.webHooksAPI.removeHook(
+      this.state.system.id,
+      hook.eventType,
+      hook.hookId)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   renderHooks () {
 
-    return this.props.hooks.map((hook) => {
+    return this.state.hooks.map((hook) => {
 
       return(
         <div className="hook" key={hook.hookId} 
           onClick={() => this.onHookSelected(hook)}>
-          { "Hook" }
+          { "Hook: " + hook.eventType }
+          <button  
+            onClick={(e) => {
+              this.onRemoveHook(hook)
+              e.stopPropagation()
+            }}
+            title="remove that hook">
+            <span className="fa fa-times"/>
+          </button>
         </div>
       )
     })
@@ -74,12 +105,17 @@ export default class ManageView extends BaseComponent {
           <MenuItem eventKey={system.id} key={system.id}
             onClick={() => {
   
-              this.props.onSystemSelected(system)
-
               this.assignState({
                 system
               })
 
+              this.webHooksAPI.getSystemHooks(
+                system.id).then((hooks) => {
+                  this.assignState({
+                    hooks: Array.isArray(hooks) 
+                      ? hooks : []
+                  })
+                })    
             }}>
             { system.name }
           </MenuItem>

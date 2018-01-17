@@ -12,6 +12,7 @@ import WebHooksAPI from './WebHooks.API'
 import ServiceManager from 'SvcManager'
 import ManageView from './ManageView'
 import CreateView from './CreateView'
+import EventsView from './EventsView'
 import { ReactLoader } from 'Loader'
 import Measure from 'react-measure'
 import Image from 'Image'
@@ -29,17 +30,12 @@ class WebHooksExtension extends MultiModelExtensionBase {
 
 		super (viewer, options)
 
-    this.onWebHookMessage = this.onWebHookMessage.bind(this)
-    this.onSystemSelected = this.onSystemSelected.bind(this)
     this.onTabSelected = this.onTabSelected.bind(this)
     this.onCreateHook = this.onCreateHook.bind(this)
 
     this.webHooksAPI = new WebHooksAPI({
       apiUrl: '/api/hooks'
     })
-
-    this.socketSvc =
-      ServiceManager.getService('SocketSvc')
 
     this.dialogSvc =
       ServiceManager.getService(
@@ -50,8 +46,6 @@ class WebHooksExtension extends MultiModelExtensionBase {
         'ForgeSvc')
 
     this.react = options.react
-
-    this.socketSvc.connect()
 	}
 
 	/////////////////////////////////////////////////////////
@@ -87,10 +81,6 @@ class WebHooksExtension extends MultiModelExtensionBase {
           this.react.setState({
             user
           })
-
-          this.socketSvc.on (
-            'forge.hook',
-            this.onWebHookMessage)
 
         } catch (ex) {
 
@@ -129,10 +119,6 @@ class WebHooksExtension extends MultiModelExtensionBase {
 	unload () {
 
     console.log('Viewing.Extension.WebHooks loaded')
-
-    this.socketSvc.off (
-      'forge.hook',
-      this.onWebHookMessage)
 
     super.unload ()
 
@@ -176,14 +162,6 @@ class WebHooksExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onWebHookMessage (msg) {
-
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
   onTabSelected (tabKey) {
 
     this.react.setState({
@@ -197,8 +175,6 @@ class WebHooksExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   async onCreateHook (system, event, _scope) {
 
-    const callbackUrl = 'https://b1ab9c4d.ngrok.io/api/forge/callback/hooks'
-
     const scope =  {
       folder: 'urn:adsk.wipprod:fs.folder:co.OmpMK8qARGWVAaE36R_JiQ'  
     }
@@ -206,7 +182,7 @@ class WebHooksExtension extends MultiModelExtensionBase {
     if (event.id) {
 
       const res = await this.webHooksAPI.createEventHook(
-        system.id, event.id, callbackUrl, scope)
+        system.id, event.id, scope)
 
       console.log(res)
 
@@ -223,30 +199,12 @@ class WebHooksExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  async onSystemSelected (system) {
-
-    const hooks = 
-      await this.webHooksAPI.getSystemHooks(
-        system.id)
-
-    this.react.setState({
-      hooks
-    })
-  }
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
   renderManageTab () {
 
     const {hooks} = this.react.getState()
 
     return (
-      <ManageView
-        onSystemSelected={this.onSystemSelected}
-        hooks={hooks}
-      />
+      <ManageView webHooksAPI={this.webHooksAPI}/>
     )
   }
 
@@ -267,12 +225,25 @@ class WebHooksExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  renderEventsTab () {
+    
+    return (
+      <EventsView
+        
+      />
+    )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   renderContent () {
 
     const {activeTabKey, tabsWidth} =
       this.react.getState()
 
-    const nbTabs = 2
+    const nbTabs = 3
 
     const style = {
       width:
@@ -315,6 +286,12 @@ class WebHooksExtension extends MultiModelExtensionBase {
                   eventKey="hook-manage"
                   key="hook-manage">
                     { this.renderManageTab() }
+                </Tab>
+                <Tab className="tab-container"
+                  title={tabTitle('Events Log')}
+                  eventKey="hook-events"
+                  key="hook-events">
+                    { this.renderEventsTab() }
                 </Tab>
               </Tabs>
             </div>

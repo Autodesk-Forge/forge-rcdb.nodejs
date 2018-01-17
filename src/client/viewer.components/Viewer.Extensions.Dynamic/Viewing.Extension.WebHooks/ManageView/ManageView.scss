@@ -31,10 +31,43 @@
     float: left;
 
     .hook {
+      transition-timing-function: ease;
+      transition-duration: 1.5s;
+      transition-property: all;
+      transition-delay: 0.0s;
+
       border: 1px solid #cccccc;
+      padding: 4px 4px 4px 8px;
       cursor:pointer;
-      padding: 4px;
       margin: 4px;
+
+      &:hover:not(.active) {
+        background: rgba(0, 105, 245, 0.35);
+        border: 1px solid #1bb1f4;
+
+        button {
+          display: block;
+        }
+      }
+
+      button {
+        background: none;
+        display: none;
+        outline: none;
+        float: right;
+        border: none;
+
+        span {
+          position: relative;
+          color: #888888;
+          font-size: 20px;
+          top: -1px;
+        }
+
+        span:hover {
+          color: orange;
+        }
+      }
     }
   }
 
