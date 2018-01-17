@@ -51,6 +51,8 @@ export default class EventsView extends BaseComponent {
   /////////////////////////////////////////////////////////
   onWebHookEvent (event) {
     
+    console.log(event)
+
     this.assignState({
       events: [...this.state.events, event]
     })
