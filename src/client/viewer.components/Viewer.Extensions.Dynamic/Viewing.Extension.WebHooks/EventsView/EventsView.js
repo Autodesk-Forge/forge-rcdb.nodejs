@@ -88,7 +88,7 @@ export default class EventsView extends BaseComponent {
 
     if (this.state.eventDetails) {
 
-      const hook = this.state.eventDetails.hook.hookId
+      const hook = this.state.eventDetails.hook
 
       if (hook.hookId === event.hook.hookId) {
 

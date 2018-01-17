@@ -74,8 +74,6 @@ class WebHooksExtension extends MultiModelExtensionBase {
 
     }).then (async() => {
 
-      await this.react.pushRenderExtension(this)
-
       if (!this.options.appState.user) {
 
         try {
@@ -91,6 +89,8 @@ class WebHooksExtension extends MultiModelExtensionBase {
           return this.showLogin()
         }
       }
+
+      await this.react.pushRenderExtension(this)
     })
 
     console.log('Viewing.Extension.WebHooks loaded')
@@ -257,7 +257,7 @@ class WebHooksExtension extends MultiModelExtensionBase {
     const {user} = this.react.getState()
 
     return (
-      user && <EventsView user={user}/>
+      !!user && <EventsView user={user}/>
     )
   }
 
