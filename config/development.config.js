@@ -72,7 +72,7 @@ const config = {
     },
 
     hooks: {
-      callbackUrl: `https://77b75314.ngrok.io/api/forge/callback/hooks`
+      callbackUrl: `https://dcc54956.ngrok.io/api/forge/callback/hooks`
     },
 
     viewer: {

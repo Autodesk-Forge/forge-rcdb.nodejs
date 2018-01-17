@@ -19,6 +19,7 @@ export default class ManageView extends BaseComponent {
 
     this.state = {
       hookDetails: null,
+      showLoader: false,
       system: null,
       hooks: []
     }
@@ -39,15 +40,25 @@ export default class ManageView extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
-  onRemoveHook (hook) {
+  async onRemoveHook (hook) {
   
     const hooks = this.state.hooks.filter((hk) => {
       return hk.hookId !== hook.hookId
     })
 
-    this.assignState({
+    await this.assignState({
       hooks
     })
+
+    if (this.state.hookDetails) {
+      
+      if (this.state.hookDetails.hookId === hook.hookId) {
+
+        this.assignState({
+          hookDetails: null
+        })
+      }
+    }
 
     this.webHooksAPI.removeHook(
       this.state.system.id,
@@ -97,7 +108,7 @@ export default class ManageView extends BaseComponent {
   /////////////////////////////////////////////////////////
   render () {
 
-    const { system, hookDetails } = this.state
+    const { system, hookDetails, showLoader } = this.state
 
     const systemItems = Systems.map((system) => {
       
@@ -106,12 +117,14 @@ export default class ManageView extends BaseComponent {
             onClick={() => {
   
               this.assignState({
+                showLoader: true,
                 system
               })
 
               this.webHooksAPI.getSystemHooks(
                 system.id).then((hooks) => {
                   this.assignState({
+                    showLoader: false,
                     hooks: Array.isArray(hooks) 
                       ? hooks : []
                   })
@@ -133,6 +146,7 @@ export default class ManageView extends BaseComponent {
         </DropdownButton>
 
         <div className="hooks">
+          <ReactLoader show={showLoader}/>
           { this.renderHooks() }
         </div>
 

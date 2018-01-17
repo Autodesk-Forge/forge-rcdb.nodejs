@@ -217,7 +217,10 @@ module.exports = function() {
     const socketSvc = ServiceManager.getService(
       'SocketSvc')
 
-    socketSvc.broadcast('forge.hook', req.body)
+    const userId = req.body.hook.createdBy
+
+    socketSvc.broadcastToUser(
+      userId, 'forge.hook', req.body)
 
     res.status(200).end()
   })

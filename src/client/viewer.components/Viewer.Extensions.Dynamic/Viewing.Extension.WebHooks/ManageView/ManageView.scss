@@ -25,6 +25,7 @@
   .hooks {
     border: 1px solid #dddddd;
     height: calc(100% - 32px);
+    position: relative;    
     margin: 4px 0 0 0;
     overflow: scroll;
     width: 290px;
@@ -37,7 +38,7 @@
       transition-delay: 0.0s;
 
       border: 1px solid #cccccc;
-      padding: 4px 4px 4px 8px;
+      padding: 4px 4px 4px 8px; 
       cursor:pointer;
       margin: 4px;
 

@@ -26,7 +26,12 @@ export default class EventsView extends BaseComponent {
       'forge.hook',
       this.onWebHookEvent)
 
-    this.socketSvc.connect()
+    this.socketSvc.connect().then(() => {
+
+      this.socketSvc.emit(
+        'forge.userId', 
+        this.props.user.userId)
+    })
 
     this.state = {
       eventDetails: null,
@@ -51,8 +56,6 @@ export default class EventsView extends BaseComponent {
   /////////////////////////////////////////////////////////
   onWebHookEvent (event) {
     
-    console.log(event)
-
     this.assignState({
       events: [...this.state.events, event]
     })
@@ -73,15 +76,27 @@ export default class EventsView extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
-  onDeleteEvent (event) {
+  async onDeleteEvent (event) {
     
     const events = this.state.events.filter((e) => {
       return e.hook.hookId !== event.hook.hookId
     })
 
-    this.assignState({
+    await this.assignState({
       events
     })
+
+    if (this.state.eventDetails) {
+
+      const hook = this.state.eventDetails.hook.hookId
+
+      if (hook.hookId === event.hook.hookId) {
+
+        this.assignState({
+          eventDetails: null
+        })
+      }
+    }
   }
 
   /////////////////////////////////////////////////////////

@@ -45,6 +45,10 @@ class WebHooksExtension extends MultiModelExtensionBase {
       ServiceManager.getService(
         'ForgeSvc')
 
+    this.notifySvc =
+      ServiceManager.getService(
+        'NotifySvc')
+
     this.react = options.react
 	}
 
@@ -173,25 +177,48 @@ class WebHooksExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  async onCreateHook (system, event, _scope) {
+  async onCreateHook (system, event, scope) {
 
-    const scope =  {
-      folder: 'urn:adsk.wipprod:fs.folder:co.OmpMK8qARGWVAaE36R_JiQ'  
-    }
+    try {
 
-    if (event.id) {
+      if (event.id) {
+        
+        const res = 
+          await this.webHooksAPI.createEventHook(
+            system.id, event.id, scope)
+  
+        console.log(res)
+  
+      } else {
+  
+        const res = 
+          await this.webHooksAPI.createSystemHook(
+            system.id, scope)
+  
+        console.log(res)
+      }
+  
+      this.notifySvc.add({
+        message: event.id || 'system-wide',
+        title: 'Hook added ... :)',
+        dismissAfter: 2500,
+        dismissible: false,
+        status: 'success',
+        id: this.guid(),
+        position: 'tl'
+      })
 
-      const res = await this.webHooksAPI.createEventHook(
-        system.id, event.id, scope)
+    } catch (ex) {
 
-      console.log(res)
-
-    } else {
-
-      const res = await this.webHooksAPI.createSystemHook(
-        system.id, callbackUrl, scope)
-
-      console.log(res)
+      this.notifySvc.add({
+        message: event.id || 'system-wide',
+        title: 'Hook rejected ... :(',
+        dismissAfter: 2500,
+        dismissible: false,
+        status: 'error',
+        id: this.guid(),
+        position: 'tl'
+      })
     }
   }
 
@@ -227,10 +254,10 @@ class WebHooksExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderEventsTab () {
     
+    const {user} = this.react.getState()
+
     return (
-      <EventsView
-        
-      />
+      user && <EventsView user={user}/>
     )
   }
 
