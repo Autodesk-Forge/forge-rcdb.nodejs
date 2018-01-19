@@ -67,9 +67,9 @@ class WebHooksExtension extends MultiModelExtensionBase {
 
     this.react.setState({
 
+      user: this.options.appState.user,
       activeTabKey: 'hook-create',
       tabsWidth: 0,
-      user: null,
       hooks: []
 
     }).then (async() => {
