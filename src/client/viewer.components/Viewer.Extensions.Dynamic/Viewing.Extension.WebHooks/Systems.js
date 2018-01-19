@@ -3,11 +3,11 @@ const Systems = [
     name: 'Data Management',
     id: 'data',
     events: [
-      {
-        desc: 'All Data Management events.',
-        name: 'Full System Events',
-        id: null
-      },
+      // {
+      //   desc: 'All Data Management events.',
+      //   name: 'Full System Events',
+      //   id: null
+      // },
       {
         desc: 'When a new version of an item (file) is added to a project or folder.',
         name: 'File Version Added',

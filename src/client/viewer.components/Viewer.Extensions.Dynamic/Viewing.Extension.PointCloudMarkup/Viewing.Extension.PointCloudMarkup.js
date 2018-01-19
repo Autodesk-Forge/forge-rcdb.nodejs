@@ -303,7 +303,11 @@ class PointCloudMarkupExtension extends MultiModelExtensionBase {
   //        viewerState, immediate);
   //    }
   /////////////////////////////////////////////////////////////////
-  restoreState (state, immediate) {
+  async restoreState (state, immediate) {
+
+    this.react.setState({
+      markups: []
+    })
 
     if (immediate) {
 

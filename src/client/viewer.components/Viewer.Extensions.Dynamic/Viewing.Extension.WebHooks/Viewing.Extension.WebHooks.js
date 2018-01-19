@@ -80,7 +80,7 @@ class WebHooksExtension extends MultiModelExtensionBase {
 
           const user = await this.forgeSvc.getUser()
 
-          this.react.setState({
+          await this.react.setState({
             user
           })
 
@@ -90,7 +90,7 @@ class WebHooksExtension extends MultiModelExtensionBase {
         }
       }
 
-      await this.react.pushRenderExtension(this)
+      this.react.pushRenderExtension(this)
     })
 
     console.log('Viewing.Extension.WebHooks loaded')
