@@ -1,8 +1,12 @@
+
 import EdgesGeometry from './EdgesGeometry'
 import sortBy from 'lodash/sortBy'
 import ThreeBSP from './threeCSG'
 import THREELib from "three-js"
+
 const THREE = THREELib()
+
+THREE.EdgesGeometry = EdgesGeometry
 
 /////////////////////////////////////////////////////////
 //
@@ -205,7 +209,7 @@ function createBoundingMesh (bbox) {
 /////////////////////////////////////////////////////////
 function getHardEdges (mesh, matrix = null) {
 
-  const edgesGeom = new EdgesGeometry(mesh.geometry)
+  const edgesGeom = new THREE.EdgesGeometry(mesh.geometry)
 
   const positions = edgesGeom.attributes.position
 

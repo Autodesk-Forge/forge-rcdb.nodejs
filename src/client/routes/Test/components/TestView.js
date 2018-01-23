@@ -1,5 +1,6 @@
 import ViewingApp from 'Viewer.ViewingApplication'
 import Toolkit from 'Viewer.Toolkit'
+import './Viewing.Extension.Test'
 import Viewer from 'Viewer'
 import React from 'react'
 
@@ -161,7 +162,6 @@ class TestView extends React.Component {
     viewer.addEventListener(Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT, () => {
 
       //console.log(viewer.model.getData().instanceTree.getRootId())
-
     })
 
     viewer.addEventListener(Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT, (e) => {

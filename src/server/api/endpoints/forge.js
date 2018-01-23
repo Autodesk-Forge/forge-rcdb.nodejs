@@ -113,7 +113,7 @@ module.exports = function() {
 
       const userSvc = ServiceManager.getService(
         'UserSvc')
-
+1
       const user = await userSvc.getCurrentUser(
         req.session)
 
