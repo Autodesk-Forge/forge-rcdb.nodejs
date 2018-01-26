@@ -15,14 +15,26 @@
 // DOES NOT WARRANT THAT THE OPERATION OF THE PROGRAM WILL BE
 // UNINTERRUPTED OR ERROR FREE.
 /////////////////////////////////////////////////////////////////////////////////
-
 import ServiceManager from '../services/SvcManager'
+import compression from 'compression'
 import express from 'express'
 import config from 'c0nfig'
 
 module.exports = function () {
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   const router = express.Router()
+
+  const shouldCompress = (req, res) => {
+    return true
+  }
+
+  router.use(compression({
+    filter: shouldCompress
+  }))
 
   ///////////////////////////////////////////////////////
   //
@@ -47,8 +59,15 @@ module.exports = function () {
         return
       }
 
+      const opts = {
+        sort: {
+          name: 1
+        }
+      }
+
       const items = await dbSvc.getItems(
-        materialsConfig.collection)
+        materialsConfig.collection,
+        opts)
 
       res.json(items)
 
@@ -127,7 +146,7 @@ module.exports = function () {
 
       const query = { name: material.name }
 
-      await dbSvc.upsertItem(
+      await dbSvc.upsert(
         materialsConfig.collection,
         material, query)
 

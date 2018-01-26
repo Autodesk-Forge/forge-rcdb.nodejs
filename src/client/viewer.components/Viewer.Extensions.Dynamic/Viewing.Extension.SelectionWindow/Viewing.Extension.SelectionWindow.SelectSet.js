@@ -140,7 +140,7 @@ export default class SelectSet {
 
   /////////////////////////////////////////////////////////
   // Returns true if the box is contained inside the
-  // closed volume defined the the input planes
+  // closed volume defined by the the input planes
   //
   /////////////////////////////////////////////////////////
   containsBox (planes, box) {
@@ -170,6 +170,35 @@ export default class SelectSet {
     }
 
     return true
+  }
+
+  /////////////////////////////////////////////////////////
+  // Returns true if at least one vertex is contained in
+  // closed volume defined by the the input planes
+  //
+  /////////////////////////////////////////////////////////
+  containsVertex (planes, vertices) {
+
+    for (let vertex of vertices) {
+
+      let isInside = true
+
+      for (let plane of planes) {
+
+        if (plane.distanceToPoint(vertex) < 0) {
+
+          isInside = false
+          break
+        }
+      }
+
+      if (isInside) {
+
+        return true
+      }
+    }
+
+    return false
   }
 
   /////////////////////////////////////////////////////////
@@ -375,7 +404,7 @@ export default class SelectSet {
     const planes = [
       plane1, plane2,
       plane3, plane4,
-      plane5, this.getCameraPlane()
+      plane5
     ]
 
     const vertices = [
@@ -405,10 +434,21 @@ export default class SelectSet {
         return bboxInfo.dbId
       })
 
-      // At this point we could perform a finer analysis
-      // to determine if the mesh vertices are inside
+      // At this point perform a finer analysis
+      // to determine if the any of the mesh vertices are inside
       // or outside the selection window but it would
       // be a much more expensive computation
+
+      //const dbIdsIntersectAccurate =
+      //  dbIdsIntersect.filter((dbId) => {
+      //
+      //    const geometry =
+      //      Toolkit.buildComponentGeometry(
+      //        this.viewer, this.viewer.model, dbId)
+      //
+      //    return this.containsVertex(
+      //      planes, geometry.vertices)
+      //  })
 
       return [...dbIdsInside, ...dbIdsIntersect]
     }

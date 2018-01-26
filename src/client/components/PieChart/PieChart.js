@@ -71,8 +71,8 @@ class PieChart extends React.Component {
     }
 
     const size = Math.min(
-       $(this.container).height(),
-       $(this.container).width())
+      this.container.offsetHeight,
+      this.container.offsetWidth)
 
     const options =  Object.assign({}, {
 
@@ -156,8 +156,8 @@ class PieChart extends React.Component {
 
     setTimeout(()=> {
 
-      const $path = $(`g[class*="_arc"] > path`,
-        $(this.container))
+      const $path = $(this.container).find(
+        `g[class*="_arc"] > path`)
 
       $path.css({
         'stroke-width': '0'
@@ -172,9 +172,10 @@ class PieChart extends React.Component {
   render () {
 
     return (
-      <div className="pie-chart"
-        ref={ (div) => this.container = div }>
-      </div>
+      <div className="pie-chart" ref={ (div) => {
+          this.container = div
+        }}
+      />
     )
   }
 }

@@ -133,6 +133,8 @@ class GalleryView extends BaseComponent {
       pageCount,
       items
     })
+
+    this.primaryRef.scrollTop = 0
   }
 
   /////////////////////////////////////////////////////////
@@ -225,7 +227,7 @@ class GalleryView extends BaseComponent {
   //
   /////////////////////////////////////////////////////////
   @autobind
-  async onDropFiles (files) {
+  async onFileDrop () {
 
     if (this.settings.agreement) {
 
@@ -393,8 +395,10 @@ class GalleryView extends BaseComponent {
 
         if (error.status === 404) {
 
-          this.extractorSvc.extract(itemId, {
-            socketId: this.socketSvc.socketId
+          this.socketSvc.getSocketId().then((socketId) => {
+            this.extractorSvc.extract(itemId, {
+              socketId
+            })
           })
         }
       })
@@ -526,7 +530,9 @@ class GalleryView extends BaseComponent {
             />
           </div>
           <div className="scroller">
-            <div className="primary">
+            <div className="primary" ref={
+              (div) => this.primaryRef = div
+              }>
               <div className="items">
                 {this.renderItems()}
               </div>
@@ -535,10 +541,9 @@ class GalleryView extends BaseComponent {
               <div className="uploader">
                 <ModelUploader
                   onProgress={this.onUploadProgress}
-                  socketId={this.socketSvc.socketId}
                   onInitUpload={this.onInitUpload}
                   user={this.props.appState.user}
-                  onDropFiles={this.onDropFiles}
+                  onFileDrop={this.onFileDrop}
                   onLogIn={this.onLogIn}
                   database={'gallery'}
                 />

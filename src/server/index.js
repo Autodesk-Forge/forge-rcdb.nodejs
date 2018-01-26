@@ -164,6 +164,7 @@ const get3LeggedToken = (session) => {
 // API Routes setup
 //
 /////////////////////////////////////////////////////////////////////
+app.use('/api/derivatives/2legged', DerivativesAPI(get2LeggedToken))
 app.use('/api/derivatives/3legged', DerivativesAPI(get3LeggedToken))
 app.use('/api/materials', MaterialAPI())
 app.use('/api/extract',   ExtractAPI())
@@ -231,7 +232,6 @@ if (process.env.HOT_RELOADING) {
 
   app.get('*', gzip(path.resolve(process.cwd(), './dist')))
 }
-
 
 /////////////////////////////////////////////////////////////////////
 //

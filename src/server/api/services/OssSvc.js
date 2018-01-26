@@ -185,8 +185,10 @@ export default class OssSvc extends BaseSvc {
   // Uploads object to bucket using resumable endpoint
   //
   /////////////////////////////////////////////////////////
-  uploadObjectChunked (getToken, bucketKey, objectKey,
-                       file,  opts = {}) {
+  uploadObjectChunked (
+    getToken,
+    bucketKey, objectKey,
+    file,  opts = {}) {
 
     return new Promise((resolve, reject) => {
 

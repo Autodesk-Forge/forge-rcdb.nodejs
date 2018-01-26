@@ -55,7 +55,7 @@ module.exports = function() {
 
     const csrf = await forgeSvc.generateCryptoToken()
 
-    req.session.csrf = csrf
+    req.session.csrf = csrf.replace(/\+/g, ' ')
 
     res.json(`${authURL}&response_type=code&state=${csrf}`)
   })
@@ -157,7 +157,6 @@ module.exports = function() {
 
       return res.redirect(req.session.redirect)
     }
-
 
 
     oauth2.getOAuthAccessToken(

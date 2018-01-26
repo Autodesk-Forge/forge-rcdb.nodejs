@@ -4,7 +4,6 @@ import createStore from './createStore'
 //Services
 import ServiceManager from 'SvcManager'
 import ExtractorSvc from 'ExtractorSvc'
-import MaterialSvc from 'MaterialSvc'
 import StorageSvc from 'StorageSvc'
 import NotifySvc from 'NotifySvc'
 import DialogSvc from 'DialogSvc'
@@ -23,18 +22,9 @@ const storageSvc = new StorageSvc({
   storageVersion: config.storageVersion
 })
 
-const materialSvc = new MaterialSvc({
-  apiUrl: '/api/materials'
-})
-
 const socketSvc = new SocketSvc({
   host: config.host,
   port: config.port
-})
-
-socketSvc.connect().then((socket) => {
-  console.log(`${config.host}:${config.port}`)
-  console.log('Client socket connected: ' + socket.id)
 })
 
 const extractorSvc = new ExtractorSvc({
@@ -63,7 +53,6 @@ const userSvc = new UserSvc({
 // Services Registration
 // ========================================================
 ServiceManager.registerService(extractorSvc)
-ServiceManager.registerService(materialSvc)
 ServiceManager.registerService(storageSvc)
 ServiceManager.registerService(socketSvc)
 ServiceManager.registerService(dialogSvc)

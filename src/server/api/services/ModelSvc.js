@@ -59,6 +59,27 @@ export default class ModelSvc extends BaseSvc {
   //
   //
   /////////////////////////////////////////////////////////
+  getModel (opts = {}) {
+
+    try {
+
+      const dbSvc = ServiceManager.getService(
+        this._config.dbName)
+
+      return dbSvc.findOne(
+        this._config.collection,
+        opts)
+
+    } catch (ex) {
+
+      return Promise.reject (ex)
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   getModels (opts = {}) {
 
     try {

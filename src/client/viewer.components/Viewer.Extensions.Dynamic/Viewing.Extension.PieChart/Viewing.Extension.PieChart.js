@@ -5,7 +5,6 @@
 /////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import { DropdownButton, MenuItem } from 'react-bootstrap'
-import ExtensionBase from 'Viewer.ExtensionBase'
 import WidgetContainer from 'WidgetContainer'
 import {ReactLoader as Loader} from 'Loader'
 import './Viewing.Extension.PieChart.scss'
@@ -60,9 +59,6 @@ class PieChartExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   load () {
 
-    window.addEventListener(
-      'resize', this.onStopResize)
-
     this.react.setState({
       activeProperty: '',
       showLoader: true,
@@ -82,21 +78,22 @@ class PieChartExtension extends MultiModelExtensionBase {
       }
     })
 
-    this.viewer.addEventListener(
-      Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
-      this.onGeometryLoaded)
-
     this.viewer.loadDynamicExtension(
       'Viewing.Extension.ContextMenu', {
-        buildMenu: (menu, selectedDbId) => {
-          return !selectedDbId
-            ? [{
-            title: 'Show all objects',
-            target: () => {
-              Toolkit.isolateFull(this.viewer)
-              this.viewer.fitToView()
-            }}]
-            : menu
+        buildMenu: (menu) => {
+          return menu.map((item) => {
+            const title = item.title.toLowerCase()
+            if (title === 'show all objects') {
+              return {
+                title: 'Show All objects',
+                target: () => {
+                  Toolkit.isolateFull(this.viewer)
+                  this.viewer.fitToView()
+                }
+              }
+            }
+            return item
+          })
         }
       })
 
@@ -117,9 +114,6 @@ class PieChartExtension extends MultiModelExtensionBase {
 
       this.toggleTheming()
     }
-
-    window.removeEventListener(
-      'resize', this.onStopResize)
 
     console.log('Viewing.Extension.PieChart unloaded')
 
@@ -192,7 +186,7 @@ class PieChartExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onGeometryLoaded (event) {
+  onModelCompletedLoad (event) {
 
     this.loadChart(event.model)
   }

@@ -37,26 +37,6 @@ export default class DMSvc extends BaseSvc {
   }
 
   /////////////////////////////////////////////////////////////////
-  // Returns current user profile
-  //
-  /////////////////////////////////////////////////////////////////
-  async getUser (getToken) {
-
-    const token = ((typeof getToken == 'function')
-      ? await getToken()
-      : getToken)
-
-    const url = 'https://developer.api.autodesk.com' +
-      '/userprofile/v1/users/@me'
-
-    return requestAsync({
-      token: token.access_token,
-      json: true,
-      url: url
-    })
-  }
-
-  /////////////////////////////////////////////////////////////////
   // Returns hub info
   //
   /////////////////////////////////////////////////////////////////
@@ -205,7 +185,7 @@ export default class DMSvc extends BaseSvc {
   // Delete Item
   //
   /////////////////////////////////////////////////////////////////
-  async deleteItem (getToken, projectId, itemId) {
+  async deleteItem (getToken, projectId, itemId, opts = {}) {
 
     return new Promise(async(resolve, reject) => {
 
@@ -216,7 +196,7 @@ export default class DMSvc extends BaseSvc {
           : getToken
 
         const versionsRes = await this._itemsAPI.getItemVersions(
-          projectId, itemId, {autoRefresh:false}, token)
+          projectId, itemId, opts, {autoRefresh:false}, token)
 
         const deleteTasks = versionsRes.body.data.map((version) => {
 
@@ -228,6 +208,7 @@ export default class DMSvc extends BaseSvc {
 
       } catch (ex) {
 
+        console.log(ex)
         reject (ex)
       }
     })
@@ -251,43 +232,47 @@ export default class DMSvc extends BaseSvc {
   // Delete Version
   //
   /////////////////////////////////////////////////////////////////
-  deleteVersion (getToken, projectId, versionId) {
+  async deleteVersion (getToken, projectId, versionId) {
 
-    return new Promise(async(resolve, reject) => {
+    try {
 
-      try {
+      const token = (typeof getToken == 'function')
+        ? await getToken()
+        : getToken
 
-        const token = (typeof getToken == 'function')
-          ? await getToken()
-          : getToken
+      const versionsRes =
+        await this._versionsAPI.getVersion(
+          projectId, versionId,
+          {autoRefresh:false}, token)
 
-        const versionsRes = await this._versionsAPI.getVersion(
-          projectId, versionId, {autoRefresh:false}, token)
+      const payload = this.createDeleteVersionPayload(
+        versionsRes.body.data.relationships.item.data.id)
 
-        const version = versionsRes.body.data
+      //return this._versionsAPI.postVersion(
+      //  projectId, JSON.stringify(payload),
+      //  {autoRefresh:false}, token)
 
-        if (version.relationships.storage) {
+      const url =
+        `${DMSvc.SERVICE_BASE_URL}/projects/` +
+        `${projectId}/versions`
 
-          const ossSvc = ServiceManager.getService('OssSvc')
-
-          const objectId = ossSvc.parseObjectId(
-            version.relationships.storage.data.id)
-
-          const res = await ossSvc.deleteObject (
-            token,
-            objectId.bucketKey,
-            objectId.objectKey)
-
-          resolve (res)
-        }
-
-        return reject('no storage')
-
-      } catch (ex) {
-
-        reject (ex)
+      const headers = {
+        'Content-Type': 'application/vnd.api+json',
+        'Authorization': 'Bearer ' + token.access_token
       }
-    })
+
+      return requestAsync({
+        method: 'POST',
+        body: payload,
+        json: true,
+        headers,
+        url
+      })
+
+    } catch (ex) {
+
+      Promise.reject (ex)
+    }
   }
 
   /////////////////////////////////////////////////////////////////
@@ -303,9 +288,26 @@ export default class DMSvc extends BaseSvc {
     const payload = this.createStoragePayload (
       folderId, filename)
 
-    return this._projectsAPI.postStorage(
-      projectId, JSON.stringify(payload),
-      {autoRefresh:false}, token)
+    //return this._projectsAPI.postStorage(
+    //  projectId, JSON.stringify(payload),
+    //  {autoRefresh:false}, token)
+
+    const url =
+      `${DMSvc.SERVICE_BASE_URL}/projects/` +
+      `${projectId}/storage`
+
+    const headers = {
+      'Content-Type': 'application/vnd.api+json',
+      'Authorization': 'Bearer ' + token.access_token
+    }
+
+    return requestAsync({
+      method: 'POST',
+      body: payload,
+      json: true,
+      headers,
+      url
+    })
   }
 
   /////////////////////////////////////////////////////////////////
@@ -313,37 +315,72 @@ export default class DMSvc extends BaseSvc {
   //
   /////////////////////////////////////////////////////////////////
   async createItem (
-    getToken, projectId, folderId, objectId, filename, displayName = null) {
+    getToken, projectId, folderId, objectId,
+    displayName, isBIM = false) {
 
     const token = (typeof getToken == 'function')
       ? await getToken()
       : getToken
 
     const payload = this.createItemPayload(
-      folderId, objectId, filename, displayName)
+      folderId, objectId, displayName, isBIM)
 
-    return this._itemsAPI.postItem(
-      projectId, JSON.stringify(payload),
-      {autoRefresh:false}, token)
+    //return this._itemsAPI.postItem(
+    //  projectId, JSON.stringify(payload),
+    //  {autoRefresh:false}, token)
+
+    const url =
+      `${DMSvc.SERVICE_BASE_URL}/projects/` +
+      `${projectId}/items`
+
+    const headers = {
+      'Content-Type': 'application/vnd.api+json',
+      'Authorization': 'Bearer ' + token.access_token
+    }
+
+    return requestAsync({
+      method: 'POST',
+      body: payload,
+      json: true,
+      headers,
+      url
+    })
   }
 
   /////////////////////////////////////////////////////////////////
   // Creates new Version
   //
   /////////////////////////////////////////////////////////////////
-  async createVersion (
-    getToken, projectId, itemId, objectId, filename) {
+  async createVersion (getToken,
+    projectId, itemId, objectId, displayName, isBIM) {
 
     const token = (typeof getToken == 'function')
       ? await getToken()
       : getToken
 
     const payload = this.createVersionPayload(
-      itemId, objectId, filename)
+      itemId, objectId, displayName, isBIM)
 
-    return this._versionsAPI.postVersion(
-      projectId, JSON.stringify(payload),
-      {autoRefresh:false}, token)
+    //return this._versionsAPI.postVersion(
+    //  projectId, JSON.stringify(payload),
+    //  {autoRefresh:false}, token)
+
+    const url =
+      `${DMSvc.SERVICE_BASE_URL}/projects/` +
+      `${projectId}/versions`
+
+    const headers = {
+      'Content-Type': 'application/vnd.api+json',
+      'Authorization': 'Bearer ' + token.access_token
+    }
+
+    return requestAsync({
+      method: 'POST',
+      body: payload,
+      json: true,
+      headers,
+      url
+    })
   }
 
   /////////////////////////////////////////////////////////////////
@@ -376,9 +413,27 @@ export default class DMSvc extends BaseSvc {
     const payload = this.createItemRelationshipRefPayload(
       refVersionId)
 
-    return this._itemsAPI.postItemRelationshipsRef(
-      projectId, targetItemId, JSON.stringify(payload),
-      {autoRefresh:false}, token)
+    //return this._itemsAPI.postItemRelationshipsRef(
+    //  projectId, targetItemId, JSON.stringify(payload),
+    //  {autoRefresh:false}, token)
+
+    const url =
+      `${DMSvc.SERVICE_BASE_URL}/projects/` +
+      `${projectId}/items/${targetItemId}/` +
+      `relationships/refs`
+
+    const headers = {
+      'Content-Type': 'application/vnd.api+json',
+      'Authorization': 'Bearer ' + token.access_token
+    }
+
+    return requestAsync({
+      method: 'POST',
+      body: payload,
+      json: true,
+      headers,
+      url
+    })
   }
 
   /////////////////////////////////////////////////////////////////
@@ -411,9 +466,27 @@ export default class DMSvc extends BaseSvc {
     const payload = this.createVersionRelationshipRefPayload(
       refVersionId)
 
-    return this._versionsAPI.postVersionRelationshipsRef(
-      projectId, targetVersionId, JSON.stringify(payload),
-      {autoRefresh:false}, token)
+    //return this._versionsAPI.postVersionRelationshipsRef(
+    //  projectId, targetVersionId, JSON.stringify(payload),
+    //  {autoRefresh:false}, token)
+
+    const url =
+      `${DMSvc.SERVICE_BASE_URL}/projects/` +
+      `${projectId}/versions/${targetVersionId}/` +
+      `relationships/refs`
+
+    const headers = {
+      'Content-Type': 'application/vnd.api+json',
+      'Authorization': 'Bearer ' + token.access_token
+    }
+
+    return requestAsync({
+      method: 'POST',
+      body: payload,
+      json: true,
+      headers,
+      url
+    })
   }
 
   /////////////////////////////////////////////////////////////////
@@ -476,10 +549,10 @@ export default class DMSvc extends BaseSvc {
     })
   }
 
-  /////////////////////////////////////////////////////////////////
-  // Upload file to create new item or new version
+  /////////////////////////////////////////////////////////
+  // Upload file and create new item or new version
   //
-  /////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
   upload (getToken, projectId, folderId, file, opts) {
 
     return new Promise(async(resolve, reject) => {
@@ -503,23 +576,23 @@ export default class DMSvc extends BaseSvc {
             try {
 
               // look for items with the same displayName
-              const items = await this.findItemsWithAttributes(
-                getToken,
-                projectId,
-                folderId, {
-                  displayName
-                })
+              const items =
+                await this.findItemsWithAttributes(
+                  getToken,
+                  projectId,
+                  folderId, {
+                    displayName
+                  })
 
               if (items.length > 0) {
 
                 const item = items[0]
 
                 const versionRes = await this.createVersion(
-                  getToken,
-                  projectId,
-                  item.id,
+                  getToken, projectId, item.id,
                   storageRes.body.data.id,
-                  displayName)
+                  displayName,
+                  opts.isBIM)
 
                 const response = {
                   version: versionRes.body.data,
@@ -535,7 +608,8 @@ export default class DMSvc extends BaseSvc {
                 const itemRes = await this.createItem(
                   getToken, projectId, folderId,
                   storageRes.body.data.id,
-                  displayName)
+                  displayName,
+                  opts.isBIM)
 
                 const versions = await this.getItemVersions(
                   getToken, projectId, itemRes.body.data.id)
@@ -650,6 +724,9 @@ export default class DMSvc extends BaseSvc {
   createStoragePayload (folderId, filename) {
 
     const payload = {
+      jsonapi: {
+        version: '1.0'
+      },
       data: {
         type: 'objects',
         attributes: {
@@ -673,10 +750,13 @@ export default class DMSvc extends BaseSvc {
   // Creates item payload
   //
   /////////////////////////////////////////////////////////////////
-  createItemPayload (folderId, objectId, displayName) {
+  createItemPayload (folderId, objectId, displayName, isBIM) {
+
+    const fileType = isBIM
+      ? 'autodesk.bim360:File'
+      : 'autodesk.core:File'
 
     const payload = {
-
       jsonapi: {
         version: '1.0'
       },
@@ -685,7 +765,7 @@ export default class DMSvc extends BaseSvc {
         attributes: {
           displayName: displayName,
           extension: {
-            type: 'items:autodesk.core:File',
+            type: `items:${fileType}`,
             version: '1.0'
           }
         },
@@ -709,7 +789,7 @@ export default class DMSvc extends BaseSvc {
         attributes: {
           name: displayName,
           extension: {
-            type: 'versions:autodesk.core:File',
+            type: `versions:${fileType}`,
             version: '1.0'
           }
         },
@@ -731,10 +811,13 @@ export default class DMSvc extends BaseSvc {
   // Creates version payload
   //
   /////////////////////////////////////////////////////////////////
-  createVersionPayload (itemId, objectId, displayName) {
+  createVersionPayload (itemId, objectId, displayName, isBIM) {
+
+    const fileType = isBIM
+      ? 'autodesk.bim360:File'
+      : 'autodesk.core:File'
 
     const payload = {
-
       jsonapi: {
         version: '1.0'
       },
@@ -743,7 +826,7 @@ export default class DMSvc extends BaseSvc {
         attributes: {
           name: displayName,
           extension: {
-            type: 'versions:autodesk.core:File',
+            type: `versions:${fileType}`,
             version: '1.0'
           }
         },
@@ -768,13 +851,45 @@ export default class DMSvc extends BaseSvc {
   }
 
   /////////////////////////////////////////////////////////////////
+  // Creates delete version payload
+  //
+  /////////////////////////////////////////////////////////////////
+  createDeleteVersionPayload (itemId) {
+
+    const payload = {
+      jsonapi: {
+        version: '1.0'
+      },
+      data:{
+        type: 'versions',
+        attributes:{
+          name: 'max-delete.max',
+          extension:{
+            type: 'versions:autodesk.core:Deleted',
+            version: '1.0'
+          }
+        },
+        relationships:{
+          item:{
+            data:{
+              type: 'items',
+              id: itemId
+            }
+          }
+        }
+      }
+    }
+
+    return payload
+  }
+
+  /////////////////////////////////////////////////////////////////
   // Creates item relationship payload
   //
   /////////////////////////////////////////////////////////////////
   createItemRelationshipRefPayload (refVersionId) {
 
     const payload = {
-
       jsonapi: {
         version: '1.0'
       },
@@ -800,7 +915,6 @@ export default class DMSvc extends BaseSvc {
   createVersionRelationshipRefPayload (refVersionId) {
 
     const  payload = {
-
       jsonapi: {
         version: '1.0'
       },
@@ -906,7 +1020,7 @@ function requestAsync(params) {
           return reject(response.statusMessage)
         }
 
-        return resolve(body)
+        return resolve({body})
 
       } catch(ex){
 

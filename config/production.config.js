@@ -11,17 +11,11 @@ const config = {
   env: 'production',
 
   client: {
-    googleAnalytics: {
-
-      accountIds: [
-        'UA-7938776-22',
-        'UA-60717701-4'
-      ]
-    },
     // this the public host name of your server for the
     // client socket to connect.
     // eg. https://myforgeapp.mydomain.com
-    storageVersion: 1.0,
+    theme: 'forge-white.min.css',
+    storageVersion: 2.1,
     host: `${HOST_URL}`,
     env: 'production',
     port: PORT
@@ -43,6 +37,10 @@ const config = {
     }
   },
 
+  layouts: {
+    index: 'index.analytics.ejs'
+  },
+
   forge: {
 
     oauth: {
@@ -61,15 +59,17 @@ const config = {
         'data:read',
         'data:write',
         'data:create',
+        'data:search',
         'bucket:read',
-        'bucket:create'
+        'bucket:create',
+        'bucket:delete'
       ]
     },
 
     viewer: {
-      viewer3D: 'https://developer.api.autodesk.com/derivativeservice/v2/viewers/viewer3D.min.js?v=3.1.1',
-      threeJS:  'https://developer.api.autodesk.com/derivativeservice/v2/viewers/three.min.js?v=3.1.1',
-      style:    'https://developer.api.autodesk.com/derivativeservice/v2/viewers/style.css?v=3.1.1'
+      viewer3D: 'https://developer.api.autodesk.com/derivativeservice/v2/viewers/viewer3D.min.js?v=3.2.1',
+      threeJS:  'https://developer.api.autodesk.com/derivativeservice/v2/viewers/three.min.js?v=3.2.1',
+      style:    'https://developer.api.autodesk.com/derivativeservice/v2/viewers/style.css?v=3.2.1'
     }
   },
 

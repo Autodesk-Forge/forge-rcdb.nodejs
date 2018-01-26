@@ -17,8 +17,6 @@ import './Data.scss'
 // Commands
 import HotSpotCommand from 'HotSpot.Command'
 
-import hotspots from './hotspots'
-
 class IoTExtension extends ExtensionBase {
 
   /////////////////////////////////////////////////////////////////
@@ -36,8 +34,8 @@ class IoTExtension extends ExtensionBase {
 
     this.hotSpotCommand = new HotSpotCommand (viewer, {
       parentControl: options.parentControl,
-      animate: true,
-      hotspots
+      hotspots: options.hotspots,
+      animate: true
     })
 
     this.panel = new HotSpotPropertyPanel(
@@ -92,6 +90,8 @@ class IoTExtension extends ExtensionBase {
     })
 
     this.socketSvc = ServiceManager.getService('SocketSvc')
+
+    this.socketSvc.connect()
 
     const sensorEvents = [
       'sensor.acceleration',
@@ -233,18 +233,22 @@ class IoTExtension extends ExtensionBase {
 
     this.viewer.loadDynamicExtension(
       'Viewing.Extension.ContextMenu', {
-        buildMenu: (menu, selectedDbId) => {
-          return !selectedDbId
-            ? [{
-                title: 'Show all objects',
+        buildMenu: (menu) => {
+          return menu.map((item) => {
+            const title = item.title.toLowerCase()
+            if (title === 'show all objects') {
+              return {
+                title: 'Show All objects',
                 target: () => {
                   Toolkit.isolateFull(this.viewer)
-                  //this.hotSpotCommand.isolate()
                   this.viewer.fitToView()
-              }}]
-            : menu
+                }
+              }
+            }
+            return item
+          })
         }
-    })
+      })
 
     this.eventTool = new EventTool(this.viewer)
 
@@ -269,10 +273,9 @@ class IoTExtension extends ExtensionBase {
     this.react.pushRenderExtension(this)
 
     this.react.setState({
-      hotspots: hotspots.filter((hotspot) => {
+      hotspots: this.options.hotspots.filter((hotspot) => {
         return !hotspot.controlled
       })
-
     })
 
     return true

@@ -10,6 +10,7 @@ import { browserHistory } from 'react-router'
 import { Tabs, Tab } from 'react-bootstrap'
 import DataTreeView from './DataTreeView'
 import ServiceManager from 'SvcManager'
+import DMUploader from './DMUploader'
 import { ReactLoader } from 'Loader'
 import Measure from 'react-measure'
 import DOMPurify from 'dompurify'
@@ -29,8 +30,21 @@ class DataManagementExtension extends MultiModelExtensionBase {
 		super (viewer, options)
 
     this.onItemNodeCreated = this.onItemNodeCreated.bind(this)
+    this.onUploadComplete = this.onUploadComplete.bind(this)
+    this.onUploadProgress = this.onUploadProgress.bind(this)
+    this.onFolderUpload = this.onFolderUpload.bind(this)
     this.onTabSelected = this.onTabSelected.bind(this)
+    this.onInitUpload = this.onInitUpload.bind(this)
+    this.onDeleteItem = this.onDeleteItem.bind(this)
     this.onLoadItem = this.onLoadItem.bind(this)
+
+    this.socketSvc =
+      ServiceManager.getService(
+        'SocketSvc')
+
+    this.notifySvc =
+      ServiceManager.getService(
+      'NotifySvc')
 
     this.dialogSvc =
       ServiceManager.getService(
@@ -99,13 +113,9 @@ class DataManagementExtension extends MultiModelExtensionBase {
       })
     })
 
-    this.viewer.loadDynamicExtension(
-      'Viewing.Extension.ContextMenu').then(
-        (ctxMenuExtension) => {
-
-          ctxMenuExtension.addHandler(
-            this.onContextMenu)
-        })
+    this.socketSvc.on(
+      'dm.upload.complete',
+      this.onUploadComplete)
 
     console.log('Viewing.Extension.DataManagement loaded')
 
@@ -138,33 +148,14 @@ class DataManagementExtension extends MultiModelExtensionBase {
 
     console.log('Viewing.Extension.DataManagement loaded')
 
+    this.socketSvc.off(
+      'dm.upload.complete',
+      this.onUploadComplete)
+
     super.unload ()
 
 		return true
 	}
-
-  /////////////////////////////////////////////////////////
-  //
-  //
-  /////////////////////////////////////////////////////////
-  async setViewerUrn (node, urn) {
-
-    try {
-
-      const manifest =
-        await this.derivativesAPI.getManifest(urn)
-
-      if (this.derivativesAPI.hasDerivative (
-          manifest, { type: 'geometry'})) {
-
-        node.setViewerUrn(urn)
-      }
-
-    } catch (ex) {
-
-      console.log(ex)
-    }
-  }
 
   /////////////////////////////////////////////////////////
   //
@@ -219,7 +210,42 @@ class DataManagementExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  async onDeleteItem (node) {
+
+    const onClose = (result) => {
+
+      this.dialogSvc.off('dialog.close', onClose)
+
+      if (result === 'OK') {
+
+        this.dmAPI.deleteItem(
+          node.projectId,
+          node.itemId)
+      }
+    }
+
+    this.dialogSvc.on('dialog.close', onClose)
+
+    this.dialogSvc.setState({
+      className: 'item-delete-dlg',
+      title: 'Delete Item ...',
+      content:
+        <div>
+          Are you sure you want to delete
+          <br/>
+          {node.name} ?
+        </div>,
+      open: true
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   async onItemNodeCreated (node) {
+
+    node.showLoader(true)
 
     const versionsRes =
       await this.dmAPI.getItemVersions(
@@ -245,9 +271,11 @@ class DataManagementExtension extends MultiModelExtensionBase {
       node.setVersions(versions)
 
       await this.setNodeThumbnail(node, urn)
-
-      node.showLoader(false)
     }
+
+    node.showLoader(false)
+
+    node.setLoaded(true)
   }
 
   /////////////////////////////////////////////////////////
@@ -280,15 +308,20 @@ class DataManagementExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   async onLoadItem (node) {
 
-    console.log(node)
-
     node.showLoader(true)
 
     try {
 
       const extId = 'Viewing.Extension.ModelLoader'
 
-      const loader = this.viewer.getExtension(extId)
+      const options = Object.assign({}, this.options, {
+        database: 'gallery'
+      })
+
+      const loader =
+        this.viewer.getExtension(extId) ||
+        await this.viewer.loadDynamicExtension(
+          extId, options)
 
       const version = node.activeVersion
 
@@ -310,6 +343,99 @@ class DataManagementExtension extends MultiModelExtensionBase {
     }
 
     node.showLoader(false)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onInitUpload (data) {
+
+    this.dialogSvc.setState({
+      open: false
+    })
+
+    const notification = this.notifySvc.add({
+      title: 'Uploading ' + data.file.name,
+      message: 'progress: 0%',
+      dismissible: false,
+      status: 'loading',
+      id: data.uploadId,
+      dismissAfter: 0,
+      position: 'tl'
+    })
+
+    notification.buttons = [{
+      name: 'Hide',
+      onClick: () => {
+        notification.dismissAfter = 1
+        this.notifySvc.update(notification)
+      }
+    }]
+
+    this.notifySvc.update(notification)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onUploadProgress (data) {
+
+    const notification =
+      this.notifySvc.getNotification(data.uploadId)
+
+    if (!notification.forgeUpload) {
+
+      const progress = data.percent * 0.5
+
+      notification.message =
+        `progress: ${progress.toFixed(2)}%`
+
+      this.notifySvc.update(notification)
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onUploadComplete (data) {
+
+    console.log(data)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async onFolderUpload (data) {
+
+    const onClose = (result) => {
+
+      this.dialogSvc.off('dialog.close', onClose)
+
+      if (result === 'OK') {
+
+      }
+    }
+
+    this.dialogSvc.on('dialog.close', onClose)
+
+    this.dialogSvc.setState({
+      className: 'folder-upload-dlg',
+      title: 'Upload to Folder ...',
+      content:
+        <DMUploader
+          onProgress={this.onUploadProgress}
+          onInitUpload={this.onInitUpload}
+          projectId={data.projectId}
+          folderId={data.folderId}
+          hubId={data.hubId}
+          api={this.dmAPI}
+        />,
+      open: true
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -436,8 +562,11 @@ class DataManagementExtension extends MultiModelExtensionBase {
           <DataTreeView
             onItemNodeCreated={this.onItemNodeCreated}
             menuContainer={this.options.appContainer}
+            onFolderUpload={this.onFolderUpload}
+            derivativesAPI={this.derivativesAPI}
+            onDeleteItem={this.onDeleteItem}
             onLoadItem={this.onLoadItem}
-            api={this.dmAPI}
+            dmAPI={this.dmAPI}
             hub={hub}
           />
         </Tab>

@@ -35,6 +35,12 @@
   width: calc(100% - 121px);
   margin-bottom: 6px;
   float: left;
+
+  .dropdown-menu {
+    max-height: 150px;
+    overflow: scroll;
+    width: 100%;
+  }
 }
 
 .config-manager .content > .controls .dropdown > button {

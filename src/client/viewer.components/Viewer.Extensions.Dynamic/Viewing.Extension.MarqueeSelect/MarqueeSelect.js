@@ -1,6 +1,9 @@
 import { difference, keys, forOwn, findKey, clone, omit, sortBy } from 'lodash'
+import $ from 'jquery'
 
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
+
+import ViewerToolkit from 'Viewer.Toolkit'
 
 const { Autodesk, THREE } = window
 
@@ -25,12 +28,38 @@ export default class MarqueeSelect extends MultiModelExtensionBase {
     this.offset = { x: 0, y: 0 }
     this.bounds = {
       origin: { x: 0, y: 0 },
-      delta: { x: 0, y: 0 }
+      delta: { x: 0, y: 0 },
     }
     if (!document.getElementById('select-marquee')) {
-      $('body').append('<div id="select-marquee"></div>')
+      $('.canvas-wrap').append('<div id="select-marquee"></div>')
     }
     this.marquee = $('#select-marquee').css({ width: 0, height: 0, display: 'none', 'background-color': 'rgba(208, 255, 242, 0.5)', border: 'dotted 1px #9a9a9a', 'z-index': 100, position: 'absolute' })
+
+    this._control = ViewerToolkit.createButton(
+      'marquee-select-icon',
+      'glyphicon glyphicon-unchecked',
+      'Marquee Select',
+      () => {
+        this.toggleActiveButton()
+      }
+    )
+
+    this.buzzParentControl = new Autodesk.Viewing.UI.ControlGroup('marquee-select')
+    this.buzzParentControl.addControl(this._control)
+
+    const viewerToolbar = this.viewer.getToolbar(true)
+
+    viewerToolbar.addControl(this.buzzParentControl)
+  }
+
+  toggleActiveButton() {
+    if (this._control.isActivated) {
+      this._control.isActivated = false
+      this._control.container.classList.remove('active')
+    } else {
+      this._control.isActivated = true
+      this._control.container.classList.add('active')
+    }
   }
 
   lockViewport = () => {
@@ -52,7 +81,7 @@ export default class MarqueeSelect extends MultiModelExtensionBase {
 
   enumNodeFragments = (dbId) => {
     const { viewer } = this
-    const instanceTree = viewer.model.getInstanceTree()
+    const instanceTree = viewer.model.getData().instanceTree
     const fragList = viewer.model.getFragmentList()
     const bounds = new THREE.Box3()
     const box = new THREE.Box3()
@@ -67,22 +96,23 @@ export default class MarqueeSelect extends MultiModelExtensionBase {
 
   async getShowIds() {
     const mappings = await this.getExternalIdMapping()
+    return Object.values(mappings)
 
-    let ids = []
-    const isolateDbIds = this.viewer.getIsolatedNodes()
-    const hiddenDbIds = this.viewer.getHiddenNodes()
-    if (!isolateDbIds.length && !hiddenDbIds.length) {
-      return Object.values(mappings)
-    }
-    // TODO: caculate the shown dbIds
-    if (isolateDbIds.length > 0) {
-      const isolatedToShowDbIds = this.getIdsByExternalId(mappings, isolateDbIds, true)
-      ids = isolatedToShowDbIds
-    } else {
-      const toShowIds = this.getIdsByExternalId(mappings, hiddenDbIds, false)
-      ids = toShowIds
-    }
-    return ids
+    // let ids = []
+    // const isolateDbIds = this.viewer.getIsolatedNodes()
+    // const hiddenDbIds = this.viewer.getHiddenNodes()
+    // if (!isolateDbIds.length && !hiddenDbIds.length) {
+    //   return Object.values(mappings)
+    // }
+    // // TODO: caculate the shown dbIds
+    // if (isolateDbIds.length > 0) {
+    //   const isolatedToShowDbIds = this.getIdsByExternalId(mappings, isolateDbIds, true)
+    //   ids = isolatedToShowDbIds
+    // } else {
+    //   const toShowIds = this.getIdsByExternalId(mappings, hiddenDbIds, false)
+    //   ids = toShowIds
+    // }
+    // return ids
   }
 
   getIdsByExternalId(mappings, dbIds, isExclude) {
@@ -113,29 +143,27 @@ export default class MarqueeSelect extends MultiModelExtensionBase {
   }
 
   async onMouseDown(event) {
-    if (!(event.ctrlKey && event.altKey)) {
+    if (!this._control.isActivated) {
       return
     }
+
+    this.lockViewport()
+    this.marquee.show()
+
     this.mousedown = true
-    this.mousedowncoords.x = event.clientX;
-    this.mousedowncoords.y = event.clientY;
+    this.mousedowncoords.x = event.clientX
+    this.mousedowncoords.y = event.clientY
 
     const { viewer } = this
     const { canvas } = viewer
-    this.lockViewport()
     const cRect = canvas.getBoundingClientRect()
     this.offset = { x: cRect.left, y: cRect.top }
-    const pos = {}
-    pos.x = (((event.clientX - cRect.left) / canvas.width) * 2) - 1
-    pos.y = (-((event.clientY - cRect.top) / canvas.height) * 2) + 1
-    const vector = new THREE.Vector3(pos.x, pos.y, 1)
-    vector.unproject(viewer.getCamera())
   }
 
   async calcDbidPP(defaultShownDbIds) {
     const dbIdPP = {}
     const { viewer } = this
-    defaultShownDbIds.forEach(async (dbId) => { // eslint-disable-line
+    defaultShownDbIds.forEach(async (dbId) => {
       const bounds = await this.enumNodeFragments(dbId)
       const { max, min } = bounds
       const pivotPoint = { x: (max.x + min.x) / 2, y: (max.y + min.y) / 2, z: (max.z + min.z) / 2 }
@@ -145,19 +173,16 @@ export default class MarqueeSelect extends MultiModelExtensionBase {
       dbIdPP[dbId].max = viewer.impl.worldToClient(pivotPointMax)
       dbIdPP[dbId].min = viewer.impl.worldToClient(pivotPointMin)
       dbIdPP[dbId].pivot = viewer.impl.worldToClient(pivotPoint)
-    });
+    })
     this.dbIdPP = dbIdPP
   }
 
-  async onMouseUp(event) { // eslint-disable-line
+  async onMouseUp(event) {
     this.marquee.fadeOut()
     setTimeout(() => {
       this.unlockViewport()
+      this.marquee.css({ width: 0, height: 0 })
     }, 100)
-
-    if (!(event.ctrlKey && event.altKey)) {
-      return
-    }
 
     if (!this.mousedown) {
       return
@@ -170,51 +195,50 @@ export default class MarqueeSelect extends MultiModelExtensionBase {
 
     const dbIds = keys(this.dbIdPP)
     const dbInBounds = []
+
+    const modelRootId = this.viewer.model.getRootId()
     dbIds.forEach((dbId) => {
-      if (+dbId === this.viewer.model.getRootId()) {
+      if (+dbId === modelRootId) {
         return
       }
       const { min, max } = this.dbIdPP[dbId]
-      // const isInBounds = this.withinBounds(pivot, this.bounds)
-      const isMaxInBounds = this.withinBounds(max, this.bounds)
-      const isMinInBounds = this.withinBounds(min, this.bounds)
+      const isMaxInBounds = this.withinBounds({ x: max.x + this.offset.x, y: max.y + this.offset.y }, this.bounds)
+      const isMinInBounds = this.withinBounds({ x: min.x + this.offset.x, y: min.y + this.offset.y }, this.bounds)
       if (isMaxInBounds && isMinInBounds) {
         dbInBounds.push(+dbId)
       }
     })
-    const defaultShownDbIds = difference(dbInBounds, hiddenDbIds);
+
+    const defaultShownDbIds = difference(dbInBounds, hiddenDbIds)
     this.viewer.select(defaultShownDbIds)
     this.mousedown = false
+
+    window.ttt = this
   }
 
   onMouseMove = (event) => {
-    if (!(event.ctrlKey && event.altKey && this.mousedown)) {
-      return
-    }
-    this.marquee.show()
-    const pos = {};
+    const pos = {}
     pos.x = event.clientX - this.mousedowncoords.x;
     pos.y = event.clientY - this.mousedowncoords.y;
-    if (pos.x < 0 && pos.y < 0) {
-      this.marquee.css({ left: `${event.clientX}px`, width: `${-pos.x}px`, top: `${event.clientY}px`, height: `${-pos.y}` })
-    } else if (pos.x >= 0 && pos.y <= 0) {
-      this.marquee.css({ left: `${this.mousedowncoords.x}px`, width: `${pos.x}px`, top: `${event.clientY}px`, height: `${-pos.y}px` })
-    } else if (pos.x >= 0 && pos.y >= 0) {
-      this.marquee.css({ left: `${this.mousedowncoords.x}px`, width: `${pos.x}px`, height: `${pos.y}px`, top: `${this.mousedowncoords.y}px` })
-    } else if (pos.x < 0 && pos.y >= 0) {
-      this.marquee.css({ left: `${event.clientX}px`, width: `${-pos.x}px`, height: `${pos.y}px`, top: `${this.mousedowncoords.y}px` })
+
+    if (!this._control.isActivated || !this.mousedown || Math.abs(pos.y) < 50 || Math.abs(pos.x) < 50) {
+      return
+    }
+
+    if (pos.x < 0 && pos.y < 0) {// rb -> lt
+      this.marquee.css({ left: `${event.clientX - this.offset.x}px`, width: `${-pos.x}px`, top: `${event.clientY - this.offset.y}px`, height: `${-pos.y}` })
+    } else if (pos.x >= 0 && pos.y <= 0) {// lb -> rt
+      this.marquee.css({ left: `${this.mousedowncoords.x - this.offset.x}px`, width: `${pos.x}px`, top: `${event.clientY - this.offset.y}px`, height: `${-pos.y}px` })
+    } else if (pos.x >= 0 && pos.y >= 0) {// lt -> rb
+      this.marquee.css({ left: `${this.mousedowncoords.x - this.offset.x}px`, width: `${pos.x}px`, height: `${pos.y}px`, top: `${this.mousedowncoords.y - this.offset.y}px` })
+    } else if (pos.x < 0 && pos.y >= 0) {// rt -> lb
+      this.marquee.css({ left: `${event.clientX - this.offset.x}px`, width: `${-pos.x}px`, height: `${pos.y}px`, top: `${this.mousedowncoords.y - this.offset.y}px` })
     }
     this.findCubesByVertices({ x: event.clientX, y: event.clientY })
   }
 
   findCubesByVertices = (location) => {
-    const currentMouse = {}
-    const mouseInitialDown = {}
-    currentMouse.x = location.x - this.offset.x
-    currentMouse.y = location.y - this.offset.y
-    mouseInitialDown.x = (this.mousedowncoords.x - this.offset.x);
-    mouseInitialDown.y = (this.mousedowncoords.y - this.offset.y);
-    this.findBounds(currentMouse, this.mousedowncoords)
+    this.findBounds(location, this.mousedowncoords)
   }
 
   findBounds = (pos1, pos2) => {
@@ -238,7 +262,6 @@ export default class MarqueeSelect extends MultiModelExtensionBase {
     }
     const bounds = { origin, delta }
     this.bounds = bounds
-    window.bounds = bounds
     return bounds
   }
 
@@ -249,28 +272,26 @@ export default class MarqueeSelect extends MultiModelExtensionBase {
     const dy = (bounds.origin.y + bounds.delta.y)
 
     if ((pos.x >= ox) && (pos.x <= dx) && (pos.y >= oy) && (pos.y <= dy)) {
-      return true;
+      return true
     }
-    return false;
+    return false
   }
 
   load() {
-    const { canvas } = this.viewer
-    canvas.addEventListener('mousedown', this.onMouseDown, true)
-    canvas.addEventListener('mouseup', this.onMouseUp, false)
-    canvas.addEventListener('mousemove', this.onMouseMove, false)
-    console.log('Viewing.Extension.MarqueeSelect loaded'); // eslint-disable-line
+    $('.canvas-wrap').on('mousedown', this.onMouseDown)
+    $('.canvas-wrap').on('mouseup', this.onMouseUp)
+    $('.canvas-wrap').on('mousemove', this.onMouseMove)
+    console.log('Viewing.Extension.MarqueeSelect loaded') 
     return true
   }
 
   unload() {
-    const { canvas } = this.viewer
-    canvas.removeEventListener('mousedown', this.onMouseDown)
-    canvas.removeEventListener('mouseup', this.onMouseUp)
-    canvas.removeEventListener('mousemove', this.onMouseMove)
+    $('.canvas-wrap').off('mousedown', this.onMouseDown)
+    $('.canvas-wrap').off('mouseup', this.onMouseUp)
+    $('.canvas-wrap').off('mousemove', this.onMouseMove)
     this.init()
-    return true;
+    return true
   }
 }
 
-Autodesk.Viewing.theExtensionManager.registerExtension(MarqueeSelect.ExtensionId, MarqueeSelect);
+Autodesk.Viewing.theExtensionManager.registerExtension(MarqueeSelect.ExtensionId, MarqueeSelect)

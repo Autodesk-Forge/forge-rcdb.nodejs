@@ -11,7 +11,7 @@
   transition: opacity 1.5s ease-in-out;
   opacity: 0.2;
   height: calc(100% - 40px);
-  width: 100%;
+  width: calc(100% - 20px);
   padding-top: 10px;
   padding-left: 10px;
   padding-right: 10px;
@@ -84,9 +84,9 @@
 }
 
 .visual-report .lmv-dropdown .btn {
-  width: 100%;
-  height: 100%;
+  width: calc(100% - 26px);
   background-color: #E8E8E8;
+  height: 100%;
 }
 
 .visual-report .lmv-dropdown .label {
@@ -102,5 +102,10 @@
 }
 
 .visual-report .tabs div {
+  height: calc(100% - 54px);
   max-height: 569px;
+}
+
+#toolbar-visual-report .glyphicon {
+  top: 4px;
 }

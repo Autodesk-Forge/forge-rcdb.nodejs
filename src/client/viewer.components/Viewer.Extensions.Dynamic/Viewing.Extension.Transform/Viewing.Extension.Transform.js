@@ -150,6 +150,14 @@ class TransformExtension extends ExtensionBase {
 
     this.parentControl = this._options.parentControl
 
+    if (typeof this.parentControl === 'string') {
+
+      var viewerToolbar = this._viewer.getToolbar(true)
+
+      this.parentControl = viewerToolbar.getControl(
+        this.parentControl)
+    }
+
     if (!this.parentControl && !this._options.hideControls) {
 
       var viewerToolbar = this._viewer.getToolbar(true)
@@ -265,9 +273,9 @@ class TransformExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////////////
   setFullTransform (fullTransform) {
 
-    this.translateTool.fullTransform = fullTransform
+    this.translateTool.setFullTransform(fullTransform)
 
-    this.rotateTool.fullTransform = fullTransform
+    this.rotateTool.setFullTransform(fullTransform)
   }
 
   /////////////////////////////////////////////////////////////////

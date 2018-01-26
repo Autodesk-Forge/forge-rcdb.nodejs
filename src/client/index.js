@@ -1,3 +1,5 @@
+
+import { AppContainer as HMR } from 'react-hot-loader'
 import AppContainer from './containers/AppContainer'
 import {client as config} from 'c0nfig'
 import { Provider } from 'react-redux'
@@ -21,16 +23,17 @@ let render = (messages) => {
   const routes = require('./routes').default(store)
 
   ReactDOM.render(
-    <Provider store={store}>
-      <LanguageProvider messages={messages}>
-        <AppContainer
-          GA={config.googleAnalytics}
-          env={config.env}
-          routes={routes}
-          store={store}
-        />
-      </LanguageProvider>
-    </Provider>,
+    <HMR>
+      <Provider store={store}>
+        <LanguageProvider messages={messages}>
+          <AppContainer
+            env={config.env}
+            routes={routes}
+            store={store}
+          />
+        </LanguageProvider>
+      </Provider>
+    </HMR>,
     MOUNT_NODE
   )
 }
@@ -46,6 +49,7 @@ if (config.env === 'development') {
   }
 
   if (module.hot) {
+
     // Development render functions
     const renderApp = render
     const renderError = (error) => {
@@ -64,10 +68,10 @@ if (config.env === 'development') {
 
     // Setup hot module replacement
     module.hot.accept('./routes', () =>
-        setImmediate(() => {
-          ReactDOM.unmountComponentAtNode(MOUNT_NODE)
-          render()
-        })
+      setImmediate(() => {
+        ReactDOM.unmountComponentAtNode(MOUNT_NODE)
+        render()
+      })
     )
   }
 }
@@ -75,20 +79,7 @@ if (config.env === 'development') {
 // ========================================================
 // Go!
 // ========================================================
-// Chunked polyfill for browsers without Intl support
-if (!window.Intl) {
-  (new Promise((resolve) => {
-    resolve(import('intl'))
-  })).then(() => Promise.all([
-      import('intl/locale-data/jsonp/en.js'),
-      import('intl/locale-data/jsonp/zh.js')
-    ])).then(() => render(translationMessages))
-    .catch((err) => {
-      throw err
-    })
-} else {
-  render(translationMessages)
-}
+render(translationMessages)
 
 
 

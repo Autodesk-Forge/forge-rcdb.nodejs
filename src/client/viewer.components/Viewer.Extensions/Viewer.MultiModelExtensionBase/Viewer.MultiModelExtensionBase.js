@@ -24,6 +24,7 @@ export default class MultiModelExtensionBase extends
     this.onModelUnloaded      = this.onModelUnloaded.bind(this)
     this.onSelection          = this.onSelection.bind(this)
 
+    this.__onModelRootLoaded  = this.__onModelRootLoaded.bind(this)
     this.__onModelActivated   = this.__onModelActivated.bind(this)
     this.__onModelUnloaded    = this.__onModelUnloaded.bind(this)
     this.__onModelLoaded      = this.__onModelLoaded.bind(this)
@@ -92,6 +93,8 @@ export default class MultiModelExtensionBase extends
         this.__onModelLoaded)
     }
 
+    this.off()
+
     return true
   }
 
@@ -142,12 +145,12 @@ export default class MultiModelExtensionBase extends
 
   /////////////////////////////////////////////////////////
   // Invoked when model root node has been loaded
-  // Extensions that do not require access to full
+  // Extensions that do require access to full
   // model geometry or component tree may use that
   // event to know a new model has been loaded
   //
   /////////////////////////////////////////////////////////
-  onModelRootLoaded (event) {
+  __onModelRootLoaded (event) {
 
     this.viewerEvent([
 
@@ -158,6 +161,11 @@ export default class MultiModelExtensionBase extends
 
       this.onModelCompletedLoad (args[0])
     })
+  }
+
+  onModelRootLoaded (event) {
+
+    //console.log('MultiModelExtensionBase.onModelRootLoaded')
   }
 
   /////////////////////////////////////////////////////////
@@ -279,6 +287,10 @@ export default class MultiModelExtensionBase extends
       },
       {
         id: Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT,
+        handler: '__onModelRootLoaded'
+      },
+      {
+        id: Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT,
         handler: 'onModelRootLoaded'
       },
       {
@@ -329,4 +341,3 @@ export default class MultiModelExtensionBase extends
     return Promise.all (eventTasks)
   }
 }
-

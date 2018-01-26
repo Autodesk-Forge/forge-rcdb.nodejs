@@ -167,3 +167,12 @@
   color: #9b9b9b
 }
 
+.folder-upload-dlg {
+
+  left: calc(50% - 150px);
+  width: 300px;
+
+  .content {
+    padding: 6px !important;
+  }
+}

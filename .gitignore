@@ -5,6 +5,7 @@ dist
 coverage
 .idea
 .vscode
+resources/img/optimized
 resources/libs/lmv
 resources/models/dev
 resources/db/prod

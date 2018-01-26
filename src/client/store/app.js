@@ -1,3 +1,4 @@
+import {client as config} from 'c0nfig'
 import ServiceManager from 'SvcManager'
 import merge from 'lodash/merge'
 
@@ -154,7 +155,8 @@ const ACTION_HANDLERS = {
   [SET_NAVBAR_STATE] : (state, action) => {
 
     const navbar = merge({},
-      state.navbar, action.payload)
+      state.navbar,
+      action.payload)
 
     return Object.assign({}, state, {
       navbar
@@ -187,13 +189,14 @@ const getStorage = () => {
   const defaultAppState = {
     layoutType: 'flexLayoutRight',
     theme: {
-      css: '/resources/themes/forge-white.css',
+      css: `/resources/themes/${config.theme}`,
       name: 'forge-white-theme',
       viewer: {
         backgroundColor: [
-          245, 245, 245,
-          245, 245, 245
-        ]
+          205, 205, 205,
+          255, 255, 255
+        ],
+        lightPreset: 1
       }
     }
   }
@@ -212,6 +215,7 @@ const createInitialState = () => {
 
   const defaultState = {
     navbar: {
+      visible: true,
       links:{
         settings: true,
         gallery: true,

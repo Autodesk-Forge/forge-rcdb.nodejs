@@ -104,7 +104,7 @@ body {
 ///////////////////////////////////////////////////////////
 button[disabled],
 div[disabled] {
-  cursor: not-allowed;
+  cursor: not-allowed !important;
 }
 
 ///////////////////////////////////////////////////////////
@@ -139,7 +139,7 @@ img.default-adsk {
 }
 
 img.forge-hero {
-  content: url('/resources/img/routes/home.jpg');
+  background: url('/resources/img/routes/home.jpg');
   background-position: center center;
   height: calc(100% - 65px);
   background-size: cover;

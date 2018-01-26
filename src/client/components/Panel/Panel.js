@@ -29,6 +29,11 @@ class Panel extends EventsEmitter {
   //
   /////////////////////////////////////////////////////////
   static defaultProps = {
+    maxHeight: Infinity,
+    maxWidth: Infinity,
+    draggable: true,
+    minHeight: 35,
+    minWidth: 300,
     className: '',
     style: {},
     document
@@ -188,11 +193,13 @@ class Panel extends EventsEmitter {
 
       const state = this.react.getState ()
 
-      const width = state.width +
-        pointer.pageX - this.pointer.pageX
+      const width = Math.min(
+        state.width + pointer.pageX - this.pointer.pageX,
+        this.props.maxWidth)
 
-      const height = state.height +
-        pointer.pageY - this.pointer.pageY
+      const height = Math.min(
+        state.height + pointer.pageY - this.pointer.pageY,
+        this.props.maxHeight)
 
       this.pointer = pointer
 
@@ -203,11 +210,11 @@ class Panel extends EventsEmitter {
       this.react.setState({
 
         width: Math.min(
-          Math.max(300, width),
+          Math.max(this.props.minWidth, width),
           bounds.width - state.left - 1),
 
         height: Math.min(
-          Math.max(35, height),
+          Math.max(this.props.minHeight, height),
           bounds.height - state.top - 1)
 
       }).then(() => {
@@ -226,12 +233,15 @@ class Panel extends EventsEmitter {
   /////////////////////////////////////////////////////////
   onStartDragging (event) {
 
-    this.pointer = this.getPointer(event.nativeEvent)
+    if (this.props.draggable) {
 
-    event.stopPropagation()
-    event.preventDefault()
+      this.pointer = this.getPointer(event.nativeEvent)
 
-    this.dragging = true
+      event.stopPropagation()
+      event.preventDefault()
+
+      this.dragging = true
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -340,8 +350,11 @@ class Panel extends EventsEmitter {
   /////////////////////////////////////////////////////////
   renderTitle () {
 
+    const draggable = this.props.draggable
+      ? ' draggable' : ''
+
     return(
-      <div className="title"
+      <div className={"title" + draggable}
         onTouchStart={this.onStartDragging}
         onMouseDown={this.onStartDragging}>
         {

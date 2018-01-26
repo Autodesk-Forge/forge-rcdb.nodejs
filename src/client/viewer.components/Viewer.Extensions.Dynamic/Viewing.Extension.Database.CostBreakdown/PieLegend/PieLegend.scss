@@ -1,0 +1,35 @@
+.pie-legend {
+  border-bottom: 1px solid #dcdcdc;
+  background: white;
+  overflow: scroll;
+  cursor: pointer;
+  outline: none;
+  height: 100%;
+
+  .ReactTable {
+    height: 100%;
+
+    .rt-thead .rt-tr {
+      border-right: none;
+      font-weight: bold;
+      text-align: left;
+      font-size: 13px;
+      color: #5a5a5a;
+    }
+
+    .rt-thead .rt-th {
+      border-right: none;
+    }
+
+    .rt-tbody .rt-td:first-child {
+      padding: 3px;
+    }
+
+    .rt-tbody .rt-td {
+      border-right: none;
+      padding: 4px 5px;
+      text-align: left;
+      color: #727272;
+    }
+  }
+}

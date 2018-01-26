@@ -44,6 +44,17 @@ export default class RotateTool extends EventsEmitter {
     return 'Viewing.Tool.Rotate'
   }
 
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  setFullTransform (fullTransform) {
+
+    this.fullTransform = fullTransform
+
+    this.clearSelection()
+  }
+
   ///////////////////////////////////////////////////////////////////
   // activate tool
   //
@@ -359,51 +370,51 @@ export default class RotateTool extends EventsEmitter {
   // Rotate selected fragments
   //
   ///////////////////////////////////////////////////////////////////////////
-  rotateFragments (model, fragIdsArray, axis, angle, center) {
+    rotateFragments (model, fragIdsArray, axis, angle, center) {
 
-    var quaternion = new THREE.Quaternion()
+      var quaternion = new THREE.Quaternion()
 
-    quaternion.setFromAxisAngle(axis, angle)
+      quaternion.setFromAxisAngle(axis, angle)
 
-    fragIdsArray.forEach((fragId, idx) => {
+      fragIdsArray.forEach((fragId, idx) => {
 
-      var fragProxy = this.viewer.impl.getFragmentProxy(
-        model, fragId)
+        var fragProxy = this.viewer.impl.getFragmentProxy(
+          model, fragId)
 
-      fragProxy.getAnimTransform()
+        fragProxy.getAnimTransform()
 
-      var position = new THREE.Vector3(
-        fragProxy.position.x - center.x,
-        fragProxy.position.y - center.y,
-        fragProxy.position.z - center.z)
+        var position = new THREE.Vector3(
+          fragProxy.position.x - center.x,
+          fragProxy.position.y - center.y,
+          fragProxy.position.z - center.z)
 
-      position.applyQuaternion(quaternion)
+        position.applyQuaternion(quaternion)
 
-      position.add(center)
+        position.add(center)
 
-      fragProxy.position = position
+        fragProxy.position = position
 
-      fragProxy.quaternion.multiplyQuaternions(
-        quaternion, fragProxy.quaternion)
+        fragProxy.quaternion.multiplyQuaternions(
+          quaternion, fragProxy.quaternion)
 
-      if (idx === 0) {
+        if (idx === 0) {
 
-        var euler = new THREE.Euler()
+          var euler = new THREE.Euler()
 
-        euler.setFromQuaternion(
-          fragProxy.quaternion, 0)
+          euler.setFromQuaternion(
+            fragProxy.quaternion, 0)
 
-        this.emit('rotate', {
-          dbIds: this.selection.dbIdArray,
-          fragIds: fragIdsArray,
-          rotation: euler,
-          model
-        })
-      }
+          this.emit('rotate', {
+            dbIds: this.selection.dbIdArray,
+            fragIds: fragIdsArray,
+            rotation: euler,
+            model
+          })
+        }
 
-      fragProxy.updateAnimTransform()
-    })
-  }
+        fragProxy.updateAnimTransform()
+      })
+    }
 
   ///////////////////////////////////////////////////////////////////////////
   // returns bounding box as it appears in the viewer

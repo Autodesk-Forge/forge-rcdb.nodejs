@@ -1,9 +1,9 @@
-const ProgressBarPlugin = require('progress-bar-webpack-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const webpack = require('webpack')
-const config = require('c0nfig')
-const chalk = require('chalk')
-const path = require('path')
+import ProgressBarPlugin from 'progress-bar-webpack-plugin'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+import webpack from 'webpack'
+import config from 'c0nfig'
+import chalk from 'chalk'
+import path from 'path'
 
 ///////////////////////////////////////////////////////////
 // Silence deprecation warnings
@@ -19,13 +19,14 @@ process.noDeprecation = true
 ///////////////////////////////////////////////////////////
 module.exports = {
 
-  devtool: 'source-map',
+  devtool: 'eval',
 
   context: path.join(__dirname, '..'),
 
   entry: {
     bundle: [
       'webpack-hot-middleware/client',
+      'react-hot-loader/patch',
       path.resolve('./src/client/index.js')
     ]
   },
@@ -105,7 +106,10 @@ module.exports = {
       threeJS: config.forge.viewer.threeJS,
       style: config.forge.viewer.style,
 
-      template: path.resolve(__dirname, '../src/client/layouts/index.ejs'),
+      template: path.resolve(
+        __dirname,
+        `../src/client/layouts/${config.layouts.index}`),
+
       title: 'Forge | RCDB | DEV',
       filename: 'index.html',
       minify: false,
@@ -149,13 +153,12 @@ module.exports = {
         test: /\.jsx?$/,
         exclude: /node_modules/,
         use: [{
-          loader:'react-hot-loader'
-        }, {
           loader: 'babel-loader',
           options: {
             presets: ['react', 'env', 'stage-0'],
             plugins: [
               'transform-decorators-legacy',
+              'react-hot-loader/babel',
               'transform-runtime'
             ],
             cacheDirectory: true

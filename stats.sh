@@ -1,2 +1,2 @@
-#!/bin/sh
+sloc#!/bin/sh
 sloc ./src

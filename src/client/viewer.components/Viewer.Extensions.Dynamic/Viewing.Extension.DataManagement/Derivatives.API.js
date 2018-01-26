@@ -117,7 +117,6 @@ export default class DerivativesSvc extends ClientAPI {
 
       return flattenDeep([...matches, ...childResults])
     }
-
   }
 
   /////////////////////////////////////////////////////////

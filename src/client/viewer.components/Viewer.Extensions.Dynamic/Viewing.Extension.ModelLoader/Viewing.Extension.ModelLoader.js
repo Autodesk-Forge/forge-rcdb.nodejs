@@ -10,6 +10,7 @@ import WidgetContainer from 'WidgetContainer'
 import ServiceManager from 'SvcManager'
 import { ReactLoader } from 'Loader'
 import Toolkit from 'Viewer.Toolkit'
+import './MultiModelStructurePanel'
 import sortBy from 'lodash/sortBy'
 import DOMPurify from 'dompurify'
 import ReactDOM from 'react-dom'
@@ -244,6 +245,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
                 model.urn = dbModel.model.urn
                 model.name = dbModel.name
                 model.guid = this.guid()
+                model.proxy = lmvProxy
 
                 this.eventSink.emit('model.loaded', {
                   model
@@ -495,10 +497,14 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
 
     const instanceTree = model.getData().instanceTree
 
-    if (instanceTree && this.viewer.modelstructure) {
+    const modelstructure = this.viewer.modelstructure
 
-      this.viewer.modelstructure.setModel(
-        instanceTree)
+    if (instanceTree && modelstructure) {
+
+      if (modelstructure.instanceTree !== instanceTree) {
+
+        modelstructure.setModel(instanceTree)
+      }
     }
   }
 

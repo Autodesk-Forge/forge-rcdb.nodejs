@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////
-// Viewing.Extension.DualViewer
+// Viewing.Extension.ExtensionManager
 // by Philippe Leefsma, April 2016
 //
 /////////////////////////////////////////////////////////
@@ -219,7 +219,7 @@ class ExtensionManager extends MultiModelExtensionBase {
       })
 
       const options = Object.assign({},
-        extension.options, {
+        this.options, extension.options, {
           react: this.reactOpts
         })
 

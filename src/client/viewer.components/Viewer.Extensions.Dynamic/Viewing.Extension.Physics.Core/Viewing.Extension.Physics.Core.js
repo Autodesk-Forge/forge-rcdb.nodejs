@@ -170,11 +170,13 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  createCollisionShape (dbId, scale) {
-
-    const hull = new Ammo.btConvexHullShape()
+  createCollisionShape (dbId, transform) {
 
     const vertices = this.getComponentVertices(dbId)
+
+    const {position, quaternion, scale} = transform
+
+    const hull = new Ammo.btConvexHullShape()
 
     vertices.forEach((vertex) => {
       hull.addPoint(
@@ -305,17 +307,12 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
       const transform =
         this.getFragmentTransform(fragIds[0])
 
-      const {position, quaternion, scale } =
-        transform
-
       return {
         vLinear: parseArray(vLinear.displayValue),
         mass: mass.displayValue,
         vAngular: [0,0,0],
-        quaternion,
-        position,
+        transform,
         fragIds,
-        scale,
         dbId
       }
     })
@@ -332,7 +329,7 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
     const inertia = new Ammo.btVector3(0, 0, 0)
 
     const shape = this.createCollisionShape(
-      state.dbId, state.scale)
+      state.dbId, state.transform)
 
     shape.calculateLocalInertia(
       state.mass, inertia)
@@ -390,16 +387,16 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
 
     transform.setOrigin(
       new Ammo.btVector3(
-        state.position.x,
-        state.position.y,
-        state.position.z))
+        state.transform.position.x,
+        state.transform.position.y,
+        state.transform.position.z))
 
     transform.setRotation(
       new Ammo.btQuaternion(
-        state.quaternion.x,
-        state.quaternion.y,
-        state.quaternion.z,
-        state.quaternion.w))
+        state.transform.quaternion.x,
+        state.transform.quaternion.y,
+        state.transform.quaternion.z,
+        state.transform.quaternion.w))
 
     const motionState =
       new Ammo.btDefaultMotionState(
@@ -539,9 +536,9 @@ class PhysicsCoreExtension extends MultiModelExtensionBase {
       origin.z())
 
     const offset = new THREE.Vector3(
-      body.initialState.position.x,
-      body.initialState.position.y,
-      body.initialState.position.z)
+      body.initialState.transform.position.x,
+      body.initialState.transform.position.y,
+      body.initialState.transform.position.z)
 
     body.fragProxies.forEach((fragProxy) => {
 

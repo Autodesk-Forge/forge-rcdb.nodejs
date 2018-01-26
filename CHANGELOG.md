@@ -8,8 +8,6 @@ Thanks [ubicleDowns/webgl-code-samples](https://github.com/cubicleDowns/webgl-co
   viewer.loadExtension('Viewing.Extension.MarqueeSelect')
 ```
 
-> press `ctrl` + `alt` key to activate marquee selection.
-
 [Containers] Add i18n support with lib `react-int` && `intl`
 
 [BaseComponet] The `BaseComponent` inherits `formatMessage` method provied by `react-intl`.

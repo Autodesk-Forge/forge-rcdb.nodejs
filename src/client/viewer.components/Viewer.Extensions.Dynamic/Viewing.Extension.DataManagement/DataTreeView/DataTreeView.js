@@ -37,8 +37,11 @@ export default class DataTreeView extends BaseComponent {
     this.onKeyDown = this.onKeyDown.bind(this)
     this.onSearch = this.onSearch.bind(this)
 
-    this.delegate = new DataTreeDelegate(
-      props.menuContainer)
+    this.delegate = new DataTreeDelegate({
+      derivativesAPI: props.derivativesAPI,
+      menuContainer: props.menuContainer,
+      dmAPI: props.dmAPI
+    })
 
     this.delegate.on('node.destroy', (nodeId) => {
 
@@ -53,11 +56,27 @@ export default class DataTreeView extends BaseComponent {
       }
     })
 
+    this.delegate.on('item.delete', (node) => {
+
+      if (this.props.onDeleteItem) {
+
+        this.props.onDeleteItem(node)
+      }
+    })
+
     this.delegate.on('item.load', (node) => {
 
       if (this.props.onLoadItem) {
 
         this.props.onLoadItem(node)
+      }
+    })
+
+    this.delegate.on('folder.upload', (data) => {
+
+      if (this.props.onFolderUpload) {
+
+        this.props.onFolderUpload(data)
       }
     })
 
@@ -72,16 +91,19 @@ export default class DataTreeView extends BaseComponent {
   /////////////////////////////////////////////////////////
   loadHub (hub) {
 
+    const hubType = hub.attributes.extension.type
+
     const rootNode = this.delegate.createRootNode({
       name: hub.attributes.name,
       delegate: this.delegate,
-      api: this.props.api,
+      dmAPI: this.props.dmAPI,
       type: hub.type,
       hubId: hub.id,
       details: hub,
       group: true,
       id: hub.id,
-      level: 0
+      level: 0,
+      hubType
     })
 
     this.tree = new TreeView (

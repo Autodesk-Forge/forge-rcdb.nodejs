@@ -11,10 +11,8 @@ const config = {
   env: 'development',
 
   client: {
-    googleAnalytics: {
-      accountIds: []
-    },
-    storageVersion: 1.0,
+    theme: 'forge-white.css',
+    storageVersion: 2.1,
     host: `${HOST_URL}`,
     env: 'development',
     port: PORT
@@ -25,7 +23,7 @@ const config = {
     uploadLimit: 5,
     bucket: {
         bucketKey: 'forge-rcdb-gallery-dev',
-        policyKey: 'Persistent'
+        policyKey: 'Transient'
       }
   },
 
@@ -34,6 +32,10 @@ const config = {
       bucketKey: 'forge-rcdb-meta-dev',
       policyKey: 'Persistent'
     }
+  },
+
+  layouts: {
+    index: 'index.ejs'
   },
 
   forge: {
@@ -54,8 +56,10 @@ const config = {
         'data:read',
         'data:write',
         'data:create',
+        'data:search',
         'bucket:read',
-        'bucket:create'
+        'bucket:create',
+        'bucket:delete'
       ]
     },
 
@@ -64,9 +68,9 @@ const config = {
       //threeJS:  'https://developer.api.autodesk.com/derivativeservice/v2/viewers/three.js?v=3.1.1',
       //style:    'https://developer.api.autodesk.com/derivativeservice/v2/viewers/style.css?v=3.1.1'
 
-      viewer3D: '/resources/libs/lmv/3.1.1/viewer3D.js',
-      threeJS:  '/resources/libs/lmv/3.1.1/three.js',
-      style:    '/resources/libs/lmv/3.1.1/style.css'
+      viewer3D: '/resources/libs/lmv/3.2.1/viewer3D.js',
+      threeJS:  '/resources/libs/lmv/3.2.1/three.js',
+      style:    '/resources/libs/lmv/3.2.1/style.min.css'
     }
   },
 

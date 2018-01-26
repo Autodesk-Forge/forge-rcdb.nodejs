@@ -109,7 +109,8 @@ class ConfiguratorHomeView extends BaseComponent {
           onKeyDown={(e) => this.onKeyDown(e)}
           data-placeholder="Search ..."
           html={this.state.search}
-          className="search"/>
+          className="search"
+        />
         <div className="container">
           <div className="primary">
             <div className="items">

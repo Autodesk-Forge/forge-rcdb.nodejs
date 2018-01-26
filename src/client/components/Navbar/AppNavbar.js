@@ -1,5 +1,5 @@
-
 import { LinkContainer } from 'react-router-bootstrap'
+import { browserHistory } from 'react-router'
 import DatabaseDlg from 'Dialogs/DatabaseDlg'
 import LayoutDlg from 'Dialogs/LayoutDlg'
 import ThemeDlg from 'Dialogs/ThemeDlg'
@@ -106,7 +106,10 @@ export default class AppNavbar extends React.Component {
 
       this.props.setUser(null)
 
-      this.forgeSvc.logout()
+      this.forgeSvc.logout().then(() => {
+
+        window.location.reload()
+      })
 
     } else {
 
@@ -128,7 +131,7 @@ export default class AppNavbar extends React.Component {
       ? `${user.firstName} ${user.lastName}`
       : ''
 
-    return (
+    return appState.navbar.visible && (
 
       <Navbar className="forge-rcdb-navbar">
         <Navbar.Header>
@@ -137,7 +140,6 @@ export default class AppNavbar extends React.Component {
               href="https://forge.autodesk.com"
               target="_blank">
               <img height="30" src="/resources/img/logos/adsk-forge.png"/>
-              {/*&nbsp;<b>Forge</b> | RCDB*/}
             </NavItem>
           </Navbar.Brand>
           <Navbar.Toggle/>
@@ -166,7 +168,7 @@ export default class AppNavbar extends React.Component {
               <LinkContainer to={{ pathname: '/configurator'}}>
                 <NavItem eventKey={2}>
                   <label className="nav-label">
-                    &nbsp; {this.formatMessage(messages.demo)}
+                    &nbsp;{this.formatMessage(messages.demo)}
                   </label>
                 </NavItem>
               </LinkContainer>
@@ -180,7 +182,7 @@ export default class AppNavbar extends React.Component {
               <LinkContainer to={{ pathname: '/gallery', query: { } }}>
                 <NavItem eventKey={3}>
                   <label className="nav-label">
-                    &nbsp; {this.formatMessage(messages.gallery)}
+                    &nbsp;{this.formatMessage(messages.gallery)}
                   </label>
                 </NavItem>
               </LinkContainer>

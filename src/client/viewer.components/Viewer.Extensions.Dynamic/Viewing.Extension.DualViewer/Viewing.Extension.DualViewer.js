@@ -3,7 +3,7 @@
 // by Philippe Leefsma, April 2016
 //
 /////////////////////////////////////////////////////////
-import ExtensionBase from 'Viewer.ExtensionBase'
+import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import WidgetContainer from 'WidgetContainer'
 import './Viewing.Extension.DualViewer.scss'
 import {ReactLoader as Loader} from 'Loader'
@@ -16,7 +16,7 @@ import {
   MenuItem
 } from 'react-bootstrap'
 
-class DualViewerExtension extends ExtensionBase {
+class DualViewerExtension extends MultiModelExtensionBase {
 
   /////////////////////////////////////////////////////////
   // Class constructor
@@ -26,8 +26,8 @@ class DualViewerExtension extends ExtensionBase {
 
     super (viewer, options)
 
-    this.onSelectionChanged =
-      this.onSelectionChanged.bind(this)
+    this.onDualViewerSelection =
+      this.onDualViewerSelection.bind(this)
 
     this.onStopResize =
       this.onStopResize.bind(this)
@@ -68,9 +68,6 @@ class DualViewerExtension extends ExtensionBase {
   /////////////////////////////////////////////////////////
   load () {
 
-    window.addEventListener(
-      'resize', this.onStopResize)
-
     this.pathIndex = this.options.defaultPathIndex || 0
 
     this.react.setState({
@@ -84,10 +81,6 @@ class DualViewerExtension extends ExtensionBase {
 
       this.react.pushRenderExtension(this)
     })
-
-    this.viewer.addEventListener(
-      Autodesk.Viewing.SELECTION_CHANGED_EVENT,
-      this.onSelectionChanged)
 
     console.log('Viewing.Extension.DualViewer loaded')
 
@@ -106,16 +99,44 @@ class DualViewerExtension extends ExtensionBase {
         this.viewerModel)
     }
 
-    this.viewer.removeEventListener(
-      Autodesk.Viewing.SELECTION_CHANGED_EVENT,
-      this.onSelectionChanged)
-
-    window.removeEventListener(
-      'resize', this.onStopResize)
-
     console.log('Viewing.Extension.DualViewer unloaded')
 
+    super.unload()
+
     return true
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async onModelActivated (event) {
+
+    if (event.source !== 'model.loaded') {
+
+      await this.react.setState({
+        disabled: true
+      })
+
+      const model = event.model
+
+      const lmvProxy = model.proxy || 'lmv-proxy-2legged'
+
+      Autodesk.Viewing.endpoint.setEndpointAndApi(
+        `${window.location.origin}/${lmvProxy}`,
+        'modelDerivativeV2')
+
+      this.viewerDocument =
+        await Toolkit.loadDocument(model.urn)
+
+      const items = Toolkit.getViewableItems(
+        this.viewerDocument, '2d')
+
+      await this.react.setState({
+        disabled: false,
+        items
+      })
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -132,10 +153,18 @@ class DualViewerExtension extends ExtensionBase {
 
       this.dualViewer.start()
 
+      const model =
+        this.viewer.activeModel ||
+        this.viewer.model ||
+        this.options.dbModel.model
+
+      const urn =
+        this.options.urn ||
+        model.urn
+
       this.viewerDocument =
         this.options.viewerDocument ||
-        await Toolkit.loadDocument(
-          this.options.model.urn)
+        await Toolkit.loadDocument(urn)
 
       const items = Toolkit.getViewableItems(
         this.viewerDocument, '2d')
@@ -156,14 +185,8 @@ class DualViewerExtension extends ExtensionBase {
         })
 
         this.dualViewer.addEventListener(
-          Autodesk.Viewing.SELECTION_CHANGED_EVENT, (e) => {
-
-            if (!this.selection2Locked) {
-              this.selection1Locked = true
-              this.viewer.select(e.dbIdArray)
-              this.selection1Locked = false
-            }
-          })
+          Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT,
+          this.onDualViewerSelection)
       }
 
     } catch(ex) {
@@ -177,12 +200,45 @@ class DualViewerExtension extends ExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onSelectionChanged (e) {
+  onSelection (e) {
 
-    if (!this.selection1Locked && this.dualViewer) {
+    const dbIdArray = e.selections.length
+      ? e.selections[0].dbIdArray
+      : []
+
+    const model = this.dualViewer.model
+
+    if (!this.selection1Locked && model && model.selector) {
+
       this.selection2Locked = true
-      this.dualViewer.select(e.dbIdArray)
+
+      model.selector.setSelection(dbIdArray)
+
       this.selection2Locked = false
+    }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onDualViewerSelection (e) {
+
+    const dbIdArray = e.selections.length
+      ? e.selections[0].dbIdArray
+      : []
+
+    const model =
+      this.viewer.activeModel ||
+      this.viewer.model
+
+    if (!this.selection2Locked && model.selector) {
+
+      this.selection1Locked = true
+
+      model.selector.setSelection(dbIdArray)
+
+      this.selection1Locked = false
     }
   }
 

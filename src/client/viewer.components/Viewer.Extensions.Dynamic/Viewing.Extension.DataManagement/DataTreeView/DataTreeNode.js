@@ -19,9 +19,15 @@ export default class DataTreeNode extends EventsEmitter {
     super ()
 
     this.onVersionSelected = this.onVersionSelected.bind(this)
+    this.onDeleteItem = this.onDeleteItem.bind(this)
     this.onLoadItem = this.onLoadItem.bind(this)
+    this.onUpload = this.onUpload.bind(this)
     this.onReload = this.onReload.bind(this)
     this.onExpand = this.onExpand.bind(this)
+
+    const hubType = props.delegate.rootNode
+      ? props.delegate.rootNode.props.hubType
+      : null
 
     this.on('expand', this.onExpand)
 
@@ -29,10 +35,16 @@ export default class DataTreeNode extends EventsEmitter {
     this.parent       = props.parent
     this.level        = props.level
     this.group        = props.group
+    this.dmAPI        = props.dmAPI
     this.name         = props.name
     this.type         = props.type
-    this.api          = props.api
     this.id           = props.id
+
+    this.renderProps = {
+      onDeleteItem: this.onDeleteItem,
+      onUpload: this.onUpload,
+      hubType
+    }
 
     this.children = null
 
@@ -205,9 +217,44 @@ export default class DataTreeNode extends EventsEmitter {
   //
   //
   /////////////////////////////////////////////////////////////
+  onDeleteItem () {
+
+    this.delegate.emit(
+      'item.delete',
+      this.props)
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
+  onUpload () {
+
+    this.delegate.emit(
+      'folder.upload',
+      this.props)
+  }
+
+  /////////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////////
   onReload () {
 
-    if (this.children) {
+    if (this.type === 'items') {
+
+      this.parentDomElement.classList.remove('derivated')
+
+      this.render({
+        viewerUrn: null,
+        thumbnail: null,
+        versions: null,
+        loaded: null
+      })
+
+      this.delegate.emit('item.created', this)
+
+    } else if (this.children) {
 
       this.children.forEach((child) => {
 
@@ -262,16 +309,16 @@ export default class DataTreeNode extends EventsEmitter {
 
     switch (this.type) {
 
-      case 'hubs':
-        await this.loadHubChildren()
-        break
-
       case 'projects':
         await this.loadProjectChildren()
         break
 
       case 'folders':
         await this.loadFolderChildren()
+        break
+
+      case 'hubs':
+        await this.loadHubChildren()
         break
 
       default: break
@@ -289,7 +336,7 @@ export default class DataTreeNode extends EventsEmitter {
   async loadHubChildren () {
 
     const projectsRes =
-      await this.api.getProjects(this.props.hubId)
+      await this.dmAPI.getProjects(this.props.hubId)
 
     const projects = sortBy(projectsRes.data,
       (project) => {
@@ -336,7 +383,7 @@ export default class DataTreeNode extends EventsEmitter {
         return new Promise(async(resolve) => {
 
           const folderItemsRes =
-            await this.api.getProjectTopFolders(
+            await this.dmAPI.getProjectTopFolders(
               this.props.hubId, project.id)
 
           folderItemsRes.data.forEach((folder) => {
@@ -386,7 +433,7 @@ export default class DataTreeNode extends EventsEmitter {
   async loadProjectChildren () {
 
     const folderItemsRes =
-      await this.api.getProjectTopFolders(
+      await this.dmAPI.getProjectTopFolders(
         this.props.hubId, this.props.projectId)
 
     const folderItems = sortBy(folderItemsRes.data,
@@ -442,11 +489,13 @@ export default class DataTreeNode extends EventsEmitter {
 
         const childNode = new DataTreeNode(childProps)
 
-        this.delegate.emit('item.created', childNode)
-
         this.children.push(childNode)
 
         this.addChild(childNode)
+
+        this.delegate.emit(
+          'item.created',
+          childNode)
       })
     })
   }
@@ -458,7 +507,7 @@ export default class DataTreeNode extends EventsEmitter {
   async loadFolderChildren () {
 
     const folderItemsRes =
-      await this.api.getFolderContent(
+      await this.dmAPI.getFolderContent(
         this.props.projectId, this.props.folderId)
 
     const folderItems = sortBy(folderItemsRes.data,
@@ -514,13 +563,13 @@ export default class DataTreeNode extends EventsEmitter {
 
         const childNode = new DataTreeNode(childProps)
 
-        this.delegate.emit('item.created', childNode)
-
         this.children.push(childNode)
 
         this.addChild(childNode)
 
-        childNode.showLoader(true)
+        this.delegate.emit(
+          'item.created',
+          childNode)
       })
     })
   }
@@ -584,7 +633,7 @@ class ReactTreeNode extends React.Component {
           <div>
             <span className="fa fa-refresh"
               data-for={`reload-${this.props.id}`}
-              style={{marginRight:'162px'}}
+              style={{marginRight:'190px'}}
               onClick={this.props.onReload}
               data-tip
             />
@@ -592,7 +641,7 @@ class ReactTreeNode extends React.Component {
               className="tooltip-text"
               effect="solid">
               <div>
-                  {`Reload child nodes ...`}
+                {`Reload child nodes ...`}
               </div>
             </ReactTooltip>
           </div>
@@ -656,6 +705,20 @@ class ReactTreeNode extends React.Component {
             <span/>
           </div>
         }
+        <div>
+          <span className="fa fa-cloud-upload"
+            data-for={`upload-${this.props.id}`}
+            onClick={this.props.onUpload}
+            data-tip
+          />
+          <ReactTooltip id={`upload-${this.props.id}`}
+            className="tooltip-text"
+            effect="solid">
+            <div>
+                {`Upload file to that folder ...`}
+            </div>
+          </ReactTooltip>
+        </div>
         {
           this.props.loaded &&
           <div>
@@ -750,6 +813,41 @@ class ReactTreeNode extends React.Component {
             </ReactTooltip>
           </div>
         }
+        {
+          this.props.loaded &&
+          <div>
+            <span className="fa fa-refresh"
+              data-for={`reload-${this.props.id}`}
+              onClick={this.props.onReload}
+              data-tip
+            />
+            <ReactTooltip id={`reload-${this.props.id}`}
+              className="tooltip-text"
+              effect="solid">
+              <div>
+                {`Reload item ...`}
+              </div>
+            </ReactTooltip>
+          </div>
+        }
+        {
+          this.props.hubType === 'hubs:autodesk.bim360:Account' &&
+          this.props.versions &&
+          <div>
+            <span className="fa fa-times"
+              data-for={`delete-${this.props.id}`}
+              onClick={this.props.onDeleteItem}
+              data-tip
+            />
+            <ReactTooltip id={`delete-${this.props.id}`}
+              className="tooltip-text"
+              effect="solid">
+              <div>
+                {`Delete item ...`}
+              </div>
+            </ReactTooltip>
+          </div>
+        }
       </div>
     )
   }
@@ -769,7 +867,7 @@ class ReactTreeNode extends React.Component {
 
         const verNum = this.props.versions.length - idx
 
-        const name = version.attributes.displayName
+        const name = version.attributes.name
 
         return (
           <div

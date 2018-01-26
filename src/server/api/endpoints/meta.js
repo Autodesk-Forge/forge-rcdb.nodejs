@@ -1,4 +1,5 @@
 import ServiceManager from '../services/SvcManager'
+import compression from 'compression'
 import json2csv from 'json2csv'
 import express from 'express'
 import config from 'c0nfig'
@@ -40,10 +41,18 @@ module.exports = function() {
   })
 
   /////////////////////////////////////////////////////////
-  //router
+  //
   //
   /////////////////////////////////////////////////////////
   const router = express.Router()
+
+  const shouldCompress = (req, res) => {
+    return true
+  }
+
+  router.use(compression({
+    filter: shouldCompress
+  }))
 
   /////////////////////////////////////////////////////////
   // Get all meta properties for model (debug only)

@@ -42,7 +42,7 @@ export default class DerivativeSvc extends BaseSvc {
       : getToken)
 
     return this._derivativesAPI.translate (payload, {
-      'xAdsForce': payload.output.force
+      xAdsForce: payload.output.force
     }, {autoRefresh:false}, token)
   }
 
@@ -389,7 +389,7 @@ export default class DerivativeSvc extends BaseSvc {
           return reject(job)
         }
 
-      } catch(ex) {
+      } catch (ex) {
 
         return reject(ex)
       }

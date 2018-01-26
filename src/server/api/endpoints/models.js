@@ -1,9 +1,12 @@
 import ServiceManager from '../services/SvcManager'
+import sanitizeHtml from 'sanitize-html'
+import compression from 'compression'
 import queryString from 'querystring'
 import express from 'express'
 import {Buffer} from 'buffer'
 import config from'c0nfig'
 import path from 'path'
+import zlib from 'zlib'
 
 module.exports = function() {
 
@@ -69,7 +72,8 @@ module.exports = function() {
   /////////////////////////////////////////////////////////
   const btoa = (str) => {
 
-    return new Buffer(str).toString('base64')
+    return new Buffer(str).toString('base64').replace(
+      new RegExp('=', 'g'), '')
   }
 
   const atob = (b64Encoded) => {
@@ -81,60 +85,70 @@ module.exports = function() {
   //
   //
   /////////////////////////////////////////////////////////
-  const postSVFJob = (data) => {
+  const postSVFJob = async(data) => {
 
     const bucketKey = queryString.escape(data.bucketKey)
     const objectKey = queryString.escape(data.objectKey)
 
-    const fileId = (
-      `urn:adsk.objects:os.object:${bucketKey}/${objectKey}`)
+    const fileId =
+      `urn:adsk.objects:os.object:${bucketKey}/${objectKey}`
 
-    const urn = btoa(fileId).replace(
-      new RegExp('=', 'g'), '')
-
-    const job = {
-      input: {
-        urn
-      },
-      output: {
-        force: true,
-        formats:[{
-          type: 'svf',
-          views: ['2d', '3d']
-        }]
-      }
-    }
+    const urn = btoa(fileId)
 
     const socketSvc = ServiceManager.getService(
       'SocketSvc')
 
     const jobId = guid()
 
-    derivativesSvc.postJobWithProgress(
-      data.getToken, job, {
-      query: { type: 'geometry' },
-      onProgress: async(progress) => {
+    try {
 
-        if (data.socketId) {
-
-          const msg = {
-            filename: data.filename,
-            progress,
-            jobId
+      const input = Object.assign({urn}, data.compressedUrn
+        ? {
+            compressedUrn: data.compressedUrn,
+            rootFilename: data.rootFilename
           }
+        : null)
 
-          socketSvc.broadcast (
-            'svf.progress', msg, data.socketId)
+      const job = {
+        input,
+        output: {
+          force: true,
+          formats:[{
+            views: ['2d', '3d'],
+            type: 'svf'
+          }]
         }
       }
-    }).then(async() => {
+
+      await derivativesSvc.postJobWithProgress (
+        data.getToken, job, {
+          query: { outputType: 'svf' },
+          onProgress: async(progress) => {
+
+            if (data.socketId) {
+
+              const filename = data.compressedUrn
+                ? data.rootFilename
+                : data.filename
+
+              const msg = {
+                filename,
+                progress,
+                jobId
+              }
+
+              socketSvc.broadcast (
+                'svf.progress', msg, data.socketId)
+            }
+          }
+        })
 
       const modelInfo = {
         lifetime: galleryConfig.lifetime,
+        name : sanitizeHtml(data.name),
         env: 'AutodeskProduction',
         timestamp: new Date(),
         owner: data.userId,
-        name : data.name,
         model : {
           objectKey,
           fileId,
@@ -154,7 +168,27 @@ module.exports = function() {
       }
 
       socketSvc.broadcast ('model.added', msg)
-    })
+
+    } catch (ex) {
+
+      // removes circular buffer
+      const error = Object.assign(ex, {
+        parent: undefined
+      })
+
+      const msg = {
+        filename: data.filename,
+        jobId,
+        error
+      }
+
+      socketSvc.broadcast ('svf.error', msg)
+
+      data.getToken().then((token) => {
+        ossSvc.deleteObject(
+          token, bucketKey, objectKey)
+      })
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -182,24 +216,26 @@ module.exports = function() {
 
     setTimeout(() => {
       cleanModels(modelSvc)
-    }, 1000 * 60 * 60 * 24)
+    }, 1000 * 60 * 60) //Every hour
   }
 
   /////////////////////////////////////////////////////////
-  // Remove models which are not on OSS
+  // Remove DB models which are not on OSS
+  // or have no geometry (extraction failed)
   //
   /////////////////////////////////////////////////////////
-  const purge = async(modelSvc) => {
-
-    const models = await modelSvc.getModels()
+  const purgeDB = async(modelSvc) => {
 
     const token = await forgeSvc.get2LeggedToken()
+
+    const models = await modelSvc.getModels()
 
     models.forEach(async(modelInfo) => {
 
       try {
 
         if (modelInfo.env === 'Local') {
+
           return
         }
 
@@ -231,6 +267,45 @@ module.exports = function() {
           deleteModel(modelSvc, modelInfo)
         }
       }
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  // Remove OSS models which are not in the DB
+  //
+  /////////////////////////////////////////////////////////
+  const purgeOSS = async(modelSvc) => {
+
+    const token = await forgeSvc.get2LeggedToken()
+
+    const bucketKey = galleryConfig.bucket.bucketKey
+
+    const res = await ossSvc.getObjects(token, bucketKey)
+
+    res.body.items.forEach((object) => {
+
+      const urn = btoa(object.objectId)
+
+      const opts = {
+        fieldQuery: {
+          'model.urn': urn
+        },
+        pageQuery: {
+          name: 1
+        }
+      }
+
+      modelSvc.getModel(opts).then((model) => {
+
+        //console.log(model.name)
+
+      }, () => {
+
+        console.log(`NOT FOUND: ${object.objectKey}`)
+
+        ossSvc.deleteObject(
+          token, bucketKey, object.objectKey)
+      })
     })
   }
 
@@ -280,7 +355,8 @@ module.exports = function() {
 
       cleanModels(svc)
 
-      //purge(svc)
+      //purgeOSS(svc)
+      //purgeDB(svc)
     }
   })
 
@@ -289,6 +365,52 @@ module.exports = function() {
   //
   /////////////////////////////////////////////////////////
   const router = express.Router()
+
+  const shouldCompress = (req, res) => {
+    return true
+  }
+
+  router.use(compression({
+    filter: shouldCompress
+  }))
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  const buildUserWhiteListQuery = async(req, inQuery) => {
+
+    try {
+
+      const userSvc = ServiceManager.getService(
+        'UserSvc')
+
+      const user = await userSvc.getCurrentUser(
+        req.session)
+
+      const emailId = user ? user.emailId : ''
+
+      const funcDef = `
+        function () {
+          const allowed = this.whiteList.filter(
+            function(email){
+              return "${emailId}".match(new RegExp(email))
+            })
+          return (allowed.length > 0)
+        }`
+
+      return Object.assign({}, inQuery, {
+        $or: [
+          {whiteList: null},
+          {$where: funcDef}
+        ]
+      })
+
+    } catch (ex) {
+
+      return inQuery
+    }
+  }
 
   /////////////////////////////////////////////////////////
   //
@@ -303,7 +425,25 @@ module.exports = function() {
       const modelSvc = ServiceManager.getService(
         db + '-ModelSvc')
 
+      const fieldQuery =
+        await buildUserWhiteListQuery(req, {
+          private: null
+        })
+
+      if (req.query.search) {
+
+        fieldQuery.name = {
+          $regex: new RegExp(req.query.search),
+          $options: 'i'
+        }
+      }
+
+      const limit = parseInt(req.query.limit || 100)
+
+      const skip = parseInt(req.query.offset || 0)
+
       const opts = {
+        fieldQuery,
         pageQuery: {
           extraModels: 1,
           timestamp: 1,
@@ -318,29 +458,9 @@ module.exports = function() {
         },
         sort: {
           name: 1
-        }
-      }
-
-      // Hide private models
-      opts.fieldQuery = {
-        $or: [
-          { private: false },
-          { private: null }
-        ],
-        name: {
-          $regex: new RegExp(req.query.search || ''),
-          $options : 'i'
-        }
-      }
-
-      if (req.query.offset) {
-
-        opts.pageQuery.skip = parseInt(req.query.offset)
-      }
-
-      if(req.query.limit) {
-
-        opts.pageQuery.limit = parseInt(req.query.limit)
+        },
+        limit,
+        skip
       }
 
       const response = await modelSvc.getModels(opts)
@@ -349,6 +469,7 @@ module.exports = function() {
 
     } catch (error) {
 
+      console.log(error)
       res.status(error.statusCode || 500)
       res.json(error)
     }
@@ -367,18 +488,21 @@ module.exports = function() {
       const modelSvc = ServiceManager.getService(
         db + '-ModelSvc')
 
-      const opts = {}
+      const fieldQuery =
+        await buildUserWhiteListQuery(req, {
+          private: null
+        })
 
-      // Hide private models
-      opts.fieldQuery = {
-        $or: [
-          { private: false },
-          { private: null }
-        ],
-        name: {
-          $regex: new RegExp(req.query.search || ''),
-          $options : 'i'
+      if (req.query.search) {
+
+        fieldQuery.name = {
+          $regex: new RegExp(req.query.search),
+          $options: 'i'
         }
+      }
+
+      const opts = {
+        fieldQuery
       }
 
       const models = await modelSvc.getModels(opts)
@@ -407,21 +531,35 @@ module.exports = function() {
       const modelSvc = ServiceManager.getService(
         db + '-ModelSvc')
 
+      const fieldQuery =
+        await buildUserWhiteListQuery(req, {
+          private: null
+        })
+
+      if (req.query.search) {
+
+        fieldQuery.name = {
+          $regex: new RegExp(req.query.search),
+          $options: 'i'
+        }
+      }
+
+      const limit = parseInt(req.query.limit || 15)
+
+      const skip = parseInt(req.query.offset || 0)
+
       const opts = {
+        fieldQuery,
         pageQuery: {
-          limit: 15,
           model: 1,
           name: 1,
           urn:  1
         },
         sort: {
           _id: -1
-        }
-      }
-
-      if(req.query.limit) {
-
-        opts.pageQuery.limit = req.query.limit
+        },
+        limit,
+        skip
       }
 
       const response = await modelSvc.getModels(opts)
@@ -449,7 +587,11 @@ module.exports = function() {
         db + '-ModelSvc')
 
       const pageQuery = {
-        thumbnail: 0
+        dynamicExtensions: 1,
+        layout:1,
+        name: 1,
+        model:1,
+        env:1
       }
 
       const model = await modelSvc.getById(
@@ -496,6 +638,23 @@ module.exports = function() {
   })
 
   /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  const gzipImg = (res, img) => {
+
+    zlib.gzip(img, function (error, zip) {
+
+      res.set({
+        'content-type': 'image/png',
+        'content-encoding': 'gzip'
+      })
+
+      res.end(zip, 'binary')
+    })
+  }
+
+  /////////////////////////////////////////////////////////
   // GET /{collection}/model/{modelId}/thumbnail
   // Get model thumbnail
   //
@@ -516,7 +675,12 @@ module.exports = function() {
 
         const img = new Buffer(model.thumbnail, 'base64')
 
+        const expire = new Date(Date.now() + 2592000000).toUTCString()
+
+        res.setHeader('Cache-Control', 'public, max-age=2592000')
+        res.setHeader('Expires', expire)
         res.contentType('image/png')
+
         return res.end(img, 'binary')
       }
 
@@ -533,6 +697,10 @@ module.exports = function() {
       const response = await derivativesSvc.getThumbnail(
         token, model.model.urn, options)
 
+      const expire = new Date(Date.now() + 2592000000).toUTCString()
+
+      res.setHeader('Cache-Control', 'public, max-age=2592000')
+      res.setHeader('Expires', expire)
       res.contentType('image/png')
       res.end(response, 'binary')
 
@@ -580,6 +748,8 @@ module.exports = function() {
 
       const socketId = req.body.socketId
 
+      const uploadId = req.body.uploadId
+
       const file = req.file
 
       const objectKey = guid('xxxx-xxxx-xxxx') +
@@ -587,6 +757,14 @@ module.exports = function() {
 
       const socketSvc = ServiceManager.getService(
         'SocketSvc')
+
+      const rootFilename = req.body.rootFilename
+
+      const compressedUrn = !!rootFilename
+
+      const name =
+        rootFilename ||
+        path.parse(file.originalname).name
 
       const opts = {
         chunkSize: 5 * 1024 * 1024, //5MB chunks
@@ -597,9 +775,9 @@ module.exports = function() {
 
             const msg = Object.assign({}, info, {
               filename: file.originalname,
-              uploadId: req.body.uploadId,
               bucketKey,
-              objectKey
+              objectKey,
+              uploadId
             })
 
             socketSvc.broadcast (
@@ -610,21 +788,29 @@ module.exports = function() {
 
           postSVFJob({
             getToken: () => forgeSvc.get2LeggedToken(),
-            name: path.parse(file.originalname).name,
             filename: file.originalname,
             userId: user.userId,
             db: req.params.db,
+            compressedUrn,
+            rootFilename,
             bucketKey,
             objectKey,
-            socketId
+            socketId,
+            name
           })
         },
         onError: (error) => {
 
           if (socketId) {
 
+            const msg = {
+              filename: file.originalname,
+              uploadId,
+              error
+            }
+
             socketSvc.broadcast (
-              'upload.error', error, socketId)
+              'upload.error', msg, socketId)
           }
         }
       }
@@ -639,8 +825,6 @@ module.exports = function() {
       res.json(response)
 
     } catch (error) {
-
-      console.log(error)
 
       res.status(error.statusCode || 500)
       res.json(error)

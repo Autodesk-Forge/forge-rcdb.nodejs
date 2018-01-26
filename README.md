@@ -17,6 +17,10 @@ This is Forge Responsive Connected Database: A responsive React-based web applic
 This project is based on the cool [React Redux Starter Kit](https://github.com/davezuko/react-redux-starter-kit)
 
 
+### Thumbnail
+![thumbnail](resources/img/misc/readme.png)
+
+
 ## Prerequisites
 
 To run these samples, you need your own Forge API credentials:
@@ -112,7 +116,7 @@ You should be ready to deploy to heroku, providing the same Forge credentials us
 
 [https://forge-rcdb.autodesk.io](https://forge-rcdb.autodesk.io)
 
- ![forge-rcdb](resources/img/forge-rcdb.jpg)
+ ![forge-rcdb](resources/img/logos/adsk-forge.png)
 
 ## License
 
