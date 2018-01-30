@@ -17,6 +17,7 @@ import ServiceManager from 'SvcManager'
 import ScenesView from './ScenesView'
 import { ReactLoader } from 'Loader'
 import Measure from 'react-measure'
+import TokenView from './TokenView'
 import DOMPurify from 'dompurify'
 import ReactDOM from 'react-dom'
 import Image from 'Image'
@@ -434,7 +435,7 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
     const widgetTitle = 'Model: ' +
       selectedModel.name
 
-    const nbTabs = 3
+    const nbTabs = 4
 
     const style = {
       width:
@@ -489,6 +490,14 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
                   key="new-scene">
                   {
                     this.renderNewSceneTab ()
+                  }
+                </Tab>
+                <Tab className="tab-container"
+                  title={tabTitle('Token')}
+                  eventKey="token"
+                  key="token">
+                  {
+                    this.renderTokenTab ()
                   }
                 </Tab>
               </Tabs>
@@ -612,6 +621,25 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
         hierarchy= {hierarchy}
         model={selectedModel}
         guid={guid}
+      />
+    )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  renderTokenTab () {
+
+    const {
+      selectedModel,
+      hierarchy,
+      guid
+    } = this.react.getState()
+
+    return (
+      <TokenView
+        auth={this.options.auth}
       />
     )
   }

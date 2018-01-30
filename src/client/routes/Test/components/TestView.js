@@ -162,6 +162,21 @@ class TestView extends React.Component {
     viewer.addEventListener(Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT, () => {
 
       //console.log(viewer.model.getData().instanceTree.getRootId())
+
+      viewer.loadExtension('Viewing.Extension.Text').then((extension) => {
+
+        extension.createText({
+          position: {x: -50, y: 50, z: 0},
+          bevelEnabled: true,
+          curveSegments: 24,
+          bevelThickness: 1,
+          color: 0xFFA500,
+          text: 'Forge!',
+          bevelSize: 1,
+          height: 1,
+          size: 1
+        })
+      })
     })
 
     viewer.addEventListener(Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT, (e) => {

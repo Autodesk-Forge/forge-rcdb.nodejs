@@ -25,10 +25,7 @@ export default class ManifestView extends BaseComponent {
     return(
       <div className="manifest">
         <ReactLoader show={!manifest}/>
-        {
-          manifest &&
-          <JSONView src={manifest}/>
-        }
+        { manifest && <JSONView src={manifest}/> }
       </div>
     )
   }
