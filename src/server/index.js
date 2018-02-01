@@ -115,9 +115,9 @@ if(process.env.NODE_ENV === 'development') {
   app.use(helmet())
 
   const limiter = new RateLimit({
-    windowMs: 10 * 60 * 1000, // 10 minutes
+    windowMs: 1 * 60 * 1000, // 1 minute
     delayMs: 0, // disabled
-    max: 100
+    max: 1000
   })
 
   app.use('/api/', limiter)
