@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import WidgetContainer from 'WidgetContainer'
-import './Viewing.Extension.filter.scss'
+import './Viewing.Extension.Filter.scss'
 import ServiceManager from 'SvcManager'
 import { ReactLoader } from 'Loader'
 import Toolkit from 'Viewer.Toolkit'
@@ -98,7 +98,7 @@ class FilterExtension extends MultiModelExtensionBase {
             return box.min.z
           }))
 
-        const levelBoxes = []    
+        const levelBoxes = []
 
         for (let idx = mergedBoxes.length-2; idx >= 0 ; --idx) {
 
@@ -217,7 +217,7 @@ class FilterExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
-  // 
+  //
   //
   /////////////////////////////////////////////////////////
   onLevelClick (levelBox) {
@@ -254,12 +254,12 @@ class FilterExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderControls () {
 
-    const {levelBoxes} = this.react.getState() 
+    const {levelBoxes} = this.react.getState()
 
     const levels = levelBoxes.map((levelBox, idx) => {
 
       return (
-        <div key={`level-${idx}`} className="level" 
+        <div key={`level-${idx}`} className="level"
           onClick={() => this.onLevelClick(levelBox)}>
           <div className="color"/>
           <Label text={`Level ${levelBoxes.length-idx}`}/>
