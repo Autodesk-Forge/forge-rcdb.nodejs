@@ -4,11 +4,17 @@
     background: #fafafa;
     position: relative;
     overflow-y: scroll;
-    overflow-x: hidden;
+    overflow-x: scroll;
     user-select: text;
     text-align: left;
     padding: 10px;
     height: 100%;
     width: 100%;
+
+    .json-view {
+      overflow-x: scroll;
+      overflow-y: scroll;
+      height: 100%;
+    }
   }
 }

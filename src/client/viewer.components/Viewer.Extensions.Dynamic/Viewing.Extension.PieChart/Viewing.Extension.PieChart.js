@@ -142,7 +142,7 @@ class PieChartExtension extends MultiModelExtensionBase {
 
     this.componentIds = await Toolkit.getLeafNodes(model)
 
-    const chartProperties =
+    this.chartProperties =
       this.options.chartProperties ||
       await Toolkit.getPropertyList(
         this.viewer, this.componentIds, model)
@@ -150,15 +150,21 @@ class PieChartExtension extends MultiModelExtensionBase {
     $('#pie-chart-dropdown').parent().find('ul').css({
       height: Math.min(
         $('.pie-chart').height() - 42,
-        chartProperties.length * 26 + 16)
+        this.chartProperties.length * 26 + 16)
     })
 
+    const chartPropertiesList = 
+      this.chartProperties.map((entry) => {
+        return (typeof entry === 'string') 
+          ? entry : entry.name
+      })
+
     await this.react.setState({
-      items: chartProperties
+      items: chartPropertiesList
     })
 
     this.setActiveProperty (
-      chartProperties[this.options.defaultIndex || 0])
+      this.chartProperties[this.options.defaultIndex || 0])
 
     const fragIds = await Toolkit.getFragIds(
       model, this.componentIds)
@@ -251,9 +257,13 @@ class PieChartExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  async setActiveProperty (propName, disable) {
+  async setActiveProperty (propNameOrObject, disable) {
 
     const state = this.react.getState()
+
+    const propName = 
+      propNameOrObject.name || 
+      propNameOrObject
 
     await this.react.setState({
       activeProperty: disable ? propName : '',
@@ -418,7 +428,9 @@ class PieChartExtension extends MultiModelExtensionBase {
       return (
         <MenuItem eventKey={idx} key={idx} onClick={() => {
 
-          this.setActiveProperty (item, true)
+          const entry = this.chartProperties[idx] 
+
+          this.setActiveProperty (entry, true)
         }}>
           { item }
         </MenuItem>
@@ -434,7 +446,7 @@ class PieChartExtension extends MultiModelExtensionBase {
     return (
       <div className="title controls">
         <label>
-          Pie Chart
+          {this.options.title || 'Pie Chart'}
         </label>
 
         <DropdownButton

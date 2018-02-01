@@ -504,8 +504,7 @@ export default class Toolkit {
       } else {
 
         const propFilterArray = Array.isArray (propFilter)
-          ? propFilter :[propFilter]
-
+          ? propFilter : [propFilter]
 
         model.getBulkProperties(dbIds, propFilterArray, (result) => {
 

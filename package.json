@@ -44,6 +44,7 @@
     "connect-mongo": "2.0.0",
     "cookie-parser": "^1.4.3",
     "express": "4.16.2",
+    "express-rate-limit": "2.11.0",
     "express-session": "^1.15.1",
     "express-static-gzip": "^0.3.0",
     "forge-apis": "^0.4.1",

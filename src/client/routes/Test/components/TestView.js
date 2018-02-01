@@ -181,9 +181,7 @@ class TestView extends React.Component {
 
     viewer.addEventListener(Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT, (e) => {
 
-      const metadata = viewer.model.getData().metadata
 
-      console.log(metadata)
     })
 
     viewer.loadModel(path)

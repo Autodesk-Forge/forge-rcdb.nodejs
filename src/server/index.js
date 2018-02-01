@@ -2,6 +2,7 @@
 import 'babel-polyfill'
 
 //Server stuff
+import RateLimit from 'express-rate-limit'
 import cookieParser from 'cookie-parser'
 import gzip from 'express-static-gzip'
 import session from 'express-session'
@@ -50,7 +51,7 @@ import config from'c0nfig'
 // App initialization
 //
 /////////////////////////////////////////////////////////////////////
-var app = express()
+const app = express()
 
 if(process.env.NODE_ENV === 'development') {
 
@@ -112,6 +113,14 @@ if(process.env.NODE_ENV === 'development') {
   }))
 
   app.use(helmet())
+
+  const limiter = new RateLimit({
+    windowMs: 10 * 60 * 1000, // 15 minutes
+    delayMs: 0, // disabled
+    max: 100
+  })
+
+  app.use('/api/', limiter)
 }
 
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -329,6 +338,6 @@ const runServer = (app) => {
 runServer(app)
 
 
-    
+
 
 
