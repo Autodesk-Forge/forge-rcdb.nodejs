@@ -53,21 +53,24 @@ export default class HierarchyTreeView extends React.Component {
   /////////////////////////////////////////////////////////
   loadTree (hierarchy) {
 
-    const hierarchyRoot = hierarchy.data.objects[0]
+    if (hierarchy.data && hierarchy.data.objects) {
 
-    this.rootNode = this.delegate.createRootNode(
-      hierarchyRoot)
+      const hierarchyRoot = hierarchy.data.objects[0]
 
-    this.tree = new TreeView (
-      this.delegate, this.rootNode, this.treeContainer, {
-        excludeRoot: false
-      })
+      this.rootNode = this.delegate.createRootNode(
+        hierarchyRoot)
 
-    this.rootNode.expand ()
-    this.rootNode.setChecked (true)
+      this.tree = new TreeView(
+        this.delegate, this.rootNode, this.treeContainer, {
+          excludeRoot: false
+        })
 
-    this.props.onRootNodeCreated (
-      this.tree, this.rootNode)
+      this.rootNode.expand()
+      this.rootNode.setChecked(true)
+
+      this.props.onRootNodeCreated(
+        this.tree, this.rootNode)
+    }
   }
 
   /////////////////////////////////////////////////////////

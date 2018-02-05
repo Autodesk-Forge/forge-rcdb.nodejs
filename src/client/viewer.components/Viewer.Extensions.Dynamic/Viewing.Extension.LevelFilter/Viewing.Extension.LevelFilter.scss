@@ -1,4 +1,4 @@
-.filter {
+.level-filter {
 
   .title {
     display: inline-flex;
@@ -41,6 +41,11 @@
         height: 34px;
         width: 100%;
 
+        &.active {
+          background: rgba(0, 105, 245, 0.10);
+          border: 1px solid #1bb1f4;
+        }
+
         &:hover {
           background: rgba(0, 105, 245, 0.10);
           border: 1px solid #1bb1f4;
@@ -50,7 +55,6 @@
           pointer-events: none;
           position: relative;
           border-radius: 50%;
-          background: green;
           height: 28px;
           margin: 2px;
           width: 28px;

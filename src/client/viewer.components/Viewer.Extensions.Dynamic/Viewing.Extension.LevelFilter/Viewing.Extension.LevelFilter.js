@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import WidgetContainer from 'WidgetContainer'
-import './Viewing.Extension.Filter.scss'
+import './Viewing.Extension.LevelFilter.scss'
 import ServiceManager from 'SvcManager'
 import { ReactLoader } from 'Loader'
 import Toolkit from 'Viewer.Toolkit'
@@ -13,8 +13,9 @@ import sortBy from 'lodash/sortBy'
 import ReactDOM from 'react-dom'
 import Label from 'Label'
 import React from 'react'
+import d3 from 'd3'
 
-class FilterExtension extends MultiModelExtensionBase {
+class LevelFilterExtension extends MultiModelExtensionBase {
 
   /////////////////////////////////////////////////////////
   // Class constructor
@@ -33,7 +34,7 @@ class FilterExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   get className() {
 
-    return 'filter'
+    return 'level-filter'
   }
 
   /////////////////////////////////////////////////////////
@@ -42,7 +43,7 @@ class FilterExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   static get ExtensionId() {
 
-    return 'Viewing.Extension.Filter'
+    return 'Viewing.Extension.LevelFilter'
   }
 
   /////////////////////////////////////////////////////////
@@ -53,14 +54,15 @@ class FilterExtension extends MultiModelExtensionBase {
 
     this.react.setState({
 
-      levelBoxes: []
+      activeLevelId: -1,
+      levels: []
 
     }).then (() => {
 
       this.react.pushRenderExtension(this)
     })
 
-    console.log('Viewing.Extension.Filter loaded')
+    console.log('Viewing.Extension.LevelFilter loaded')
 
     return true
   }
@@ -71,7 +73,7 @@ class FilterExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   unload () {
 
-    console.log('Viewing.Extension.Filter unloaded')
+    console.log('Viewing.Extension.LevelFilter unloaded')
 
     this.react.popViewerPanel(this)
 
@@ -84,34 +86,74 @@ class FilterExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onModelCompletedLoad (event) {
+  async getModelBoundingBox (model) {
 
-    this.getComponentsByParentName(
-      'Floors', this.viewer.model).then((floorsIds) => {
+    const instanceTree = model.getData().instanceTree
 
-        const boxes = floorsIds.map((dbId) => {
-          return this.getComponentBoundingBox(dbId)
-        })
+    const rootId = instanceTree.getRootId()
 
-        const mergedBoxes = this.mergeBoxes(
-          sortBy(boxes, (box) => {
-            return box.min.z
-          }))
+    const fragIds = await Toolkit.getFragIds(
+      model, rootId)
 
-        const levelBoxes = []
+    const fragList = model.getFragmentList()
 
-        for (let idx = mergedBoxes.length-2; idx >= 0 ; --idx) {
+    const boundingBox =
+      this.getModifiedWorldBoundingBox(
+        fragIds, fragList)
 
-          levelBoxes.push({
-            max: mergedBoxes[idx + 1].min,
-            min: mergedBoxes[idx].max
-          })
-        }
+    return boundingBox
+  }
 
-        this.react.setState({
-          levelBoxes
-        })
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async onModelCompletedLoad (event) {
+
+    const model = this.viewer.model
+
+    const modelBox = 
+      await this.getModelBoundingBox (model)
+
+    const floorsIds = 
+      await this.getComponentsByParentName(
+        'Floors', this.viewer.model)
+
+    const boxes = floorsIds.map((dbId) => {
+      return this.getComponentBoundingBox(dbId)
+    })
+
+    const mergedBoxes = this.mergeBoxes(
+      sortBy(boxes, (box) => {
+        return box.min.z
+      }))
+
+    const levels = []
+
+    const nbLevels = mergedBoxes.length
+
+    const colors = d3.scale.linear()
+    .domain([0, nbLevels * .33, nbLevels * .66, nbLevels])
+    .range(['#FCB843', '#C2149F', '#0CC4BD', '#0270E9'])
+
+    levels.push({
+      min: mergedBoxes[mergedBoxes.length-1].max,
+      color: colors(mergedBoxes.length-1),
+      max: modelBox.max
+    })  
+
+    for (let idx = mergedBoxes.length-2; idx >= 0 ; --idx) {
+
+      levels.push({
+        max: mergedBoxes[idx + 1].min,
+        min: mergedBoxes[idx].max,
+        color: colors(idx)
       })
+    }
+
+    this.react.setState({
+      levels
+    })
   }
 
   /////////////////////////////////////////////////////////
@@ -220,17 +262,32 @@ class FilterExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  onLevelClick (levelBox) {
+  onLevelClick (levelId, level) {
 
-    // plane equation:
-    // ax + by + cz + d = 0
+    const {activeLevelId} = this.react.getState()
 
-    const pMin = new THREE.Vector4 (0, 0, -1, levelBox.min.z)
-    const pMax = new THREE.Vector4 (0, 0,  1, -levelBox.max.z)
+    if (levelId === activeLevelId) {
 
-    this.viewer.setCutPlanes([pMin, pMax])
+      this.viewer.setCutPlanes([])
 
-    console.log(levelBox)
+      this.react.setState({
+        activeLevelId: -1
+      })
+
+    } else {
+
+      // plane equation:
+      // ax + by + cz + d = 0
+
+      const pMin = new THREE.Vector4 (0, 0, -1,  level.min.z)
+      const pMax = new THREE.Vector4 (0, 0,  1, -level.max.z)
+
+      this.viewer.setCutPlanes([pMin, pMax])
+
+      this.react.setState({
+        activeLevelId: levelId
+      })
+    }
   }
 
   /////////////////////////////////////////////////////////
@@ -242,10 +299,33 @@ class FilterExtension extends MultiModelExtensionBase {
     return (
       <div className="title">
         <label>
-          Filter
+          Level Filter
         </label>
       </div>
     )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  hexToRgbA (hex, alpha) {
+
+    if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+
+      var c = hex.substring(1).split('')
+
+      if (c.length == 3) {
+
+        c = [c[0], c[0], c[1], c[1], c[2], c[2]]
+      }
+
+      c = '0x' + c.join('')
+
+      return `rgba(${(c>>16)&255},${(c>>8)&255},${c&255},${alpha})`
+    }
+
+    throw new Error('Bad Hex Number: ' + hex)
   }
 
   /////////////////////////////////////////////////////////
@@ -254,15 +334,22 @@ class FilterExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderControls () {
 
-    const {levelBoxes} = this.react.getState()
+    const {activeLevelId, levels} = this.react.getState()
 
-    const levels = levelBoxes.map((levelBox, idx) => {
+    const levelItems = levels.map((level, idx) => {
+
+      const active = (activeLevelId === idx) ? ' active':''
+
+      const style = {
+        backgroundColor: this.hexToRgbA(level.color, 0.3),
+        border: `2px solid ${level.color}`
+      }
 
       return (
-        <div key={`level-${idx}`} className="level"
-          onClick={() => this.onLevelClick(levelBox)}>
-          <div className="color"/>
-          <Label text={`Level ${levelBoxes.length-idx}`}/>
+        <div key={`level-${idx}`} className={`level${active}`}
+          onClick={() => this.onLevelClick(idx, level)}>
+          <div className="color" style={style}/>
+          <Label text={`Level ${levels.length-idx}`}/>
         </div>
       )
     })
@@ -270,7 +357,7 @@ class FilterExtension extends MultiModelExtensionBase {
     return (
       <div className="ui-controls">
         <div className="levels">
-          { levels }
+          { levelItems }
         </div>
       </div>
     )
@@ -294,5 +381,5 @@ class FilterExtension extends MultiModelExtensionBase {
 }
 
 Autodesk.Viewing.theExtensionManager.registerExtension(
-  FilterExtension.ExtensionId,
-  FilterExtension)
+  LevelFilterExtension.ExtensionId,
+  LevelFilterExtension)

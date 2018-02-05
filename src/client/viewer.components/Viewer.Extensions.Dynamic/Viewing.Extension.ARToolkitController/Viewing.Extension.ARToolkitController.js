@@ -269,9 +269,9 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  selectModel (model) {
+  async selectModel (model) {
 
-    this.react.setState({
+    await this.react.setState({
       selectedModel: model,
       hierarchy: null,
       manifest: null,

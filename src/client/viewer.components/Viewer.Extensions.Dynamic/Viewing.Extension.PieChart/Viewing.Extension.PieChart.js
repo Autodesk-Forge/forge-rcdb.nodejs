@@ -271,7 +271,11 @@ class PieChartExtension extends MultiModelExtensionBase {
       showLoader: true
     })
 
-    const data = await this.buildPropertyData (propName)
+    const propNames = 
+      propNameOrObject.properties || 
+      [propNameOrObject]
+
+    const data = await this.buildPropertyData (propNames)
 
     await this.react.setState({
       activeProperty: propName,
@@ -352,24 +356,33 @@ class PieChartExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
-  async buildPropertyData (propName) {
+  async buildPropertyData (propNames) {
 
     const model = this.viewer.activeModel ||
       this.viewer.model
 
-    const componentsMap = await Toolkit.mapComponentsByProp(
-      model, propName,
-      this.componentIds)
+    const fullComponentsMap = {}
 
-    for (const key in componentsMap) {
+    for (let i=0; i<propNames.length; ++i) {
+    
+      const componentsMap = 
+        await Toolkit.mapComponentsByProp(
+          model, propNames[i], this.componentIds)
+
+      Object.assign(fullComponentsMap, componentsMap)
+    }
+
+    console.log(fullComponentsMap)
+    
+    for (const key in fullComponentsMap) {
 
       if (!key.length || key.indexOf('<') > -1) {
 
-        delete componentsMap[key]
+        delete fullComponentsMap[key]
       }
     }
 
-    const groupedMap = this.groupMap(componentsMap, 'Other',
+    const groupedMap = this.groupMap(fullComponentsMap, 'Other',
       this.componentIds.length, 2.0)
 
     const keys = Object.keys (groupedMap)
@@ -490,7 +503,9 @@ class PieChartExtension extends MultiModelExtensionBase {
               this.viewer,
               dbIds)
 
-            this.viewer.fitToView()
+            if (this.options.fitToView) {
+              this.viewer.fitToView()
+            }  
           }}
           dataGuid={state.guid}
           data={state.data}
