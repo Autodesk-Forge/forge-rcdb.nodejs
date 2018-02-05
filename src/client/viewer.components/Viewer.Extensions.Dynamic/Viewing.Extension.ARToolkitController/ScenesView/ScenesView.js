@@ -3,8 +3,32 @@ import { Tabs, Tab } from 'react-bootstrap'
 import BaseComponent from 'BaseComponent'
 import { ReactLoader } from 'Loader'
 import Measure from 'react-measure'
+import ClientAPI from 'ClientAPI'
+import QRCode from 'qrcode.react'
 import JSONView from 'JSONView'
 import React from 'react'
+
+class TokenAPI extends ClientAPI {
+
+  constructor (baseUrl) {
+
+    super (baseUrl)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  getToken (auth) {
+
+    const url = `/${auth}`
+
+    return this.ajax({
+      rawBody: true,
+      url
+    })
+  }
+}
 
 export default class ScenesView extends BaseComponent {
 
@@ -17,7 +41,10 @@ export default class ScenesView extends BaseComponent {
     super (props)
 
     this.onTabSelected = this.onTabSelected.bind(this)
+    this.refreshToken = this.refreshToken.bind(this)
     this.deleteScene = this.deleteScene.bind(this)
+
+    this.tokenAPI = new TokenAPI('/api/forge/token')
 
     this.toolkitAPI = this.props.arvrToolkitAPI
 
@@ -26,8 +53,18 @@ export default class ScenesView extends BaseComponent {
       instanceTree: null,
       sceneInfo: null,
       tabsWidth: 0,
-      scene: null
+      scene: null,
+      token: null
     }
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  componentDidMount () {
+
+    this.refreshToken()
   }
 
   /////////////////////////////////////////////////////////
@@ -49,7 +86,7 @@ export default class ScenesView extends BaseComponent {
 
     const {activeTabKey, tabsWidth} = this.state
 
-    const nbTabs = 3
+    const nbTabs = 4
 
     const style = {
       width:
@@ -103,6 +140,15 @@ export default class ScenesView extends BaseComponent {
                   {
                     (activeTabKey === 'resources') &&
                     this.renderResources()
+                  }
+                </Tab>
+                <Tab className="tab-container"
+                  title={tabTitle('QR Code')}
+                  eventKey="qr-code"
+                  key="qr-code">
+                  {
+                    (activeTabKey === 'qr-code') &&
+                    this.renderQRCode()
                   }
                 </Tab>
               </Tabs>
@@ -183,6 +229,25 @@ export default class ScenesView extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  async refreshToken () {
+
+    await this.setState({
+      token: null
+    })
+
+    const token =
+      await this.tokenAPI.getToken(
+      this.props.auth)
+
+    this.setState({
+      token
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   renderSceneInfo () {
 
     const {scene, sceneInfo} = this.state
@@ -230,6 +295,33 @@ export default class ScenesView extends BaseComponent {
     return (
       <div>
         NOT IMPLEMENTED
+      </div>
+    )
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  renderQRCode () {
+
+    const { scene, sceneInfo, token } = this.state
+
+    const qrCode = {
+      urn: sceneInfo.prj.urn,
+      scene_id: scene.name,
+      token
+    }
+
+    return (
+      <div className="qr-code">
+        <button
+          className="btn-refresh"
+          onClick={this.refreshToken}>
+          <span className="fa fa-refresh"/>
+        </button>
+        <ReactLoader show={!token}/>
+        <QRCode size={256} value={JSON.stringify(qrCode)}/>
       </div>
     )
   }

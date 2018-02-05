@@ -595,6 +595,7 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
         arvrToolkitAPI={this.arvrToolkitAPI}
         onSceneDeleted={this.onSceneDeleted}
         notifySvc={this.notifySvc}
+        auth={this.options.auth}
         model={selectedModel}
         scenes={scenes}
       />

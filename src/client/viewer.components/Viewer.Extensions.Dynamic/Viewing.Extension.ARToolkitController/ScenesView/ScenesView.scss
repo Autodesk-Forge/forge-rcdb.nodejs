@@ -52,5 +52,26 @@
       position: relative;
       left: -3px;
     }
+
+    .qr-code {
+      padding: 20px;
+      height: 100%;
+      width: 100%;
+
+      .btn-refresh {
+        position: absolute;
+        background: none;
+        z-index: 1000;
+        outline: none;
+        border: none;
+        right: 8px;
+        top: 8px;
+
+        span {
+          color: #888888;
+          font-size: 24px;
+        }
+      }
+    }
   }
 }

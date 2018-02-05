@@ -57,6 +57,7 @@
     "mz": "^2.6.0",
     "node-zip": "1.1.1",
     "oauth": "0.9.15",
+    "qrcode.react": "0.7.2",
     "react-json-view": "1.13.3",
     "react-s-alert": "1.3.2",
     "react-tooltip": "3.4.0",
