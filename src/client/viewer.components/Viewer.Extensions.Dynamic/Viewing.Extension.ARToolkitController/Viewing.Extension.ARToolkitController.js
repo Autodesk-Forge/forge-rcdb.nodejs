@@ -379,7 +379,8 @@ class ARToolkitControllerExtension extends MultiModelExtensionBase {
           onClick={() => {
             this.selectModel({
               urn: dbModel.model.urn,
-              name: dbModel.name
+              name: dbModel.name,
+              id: dbModel._id
             })
           }}>
           <Image src={thumbnailUrl}/>

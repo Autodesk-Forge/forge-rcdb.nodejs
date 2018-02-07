@@ -177,6 +177,51 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
   }
 
   /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  scaleModel (model, scale) {
+
+    const fragCount = model.getFragmentList().
+      fragments.fragId2dbId.length
+
+    //fragIds range from 0 to fragCount-1
+    for (var fragId = 0; fragId < fragCount; ++fragId) {
+
+      const fragProxy =
+        this.viewer.impl.getFragmentProxy(
+          model, fragId)
+
+      fragProxy.getAnimTransform()
+
+      fragProxy.scale = new THREE.Vector3(
+        scale, scale, scale)
+
+      fragProxy.updateAnimTransform()
+    }
+
+    this.viewer.impl.sceneUpdated(true)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onModelCompletedLoad (event) {
+
+    const model = event.model
+
+    const modelScale = model.getUnitScale()
+
+    this.refScale = this.refScale || modelScale
+
+    if (modelScale !== this.refScale) {
+    
+      this.scaleModel(model, modelScale/this.refScale)
+    }
+  }
+
+  /////////////////////////////////////////////////////////
   // Displays model selection popup dialog
   //
   /////////////////////////////////////////////////////////

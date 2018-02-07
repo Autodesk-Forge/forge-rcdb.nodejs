@@ -84,7 +84,7 @@ export default class ScenesView extends BaseComponent {
   /////////////////////////////////////////////////////////
   renderTabs () {
 
-    const {activeTabKey, tabsWidth} = this.state
+    const {activeTabKey, sceneInfo, tabsWidth} = this.state
 
     const nbTabs = 4
 
@@ -102,7 +102,7 @@ export default class ScenesView extends BaseComponent {
     }
 
     return (
-      <div className="scene-tabs">
+      <div className={`scene-tabs${sceneInfo ? '':' disabled'}`}>
         <Measure bounds onResize={(rect) => {
           this.assignState({
             tabsWidth: rect.bounds.width
@@ -308,6 +308,7 @@ export default class ScenesView extends BaseComponent {
     const { scene, sceneInfo, token } = this.state
 
     const qrCode = {
+      model_id: this.props.model.id,
       urn: sceneInfo.prj.urn,
       scene_id: scene.name,
       token

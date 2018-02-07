@@ -356,6 +356,7 @@ class LevelFilterExtension extends MultiModelExtensionBase {
 
     return (
       <div className="ui-controls">
+      <ReactLoader show={!levels.length}/>
         <div className="levels">
           { levelItems }
         </div>

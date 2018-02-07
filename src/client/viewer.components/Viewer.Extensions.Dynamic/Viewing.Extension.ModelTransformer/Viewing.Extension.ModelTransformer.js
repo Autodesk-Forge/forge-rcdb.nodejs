@@ -592,7 +592,7 @@ class ModelTransformerExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   transformFragProxy (model, fragId, transform) {
 
-    let fragProxy =
+    const fragProxy =
       this.viewer.impl.getFragmentProxy(
         model, fragId)
 

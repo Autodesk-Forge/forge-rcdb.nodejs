@@ -3,9 +3,9 @@
 // by Philippe Leefsma, March 2017
 //
 /////////////////////////////////////////////////////////
+import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
 import ConfigAPI from './Viewing.Extension.Config.API'
 import ContentEditable from 'react-contenteditable'
-import ExtensionBase from 'Viewer.ExtensionBase'
 import './Viewing.Extension.ConfigManager.scss'
 import WidgetContainer from 'WidgetContainer'
 import 'react-dragula/dist/dragula.min.css'
@@ -23,7 +23,7 @@ import {
   MenuItem
 } from 'react-bootstrap'
 
-class ConfigManagerExtension extends ExtensionBase {
+class ConfigManagerExtension extends MultiModelExtensionBase {
 
   /////////////////////////////////////////////////////////
   // Class constructor
@@ -117,21 +117,7 @@ class ConfigManagerExtension extends ExtensionBase {
 
           if (this.api) {
 
-            const sequences =
-              await this.api.getSequences({
-                sortByName: true
-              })
-
-            const sequence = sequences.length ?
-              sequences[0] : null
-
-            this.react.setState({
-              sequences
-            })
-
-            setTimeout(() => {
-              this.setActiveSequence (sequence)
-            }, 2000)
+            this.loadSequences()
           }
       })
     })
@@ -152,6 +138,58 @@ class ConfigManagerExtension extends ExtensionBase {
     console.log('Viewing.Extension.ConfigManager unloaded')
 
     return true
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async loadSequences () {
+
+    const sequences =
+      await this.api.getSequences({
+        sortByName: true
+      })
+
+    const sequence = sequences.length ?
+      sequences[0] : null
+
+    this.react.setState({
+      sequences
+    })
+
+    setTimeout(() => {
+      this.setActiveSequence (sequence)
+    }, 2000)
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onModelActivated (event) {
+
+    this.setModel(event.model)
+
+    this.loadSequences()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  setModel (model) {
+
+    const modelId = model.dbModelId ||
+      this.options.dbModel._id
+
+    const database = model.database ||
+      this.options.database
+
+    const {apiUrl} = this.options
+
+    this.api = new ConfigAPI(
+      `${apiUrl}/config/${database}/${modelId}`)
   }
 
   /////////////////////////////////////////////////////////

@@ -51,6 +51,10 @@
       width: calc(100% + 12px);
       position: relative;
       left: -3px;
+
+      &.disabled {
+        pointer-events: none;
+      }
     }
 
     .qr-code {
