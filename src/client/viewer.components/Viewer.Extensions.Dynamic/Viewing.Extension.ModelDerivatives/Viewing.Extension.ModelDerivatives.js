@@ -425,13 +425,14 @@ class ModelDerivativesExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   renderJobTab () {
 
-    const {selectedModel} = this.react.getState()
+    const {selectedModel, guid} = this.react.getState()
 
     return (
       <JobView
         derivativesAPI={this.derivativesAPI}
         database={this.options.database}
         dbModel={selectedModel}
+        guid={guid}
       />
     )
   }

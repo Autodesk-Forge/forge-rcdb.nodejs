@@ -62,10 +62,13 @@
       height: 100%;
       width: 100%;
 
+      canvas {
+        cursor: pointer;
+      }
+
       .btn-refresh {
         position: absolute;
         background: none;
-        z-index: 1000;
         outline: none;
         border: none;
         right: 8px;
@@ -77,5 +80,19 @@
         }
       }
     }
+  }
+}
+
+/////////////////////////////////////////////////////////
+// qr code dialog
+//
+/////////////////////////////////////////////////////////
+.qr-code-dlg {
+  width: 90% !important;
+  left: 5% !important;
+  top: 5px !important;
+
+  .qr-code-dlg-content {
+    height: calc(100vh - 110px);
   }
 }

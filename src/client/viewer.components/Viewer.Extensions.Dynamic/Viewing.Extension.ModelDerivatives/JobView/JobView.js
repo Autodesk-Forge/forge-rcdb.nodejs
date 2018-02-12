@@ -46,10 +46,11 @@ export default class JobView extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
-  async getPayload (format, model) {
+  async getPayload (format, {model, guid}) {
 
     const params = {
-      urn: model.urn
+      urn: model.urn,
+      modelGuid: guid
     }
 
     return Payloads[format](params)
@@ -114,6 +115,8 @@ export default class JobView extends BaseComponent {
 
     const {model} = this.props.dbModel
 
+    const {guid} = this.props
+
     const {
       selectedFormat,
       showLoader,
@@ -132,7 +135,7 @@ export default class JobView extends BaseComponent {
         <MenuItem eventKey={idx} key={idx}
           onClick={async () => {
             this.assignState({
-              payload: await this.getPayload(format, model),
+              payload: await this.getPayload(format, {model, guid}),
               selectedFormat: format
             })
           }}>

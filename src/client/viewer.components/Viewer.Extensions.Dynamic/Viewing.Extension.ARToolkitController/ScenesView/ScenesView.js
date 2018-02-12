@@ -1,6 +1,7 @@
 import { DropdownButton, MenuItem } from 'react-bootstrap'
 import { Tabs, Tab } from 'react-bootstrap'
 import BaseComponent from 'BaseComponent'
+import ServiceManager from 'SvcManager'
 import { ReactLoader } from 'Loader'
 import Measure from 'react-measure'
 import ClientAPI from 'ClientAPI'
@@ -40,6 +41,7 @@ export default class ScenesView extends BaseComponent {
 
     super (props)
 
+    this.showQrCodeDlg = this.showQrCodeDlg.bind(this)
     this.onTabSelected = this.onTabSelected.bind(this)
     this.refreshToken = this.refreshToken.bind(this)
     this.deleteScene = this.deleteScene.bind(this)
@@ -47,6 +49,9 @@ export default class ScenesView extends BaseComponent {
     this.tokenAPI = new TokenAPI('/api/forge/token')
 
     this.toolkitAPI = this.props.arvrToolkitAPI
+
+    this.dialogSvc =
+      ServiceManager.getService('DialogSvc')
 
     this.state = {
       activeTabKey: 'scene-info',
@@ -303,6 +308,27 @@ export default class ScenesView extends BaseComponent {
   //
   //
   /////////////////////////////////////////////////////////
+  showQrCodeDlg (qrCodeStr) {
+
+    const size = window.innerHeight - 110
+
+    this.dialogSvc.setState({
+      className: 'qr-code-dlg',
+      title: 'QR Code ...',
+      showCancel: false,
+      search: '',
+      content:
+        <div className="qr-code-dlg-content">
+          <QRCode value={qrCodeStr} size={size}/>
+        </div>,
+      open: true
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   renderQRCode () {
 
     const { scene, sceneInfo, token } = this.state
@@ -314,6 +340,8 @@ export default class ScenesView extends BaseComponent {
       token
     }
 
+    const qrCodeStr = JSON.stringify(qrCode)
+
     return (
       <div className="qr-code">
         <button
@@ -322,7 +350,9 @@ export default class ScenesView extends BaseComponent {
           <span className="fa fa-refresh"/>
         </button>
         <ReactLoader show={!token}/>
-        <QRCode size={256} value={JSON.stringify(qrCode)}/>
+        <div onClick={() => this.showQrCodeDlg(qrCodeStr)}>
+          <QRCode value={qrCodeStr} size={256}/>
+        </div>
       </div>
     )
   }
