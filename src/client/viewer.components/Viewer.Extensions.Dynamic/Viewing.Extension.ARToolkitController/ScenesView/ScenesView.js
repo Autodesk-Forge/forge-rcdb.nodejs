@@ -333,11 +333,13 @@ export default class ScenesView extends BaseComponent {
 
     const { scene, sceneInfo, token } = this.state
 
+    //console.log(`/api/forge/token/${this.props.auth}`)
+
     const qrCode = {
       model_id: this.props.model.id,
+      token: token.access_token,
       urn: sceneInfo.prj.urn,
-      scene_id: scene.name,
-      token
+      scene_id: scene.name
     }
 
     const qrCodeStr = JSON.stringify(qrCode)
