@@ -1,3 +1,4 @@
+import Clipboard from 'react-copy-to-clipboard'
 import BaseComponent from 'BaseComponent'
 import { ReactLoader } from 'Loader'
 import ClientAPI from 'ClientAPI'
@@ -42,8 +43,9 @@ export default class TokenView extends BaseComponent {
     super (props)
 
     this.tokenAPI = new TokenAPI('/api/forge/token')
-
+    
     this.refreshToken = this.refreshToken.bind(this)
+    this.copyToken = this.copyToken.bind(this)
 
     this.state = {
       token: null
@@ -57,6 +59,15 @@ export default class TokenView extends BaseComponent {
   componentDidMount () {
   
     this.refreshToken()
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  copyToken () {
+  
+  
   }
 
   /////////////////////////////////////////////////////////
@@ -88,6 +99,16 @@ export default class TokenView extends BaseComponent {
 
     return(
       <div className="token">
+        { 
+          token && 
+          <Clipboard
+            text={token.access_token}>
+            <button className="btn-copy"
+              title="Copy to clipboard">
+            <span className="fa fa-clipboard"/>
+            </button>
+          </Clipboard>
+        }
         <button 
           className="btn-refresh" 
           onClick={this.refreshToken}>

@@ -15,6 +15,27 @@
       overflow-y: scroll;
     }
 
+    .btn-copy {
+      position: absolute;
+      background: none;
+      z-index: 1000;
+      outline: none;
+      border: none;
+      right: 42px;
+      top: 8px;
+
+      span {
+        color: #888888;
+        font-size: 24px;
+      }
+
+      &:hover {
+        span {
+          color: orange;
+        }
+      }
+    }
+
     .btn-refresh {
       position: absolute;
       background: none;
@@ -27,6 +48,12 @@
       span {
         color: #888888;
         font-size: 24px;
+      }
+
+      &:hover {
+        span {
+          color: orange;
+        }
       }
     }
   }

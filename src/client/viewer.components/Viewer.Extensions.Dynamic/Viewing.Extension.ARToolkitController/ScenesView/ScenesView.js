@@ -332,9 +332,7 @@ export default class ScenesView extends BaseComponent {
   renderQRCode () {
 
     const { scene, sceneInfo, token } = this.state
-
-    //console.log(`/api/forge/token/${this.props.auth}`)
-
+    
     const qrCode = {
       model_id: this.props.model.id,
       token: token.access_token,
