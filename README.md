@@ -42,7 +42,7 @@ To run these samples, you need your own Forge API credentials:
 
     * `npm install`    *(downloads project dependencies locally)*
 
-    * `npm start`      *(builds client on the fly and run server)*
+    * `NODE_ENV=development HOT_RELOADING=true npm start`      *(builds client on the fly and run server)*
 
     * open [http://localhost:3000](http://localhost:3000) in your favorite browser
 
@@ -51,7 +51,7 @@ To run these samples, you need your own Forge API credentials:
 
     * `npm install` *(not required if you already run at previous step)*
 
-    * `npm run build-prod && npm start` *(builds client and run server)*
+    * `npm run build-prod && NODE_ENV=production npm start` *(builds client and run server)*
 
     * open [http://localhost:3000](http://localhost:3000) in your favorite browser
 

@@ -97,12 +97,12 @@ export default class NewSceneView extends BaseComponent {
 
         const sceneDef3Legged = {
           prj: {
-            remove: this.removedDbIds,
-            list: this.includedDbIds,
             projectId,
             versionId,
             urn
-          }
+          },
+          remove: this.removedDbIds,
+          list: this.includedDbIds
         }
 
         await this.toolkitAPI.createScene3Legged(
@@ -113,10 +113,10 @@ export default class NewSceneView extends BaseComponent {
 
         const sceneDef2Legged = {
           prj: {
-            remove: this.removedDbIds,
-            list: this.includedDbIds,
             urn
-          }
+          },
+          remove: this.removedDbIds,
+          list: this.includedDbIds
         }
 
         await this.toolkitAPI.createScene(

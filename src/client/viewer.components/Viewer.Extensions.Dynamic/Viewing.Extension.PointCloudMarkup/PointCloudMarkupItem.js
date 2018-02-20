@@ -90,7 +90,7 @@ export default class PointCloudMarkupItem extends BaseComponent {
         <Slider
           handle={(props) => this.onSliderChanged(props)}
           defaultValue={markup.size}
-          max={100.0}
+          max={200.0}
           step={1.0}
           min={1.0}
         />

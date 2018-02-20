@@ -190,6 +190,26 @@ export default class PointCloudMarkup extends EventsEmitter {
       return dataTexture
     }
 
+    const generateCanvasTexture = () => {
+
+      const canvas = document.createElement("canvas")
+      const ctx = canvas.getContext('2d')
+
+      ctx.font = '20pt Arial'
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillText(new Date().toLocaleString(),
+        canvas.width / 2, canvas.height / 2)
+
+      const canvasTexture = new THREE.Texture(canvas)
+
+      canvasTexture.needsUpdate = true
+      canvasTexture.flipX = false
+      canvasTexture.flipY = false
+
+      return canvasTexture
+    }
+
     const stopwatch = new Stopwatch()
 
     let radius = 0.0
@@ -214,6 +234,7 @@ export default class PointCloudMarkup extends EventsEmitter {
 
         const {texture} = shaderParams.uniforms
 
+        //texture.value = generateCanvasTexture()
         texture.value = generateTexture(96, radius)
 
         texture.needsUpdate = true
