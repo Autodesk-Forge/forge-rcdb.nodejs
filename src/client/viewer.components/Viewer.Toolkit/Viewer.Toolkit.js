@@ -158,37 +158,36 @@ export default class Toolkit {
 
       try {
 
-        const map =
+        const instanceTree =
           model.getData().instanceTree ||
           model.getFragmentMap()
 
-        dbIds = dbIds || map.getRootId()
+        dbIds = dbIds || instanceTree.getRootId()
 
-        const dbIdArray = Array.isArray(dbIds) ? dbIds : [dbIds]
+        const dbIdArray = Array.isArray(dbIds) 
+          ? dbIds 
+          : [dbIds]
 
-        let leafIds = []
+        const leafIds = []
 
-        const getLeafNodesRec = (id) => {
+        const getLeafNodeIdsRec = (id) => {
 
-          var childCount = 0;
+          let childCount = 0;
 
-          map.enumNodeChildren(id, (childId) => {
+          instanceTree.enumNodeChildren(id, (childId) => {
+            getLeafNodeIdsRec(childId)
+            ++childCount
+          })
 
-              getLeafNodesRec(childId)
-
-              ++childCount
-            })
-
-          if (childCount == 0) {
+          if (childCount === 0) {
 
             leafIds.push(id)
           }
         }
 
-        for (var i = 0; i < dbIdArray.length; ++i) {
-
-          getLeafNodesRec(dbIdArray[i])
-        }
+        dbIdArray.forEach((dbId) => {
+          getLeafNodeIdsRec(dbId)
+        })
 
         return resolve(leafIds)
 
