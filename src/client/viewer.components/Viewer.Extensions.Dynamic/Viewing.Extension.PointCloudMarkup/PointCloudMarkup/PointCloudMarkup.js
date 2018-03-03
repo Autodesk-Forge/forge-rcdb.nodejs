@@ -66,6 +66,8 @@ export default class PointCloudMarkup extends EventsEmitter {
     this.pointCloud = new THREE.PointCloud(
       this.geometry, this.shader.material)
 
+    this.pointCloud.frustumCulled = false
+
     // adds to the viewer scene
     this.viewer.impl.sceneAfter.add(this.pointCloud)
 
