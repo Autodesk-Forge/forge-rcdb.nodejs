@@ -208,8 +208,6 @@ module.exports = function () {
 
     } catch (ex) {
 
-      console.log(ex)
-
       res.status(ex.statusCode || 500)
       res.json(ex)
     }

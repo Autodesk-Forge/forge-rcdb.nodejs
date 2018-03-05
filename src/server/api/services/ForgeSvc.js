@@ -588,7 +588,7 @@ export default class ForgeSvc extends BaseSvc {
     const body = Object.assign({}, params, {
       callbackUrl: this._config.hooks.callbackUrl
     })
-    
+
     return this.requestAsync({
       token: token.access_token,
       method: 'POST',
@@ -604,7 +604,7 @@ export default class ForgeSvc extends BaseSvc {
   /////////////////////////////////////////////////////////
   removeHook (token, systemId, eventId, hookId) {
 
-    const url = 
+    const url =
       `${ForgeSvc.BASE_HOOKS_URL}/systems/` +
       `${systemId}/events/${eventId}/hooks/${hookId}`
 

@@ -29,7 +29,7 @@ export default class EventsView extends BaseComponent {
     this.socketSvc.connect().then(() => {
 
       this.socketSvc.emit(
-        'forge.userId', 
+        'forge.userId',
         this.props.user.userId)
     })
 
@@ -55,7 +55,7 @@ export default class EventsView extends BaseComponent {
   //
   /////////////////////////////////////////////////////////
   onWebHookEvent (event) {
-    
+
     this.assignState({
       events: [...this.state.events, event]
     })
@@ -66,7 +66,7 @@ export default class EventsView extends BaseComponent {
   //
   /////////////////////////////////////////////////////////
   onEventSelected (event) {
-    
+
     this.assignState({
       eventDetails: event
     })
@@ -77,7 +77,7 @@ export default class EventsView extends BaseComponent {
   //
   /////////////////////////////////////////////////////////
   async onDeleteEvent (event) {
-    
+
     const events = this.state.events.filter((e) => {
       return e.hook.hookId !== event.hook.hookId
     })
@@ -104,16 +104,16 @@ export default class EventsView extends BaseComponent {
   //
   /////////////////////////////////////////////////////////
   renderEvents () {
-  
+
     return this.state.events.map((event) => {
 
       const hook = event.hook
 
       return  (
-        <div className="event" key={hook.hookId} 
+        <div className="event" key={hook.hookId}
           onClick={() => this.onEventSelected(event)}>
-            { "Event: " + hook.eventType }
-          <button  
+            { "Event: " + hook.event }
+          <button
             onClick={(e) => {
               this.onDeleteEvent(event)
               e.stopPropagation()
@@ -131,7 +131,7 @@ export default class EventsView extends BaseComponent {
   //
   /////////////////////////////////////////////////////////
   renderEventDetails () {
-    
+
     return (
       <JSONView src={this.state.eventDetails}/>
     )
@@ -143,7 +143,7 @@ export default class EventsView extends BaseComponent {
   /////////////////////////////////////////////////////////
   render () {
 
-    const {eventDetails} = this.state 
+    const {eventDetails} = this.state
 
     return(
       <div className="events">

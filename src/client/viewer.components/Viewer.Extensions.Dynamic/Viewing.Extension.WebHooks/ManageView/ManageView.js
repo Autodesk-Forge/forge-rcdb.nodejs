@@ -41,7 +41,7 @@ export default class ManageView extends BaseComponent {
   //
   /////////////////////////////////////////////////////////
   async onRemoveHook (hook) {
-  
+
     const hooks = this.state.hooks.filter((hk) => {
       return hk.hookId !== hook.hookId
     })
@@ -51,7 +51,7 @@ export default class ManageView extends BaseComponent {
     })
 
     if (this.state.hookDetails) {
-      
+
       if (this.state.hookDetails.hookId === hook.hookId) {
 
         this.assignState({
@@ -62,7 +62,7 @@ export default class ManageView extends BaseComponent {
 
     this.webHooksAPI.removeHook(
       this.state.system.id,
-      hook.eventType,
+      hook.event,
       hook.hookId)
   }
 
@@ -75,10 +75,10 @@ export default class ManageView extends BaseComponent {
     return this.state.hooks.map((hook) => {
 
       return(
-        <div className="hook" key={hook.hookId} 
+        <div className="hook" key={hook.hookId}
           onClick={() => this.onHookSelected(hook)}>
-          { "Hook: " + hook.eventType }
-          <button  
+          { "Hook: " + hook.event }
+          <button
             onClick={(e) => {
               this.onRemoveHook(hook)
               e.stopPropagation()
@@ -111,11 +111,11 @@ export default class ManageView extends BaseComponent {
     const { system, hookDetails, showLoader } = this.state
 
     const systemItems = Systems.map((system) => {
-      
+
         return (
           <MenuItem eventKey={system.id} key={system.id}
             onClick={() => {
-  
+
               this.assignState({
                 showLoader: true,
                 system
@@ -125,10 +125,10 @@ export default class ManageView extends BaseComponent {
                 system.id).then((hooks) => {
                   this.assignState({
                     showLoader: false,
-                    hooks: Array.isArray(hooks) 
+                    hooks: Array.isArray(hooks)
                       ? hooks : []
                   })
-                })    
+                })
             }}>
             { system.name }
           </MenuItem>
