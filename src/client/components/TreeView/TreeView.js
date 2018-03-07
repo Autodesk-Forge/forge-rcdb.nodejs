@@ -1,3 +1,4 @@
+import TreeViewBase from './base/TreeViewBase'
 import EventsEmitter from 'EventsEmitter'
 
 /////////////////////////////////////////////////////////////////////
@@ -5,7 +6,7 @@ import EventsEmitter from 'EventsEmitter'
 //
 /////////////////////////////////////////////////////////////////////
 export default class TreeView extends
-  EventsEmitter.Composer (Autodesk.Viewing.UI.Tree) {
+  EventsEmitter.Composer (TreeViewBase) {
 
   /////////////////////////////////////////////////////////
   //

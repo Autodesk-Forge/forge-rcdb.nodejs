@@ -14,8 +14,8 @@ const config = {
     // this the public host name of your server for the
     // client socket to connect.
     // eg. https://myforgeapp.mydomain.com
-    theme: 'forge-white.min.css',
-    storageVersion: 3.0,
+    viewerTheme: 'light-theme',
+    storageVersion: 4.0,
     host: `${HOST_URL}`,
     env: 'production',
     port: PORT
@@ -25,10 +25,10 @@ const config = {
     lifetime: 60 * 60 * 24 * 30, // 30 days
     // whiteList of user emails who can upload
     // to the gallery without limit
-    whiteList:[ 
+    whiteList:[
       /@autodesk.com/ // match only @autodesk.com accounts
     ],
-    // number of active models for 
+    // number of active models for
     // non white-listed user
     uploadLimit: 0,
     bucket: {
@@ -79,9 +79,9 @@ const config = {
     },
 
     viewer: {
-      viewer3D: 'https://developer.api.autodesk.com/derivativeservice/v2/viewers/viewer3D.min.js?v=3.3',
-      threeJS:  'https://developer.api.autodesk.com/derivativeservice/v2/viewers/three.min.js?v=3.3',
-      style:    'https://developer.api.autodesk.com/derivativeservice/v2/viewers/style.css?v=3.3'
+      viewer3D: 'https://developer.api.autodesk.com/derivativeservice/v2/viewers/viewer3D.min.js?v=4.0.1',
+      threeJS:  'https://developer.api.autodesk.com/derivativeservice/v2/viewers/three.min.js?v=4.0.1',
+      style:    'https://developer.api.autodesk.com/derivativeservice/v2/viewers/style.css?v=4.0.1'
     }
   },
 

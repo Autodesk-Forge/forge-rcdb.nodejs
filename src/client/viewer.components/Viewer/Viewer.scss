@@ -20,3 +20,11 @@
   left: 0;
   top: 0;
 }
+
+.adsk-viewing-viewer .docking-panel {
+  text-align: left;
+
+  .docking-panel-close {
+    top: -6px;
+  }
+}

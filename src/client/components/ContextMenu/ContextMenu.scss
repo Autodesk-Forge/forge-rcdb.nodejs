@@ -1,5 +1,28 @@
+.menu-base {
+  position: absolute;
+  min-width: 120px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(150, 150, 150, 0.15);
+  border-radius: 5px;
+  z-index: 20;
+}
 
-.menuItem {
+.menuItem-base {
+  border: 1px solid #868686;
+  position: relative;
+  display: table-row;
+  background-color: rgba(255, 255, 255, 0.12);
+  margin-bottom: 1px;
+  cursor: pointer;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  font-size: 14px;
+}
+
+
+.menuItem-base {
   padding: 5px 10px 5px 10px;
   width: calc(100% - 22px);
   vertical-align: middle;
@@ -9,11 +32,11 @@
   display: table;
 }
 
-.menuItem .menuItemIcon {
+.menuItem-base .menuItemIcon {
   padding: 8px 0 5px 8px;
 }
 
-.menuItem > span {
+.menuItem-base > span {
   pointer-events: none;
   position: relative;
   margin-left: -2px;

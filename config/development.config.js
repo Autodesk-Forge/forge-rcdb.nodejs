@@ -11,8 +11,8 @@ const config = {
   env: 'development',
 
   client: {
-    theme: 'forge-white.css',
-    storageVersion: 3.0,
+    viewerTheme: 'light-theme',
+    storageVersion: 4.0,
     host: `${HOST_URL}`,
     env: 'development',
     port: PORT
@@ -22,10 +22,10 @@ const config = {
     lifetime: 60 * 60 * 24 * 7, // 7 days
     // whiteList of user emails who can upload
     // to the gallery without limit
-    whiteList:[ 
+    whiteList:[
       '.*' // match any
     ],
-    // number of active models for 
+    // number of active models for
     // non white-listed user
     uploadLimit: 0,
     bucket: {
@@ -80,9 +80,9 @@ const config = {
       // threeJS:  'https://developer.api.autodesk.com/derivativeservice/v2/viewers/three.js?v=4.0.0',
       // style:    'https://developer.api.autodesk.com/derivativeservice/v2/viewers/style.css?v=4.0.0'
 
-      viewer3D: '/resources/libs/lmv/3.3/viewer3D.js',
-      threeJS:  '/resources/libs/lmv/3.3/three.js',
-      style:    '/resources/libs/lmv/3.3/style.css'
+      viewer3D: '/resources/libs/lmv/4.0.1/viewer3D.js',
+      threeJS:  '/resources/libs/lmv/4.0.1/three.js',
+      style:    '/resources/libs/lmv/4.0.1/style.css'
     }
   },
 

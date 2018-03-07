@@ -18,6 +18,9 @@ export default class ContextMenu {
     var that = this;
 
     menuItem.addEventListener('click', function (event) {
+
+      console.log('CLICK')
+
       that.hide();
       target();
       event.preventDefault();
@@ -57,7 +60,7 @@ export default class ContextMenu {
       this.showMenu(menu, x, y);
       this.open = true;
       this.hideEventListener = function(event) {
-        if (event.target.className !== "menuItem") {
+        if (event.target.className !== "menuItem-base") {
           self.hide(event);
         }
       }
@@ -81,24 +84,27 @@ export default class ContextMenu {
       menuItem,
       submenus = [];
 
-    container.className = 'menu';
+    container.className = 'menu-base';
     this.viewer.container.appendChild(container);
     this.menus.push(container);
 
     for (var i = 0; i < menu.length; ++i) {
 
-      var defn = menu[i], target = defn.target;
+      var defn = menu[i], target = defn.target
 
-      menuItem = this.createMenuItem(container, defn);
+      menuItem = this.createMenuItem(container, defn)
 
       if (typeof target === 'function') {
-        this.addCallbackToMenuItem(menuItem, target);
+
+        this.addCallbackToMenuItem(menuItem, target)
 
       } else if (Array.isArray(target)) {
-        submenus.push({menuItem: menuItem, target: target});
+
+        submenus.push({menuItem: menuItem, target: target})
 
       } else {
-        console.warn("Invalid context menu option:", title, target);
+
+        console.warn("Invalid context menu option:", title, target)
       }
     }
 
@@ -160,7 +166,7 @@ export default class ContextMenu {
     const text = menuItemDef.title
 
     $(parentItem).append(`
-      <div id="${menuItemId}" class="menuItem" data-i18n=${text}>
+      <div id="${menuItemId}" class="menuItem-base" data-i18n=${text}>
         <span class="${menuItemDef.icon || ''}">
         </span>
         ${Autodesk.Viewing.i18n.translate(text)}

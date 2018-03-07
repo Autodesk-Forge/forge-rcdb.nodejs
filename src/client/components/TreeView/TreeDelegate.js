@@ -1,3 +1,4 @@
+import TreeDelegateBase from './base/TreeDelegateBase'
 import EventsEmitter from 'EventsEmitter'
 
 /////////////////////////////////////////////////////////////////////
@@ -5,7 +6,7 @@ import EventsEmitter from 'EventsEmitter'
 //
 /////////////////////////////////////////////////////////////////////
 export default class TreeDelegate extends
-  EventsEmitter.Composer (Autodesk.Viewing.UI.TreeDelegate) {
+  EventsEmitter.Composer (TreeDelegateBase) {
 
   ///////////////////////////////////////////////////////////////////
   //

@@ -10,7 +10,6 @@ import WidgetContainer from 'WidgetContainer'
 import ServiceManager from 'SvcManager'
 import { ReactLoader } from 'Loader'
 import Toolkit from 'Viewer.Toolkit'
-import './MultiModelStructurePanel'
 import sortBy from 'lodash/sortBy'
 import DOMPurify from 'dompurify'
 import ReactDOM from 'react-dom'
@@ -216,7 +215,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
     this.refScale = this.refScale || modelScale
 
     if (modelScale !== this.refScale) {
-    
+
       this.scaleModel(model, modelScale/this.refScale)
     }
   }
@@ -547,7 +546,7 @@ class ModelLoaderExtension extends MultiModelExtensionBase {
 
     if (model) {
 
-      this.setStructure(model)
+      //this.setStructure(model)
 
       if (model.guid !== activeGuid) {
 

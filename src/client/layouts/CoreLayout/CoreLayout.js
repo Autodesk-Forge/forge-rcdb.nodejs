@@ -362,19 +362,14 @@ class CoreLayout extends React.Component {
   /////////////////////////////////////////////////////////
   render () {
 
-    const { appState, children } = this.props
-
     return (
       <div className='container'>
         <div className='notifications'>
           <NotificationsSystem theme={theme}/>
         </div>
-        <link rel="stylesheet" type="text/css"
-          href={appState.storage.theme.css}
-        />
         <Header {...this.props} />
         <div className='core-layout__viewport'>
-          {children}
+          {this.props.children}
         </div>
         { this.dialogSvc.render() }
       </div>

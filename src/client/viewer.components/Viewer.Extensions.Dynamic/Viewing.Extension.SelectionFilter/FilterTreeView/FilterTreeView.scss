@@ -1,6 +1,6 @@
 .filter-tree-container {
 
-  .treeview lmvheader {
+  .treeview-base lmvheader {
     transition-property: background, border;
     transition-timing-function: ease;
     transition-duration: 1.5s;
@@ -12,11 +12,11 @@
     height: 30px;
   }
 
-  .treeview lmvheader:hover {
+  .treeview-base lmvheader:hover {
     background: rgba(0, 105, 245, 0.35);
   }
 
-  .treeview group > lmvheader > icon {
+  .treeview-base group > lmvheader > icon {
     height: 20px;
     float: left;
   }

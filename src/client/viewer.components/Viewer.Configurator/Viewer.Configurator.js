@@ -699,6 +699,8 @@ class ViewerConfigurator extends BaseComponent {
           viewer, this.loader)
       }
 
+      viewer.setTheme(appState.storage.theme.viewer.theme)
+
       viewer.start()
 
       viewer.addEventListener(
