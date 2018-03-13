@@ -152,6 +152,16 @@ export default class DataContextMenu extends
           }
         })
 
+        menu.push({
+          title: 'Show item versions',
+          icon: 'fa fa-clock-o',
+          target: () => {
+            this.emit('context.details', {
+              event, node, type: 'versions'
+            })
+          }
+        })
+
         if (node.viewerUrn) {
 
           menu.push({

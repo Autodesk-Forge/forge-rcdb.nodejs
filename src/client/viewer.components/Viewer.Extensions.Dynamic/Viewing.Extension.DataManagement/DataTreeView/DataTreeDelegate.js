@@ -93,6 +93,13 @@ export default class DataTreeDelegate extends TreeDelegate {
           `${this.derivativesAPI.apiUrl}/manifest/` +
           `${data.node.viewerUrn}`)
         break
+
+      case 'versions':
+        this.showPayload(
+          `${this.dmAPI.apiUrl}/projects/` +
+          `${data.node.props.projectId}/items/` +
+          `${data.node.props.itemId}/versions`)
+          break
     }
   }
 

@@ -19,8 +19,6 @@ export default class ContextMenu {
 
     menuItem.addEventListener('click', function (event) {
 
-      console.log('CLICK')
-
       that.hide();
       target();
       event.preventDefault();

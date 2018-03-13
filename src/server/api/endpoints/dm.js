@@ -82,34 +82,6 @@ module.exports = function() {
   })
 
   /////////////////////////////////////////////////////////
-  // GET /hubs/{hubId}
-  // Get hub by id
-  //
-  /////////////////////////////////////////////////////////
-  router.get('/hubs/:hubId', async (req, res) => {
-
-    try {
-
-      const hubId = req.params.hubId
-
-      const forgeSvc = ServiceManager.getService('ForgeSvc')
-
-      const token = await forgeSvc.get3LeggedTokenMaster(req.session)
-
-      const dmSvc = ServiceManager.getService('DMSvc')
-
-      const response = await dmSvc.getHub(token, hubId)
-
-      res.json(response)
-
-    } catch (ex) {
-
-      res.status(ex.status || 500)
-      res.json(ex)
-    }
-  })
-
-  /////////////////////////////////////////////////////////
   // GET /hubs/{hubId}/projects
   // Get all hub projects
   //

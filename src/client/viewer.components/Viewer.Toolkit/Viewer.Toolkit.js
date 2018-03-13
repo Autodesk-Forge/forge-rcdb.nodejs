@@ -164,8 +164,8 @@ export default class Toolkit {
 
         dbIds = dbIds || instanceTree.getRootId()
 
-        const dbIdArray = Array.isArray(dbIds) 
-          ? dbIds 
+        const dbIdArray = Array.isArray(dbIds)
+          ? dbIds
           : [dbIds]
 
         const leafIds = []
@@ -224,6 +224,7 @@ export default class Toolkit {
         for(var i=0; i< leafIds.length; ++i) {
 
           if (it) {
+
             it.enumNodeFragments(
               leafIds[i], (fragId) => {
                 fragIds.push(fragId)
