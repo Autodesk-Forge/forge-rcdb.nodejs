@@ -74,35 +74,35 @@ class ViewerPropertiesExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////////////
-  addProperties (properties) {
+  // addProperties (properties) {
 
-    //suppress "no properties" in panel
-    if(properties.length) {
+  //   //suppress "no properties" in panel
+  //   if(properties.length) {
 
-      $('div.noProperties', this.panel.container).remove()
-    }
+  //     $('div.noProperties', this.panel.container).remove()
+  //   }
 
-    properties.forEach((property) => {
+  //   properties.forEach((property) => {
 
-      this.panel.addProperty(property)
-    })
+  //     this.panel.addProperty(property)
+  //   })
 
-    this.panel.resizeToContent()
-  }
+  //   this.panel.resizeToContent()
+  // }
 
   /////////////////////////////////////////////////////////////////
   //
   //
   /////////////////////////////////////////////////////////////////
-  updateProperties (properties) {
+  // updateProperties (properties) {
 
-    properties.forEach((property) => {
+  //   properties.forEach((property) => {
 
-      this.panel.updateProperty(property)
-    })
+  //     this.panel.updateProperty(property)
+  //   })
 
-    return true
-  }
+  //   return true
+  // }
 }
 
 Autodesk.Viewing.theExtensionManager.registerExtension(

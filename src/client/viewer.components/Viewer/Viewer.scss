@@ -10,21 +10,21 @@
   overflow: hidden;
   height: 100%;
   width: 100%;
-}
 
-.viewer-panels-container {
-  position: absolute;
-  overflow: visible;
-  height: 0;
-  width: 0;
-  left: 0;
-  top: 0;
-}
+  .adsk-viewing-viewer.light-theme .adsk-button:hover {
+    border: 1px solid orange;
+    color: orange;
+  }
 
-.adsk-viewing-viewer .docking-panel {
-  text-align: left;
+  .adsk-viewing-viewer.light-theme .adsk-button.active {
+    color:orange;
+  }
 
-  .docking-panel-close {
-    top: -6px;
+  .docking-panel {
+    text-align: left;
+  
+    .docking-panel-close {
+      top: -6px;
+    }
   }
 }

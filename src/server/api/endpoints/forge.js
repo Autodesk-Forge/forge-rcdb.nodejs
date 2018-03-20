@@ -254,6 +254,7 @@ module.exports = function() {
 
     } catch (error) {
 
+      console.log(error)
       res.status(error.statusCode || 500)
       res.json(error)
     }
