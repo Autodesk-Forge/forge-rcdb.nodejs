@@ -158,9 +158,12 @@ class ViewingApplication extends React.Component {
       new Autodesk.Viewing.ViewingApplication(
         this.viewerContainer.id)
 
+    const config = {}    
+
     this.viewingApp.registerViewer(
       this.viewingApp.k3D,
-      Autodesk.Viewing.Private.GuiViewer3D)
+      Autodesk.Viewing.Private.GuiViewer3D,
+      config)
 
     if (this.props.urn) {
 
