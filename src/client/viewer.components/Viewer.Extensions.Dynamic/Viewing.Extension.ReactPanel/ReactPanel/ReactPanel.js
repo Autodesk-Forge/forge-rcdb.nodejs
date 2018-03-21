@@ -11,7 +11,10 @@ export default class ReactPanel extends Autodesk.Viewing.UI.DockingPanel {
   /////////////////////////////////////////////////////////
   constructor (viewer, options) {
 
-    super (viewer.container, options.id, options.title)
+    super (viewer.container, options.id, options.title, {
+      addFooter: false,
+      viewer
+    })
 
     this.container.classList.add('react-docking-panel')
 
@@ -19,7 +22,22 @@ export default class ReactPanel extends Autodesk.Viewing.UI.DockingPanel {
 
     this.DOMContent.className = 'content'
 
-    this.container.appendChild(this.DOMContent) 
+    this.container.appendChild(
+      this.DOMContent) 
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  initialize () {
+
+    super.initialize()
+
+    this.viewer = this.options.viewer
+
+    this.footer = this.createFooter()
+    this.container.appendChild(this.footer)
   }
 
   /////////////////////////////////////////////////////////
