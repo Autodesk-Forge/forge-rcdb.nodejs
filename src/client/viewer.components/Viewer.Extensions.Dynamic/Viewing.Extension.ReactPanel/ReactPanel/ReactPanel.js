@@ -37,7 +37,9 @@ export default class ReactPanel extends Autodesk.Viewing.UI.DockingPanel {
     this.viewer = this.options.viewer
 
     this.footer = this.createFooter()
-    this.container.appendChild(this.footer)
+
+    this.container.appendChild(
+      this.footer)
   }
 
   /////////////////////////////////////////////////////////

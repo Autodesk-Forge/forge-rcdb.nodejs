@@ -111,6 +111,8 @@ class ViewableSelectorExtension extends MultiModelExtensionBase {
 
     if (item.guid !== activeItem.guid) {
 
+      this.options.loader.show(true)
+
       this.viewer.tearDown()
 
       this.viewer.start()
@@ -118,7 +120,10 @@ class ViewableSelectorExtension extends MultiModelExtensionBase {
       const path =
         this.viewerDocument.getViewablePath(item)
 
-      this.viewer.loadModel(path)
+      this.viewer.loadModel(path, {}, () => {
+
+        this.options.loader.show(false)
+      })
 
       this.react.setState({
         activeItem: item

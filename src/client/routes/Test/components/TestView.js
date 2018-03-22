@@ -174,11 +174,12 @@ class TestView extends React.Component {
           height: 1,
           size: 1
         })
+
+        viewer.addEventListener(Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT, (e) => {
+          this.viewer.impl.scene.remove(textMesh)
+          this.viewer.impl.sceneUpdated(true)
+        })
       })
-    })
-
-    viewer.addEventListener(Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT, (e) => {
-
     })
 
     viewer.loadModel(path)
