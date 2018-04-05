@@ -123,7 +123,9 @@ export default class HierarchyTreeView extends React.Component {
 
     this.delegate.off()
 
-    this.tree.destroy()
+    if (this.tree) {
+      this.tree.destroy()
+    }
   }
 
   /////////////////////////////////////////////////////////
