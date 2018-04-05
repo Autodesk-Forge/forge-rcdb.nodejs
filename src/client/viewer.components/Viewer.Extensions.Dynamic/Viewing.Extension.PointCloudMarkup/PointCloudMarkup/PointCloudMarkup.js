@@ -391,7 +391,7 @@ export default class PointCloudMarkup extends EventsEmitter {
 
     const size = markupInfo.size ||
       this.options.markupSize ||
-      40.0
+      40
 
     const index = this.markups.length
 

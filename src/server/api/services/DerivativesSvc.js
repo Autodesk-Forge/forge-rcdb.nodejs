@@ -98,8 +98,19 @@ export default class DerivativeSvc extends BaseSvc {
       ? await getToken()
       : getToken)
 
-    return this._derivativesAPI.getModelviewProperties(
-      urn, guid, opts, {autoRefresh:false}, token)
+    // objectId query not supported by SDK yet
+    //return this._derivativesAPI.getModelviewProperties(
+    //  urn, guid, opts, {autoRefresh:false}, token)
+
+    const url = `${DerivativeSvc.SERVICE_BASE_URL}/designdata/` +
+      `${urn}/metadata/${guid}/properties` +
+      (opts.objectId ? `?objectid=${opts.objectId}` : '')
+
+    return requestAsync({
+      token: token,
+      json: true,
+      url: url
+    })
   }
 
   /////////////////////////////////////////////////////////

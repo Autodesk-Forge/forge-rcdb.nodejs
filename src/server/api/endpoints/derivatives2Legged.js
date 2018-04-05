@@ -180,9 +180,11 @@ module.exports = function () {
 
     try {
 
-      const urn = req.params.urn
+      const objectId = req.query.objectId || null
 
       const guid = req.params.guid
+
+      const urn = req.params.urn
 
       const forgeSvc =
         ServiceManager.getService(
@@ -195,7 +197,9 @@ module.exports = function () {
 
       const response =
         await derivativesSvc.getProperties(
-        token, urn, guid)
+        token, urn, guid, {
+          objectId: objectId
+        })
 
       res.json(response)
 

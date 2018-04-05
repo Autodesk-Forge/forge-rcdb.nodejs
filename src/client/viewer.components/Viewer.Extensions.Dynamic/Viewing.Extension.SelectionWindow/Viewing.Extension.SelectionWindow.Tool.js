@@ -44,6 +44,11 @@ export default class SelectionWindowTool extends EventsEmitter {
     return "selectionWindowTool"
   }
 
+  getPriority () {
+
+    return 1000
+  }
+
   /////////////////////////////////////////////////////////
   //
   //
