@@ -66,7 +66,7 @@ class FaderExtension extends MultiModelExtensionBase {
     this.eventTool = new EventTool(this.viewer)
 
     this.eventTool.on ('singleclick', (event) => {
-
+      
       const hitTest = this.viewer.clientToWorld(
         event.canvasX, event.canvasY, true)
 

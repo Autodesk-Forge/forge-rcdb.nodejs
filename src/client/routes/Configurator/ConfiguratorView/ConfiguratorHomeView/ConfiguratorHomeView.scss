@@ -212,6 +212,11 @@
         }
       }
 
+      .open > .dropdown-menu {
+        display: block;
+        min-width: 198px;
+      }
+
       .stars {
         margin: 1px 18px 0 0;
         display: none;

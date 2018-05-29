@@ -78,8 +78,6 @@ module.exports = function () {
 
       const health = await toolkitSvc.getHealth()
 
-      console.log(health)
-
       res.json(health)
 
     } catch (ex) {
@@ -133,21 +131,15 @@ module.exports = function () {
 
       const {sceneId, urn} = req.params
 
-      console.log('GET SCENE')
-
       const scene =
         await toolkitSvc.getScene(
           token.access_token,
           urn, sceneId)
 
-      console.log('scene')
-      console.log(scene)
-
       res.json(scene)
 
     } catch (ex) {
 
-      console.log(ex)
       res.status(ex.statusCode || 500)
       res.json(ex)
     }
@@ -360,3 +352,4 @@ module.exports = function () {
 
   return router
 }
+

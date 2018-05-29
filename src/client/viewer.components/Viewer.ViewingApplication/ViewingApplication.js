@@ -46,6 +46,8 @@ class ViewingApplication extends React.Component {
 
     super()
 
+    this.viewables = []
+
     this.height = 0
 
     this.width = 0
@@ -121,6 +123,13 @@ class ViewingApplication extends React.Component {
         return
       }
 
+      if (this.props.onViewablesLoaded) {
+
+        this.props.onViewablesLoaded(viewables)
+      }
+
+      this.viewables = viewables
+
       this.viewingApp.selectItem(viewables[pathIndex],
         (viewer, item) => {
 
@@ -136,8 +145,9 @@ class ViewingApplication extends React.Component {
             this.props.onItemLoaded(item)
           }
 
-      }, () => {
+      }, (error) => {
 
+          console.log(error)
       })
 
     }, (error) => {
@@ -158,7 +168,7 @@ class ViewingApplication extends React.Component {
       new Autodesk.Viewing.ViewingApplication(
         this.viewerContainer.id)
 
-    const config = {}    
+    const config = {}
 
     this.viewingApp.registerViewer(
       this.viewingApp.k3D,
@@ -187,6 +197,13 @@ class ViewingApplication extends React.Component {
 
       this.loadDocument(props.urn)
     }
+
+    //if (this.props.pathIndex !== props.pathIndex) {
+    //
+    //  const item = this.viewables[props.pathIndex]
+    //
+    //  this.viewingApp.selectItem(item)
+    //}
   }
 
   /////////////////////////////////////////////////////////

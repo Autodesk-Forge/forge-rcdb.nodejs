@@ -143,44 +143,40 @@ class TestView extends React.Component {
       `${window.location.origin}/${lmvProxy}`,
       'modelDerivativeV2')
 
-    //const urn = 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LWRldi84N2M4LWY1ZWQtMWYzZi5ydnQ'
+    const urn = 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LWRldi84N2M4LWY1ZWQtMWYzZi5ydnQ'
 
-    //const urn = 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LWRldi81NjU3LTUxMmUtOTRlYy5kd2Y'
+    const doc = await this.loadDocument(urn)
 
-    //const doc = await this.loadDocument(urn)
-
-    //const path = this.getViewablePath(doc, 14)
+    const path = this.getViewablePath(doc)
 
     viewer.start()
 
-    const path = 'resources/models/dev/office/Resource/3D_View/3D/office.svf'
+    //const path = 'resources/models/dev/office/Resource/3D_View/3D/office.svf'
 
     //viewer.loadExtension('Autodesk.Viewing.ZoomWindow')
 
-    viewer.addEventListener(Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT, () => {
-
-      //console.log(viewer.model.getData().instanceTree.getRootId())
-
-      viewer.loadExtension('Viewing.Extension.Text').then((extension) => {
-
-        const textMesh = extension.createText({
-          position: {x: -150, y: 50, z: 0},
-          bevelEnabled: true,
-          curveSegments: 24,
-          bevelThickness: 1,
-          color: 0xFFA500,
-          text: 'Forge!',
-          bevelSize: 1,
-          height: 1,
-          size: 1
-        })
-
-        viewer.addEventListener(Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT, (e) => {
-          this.viewer.impl.scene.remove(textMesh)
-          this.viewer.impl.sceneUpdated(true)
-        })
-      })
-    })
+    //viewer.addEventListener(Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT, () => {
+    //
+    //  viewer.loadExtension('Viewing.Extension.Text').then((extension) => {
+    //
+    //    const textMesh = extension.createText({
+    //      position: {x: -150, y: 50, z: 0},
+    //      bevelEnabled: true,
+    //      curveSegments: 24,
+    //      bevelThickness: 1,
+    //      color: 0xFFA500,
+    //      text: 'Forge!',
+    //      bevelSize: 1,
+    //      height: 1,
+    //      size: 1
+    //    })
+    //
+    //    viewer.addEventListener(Autodesk.Viewing.AGGREGATE_SELECTION_CHANGED_EVENT, (e) => {
+    //      this.viewer.impl.scene.remove(textMesh)
+    //      this.viewer.impl.sceneUpdated(true)
+    //    })
+    //  })
+    //})
 
     viewer.loadModel(path)
   }
@@ -191,6 +187,15 @@ class TestView extends React.Component {
   /////////////////////////////////////////////////////////
   onSelectionChanged (event) {
 
+  }
+
+  ////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  onViewablesLoaded (viewables) {
+
+    console.log(viewables)
   }
 
   ////////////////////////////////////////////////////////
@@ -212,7 +217,7 @@ class TestView extends React.Component {
       'modelDerivativeV2')
 
     this.assignState({
-      urn: 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LWRldi80MDY4LWRkOGEtZDhhYS5kd2Z4'
+      urn: 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LWRldi82YmVkLWU5NGQtZTY3NS5ydnQ'
     })
   }
 
@@ -244,6 +249,7 @@ class TestView extends React.Component {
       <div className="test" style={viewStyle}>
         <ViewingApp
           onViewingApplicationCreated={this.onViewingApplicationCreated}
+          onViewablesLoaded={this.onViewablesLoaded}
           onViewerCreated={this.onViewerCreated}
           urn={this.state.urn}
         />
@@ -257,8 +263,8 @@ class TestView extends React.Component {
   /////////////////////////////////////////////////////////////////
   render() {
 
-    //return this.renderViewingApp()
-    return this.renderViewer()
+    return this.renderViewingApp()
+    //return this.renderViewer()
   }
 }
 
