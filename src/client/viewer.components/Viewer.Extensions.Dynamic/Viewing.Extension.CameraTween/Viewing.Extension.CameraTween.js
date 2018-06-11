@@ -4,6 +4,8 @@
 //
 /////////////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
+import DropdownButton from 'react-bootstrap/lib/DropdownButton'
+import MenuItem from 'react-bootstrap/lib/MenuItem'
 import ContentEditable from 'react-contenteditable'
 import WidgetContainer from 'WidgetContainer'
 import './Viewing.Extension.CameraTween.scss'
@@ -12,11 +14,6 @@ import Toolkit from 'Viewer.Toolkit'
 import { ReactLoader } from 'Loader'
 import React from 'react'
 import Label from 'Label'
-import {
-  DropdownButton,
-  MenuItem
-} from 'react-bootstrap'
-
 
 class CameraTweenExtension extends MultiModelExtensionBase {
 
@@ -112,29 +109,30 @@ class CameraTweenExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   load () {
 
-    this.react.setState({
+    this.react.pushRenderExtension(this).then(async() => {
 
-      targetTweenDuration: 2500,
-      posTweenDuration: 2500,
-      upTweenDuration: 2500,
+      await this.react.setState({
 
-      targetTweenEasing: {
-        id: Tween.Easing.Linear.None,
-        name: 'Linear'
-      },
-      posTweenEasing: {
-        id: Tween.Easing.Linear.None,
-        name: 'Linear'
-      },
-      upTweenEasing: {
-        id: Tween.Easing.Linear.None,
-        name: 'Linear'
-      },
-
-      configManager: null,
-      showLoader: true
-
-    }).then (async() => {
+        targetTweenDuration: 2500,
+        posTweenDuration: 2500,
+        upTweenDuration: 2500,
+  
+        targetTweenEasing: {
+          id: Tween.Easing.Linear.None,
+          name: 'Linear'
+        },
+        posTweenEasing: {
+          id: Tween.Easing.Linear.None,
+          name: 'Linear'
+        },
+        upTweenEasing: {
+          id: Tween.Easing.Linear.None,
+          name: 'Linear'
+        },
+  
+        configManager: null,
+        showLoader: true
+      })
 
       const configManagerReactOptions = {
         pushRenderExtension: () => {
@@ -157,8 +155,6 @@ class CameraTweenExtension extends MultiModelExtensionBase {
             },
             playPeriod: 2500
           })
-
-      await this.react.pushRenderExtension(this)
 
       this.react.setState({
         showLoader: false,

@@ -1,4 +1,5 @@
-import { DropdownButton, MenuItem } from 'react-bootstrap'
+import DropdownButton from 'react-bootstrap/lib/DropdownButton'
+import MenuItem from 'react-bootstrap/lib/MenuItem'
 import BaseComponent from 'BaseComponent'
 import ServiceManager from 'SvcManager'
 import { Link } from 'react-router'

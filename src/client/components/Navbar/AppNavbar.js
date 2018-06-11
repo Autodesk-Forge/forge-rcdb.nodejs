@@ -8,16 +8,15 @@ import ServiceManager from 'SvcManager'
 import PropTypes from 'prop-types'
 import './AppNavbar.scss'
 import React from 'react'
-import {
-  DropdownButton,
-  NavDropdown,
-  MenuItem,
-  NavItem,
-  Navbar,
-  Button,
-  Modal,
-  Nav
-  } from 'react-bootstrap'
+
+import DropdownButton from 'react-bootstrap/lib/DropdownButton'
+import NavDropdown from 'react-bootstrap/lib/NavDropdown'
+import MenuItem from 'react-bootstrap/lib/MenuItem'
+import NavItem from 'react-bootstrap/lib/NavItem'
+import Navbar from 'react-bootstrap/lib/Navbar'
+import Button from 'react-bootstrap/lib/Button'
+import Modal from 'react-bootstrap/lib/Modal'
+import Nav from 'react-bootstrap/lib/Nav'
 
 import { intlShape } from 'react-intl'
 import messages from 'translations/messages'

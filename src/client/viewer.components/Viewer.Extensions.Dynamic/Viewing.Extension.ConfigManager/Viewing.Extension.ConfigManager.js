@@ -4,7 +4,9 @@
 //
 /////////////////////////////////////////////////////////
 import MultiModelExtensionBase from 'Viewer.MultiModelExtensionBase'
+import DropdownButton from 'react-bootstrap/lib/DropdownButton'
 import ConfigAPI from './Viewing.Extension.Config.API'
+import MenuItem from 'react-bootstrap/lib/MenuItem'
 import ContentEditable from 'react-contenteditable'
 import './Viewing.Extension.ConfigManager.scss'
 import WidgetContainer from 'WidgetContainer'
@@ -18,10 +20,6 @@ import ReactDOM from 'react-dom'
 import Switch from 'Switch'
 import Label from 'Label'
 import React from 'react'
-import {
-  DropdownButton,
-  MenuItem
-} from 'react-bootstrap'
 
 class ConfigManagerExtension extends MultiModelExtensionBase {
 
