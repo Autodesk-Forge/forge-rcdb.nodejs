@@ -143,6 +143,17 @@ class CameraTweenExtension extends MultiModelExtensionBase {
         },
         popRenderExtension: () => {
           return Promise.resolve()
+        },
+        setSate: (configManagerState) => {
+
+          return this.react.setState({
+            configManagerState
+          })
+        },
+        getSate: () => {
+
+          const {configManagerState} = this.react.getState()
+          return configManagerState
         }
       }
 
