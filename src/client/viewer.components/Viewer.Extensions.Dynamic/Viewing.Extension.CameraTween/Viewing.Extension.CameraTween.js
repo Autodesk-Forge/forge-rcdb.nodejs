@@ -10,7 +10,6 @@ import './Viewing.Extension.CameraTween.scss'
 import Tween from '@tweenjs/tween.js'
 import Toolkit from 'Viewer.Toolkit'
 import { ReactLoader } from 'Loader'
-import ReactDOM from 'react-dom'
 import React from 'react'
 import Label from 'Label'
 import {
@@ -159,7 +158,7 @@ class CameraTweenExtension extends MultiModelExtensionBase {
             playPeriod: 2500
           })
 
-      this.react.setState({
+      await this.react.setState({
         showLoader: false,
         configManager
       })

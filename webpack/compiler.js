@@ -76,7 +76,7 @@ const runCompiler = async () => {
       await clean(dir)
     }
 
-    const env = process.env.NODE_ENV
+    const env = process.env.WEBPACK_ENV || process.env.NODE_ENV
 
     console.log('Starting compiler NODE_ENV=' + env)
 

@@ -69,6 +69,7 @@
     "util": "^0.10.3"
   },
   "devDependencies": {
+    "@sucrase/webpack-loader": "^1.0.2",
     "@tweenjs/tween.js": "17.1.1",
     "autoprefixer": "^6.7.5",
     "babel-cli": "^6.23.0",
@@ -166,6 +167,7 @@
     "snyk": "^1.36.2",
     "socket.io-client": "^1.7.3",
     "style-loader": "^0.12.4",
+    "sucrase": "^2.2.0",
     "systemjs": "0.20.12",
     "three-js": "^79.0.0",
     "threejs-full-es6": "4.2.4",
