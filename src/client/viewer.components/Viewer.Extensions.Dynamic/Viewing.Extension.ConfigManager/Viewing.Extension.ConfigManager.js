@@ -124,7 +124,8 @@ class ConfigManagerExtension extends MultiModelExtensionBase {
     await this.react.pushRenderExtension(this)
 
     if (this.api) {
-      this.loadSequences()
+
+      //this.loadSequences()
     }
   }
 
