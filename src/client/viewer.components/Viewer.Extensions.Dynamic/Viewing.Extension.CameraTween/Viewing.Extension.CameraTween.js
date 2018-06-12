@@ -172,7 +172,7 @@ class CameraTweenExtension extends MultiModelExtensionBase {
           playPeriod: 2500
         })
 
-      this.react.setState({
+      await this.react.setState({
         showLoader: false,
         configManager
       })
