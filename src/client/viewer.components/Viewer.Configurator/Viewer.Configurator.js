@@ -4,10 +4,10 @@ import { ReactLoader, Loader } from 'Loader'
 import BaseComponent from 'BaseComponent'
 import autobind from 'autobind-decorator'
 import ServiceManager from 'SvcManager'
+import {findDOMNode} from 'react-dom'
 import './Viewer.Configurator.scss'
 import PropTypes from 'prop-types'
 import Stopwatch from 'Stopwatch'
-import ReactDOM from 'react-dom'
 import merge from 'lodash/merge'
 import find from 'lodash/find'
 import easing from 'easing-js'
@@ -411,8 +411,8 @@ class ViewerConfigurator extends BaseComponent {
 
     const defaultOptions = {
       setNavbarState: this.props.setNavbarState,
-      appContainer: ReactDOM.findDOMNode(this),
       getViewablePath: this.getViewablePath,
+      appContainer: findDOMNode(this),
       loadDocument: this.loadDocument,
       model:this.state.dbModel.model,
       database: this.props.database,

@@ -534,7 +534,7 @@ class CameraTweenExtension extends MultiModelExtensionBase {
         </div>
 
         <div className="config-manager-container">
-          { configManager && configManager.render(opts) }
+          
         </div>
       </div>
     )
