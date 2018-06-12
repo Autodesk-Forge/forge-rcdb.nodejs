@@ -93,7 +93,23 @@ class ConfigManagerExtension extends MultiModelExtensionBase {
 
     this.itemToggling = this.options.itemToggling
 
-    this.react.setState({
+    if (!this.options.manualInit) {
+
+      this.initialize()
+    }
+
+    console.log('Viewing.Extension.ConfigManager loaded')
+
+    return true
+  }
+
+  /////////////////////////////////////////////////////////
+  // 
+  //
+  /////////////////////////////////////////////////////////
+  async initialize () {
+
+    await this.react.setState({
       emptyStateNameCaption:
          this.options.emptyStateNameCaption ||
          'State Name ...',
@@ -107,22 +123,13 @@ class ConfigManagerExtension extends MultiModelExtensionBase {
       play: false,
       loop: true,
       items: []
-
-    }).then (() => {
-
-      this.react.pushRenderExtension(this).then(
-        async() => {
-
-          if (this.api) {
-
-            this.loadSequences()
-          }
-      })
     })
 
-    console.log('Viewing.Extension.ConfigManager loaded')
+    await this.react.pushRenderExtension(this)
 
-    return true
+    if (this.api) {
+      this.loadSequences()
+    }
   }
 
   /////////////////////////////////////////////////////////
