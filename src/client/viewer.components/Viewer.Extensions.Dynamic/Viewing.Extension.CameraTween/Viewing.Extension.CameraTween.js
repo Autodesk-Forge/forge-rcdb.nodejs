@@ -164,8 +164,6 @@ class CameraTweenExtension extends MultiModelExtensionBase {
 
       await this.react.pushRenderExtension(this)
 
-      await this.sleep (5000)
-      
       const configManagerReactOptions = {
         pushRenderExtension: () => {
           return Promise.resolve()
