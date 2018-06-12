@@ -93,10 +93,7 @@ class ConfigManagerExtension extends MultiModelExtensionBase {
 
     this.itemToggling = this.options.itemToggling
 
-    if (!this.options.manualInit) {
-
-      this.initialize()
-    }
+    this.initialize()
 
     console.log('Viewing.Extension.ConfigManager loaded')
 

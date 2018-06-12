@@ -150,6 +150,8 @@ class CameraTweenExtension extends MultiModelExtensionBase {
         
     }).then (async() => {
 
+      await this.react.pushRenderExtension(this)
+
       const configManagerReactOptions = {
         pushRenderExtension: () => {
           return Promise.resolve()
@@ -169,18 +171,13 @@ class CameraTweenExtension extends MultiModelExtensionBase {
             objectSet: true,
             viewport: false
           },
-          playPeriod: 2500,
-          manualInit: true
+          playPeriod: 2500
         })
 
-      await this.react.setState({
+      this.react.setState({
         showLoader: false,
         configManager
       })
-
-      await configManager.initialize()
-
-      this.react.pushRenderExtension(this)
     })
   } 
 
