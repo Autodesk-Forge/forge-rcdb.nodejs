@@ -1,7 +1,7 @@
 import { ReflexElement } from 'react-reflex'
+import {findDOMNode} from 'react-dom'
 import PropTypes from 'prop-types'
 import Stopwatch from 'Stopwatch'
-import ReactDOM from 'react-dom'
 import './PaneManager.scss'
 import React from 'react'
 
@@ -148,7 +148,7 @@ class PaneElement extends React.Component {
   /////////////////////////////////////////////////////////
   getSize () {
 
-    const domElement = ReactDOM.findDOMNode(this)
+    const domElement = findDOMNode(this)
 
     switch (this.props.orientation) {
 

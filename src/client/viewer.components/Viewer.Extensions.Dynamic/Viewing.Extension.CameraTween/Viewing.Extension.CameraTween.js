@@ -157,18 +157,18 @@ class CameraTweenExtension extends MultiModelExtensionBase {
         }
       }
 
-      const configManager =
-        await this.viewer.loadDynamicExtension(
-          'Viewing.Extension.ConfigManager', {
-            react: configManagerReactOptions,
-            restoreFilter: {
-              renderOptions: true,
-              cameraTween: true,
-              objectSet: true,
-              viewport: false
-            },
-            playPeriod: 2500
-          })
+      // const configManager =
+      //   await this.viewer.loadDynamicExtension(
+      //     'Viewing.Extension.ConfigManager', {
+      //       react: configManagerReactOptions,
+      //       restoreFilter: {
+      //         renderOptions: true,
+      //         cameraTween: true,
+      //         objectSet: true,
+      //         viewport: false
+      //       },
+      //       playPeriod: 2500
+      //     })
     })
 
     this.navigation = this.viewer.navigation
@@ -534,7 +534,7 @@ class CameraTweenExtension extends MultiModelExtensionBase {
         </div>
 
         <div className="config-manager-container">
-          
+          { configManager && configManager.render(opts) }
         </div>
       </div>
     )

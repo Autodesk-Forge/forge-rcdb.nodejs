@@ -1,4 +1,4 @@
-import ReactDOM from 'react-dom'
+import {findDOMNode} from 'react-dom'
 import './background.scss'
 import React from 'react'
 import FSS from './fss'
@@ -42,8 +42,8 @@ class AnimatedBackground extends React.Component {
   componentDidMount() {
 
     this.animation = this.loadAnimation(
-      ReactDOM.findDOMNode(this.backgroundContainer),
-      ReactDOM.findDOMNode(this.backgroundOutput))
+      findDOMNode(this.backgroundContainer),
+      findDOMNode(this.backgroundOutput))
 
     this.animation.start();
 

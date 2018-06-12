@@ -1,4 +1,4 @@
-import ReactDOM from 'react-dom'
+import {findDOMNode} from 'react-dom'
 import React from 'react'
 
 class ResponsiveView extends React.Component {
@@ -22,7 +22,7 @@ class ResponsiveView extends React.Component {
   /////////////////////////////////////////////////////////
   componentWillReceiveProps (props) {
 
-    const domElement = ReactDOM.findDOMNode(this)
+    const domElement = findDOMNode(this)
 
     const height = domElement.offsetHeight
 

@@ -10,10 +10,10 @@ import WidgetContainer from 'WidgetContainer'
 import {ReactLoader as Loader} from 'Loader'
 import BaseComponent from 'BaseComponent'
 import ServiceManager from 'SvcManager'
+import {findDOMNode} from 'react-dom'
 import Toolkit from 'Viewer.Toolkit'
 import PieLegend from './PieLegend'
 import sortBy from 'lodash/sortBy'
-import ReactDOM from 'react-dom'
 import PieChart from 'PieChart'
 import React from 'react'
 import d3 from 'd3'
@@ -337,7 +337,7 @@ class CostGraphContainer extends BaseComponent {
   /////////////////////////////////////////////////////////
   componentWillReceiveProps (props) {
 
-    const domElement = ReactDOM.findDOMNode(this)
+    const domElement = findDOMNode(this)
 
     const height = domElement.offsetHeight
 
