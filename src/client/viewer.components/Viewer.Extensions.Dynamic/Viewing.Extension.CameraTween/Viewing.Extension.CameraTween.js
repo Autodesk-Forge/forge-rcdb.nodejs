@@ -173,12 +173,12 @@ class CameraTweenExtension extends MultiModelExtensionBase {
           manualInit: true
         })
 
-      configManager.initialize()  
-
       await this.react.setState({
         showLoader: false,
         configManager
       })
+
+      await configManager.initialize()
 
       this.react.pushRenderExtension(this)
     })

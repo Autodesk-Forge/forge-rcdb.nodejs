@@ -263,8 +263,8 @@ class TestView extends React.Component {
   /////////////////////////////////////////////////////////////////
   render() {
 
-    return this.renderViewingApp()
-    //return this.renderViewer()
+    //return this.renderViewingApp()
+    return this.renderViewer()
   }
 }
 
