@@ -109,66 +109,9 @@ class CameraTweenExtension extends MultiModelExtensionBase {
   /////////////////////////////////////////////////////////
   load () {
 
-    this.react.pushRenderExtension(this).then(async() => {
+    this.loadConfigManager().then(() => {
 
-      await this.react.setState({
-
-        targetTweenDuration: 2500,
-        posTweenDuration: 2500,
-        upTweenDuration: 2500,
-  
-        targetTweenEasing: {
-          id: Tween.Easing.Linear.None,
-          name: 'Linear'
-        },
-        posTweenEasing: {
-          id: Tween.Easing.Linear.None,
-          name: 'Linear'
-        },
-        upTweenEasing: {
-          id: Tween.Easing.Linear.None,
-          name: 'Linear'
-        },
-  
-        configManager: null,
-        showLoader: true
-      })
-
-      const configManagerReactOptions = {
-        pushRenderExtension: (configManager) => {
-          return this.react.setState({
-            showLoader: false,
-            configManager
-          })
-        },
-        popRenderExtension: () => {
-          return Promise.resolve()
-        },
-        setSate: (configManagerState) => {
-
-          return this.react.setState({
-            configManagerState
-          })
-        },
-        getSate: () => {
-
-          const {configManagerState} = this.react.getState()
-          return configManagerState
-        }
-      }
-
-      // const configManager =
-      //   await this.viewer.loadDynamicExtension(
-      //     'Viewing.Extension.ConfigManager', {
-      //       react: configManagerReactOptions,
-      //       restoreFilter: {
-      //         renderOptions: true,
-      //         cameraTween: true,
-      //         objectSet: true,
-      //         viewport: false
-      //       },
-      //       playPeriod: 2500
-      //     })
+      this.react.pushRenderExtension(this)
     })
 
     this.navigation = this.viewer.navigation
@@ -179,6 +122,69 @@ class CameraTweenExtension extends MultiModelExtensionBase {
 
     return true
   }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
+  async loadConfigManager () {
+
+    const configManagerReactOptions = {
+      pushRenderExtension: (configManager) => {
+        return this.react.setState({
+
+          targetTweenDuration: 2500,
+          posTweenDuration: 2500,
+          upTweenDuration: 2500,
+    
+          targetTweenEasing: {
+            id: Tween.Easing.Linear.None,
+            name: 'Linear'
+          },
+          posTweenEasing: {
+            id: Tween.Easing.Linear.None,
+            name: 'Linear'
+          },
+          upTweenEasing: {
+            id: Tween.Easing.Linear.None,
+            name: 'Linear'
+          },
+    
+          showLoader: false,
+          configManager
+        })
+      },
+      popRenderExtension: () => {
+        return Promise.resolve()
+      },
+      setSate: (configManagerState) => {
+
+        return this.react.setState({
+          configManagerState
+        })
+      },
+      getSate: () => {
+
+        const {configManagerState} = this.react.getState()
+        return configManagerState
+      }
+    }
+
+    const configManager =
+      await this.viewer.loadDynamicExtension(
+        'Viewing.Extension.ConfigManager', {
+          react: configManagerReactOptions,
+          restoreFilter: {
+            renderOptions: true,
+            cameraTween: true,
+            objectSet: true,
+            viewport: false
+          },
+          playPeriod: 2500
+        })
+  
+    return configManager    
+  } 
 
   /////////////////////////////////////////////////////////
   //
