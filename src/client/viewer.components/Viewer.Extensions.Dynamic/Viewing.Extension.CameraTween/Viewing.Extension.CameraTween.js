@@ -9,6 +9,7 @@ import MenuItem from 'react-bootstrap/lib/MenuItem'
 import ContentEditable from 'react-contenteditable'
 import WidgetContainer from 'WidgetContainer'
 import './Viewing.Extension.CameraTween.scss'
+import '../Viewing.Extension.ConfigManager'
 import Tween from '@tweenjs/tween.js'
 import Toolkit from 'Viewer.Toolkit'
 import { ReactLoader } from 'Loader'
@@ -151,6 +152,7 @@ class CameraTweenExtension extends MultiModelExtensionBase {
     }).then (async() => {
 
       const configManagerReactOptions = {
+        ...this.options.react,
         pushRenderExtension: () => {
           return Promise.resolve()
         },
@@ -160,17 +162,18 @@ class CameraTweenExtension extends MultiModelExtensionBase {
       }
 
       const configManager =
-        await this.viewer.loadDynamicExtension(
-          'Viewing.Extension.ConfigManager', {
-          react: configManagerReactOptions,
-          restoreFilter: {
-            renderOptions: true,
-            cameraTween: true,
-            objectSet: true,
-            viewport: false
-          },
-          playPeriod: 2500
-        })
+        await this.viewer.loadExtension(
+          'Viewing.Extension.ConfigManager', { 
+            ...this.options,
+            react: configManagerReactOptions,
+            restoreFilter: {
+              renderOptions: true,
+              cameraTween: true,
+              objectSet: true,
+              viewport: false
+            },
+            playPeriod: 2500
+          })
 
       await this.react.setState({
         showLoader: false,
