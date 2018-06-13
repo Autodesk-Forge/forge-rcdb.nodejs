@@ -164,7 +164,7 @@ class ConfigManagerExtension extends MultiModelExtensionBase {
       sequences
     })
 
-    await this.sleep(2000)
+    //await this.sleep(2000)
 
     await this.setActiveSequence (sequence)
   }
