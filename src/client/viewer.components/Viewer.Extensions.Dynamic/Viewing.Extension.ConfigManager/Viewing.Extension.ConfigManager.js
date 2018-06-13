@@ -862,7 +862,9 @@ class ConfigManagerExtension extends MultiModelExtensionBase {
 
     const state = this.react.getState()
 
-    const sequences = state.sequences.map((sequence) => {
+    const sequences = state.sequences || []
+
+    const sequenceItems = sequences.map((sequence) => {
 
       const id = sequence.id
 
@@ -899,7 +901,7 @@ class ConfigManagerExtension extends MultiModelExtensionBase {
             disabled={!sequence}
             key="sequence-dropdown"
             id="sequence-dropdown">
-           { sequences }
+           { sequenceItems }
           </DropdownButton>
 
           <button onClick={() => this.addSequence()}
@@ -1010,6 +1012,10 @@ class ConfigManagerExtension extends MultiModelExtensionBase {
 
     const state = this.react.getState()
 
+    const readonly = state.sequence 
+      ? state.sequence.readonly
+      : true 
+
     const items = state.items.map((item) => {
 
       const text = DOMPurify.sanitize(item.name)
@@ -1036,7 +1042,7 @@ class ConfigManagerExtension extends MultiModelExtensionBase {
           <Label text={text}/>
 
           {
-            !state.sequence.readonly &&
+            !readonly &&
             <button onClick={(e) => {
                 this.deleteItem(item.id)
                 e.stopPropagation()

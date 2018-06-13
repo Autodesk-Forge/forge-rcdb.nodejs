@@ -162,7 +162,7 @@ class CameraTweenExtension extends MultiModelExtensionBase {
         
     }).then (async() => {
 
-      await this.react.pushRenderExtension(this)
+      
 
       const configManagerReactOptions = {
         pushRenderExtension: () => {
@@ -170,10 +170,19 @@ class CameraTweenExtension extends MultiModelExtensionBase {
         },
         popRenderExtension: () => {
           return Promise.resolve()
-        }
+        },
+        // setState: (configMngState) => {
+        //   return this.react.setState({
+        //     configMngState
+        //   })
+        // },
+        // getState: () => {
+        //   const {configMngState} = this.react.getState()
+        //   return configMngState || {}
+        // }
       }
 
-      const configManager =
+      const configManager = 
         await this.viewer.loadDynamicExtension(
           'Viewing.Extension.ConfigManager', {
           react: configManagerReactOptions,
@@ -186,10 +195,12 @@ class CameraTweenExtension extends MultiModelExtensionBase {
           playPeriod: 2500
         })
 
-      this.react.setState({
+      await this.react.setState({
         showLoader: false,
         configManager
-      })
+      })  
+
+      await this.react.pushRenderExtension(this)
     })
   } 
 
