@@ -92,20 +92,7 @@ class ConfigManagerExtension extends MultiModelExtensionBase {
 
     this.itemToggling = this.options.itemToggling
 
-    this.initialize()
-
-    console.log('Viewing.Extension.ConfigManager loaded')
-
-    return true
-  }
-
-  /////////////////////////////////////////////////////////
-  // 
-  //
-  /////////////////////////////////////////////////////////
-  async initialize () {
-
-    await this.react.setState({
+    this.react.setState({
       emptyStateNameCaption:
          this.options.emptyStateNameCaption ||
          'State Name ...',
@@ -119,14 +106,19 @@ class ConfigManagerExtension extends MultiModelExtensionBase {
       play: false,
       loop: true,
       items: []
+    }).then (async() => {
+
+      await this.react.pushRenderExtension(this)
+
+      if (this.api) {
+
+        //this.loadSequences()
+      }
     })
 
-    await this.react.pushRenderExtension(this)
+    console.log('Viewing.Extension.ConfigManager loaded')
 
-    if (this.api) {
-
-      //this.loadSequences()
-    }
+    return true
   }
 
   /////////////////////////////////////////////////////////
@@ -146,6 +138,18 @@ class ConfigManagerExtension extends MultiModelExtensionBase {
   //
   //
   /////////////////////////////////////////////////////////
+  sleep (ms) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve()
+      }, ms)
+    })
+  }
+
+  /////////////////////////////////////////////////////////
+  //
+  //
+  /////////////////////////////////////////////////////////
   async loadSequences () {
 
     const sequences =
@@ -156,13 +160,13 @@ class ConfigManagerExtension extends MultiModelExtensionBase {
     const sequence = sequences.length ?
       sequences[0] : null
 
-    this.react.setState({
+    await this.react.setState({
       sequences
     })
 
-    setTimeout(() => {
-      this.setActiveSequence (sequence)
-    }, 2000)
+    await this.sleep(2000)
+
+    await this.setActiveSequence (sequence)
   }
 
   /////////////////////////////////////////////////////////
@@ -663,7 +667,7 @@ class ConfigManagerExtension extends MultiModelExtensionBase {
 
     this.sequenceIdx = 0
 
-    this.react.setState({
+    await this.react.setState({
       play: false,
       items: [],
       sequence
