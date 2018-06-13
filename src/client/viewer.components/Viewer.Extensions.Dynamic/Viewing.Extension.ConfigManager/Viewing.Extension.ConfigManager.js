@@ -112,7 +112,7 @@ class ConfigManagerExtension extends MultiModelExtensionBase {
 
       if (this.api) {
 
-        //this.loadSequences()
+        this.loadSequences()
       }
     })
 
