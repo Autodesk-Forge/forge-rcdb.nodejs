@@ -194,3 +194,16 @@ img.forge-hero {
   color: grey;
 }
 
+///////////////////////////////////////////////////////////
+// Reapop
+///////////////////////////////////////////////////////////
+.notifications {
+  margin: 60px 0 0 -5px;
+  position: absolute;
+  
+  &>div {
+    &>div{
+      position: relative;
+    }
+  }
+}

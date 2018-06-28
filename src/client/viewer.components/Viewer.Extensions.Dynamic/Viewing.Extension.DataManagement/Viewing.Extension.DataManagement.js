@@ -264,7 +264,8 @@ class DataManagementExtension extends MultiModelExtensionBase {
 
       node.setActiveVersion(version)
 
-      const urn = this.dmAPI.getVersionURN(version)
+      const urn = encodeURIComponent(
+        this.dmAPI.getVersionURN(version))
 
       // fix for BIM Docs:
       // displayName doesn't appear in item

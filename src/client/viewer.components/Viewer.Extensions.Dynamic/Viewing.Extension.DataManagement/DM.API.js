@@ -352,6 +352,7 @@ export default class DataManagementAPI extends ClientAPI {
     if (!useStorage) {
 
       if (version.relationships.derivatives) {
+        
         return version.relationships.derivatives.data.id
       }
     }

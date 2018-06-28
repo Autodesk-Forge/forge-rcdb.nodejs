@@ -110,7 +110,7 @@ module.exports = function () {
 
       const response =
         await derivativesSvc.getManifest(
-        token, urn)
+          token, urn)
 
       res.json(response)
 
@@ -151,8 +151,6 @@ module.exports = function () {
       res.json(response)
 
     } catch (ex) {
-
-      console.log(ex)
 
       res.status(ex.statusCode || 500)
       res.json(ex)

@@ -761,8 +761,10 @@ class ViewerConfigurator extends BaseComponent {
 
           case 'AutodeskProduction':
 
+            const urn = modelInfo.urn
+
             this.viewerDocument =
-              await this.loadDocument(modelInfo.urn)
+              await this.loadDocument(urn)
 
             const query = modelInfo.query || [
               { type: 'geometry', role: '3d' },

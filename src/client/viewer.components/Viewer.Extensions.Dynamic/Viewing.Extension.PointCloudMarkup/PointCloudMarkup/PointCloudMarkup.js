@@ -240,7 +240,6 @@ export default class PointCloudMarkup extends EventsEmitter {
         texture.value = generateTexture(96, radius)
 
         texture.needsUpdate = true
-
       },
       material
     }
@@ -293,7 +292,7 @@ export default class PointCloudMarkup extends EventsEmitter {
 
     this.shader.update(t)
 
-    this.viewer.impl.invalidate (true)
+    this.viewer.impl.invalidate (false, true, false)
   }
 
   /////////////////////////////////////////////////////////
