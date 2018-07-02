@@ -124,7 +124,7 @@ class DualViewerExtension extends MultiModelExtensionBase {
 
       Autodesk.Viewing.endpoint.setEndpointAndApi(
         `${window.location.origin}/${lmvProxy}`,
-        'modelDerivativeV2')
+        'derivativeV2')
 
       this.viewerDocument =
         await Toolkit.loadDocument(model.urn)

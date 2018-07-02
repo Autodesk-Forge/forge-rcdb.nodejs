@@ -141,7 +141,7 @@ class TestView extends React.Component {
 
     Autodesk.Viewing.endpoint.setEndpointAndApi(
       `${window.location.origin}/${lmvProxy}`,
-      'modelDerivativeV2')
+      'derivativeV2')
 
     const urn = 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LWRldi84N2M4LWY1ZWQtMWYzZi5ydnQ'
 
@@ -214,7 +214,7 @@ class TestView extends React.Component {
 
     Autodesk.Viewing.endpoint.setEndpointAndApi(
       `${window.location.origin}/${lmvProxy}`,
-      'modelDerivativeV2')
+      'derivativeV2')
 
     this.assignState({
       urn: 'dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LWRldi82YmVkLWU5NGQtZTY3NS5ydnQ'

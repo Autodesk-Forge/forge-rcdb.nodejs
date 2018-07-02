@@ -198,12 +198,7 @@ img.forge-hero {
 // Reapop
 ///////////////////////////////////////////////////////////
 .notifications {
-  margin: 60px 0 0 -5px;
-  position: absolute;
-  
-  &>div {
-    &>div{
-      position: relative;
-    }
+  & > div > div > div > div {
+    margin-bottom: 8px;
   }
 }

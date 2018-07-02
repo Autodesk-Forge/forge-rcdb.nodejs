@@ -158,7 +158,7 @@
     "react-spinkit": "2.1.2",
     "react-stars": "2.2.4",
     "react-table": "^6.6.0",
-    "reapop": "1.1.3",
+    "reapop": "^1.2.0",
     "redux": "^3.6.0",
     "redux-thunk": "^2.2.0",
     "resolve-url-loader": "^2.2.0",

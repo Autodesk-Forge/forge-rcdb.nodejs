@@ -160,7 +160,6 @@ module.exports = {
     new HtmlWebpackPlugin({
 
       viewer3D: config.forge.viewer.viewer3D,
-      threeJS: config.forge.viewer.threeJS,
       style: config.forge.viewer.style,
 
       template: path.resolve(

@@ -80,7 +80,10 @@ class ViewerConfigurator extends BaseComponent {
 
         const viewerEnv = await this.initialize({
           useConsolidation: true,
-          env: dbModel.env
+          env: dbModel.env,
+          // getAccessToken: function(onGetAccessToken) {
+          //   onGetAccessToken(accessToken, expireTimeSeconds)
+          // }
         })
 
         this.props.setViewerEnv (viewerEnv)
@@ -732,7 +735,7 @@ class ViewerConfigurator extends BaseComponent {
 
         Autodesk.Viewing.endpoint.setEndpointAndApi(
           `${window.location.origin}/${lmvProxy}`,
-          'modelDerivativeV2')
+          'derivativeV2')
 
         switch (this.state.dbModel.env) {
 
