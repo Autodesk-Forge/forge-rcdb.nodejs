@@ -79,8 +79,8 @@ const config = {
     },
 
     viewer: {
-      viewer3D: 'https://developer.api.autodesk.com/derivativeservice/v2/viewers/viewer3D.min.js?v=5.0',
-      style:    'https://developer.api.autodesk.com/derivativeservice/v2/viewers/style.css?v=5.0'
+      viewer3D: 'https://developer.api.autodesk.com/derivativeservice/v2/viewers/viewer3D.min.js?v=6.0',
+      style:    'https://developer.api.autodesk.com/derivativeservice/v2/viewers/style.css?v=6.0'
     }
   },
 
