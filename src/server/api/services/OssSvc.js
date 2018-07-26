@@ -359,6 +359,9 @@ export default class OssSvc extends BaseSvc {
         headers: {
           'Authorization': 'Bearer ' + token.access_token
         },
+        agentOptions: {
+          secureProtocol: 'TLSv1_2_method' // 'TLSv1.2'
+        },
         encoding: null
       }, (err, response, body) => {
 
@@ -454,6 +457,9 @@ function requestAsync(params) {
       method: params.method || 'GET',
       headers: params.headers || {
         'Authorization': 'Bearer ' + params.token
+      },
+      agentOptions: {
+        secureProtocol: 'TLSv1_2_method' // 'TLSv1.2'
       },
       json: params.json,
       body: params.body

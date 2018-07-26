@@ -182,6 +182,9 @@ export default class DerivativeSvc extends BaseSvc {
         headers: {
           'Authorization': 'Bearer ' + token.access_token
         },
+        agentOptions: {
+          secureProtocol: 'TLSv1_2_method' // 'TLSv1.2'
+        },
         encoding: null
       }, function(err, response, body) {
 
@@ -294,6 +297,9 @@ export default class DerivativeSvc extends BaseSvc {
         method: 'GET',
         headers: {
           'Authorization': 'Bearer ' + token.access_token
+        },
+        agentOptions: {
+          secureProtocol: 'TLSv1_2_method' // 'TLSv1.2'
         },
         encoding: null
       }, (err, response, body) => {
@@ -628,6 +634,9 @@ function requestAsync(params) {
       headers: {
         'Authorization':
           'Bearer ' + params.token.access_token
+      },
+      agentOptions: {
+        secureProtocol: 'TLSv1_2_method' // 'TLSv1.2'
       },
       json: params.json,
       body: params.body

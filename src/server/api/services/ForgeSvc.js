@@ -383,6 +383,9 @@ export default class ForgeSvc extends BaseSvc {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         },
+        agentOptions: {
+          secureProtocol: 'TLSv1_2_method' // 'TLSv1.2'
+        },
         json: true,
         form: {
           client_secret: this._config.oauth.clientSecret,
@@ -453,6 +456,9 @@ export default class ForgeSvc extends BaseSvc {
         method: params.method || 'GET',
         headers: params.headers || {
           'Authorization': 'Bearer ' + params.token
+        },
+        agentOptions: {
+          secureProtocol: 'TLSv1_2_method' // 'TLSv1.2'
         },
         json: params.json,
         body: params.body

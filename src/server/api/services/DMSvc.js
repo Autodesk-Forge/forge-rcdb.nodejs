@@ -3,7 +3,6 @@ import ServiceManager from './SvcManager'
 import BaseSvc from './BaseSvc'
 import Forge from 'forge-apis'
 import request from 'request'
-import util from 'util'
 
 export default class DMSvc extends BaseSvc {
 
@@ -981,6 +980,9 @@ function requestAsync(params) {
       method: params.method || 'GET',
       headers: params.headers || {
         'Authorization': 'Bearer ' + params.token
+      },
+      agentOptions: {
+        secureProtocol: 'TLSv1_2_method' // 'TLSv1.2'
       },
       json: params.json,
       body: params.body
