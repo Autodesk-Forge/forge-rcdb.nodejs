@@ -64,8 +64,8 @@ class ScreenShotManagerExtension extends ExtensionBase {
 
     this.react.setState({
 
-      height: this.viewer.container.clientHeight,
-      width: this.viewer.container.clientWidth,
+      screenshotHeight: this.viewer.container.clientHeight,
+      screenshotWidth: this.viewer.container.clientWidth,
       items: []
 
     }).then (() => {
@@ -108,20 +108,20 @@ class ScreenShotManagerExtension extends ExtensionBase {
 
     const state = this.react.getState()
 
-    const height = this.floor (state.height)
+    const screenshotHeight = this.floor (state.screenshotHeight)
 
-    const width = this.floor (state.width)
+    const screenshotWidth = this.floor (state.screenshotWidth)
 
     this.viewer.getScreenShot(
-      width, height, (blob) => {
+      screenshotWidth, screenshotHeight, (blob) => {
 
         const state = this.react.getState()
 
         const screenshot = {
           name:  new Date().toString('d/M/yyyy H:mm:ss'),
           id: this.guid(),
-          height,
-          width,
+          screenshotHeight,
+          screenshotWidth,
           blob
         }
 
@@ -212,8 +212,8 @@ class ScreenShotManagerExtension extends ExtensionBase {
     if (this.viewer.container) {
 
       this.react.setState({
-        height: this.viewer.container.clientHeight,
-        width: this.viewer.container.clientWidth
+        screenshotHeight: this.viewer.container.clientHeight,
+        screenshotWidth: this.viewer.container.clientWidth
       })
     }
   }
@@ -292,18 +292,18 @@ class ScreenShotManagerExtension extends ExtensionBase {
           <Label text={'Width (px):'}/>
 
           <ContentEditable
-            onChange={(e) => this.onInputChanged(e, 'width')}
+            onChange={(e) => this.onInputChanged(e, 'screenshotWidth')}
             onKeyDown={(e) => this.onKeyDownNumeric(e)}
             className="size-input"
-            html={state.width}/>
+            html={`${state.screenshotWidth}`}/>
 
           <Label text={'x Height (px):'}/>
 
           <ContentEditable
-            onChange={(e) => this.onInputChanged(e, 'height')}
+            onChange={(e) => this.onInputChanged(e, 'screenshotHeight')}
             onKeyDown={(e) => this.onKeyDownNumeric(e)}
             className="size-input"
-            html={state.height}/>
+            html={`${state.screenshotHeight}`}/>
 
         </div>
       </div>
@@ -321,7 +321,7 @@ class ScreenShotManagerExtension extends ExtensionBase {
     const items = state.items.map((item) => {
 
       const text =
-        `${item.name} [${item.width} x ${item.height}]`
+        `${item.name} [${item.screenshotWidth} x ${item.screenshotHeight}]`
 
       return (
         <div key={item.id} className="item" onClick={
