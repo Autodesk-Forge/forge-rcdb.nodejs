@@ -275,6 +275,7 @@ class ViewerConfigurator extends BaseComponent {
           renderExtension: extension
         }).then(() => {
 
+          this.onResize()
           resolve ()
         })
 
@@ -306,6 +307,7 @@ class ViewerConfigurator extends BaseComponent {
           paneExtStyle: { display: 'none' }
         })
 
+        this.onResize()
         resolve ()
 
       }, 250)
@@ -965,6 +967,17 @@ class ViewerConfigurator extends BaseComponent {
         this.state.renderExtension.onResize()
       }
     }
+
+    if(this.state.viewerPanels){
+      this.state.viewerPanels.forEach(
+        (viewerPanel)=>{
+          if(viewerPanel.renderable && viewerPanel.renderable.onResize){
+            viewerPanel.renderable.onResize()
+          }
+        }
+      )
+    }
+
   }
 
   /////////////////////////////////////////////////////////
