@@ -37,6 +37,14 @@ To run these samples, you need your own Forge API credentials:
 
 ## Project Setup
 
+   Expose the Client ID and Secret of your Forge App as environment variables:
+   
+   ```bash
+   export FORGE_CLIENT_SECRET=<your app secret>
+   export FORGE_CLIENT_ID=<=your app id> 
+   
+   ```
+
    In **development**, the client is dynamically built by the
    [webpack-dev-middleware](https://github.com/webpack/webpack-dev-middleware), so just run:
 
