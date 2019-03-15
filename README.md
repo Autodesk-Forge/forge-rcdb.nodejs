@@ -48,7 +48,9 @@ To run these samples, you need your own Forge API credentials:
 
 
    In **production**, the client requires a build step, so run:
-
+   
+    * Assign all environment variables as required in `config/production.config.js` *
+    
     * `npm install` *(not required if you already run at previous step)*
 
     * `npm run build-server && npm run build-prod && NODE_ENV=production npm start` *(builds client and run server)*
