@@ -48,12 +48,10 @@ To run these samples, you need your own Forge API credentials:
 
 
    In **production**, the client requires a build step, so run:
-   
-    * Assign all environment variables as required in `config/production.config.js` *
-    
+
     * `npm install` *(not required if you already run at previous step)*
 
-    * `npm run build-server && npm run build-prod && NODE_ENV=production npm start` *(builds client and run server)*
+    * `npm run build-prod && NODE_ENV=production npm start` *(builds client and run server)*
 
     * open [http://localhost:3000](http://localhost:3000) in your favorite browser
 
@@ -102,7 +100,7 @@ If you want to skip that manual process you can use one of our live sample: [htt
 
 Once you have translated at least one model, take note of its URN, that's the base64 encoded objectId. You also need a model which has some "Material" properties to be compatible with forge-rcdb because it is expecting components with that property. You can use Engine.dwf placed in the [resource/models](https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/resources/models) directory of this project.
 
- * 2/ You need valid credentials to a mongoDB Cloud database that holds materials and models records. I suggest [https://mlab.com](https://mlab.com). You can set up an account and run a DB with 500MB storage for free, that's way enough for running multiple samples. Creating the database, with one user, will give you the credentials you need: dbname, dbhost, user, password and dbport.
+ * 2/ You need valid credentials to a MongoDB Cloud database that holds materials and models records. I suggest [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) or [Compose MongoDB](https://elements.heroku.com/addons/mongohq). With Atlas you can set up an account for free, that's way enough for running multiple samples. Creating the database, with one user, will give you the credentials you need: dbname, dbhost, user, password and dbport.
  **Important:** your database name needs to be "forge-rcdb", it is currently hardcoded in the sample, or you need to change that accordingly in the project config.
 
 With those credentials you can use a tool such as [http://3t.io/mongochef](http://3t.io/mongochef) a mongoDB GUI which lets you easily connect remotely to the database from your machine in order to administrate it. With Mongochef you can easily import the two sample collections I placed in the [resources/db directory](https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/resources/db)
@@ -118,6 +116,25 @@ You should be ready to deploy to heroku, providing the same Forge credentials us
 [https://forge-rcdb.autodesk.io](https://forge-rcdb.autodesk.io)
 
  ![forge-rcdb](resources/img/logos/adsk-forge.png)
+
+
+## Tips and Tricks
+
+> What should I do if I get the error `Module build failed: Error: Node Sass does not yet support your current environment: OS X 64-bit with Unsupported runtime (64)` when I tried to build the front end?
+
+Rebuild `node-ass` with the command `npm rebuild node-sass` and build to production again.
+
+> How should I migrate from mLab to MongoDB Atlas?
+
+See [here](https://docs.mongodb.com/guides/cloud/migrate-from-mlab/) for their official guide. Also pull the latest changes from forge-rcdb and follow the instructions to set up your connection strings.
+
+> What connection string should I use for my MongoDB instance?
+
+If you are using MongoDB version earlier than 3.4 (default version as this sample), use the sharded schema: `mongodb://<username>:<password>@cluster0-shard-00-00-u9dtd.mongodb.net:27017,cluster0-shard-00-01-u9dtd.mongodb.net:27017,cluster0-shard-00-02-u9dtd.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true`
+
+Otherwise go with the service schema which is much simpler: `mongodb+srv://<username>:<password>@cluster0-u9dtd.mongodb.net/test?retryWrites=true`
+
+See [here](https://docs.mongodb.com/manual/reference/connection-string/) for details on connection string schema.
 
 ## License
 

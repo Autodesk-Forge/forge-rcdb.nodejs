@@ -83,9 +83,10 @@ const config = {
       style:    'https://developer.api.autodesk.com/derivativeservice/v2/viewers/style.css?v=6.0'
     }
   },
-
+  // Set the "connectionString" and "dbName" and leave other fields empty if you'd like to specify the entire connection string yourself.
   database: {
     type: 'mongo',
+    connectionString: '',
     dbhost: process.env.RCDB_DBHOST,
     dbName: process.env.RCDB_DBNAME,
     user: process.env.RCDB_USER,
@@ -114,5 +115,3 @@ const config = {
 }
 
 module.exports = config
-
-
