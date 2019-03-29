@@ -128,13 +128,17 @@ Rebuild `node-ass` with the command `npm rebuild node-sass` and build to product
 
 See [here](https://docs.mongodb.com/guides/cloud/migrate-from-mlab/) for their official guide. Also pull the latest changes from forge-rcdb and follow the instructions to set up your connection strings.
 
-> What connection string should I use for my MongoDB instance?
+> What connection string should I use for my MongoDB cluster?
 
 If you are using MongoDB version earlier than 3.4 (default version as this sample), use the sharded schema: `mongodb://<username>:<password>@cluster0-shard-00-00-u9dtd.mongodb.net:27017,cluster0-shard-00-01-u9dtd.mongodb.net:27017,cluster0-shard-00-02-u9dtd.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true`
 
 Otherwise go with the service schema which is much simpler: `mongodb+srv://<username>:<password>@cluster0-u9dtd.mongodb.net/test?retryWrites=true`
 
 See [here](https://docs.mongodb.com/manual/reference/connection-string/) for details on connection string schema.
+
+> I have set everything up right but am still unable to connect to MongoDB Atlas?
+
+Be sure to follow [this tutorial](https://docs.atlas.mongodb.com/security-whitelist/) to whitelist your server. Contact Forge Help if the problem persists.
 
 ## License
 
