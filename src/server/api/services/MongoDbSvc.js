@@ -59,7 +59,7 @@ export default class DbSvc extends BaseSvc {
   /////////////////////////////////////////////////////////
   getConnectionURL() {
 
-
+    if (this._config.connectionString) return this._config.connectionString;
     if (this._config.user.length && this._config.pass.length) {
 
       return util.format('mongodb://%s:%s@%s:%d/%s',
