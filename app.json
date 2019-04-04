@@ -19,6 +19,9 @@
     "FORGE_CLIENT_SECRET": {
       "description": "Your Forge Client Secret API Key"
     },
+    "RCDB_CONNECTION_STRING": {
+      "description": "Entire MongoDB connecion string, leave 'RCDB_HOST' and 'RCDB_PORT' empty if this is specified but be sure to specify 'RCDB_DBNAME'"
+    },
     "RCDB_DBHOST": {
       "description": "Database host url"
     },

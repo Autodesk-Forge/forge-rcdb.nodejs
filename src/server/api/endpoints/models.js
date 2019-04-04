@@ -401,8 +401,8 @@ module.exports = function() {
 
       return Object.assign({}, inQuery, {
         $or: [
-          {whiteList: null},
-          {$where: funcDef}
+          {whiteList: null}
+          //{$where: funcDef}
         ]
       })
 
@@ -817,5 +817,3 @@ module.exports = function() {
 
   return router
 }
-
-

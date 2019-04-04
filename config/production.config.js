@@ -86,7 +86,7 @@ const config = {
   // Set the "connectionString" and "dbName" and leave other fields empty if you'd like to specify the entire connection string yourself.
   database: {
     type: 'mongo',
-    connectionString: '',
+    connectionString: process.env.RCDB_CONNECTION_STRING,
     dbhost: process.env.RCDB_DBHOST,
     dbName: process.env.RCDB_DBNAME,
     user: process.env.RCDB_USER,
