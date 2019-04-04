@@ -124,10 +124,6 @@ You should be ready to deploy to heroku, providing the same Forge credentials us
 
 Rebuild `node-ass` with the command `npm rebuild node-sass` and build to production again.
 
-> Starting the application in production hangs at "Cleaning Dir"?
-
-The log output is misleading - actually it's your MongoDB Atlas Cluster taking time to pin up.
-
 > How should I migrate from mLab to MongoDB Atlas?
 
 See [here](https://docs.mongodb.com/guides/cloud/migrate-from-mlab/) for their official guide. Also pull the latest changes from forge-rcdb and follow the instructions to set up your connection strings.
@@ -138,11 +134,11 @@ If you are using MongoDB version earlier than 3.4 (default version as this sampl
 
 Otherwise go with the service schema which is much simpler: `mongodb+srv://<username>:<password>@cluster0-u9dtd.mongodb.net/test?retryWrites=true`
 
+See [here](https://docs.mongodb.com/manual/reference/connection-string/) for details on connection string schema.
+
 > I have set everything up right but am still unable to connect to MongoDB Atlas?
 
 Be sure to follow [this tutorial](https://docs.atlas.mongodb.com/security-whitelist/) to whitelist your server. Contact Forge Help if the problem persists.
-
-See [here](https://docs.mongodb.com/manual/reference/connection-string/) for details on connection string schema.
 
 ## License
 
