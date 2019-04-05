@@ -130,9 +130,9 @@ See [here](https://docs.mongodb.com/guides/cloud/migrate-from-mlab/) for their o
 
 > What connection string should I use for my MongoDB cluster?
 
-If you are using MongoDB version earlier than 3.4 (default version as this sample), use the sharded schema: `mongodb://<username>:<password>@cluster0-shard-00-00-u9dtd.mongodb.net:27017,cluster0-shard-00-01-u9dtd.mongodb.net:27017,cluster0-shard-00-02-u9dtd.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true`
+If you are using MongoDB version earlier than 3.4 (default version as this sample), use the sharded schema: `mongodb://<username>:<password>@cluster0-shard-00-00-u9dtd.mongodb.net:27017,cluster0-shard-00-01-u9dtd.mongodb.net:27017,cluster0-shard-00-02-u9dtd.mongodb.net:27017/<databasename>?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true`
 
-Otherwise go with the service schema which is much simpler: `mongodb+srv://<username>:<password>@cluster0-u9dtd.mongodb.net/test?retryWrites=true`
+Otherwise go with the service schema which is much simpler: `mongodb+srv://<username>:<password>@cluster0-u9dtd.mongodb.net/<databasename>?retryWrites=true`
 
 See [here](https://docs.mongodb.com/manual/reference/connection-string/) for details on connection string schema.
 
