@@ -66,7 +66,8 @@
     "sanitize-html": "1.15.0",
     "socket.io": "2.0.3",
     "superagent": "3.7.0",
-    "util": "^0.10.3"
+    "util": "^0.10.3",
+    "webpurify": "^2.1.0"
   },
   "devDependencies": {
     "@sucrase/webpack-loader": "^1.0.2",

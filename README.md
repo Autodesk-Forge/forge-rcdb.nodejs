@@ -126,3 +126,12 @@ You should be ready to deploy to heroku, providing the same Forge credentials us
 Written by [Philippe Leefsma](http://twitter.com/F3lipek)
 
 Forge Partner Development - [http://forge.autodesk.com](http://forge.autodesk.com)
+
+## Windows 10 64bit node-gyp errors solution:
+
+Run cmd as administrator
+Run npm config edit (You will get notepad editor)
+Change Prefix variable to C:\Users\<User Name>\AppData\Roaming\npm
+
+npm install -g node-gyp
+npm install -g --msvs_version=2013 node-gyp rebuild
