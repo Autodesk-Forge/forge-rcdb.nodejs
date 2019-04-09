@@ -192,6 +192,7 @@ export default class OssSvc extends BaseSvc {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/octet-stream',
+            'Content-Length': file.size,
             'Authorization': 'Bearer ' + token.access_token
           },
           body: data,

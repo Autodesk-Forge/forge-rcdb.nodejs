@@ -20,7 +20,7 @@ import compression from 'compression'
 import express from 'express'
 import mongo from 'mongodb'
 import config from 'c0nfig'
-
+import WebPurify from 'webpurify';
 module.exports = function () {
 
   /////////////////////////////////////////////////////////
@@ -36,6 +36,12 @@ module.exports = function () {
   router.use(compression({
     filter: shouldCompress
   }))
+
+  const wp = new WebPurify({
+    api_key: config.webpurify_API_KEY
+    //, endpoint:   'us'  // Optional, available choices: 'eu', 'ap'. Default: 'us'.
+    //, enterprise: false // Optional, set to true if you are using the enterprise API, allows SSL
+  });
 
   ///////////////////////////////////////////////////////
   //
@@ -128,7 +134,6 @@ module.exports = function () {
     try {
 
       const db = req.params.db
-
       const dbSvc = ServiceManager.getService(
         config.database.dbName)
 
@@ -143,14 +148,19 @@ module.exports = function () {
       }
 
       const material = req.body
+      const badwords = await checkProfanity(material.supplier)
 
-      const query = { name: material.name }
-
-      await dbSvc.upsert(
-        materialsConfig.collection,
-        material, query)
-
-      res.json(material)
+      if (badwords === 0) {
+        const query = { name: material.name }
+        await dbSvc.upsert(
+          materialsConfig.collection,
+          material, query)
+  
+        res.json(material)        
+      } else {
+        res.status(400)
+        res.json('mind your words mate..')
+      }
 
     } catch (ex) {
 
@@ -158,6 +168,11 @@ module.exports = function () {
       res.json(ex)
     }
   })
+
+  //  profanity checker
+  async function checkProfanity(text){
+    return wp.checkCount(text)
+  }
 
   return router;
 }
