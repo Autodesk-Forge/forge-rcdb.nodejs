@@ -9,6 +9,7 @@
   "scripts": {
     "build-server": "babel --presets env,stage-0 --plugins transform-decorators-legacy ./src/server -d ./bin/static",
     "build-prod": "cross-env NODE_ENV=production npm run build",
+    "heroku-postbuild": "npm run build-server && npm run build-prod && NODE_ENV=production npm start",
     "start": "node bin/start.js",
     "build": "node webpack",
     "clean": "rimraf dist",
