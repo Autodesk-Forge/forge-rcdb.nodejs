@@ -134,7 +134,6 @@ module.exports = function () {
     try {
 
       const db = req.params.db
-      console.log(db)
       const dbSvc = ServiceManager.getService(
         config.database.dbName)
 
