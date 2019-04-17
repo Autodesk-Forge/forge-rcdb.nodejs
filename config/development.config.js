@@ -10,7 +10,7 @@ const config = {
 
   env: 'development',
 
-  webpurify_API_KEY: '',
+  webpurify_API_KEY: process.env.WEBPURIFY_API_KEY,
 
   client: {
     viewerTheme: 'light-theme',
@@ -86,9 +86,10 @@ const config = {
       // style:    '/resources/libs/lmv/4.0.1/style.css'
     }
   },
-
+  // Set the "connectionString" and "dbName" and leave other fields empty if you'd like to specify the entire connection string yourself.
   database: {
     type: 'mongo',
+    connectionString: '',
     dbName: 'forge-rcdb',
     user: '',
     pass: '',
@@ -117,5 +118,3 @@ const config = {
 }
 
 module.exports = config
-
-
