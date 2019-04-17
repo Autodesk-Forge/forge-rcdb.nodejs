@@ -10,7 +10,7 @@ const config = {
 
   env: 'production',
 
-  webpurify_API_KEY: '',
+  webpurify_API_KEY: process.env.WEBPURIFY_API_KEY,
 
   client: {
     // this the public host name of your server for the
