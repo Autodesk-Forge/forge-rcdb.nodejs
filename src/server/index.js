@@ -101,7 +101,7 @@ if(process.env.NODE_ENV === 'development') {
     saveUninitialized: true,
 
     store: new MongoStore({
-      url: util.format('mongodb://%s:%s@%s:%d/%s',
+      url: dbConfig.connectionString?dbConfig.connectionString:util.format('mongodb://%s:%s@%s:%d/%s',
         dbConfig.user,
         dbConfig.pass,
         dbConfig.dbhost,
@@ -336,11 +336,3 @@ const runServer = (app) => {
 //
 /////////////////////////////////////////////////////////////////////
 runServer(app)
-
-
-
-
-
-
-
-
