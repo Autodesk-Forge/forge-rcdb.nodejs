@@ -10,6 +10,8 @@ const config = {
 
   env: 'production',
 
+  webpurify_API_KEY: process.env.WEBPURIFY_API_KEY,
+
   client: {
     // this the public host name of your server for the
     // client socket to connect.
@@ -86,7 +88,7 @@ const config = {
   // Set the "connectionString" and "dbName" and leave other fields empty if you'd like to specify the entire connection string yourself.
   database: {
     type: 'mongo',
-    connectionString: process.env.RCDB_CONNECTION_STRING,
+    connectionString: '',
     dbhost: process.env.RCDB_DBHOST,
     dbName: process.env.RCDB_DBNAME,
     user: process.env.RCDB_USER,

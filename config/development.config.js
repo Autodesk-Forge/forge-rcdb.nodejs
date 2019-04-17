@@ -10,6 +10,8 @@ const config = {
 
   env: 'development',
 
+  webpurify_API_KEY: process.env.WEBPURIFY_API_KEY,
+
   client: {
     viewerTheme: 'light-theme',
     storageVersion: 4.0,

@@ -140,6 +140,15 @@ See [here](https://docs.mongodb.com/manual/reference/connection-string/) for det
 
 Be sure to follow [this tutorial](https://docs.atlas.mongodb.com/security-whitelist/) to whitelist your server. Contact Forge Help if the problem persists.
 
+Windows 10 64bit node-gyp errors solution:
+
+Run cmd as administrator
+Run npm config edit (You will get notepad editor)
+Change Prefix variable to C:\Users\<User Name>\AppData\Roaming\npm
+
+npm install -g node-gyp
+npm install -g --msvs_version=2013 node-gyp rebuild
+
 ## License
 
 [MIT License](http://opensource.org/licenses/MIT)
