@@ -1,0 +1,19 @@
+.gradient {
+  user-select: none;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+
+.gradient .axis path, .axis tick, .axis line {
+  fill: none;
+  stroke: none;
+}
+
+.gradient text {
+  cursor: default;
+  user-select: none;
+  font-size: 1.2rem;
+  fill: #AAAAAA;
+  font-weight: 500;
+}

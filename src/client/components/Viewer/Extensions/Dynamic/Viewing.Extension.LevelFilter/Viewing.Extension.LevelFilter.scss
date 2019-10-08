@@ -1,0 +1,109 @@
+.level-filter {
+
+  .title {
+    display: inline-flex;
+    float: left;
+  }
+
+  .title > label {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    white-space: nowrap;
+    font-weight: normal;
+    user-select: none;
+    margin-left: 27px;
+    margin-top: 10px;
+    width: 144px;
+    float: left;
+  }
+
+  .ui-controls {
+    height: calc(100% - 6px);
+    width: calc(100% - 12px);
+    margin: 6px 0 0 6px;
+    text-align: left;
+
+    .levels {
+      overflow: scroll;
+      height: 100%;
+
+      .level {
+        transition-timing-function: ease;
+        transition-property: background;
+        transition-duration: 1.0s;
+        transition-delay: 0.0s;
+
+        border: 1px solid #b7b7b7;
+        background: whitesmoke;
+        margin: 0 0 4px 0;  
+        cursor: pointer;
+        height: 34px;
+        width: 100%;
+
+        &.active {
+          background: rgba(0, 105, 245, 0.10);
+          border: 1px solid #1bb1f4;
+        }
+
+        &:hover {
+          background: rgba(0, 105, 245, 0.10);
+          border: 1px solid #1bb1f4;
+        }
+
+        .color {
+          pointer-events: none;
+          position: relative;
+          border-radius: 50%;
+          height: 28px;
+          margin: 2px;
+          width: 28px;
+          float: left;
+        }
+
+        .label-container {
+          pointer-events: none;
+          margin: 5px 0 0 4px;
+        }
+      }
+    }
+  }
+}
+
+/////////////////////////////////////////////////////////
+// title controls
+//
+/////////////////////////////////////////////////////////
+.filter-controls {
+  margin: auto 0 auto calc(100% - 140px);
+  position: relative;
+  float: left;
+}
+
+.filter-controls > button {
+  border: 1px solid #c6c6c6;
+  background-color: #e1e1e1;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+  outline: none;
+  height: 24px;
+  width: 26px;
+}
+
+.filter-controls > button:hover {
+  border: 1px solid #878787;
+  background-color: #f5f5f5;
+}
+
+.filter-controls > button > label {
+  position: relative;
+  font-size: 20px;
+  color: #f0fcff;
+  top: -8px;
+}
+
+.filter-controls > button > span {
+  pointer-events: none;
+  color: #9b9b9b
+}

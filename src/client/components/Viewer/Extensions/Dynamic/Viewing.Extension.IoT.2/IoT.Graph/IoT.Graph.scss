@@ -1,0 +1,25 @@
+/////////////////////////////////////////////////////////
+// IoT graphs
+//
+/////////////////////////////////////////////////////////
+.graph-container {
+  background-color: rgba(171, 171, 171, 0.32);
+  overflow: auto;
+}
+
+.graph-title {
+  background: #ffffff;
+  height: 30px;
+}
+
+.graph-title label {
+  position: relative;
+  margin-left: 20px;
+  float: left;
+  left: 10px;
+  top: 4px;
+}
+
+.graph {
+  float: left;
+}

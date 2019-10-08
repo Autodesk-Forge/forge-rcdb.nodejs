@@ -1,0 +1,102 @@
+.particle{
+    top: 10px;
+    right: 10px;
+    width: 265px;
+    height: 320px;
+    resize: auto;
+}
+
+.particle .container {
+    width: 100%;
+    padding: 0;
+}
+
+.particle .btn {
+    height: 6px;
+    line-height: 0;
+    vertical-align: top;
+}
+
+.particle .btn-span {
+    margin-right: 0px;
+    line-height: 0.3;
+    top: 1px;
+}
+
+.particle .dg.main {
+    width: 100%
+}
+
+.particle .dg.main.taller-than-window .close-button {
+    border-top: 1px solid #ddd;
+}
+
+.particle .dg.main .close-button {
+    background-color: #ccc;
+    display: none;
+}
+
+.particle .dg.main .close-button:hover {
+    background-color: #ddd;
+}
+
+.particle .dg {
+    color: #555;
+    text-shadow: none !important;
+}
+
+.particle .dg.main::-webkit-scrollbar {
+    background: #fafafa;
+}
+
+.particle .dg.main::-webkit-scrollbar-thumb {
+    background: #bbb;
+}
+
+.particle .dg li:not(.folder) {
+    background: #fafafa;
+    border-bottom: 1px solid #ddd;
+}
+
+.particle .dg li.save-row .button {
+    text-shadow: none !important;
+}
+
+.particle .dg li.title {
+    background: #e8e8e8 url(data:image/gif;base64,R0lGODlhBQAFAJEAAP////Pz8////////yH5BAEAAAIALAAAAAAFAAUAAAIIlI+hKgFxoCgAOw==) 6px 10px no-repeat;
+}
+
+.particle .dg .cr.function:hover,.dg .cr.boolean:hover {
+    background: #fff;
+}
+
+.particle .dg .c input[type=text] {
+    background: #e9e9e9;
+    border: 0;
+    margin-top: 0px;
+    padding: 0px;
+    float: right;
+}
+
+.particle .dg .c input[type=text]:hover {
+    background: #eee;
+}
+
+.particle .dg .c input[type=text]:focus {
+    background: #eee;
+    color: #555;
+}
+
+.particle .dg .c .slider {
+    background: #e9e9e9;
+    height: 28px;
+    margin-top: 0px;
+}
+
+.particle .dg .c .slider:hover {
+    background: #eee;
+}
+
+.particle .dg .c {
+  background: #e9e9e9;
+}

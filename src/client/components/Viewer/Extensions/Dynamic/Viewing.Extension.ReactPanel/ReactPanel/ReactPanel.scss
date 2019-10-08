@@ -1,0 +1,15 @@
+.react-docking-panel {
+  height: 208px;
+  width: 238px;
+  resize: auto;
+  left: 10px;
+  top: 10px;
+
+  .content {
+    height: calc(100% - 35px);
+
+    .react-content {
+      margin: 10px;
+    }
+  }
+}

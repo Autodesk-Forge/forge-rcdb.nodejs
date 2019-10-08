@@ -1,0 +1,13 @@
+.tooltip-marker {
+  pointer-events: none;
+  position: absolute;
+  display: none;
+  height: 50px;
+  width: 50px;
+}
+
+.tooltip-marker svg {
+  pointer-events: none;
+  height: 50px;
+  width: 50px;
+}

@@ -1,0 +1,268 @@
+.pointcloud-markup {
+
+  .title {
+    display: inline-flex;
+    float: left;
+
+    &.markup-controls {
+
+      .switch-container {
+        margin-right: 8px;
+        top: 12px;
+      }
+
+      button {
+        padding: 0 6px 0 0;
+        background: none;
+        outline: none;
+        border: none;
+
+        span {
+          position: relative;
+          font-size: 23px;
+          color: #aeaeae;
+          top: 2px;
+
+          &:hover {
+            color: orange;
+          }
+        }
+      }
+
+      .clear-btn {
+        span {
+          top: 1px;
+        }
+      }
+    }
+  }
+
+  .title > label {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    white-space: nowrap;
+    font-weight: normal;
+    user-select: none;
+    margin-left: 27px;
+    margin-top: 10px;
+    select: none;
+    width: 144px;
+    float: left;
+  }
+
+  .items {
+
+    overflow: scroll;
+    height: 100%;
+
+    .item {
+      transition-timing-function: ease;
+      transition-duration: 1.5s;
+      transition-property: all;
+      transition-delay: 0.0s;
+
+      border: 1px solid #aeaeae;
+      width: calc(100% - 10px);
+      background: #ededed;
+      white-space: nowrap;
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      height: 28px;
+      padding: 2px;
+      margin: 5px;
+
+      .item-icon {
+        margin: 1px 2px 0 4px;
+        height: 20px;
+        width: 20px;
+        float: left;
+        padding: 0;
+
+        div {
+          background-repeat: no-repeat;
+          transform: rotateX(180deg);
+          background-size: contain;
+          border-radius: 50%;
+          height: 100%;
+          width: 100%;
+        }
+      }
+
+      .hover-control {
+        padding: 2px 4px 0 0;
+        display: none;
+      }
+
+      &.active {
+        background: rgba(0, 115, 255, 0.16);
+        border: 1px solid #1bb1f4;
+      }
+
+      &:hover:not(.active) {
+        background: rgba(0, 105, 245, 0.20);
+        border: 1px solid #1bb1f4;
+      }
+
+      &:hover {
+        .hover-control {
+          display: block;
+        }
+
+        .label-container {
+          color: orange;
+        }
+      }
+
+      .tooltip-text {
+        background-color: #ededed !important;
+        border: 1px solid grey;
+        color: grey !important;
+        padding: 4px;
+      }
+
+      .label-container {
+        width: calc(100% - 76px);
+        text-align: left;
+        color: #545454;
+        float: left;
+        left: 4px;
+      }
+
+      .remove {
+        background: none;
+        outline: none;
+        float: right;
+        border: none;
+
+        span {
+          position: relative;
+          margin-right: 4px;
+          font-size: 22px;
+          color: #aeaeae;
+          top: -2px;
+
+          &:hover {
+            color:orange;
+          }
+        }
+      }
+
+      .settings-btn {
+        background: transparent;
+        outline: none;
+        border: none;
+        height: 24px;
+        float: right;
+
+        span {
+          font-size: 20px;
+          color: #aeaeae;
+
+          &:hover {
+            color: orange;
+          }
+        }
+      }
+    }
+  }
+}
+
+
+.pointcloud-markup-item.settings,
+.pointcloud-markup.settings {
+
+  .input-name {
+    border: 1px solid #aeaeae;
+    width: calc(100% - 80px);
+    background: #f7f7f7;
+    position: relative;
+    padding-left: 4px;
+    outline: none;
+    top: -3px;
+  }
+
+  label {
+    width: 80px;
+    float: left;
+  }
+
+  hr {
+    width: calc(100% - 52px);
+    margin: 12px 0 12px 26px;
+    float: left;
+  }
+
+  .rc-slider {
+    float: left;
+  }
+
+  .rc-slider-handle {
+    border: solid 2px orange;
+  }
+
+  .rc-slider-track {
+    background-color: orange;
+  }
+
+  .footer {
+    height: 20px;
+    float: left;
+    width: 100%;
+  }
+}
+
+.pointcloud-tooltip {
+  transition-timing-function: ease;
+  transition-property: opacity;
+  transition-duration: 1.0s;
+  transition-delay: 0.0s;
+
+  position: absolute;
+  font-weight: bold;
+  overflow: hidden;
+  color: orange;
+  display: none;
+  height: 20px;
+  opacity: 0;
+}
+
+.pointcloud-markup-item.settings .switch-container,
+.pointcloud-markup.settings .switch-container,
+.pointcloud-markup .switch-container {
+
+  border: 1px solid #7a7a7a;
+  border-radius: 10px;
+  height: 18px;
+  float: left;
+
+  input[type="checkbox"].switch + div {
+    width: 34px;
+    height: 16px;
+  }
+
+  input[type="checkbox"].switch:checked + div {
+    background-color: orange;
+    width: 34px;
+  }
+
+  input[type="checkbox"].switch:checked + div > div {
+    transform: translate3d(18px, 0, 0);
+  }
+
+  input[type="checkbox"].switch + div > div {
+    height: 16px;
+    width: 16px;
+    margin: 0;
+  }
+}
+
+.color-picker-dlg {
+
+  width:227px !important;
+
+  .content {
+    padding: 0 !important;
+  }
+}

@@ -1,0 +1,19 @@
+
+.dialog.about {
+  left: calc(50% - 170px);
+  top: calc(40% - 100px);
+  height: 234px;
+  width: 340px;
+
+  .clientId {
+    margin: 4px 14px 14px 14px;
+    border: 1px solid #9a9a9a;
+    background: #ececec;
+    border-radius: 4px;
+    user-select: text;
+    cursor: text;
+    padding: 2px;
+  }
+}
+
+

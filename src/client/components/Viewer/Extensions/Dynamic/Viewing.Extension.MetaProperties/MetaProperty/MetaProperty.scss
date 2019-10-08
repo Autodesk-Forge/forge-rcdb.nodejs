@@ -1,0 +1,60 @@
+.add-meta-property {
+
+  width: 100%;
+
+  .row {
+    min-height: 38px;
+    margin: 0;
+  }
+
+  .row > div {
+    width: 100%;
+    float: left;
+  }
+
+  .row > .dropdown {
+    width: 130px;
+  }
+
+  .type-dropdown {
+    width: 124px;
+  }
+
+  .input {
+    border: 1px solid #d2d2d2;
+    white-space: nowrap;
+    overflow-x: scroll;
+    border-radius: 4px;
+    background: white;
+    text-align: left;
+    height: 34px;
+    padding: 5px;
+  }
+
+  .meta-category.input {
+    width: calc(100% - 130px);
+  }
+
+  .meta-name.input {
+    width: 100%;
+  }
+
+  .meta-value.input {
+    width: 100%;
+  }
+
+  .drop-target {
+    border: 1px solid #d2d2d2;
+    padding: 10px 10px 0 0;
+    border-radius: 4px;
+    cursor: pointer;
+
+    p {
+      color: #909090;
+    }
+
+    li {
+      text-align: left;
+    }
+  }
+}

@@ -1,0 +1,73 @@
+.property-bar-chart > .title,
+.property-pie-chart > .title {
+  background-color: white !important;
+  position: relative;
+  margin-top: 10px;
+  height: 25px;
+}
+
+.property-list > .title {
+  background-color: white !important;
+  position: relative;
+  margin-top: 10px;
+  height: 25px;
+}
+
+.property-bar-chart > .title > label ,
+.property-pie-chart > .title > label {
+  position: relative;
+  z-index: 100;
+  float: left;
+  left: 20%;
+}
+
+.property-list > .title > label {
+  position: relative;
+  z-index: 100;
+  float: left;
+  left: 4%;
+}
+
+.property-bar-chart .bar-chart,
+.property-pie-chart .pie-chart {
+  position: relative;
+  height: 200px;
+}
+
+.property-list .table {
+  margin-bottom: 0px;
+}
+
+
+.property-list .react-bs-container-body {
+  height: calc(100% - 40px) !important;
+  overflow: scroll;
+}
+
+.property-list-table {
+  border-bottom: 1px solid #dddddd;
+  border-top: 1px solid #dddddd;
+  margin-bottom: 10px;
+  overflow: hidden;
+  height: 192px;
+}
+
+.property-list-table .react-bs-table-container {
+  height: 100%;
+}
+
+.property-list-table .table-bordered {
+  border: none;
+}
+
+.property-list-table td {
+  text-align: left !important;
+  cursor: pointer;
+  outline: none;
+}
+
+.plant-factory .loader-background {
+  z-index: 1000;
+}
+
+

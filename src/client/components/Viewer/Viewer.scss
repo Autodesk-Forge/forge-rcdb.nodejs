@@ -1,0 +1,30 @@
+.viewer-app-container {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+
+.viewer-container {
+  position: absolute;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+
+  .adsk-viewing-viewer.light-theme .adsk-button:hover {
+    border: 1px solid orange;
+    color: orange;
+  }
+
+  .adsk-viewing-viewer.light-theme .adsk-button.active {
+    color:orange;
+  }
+
+  .docking-panel {
+    text-align: left;
+  
+    .docking-panel-close {
+      top: -6px;
+    }
+  }
+}

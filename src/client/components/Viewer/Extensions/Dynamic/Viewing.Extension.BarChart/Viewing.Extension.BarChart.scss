@@ -1,0 +1,48 @@
+.bar-chart .title {
+  position: relative !important;
+  overflow: visible;
+  float: left;
+}
+
+.bar-chart .title > label{
+  white-space: nowrap;
+  font-weight: normal;
+  user-select: none;
+  margin-left: 27px;
+  select: none;
+  width: 85px;
+}
+
+.bar-chart .title > .dropdown {
+  position: relative;
+  top: -1px;
+}
+
+.bar-chart .title > button {
+  margin-left: 4px;
+  height: 26px;
+}
+
+.bar-chart .title > .dropdown > button {
+  padding: 2px 12px;
+  height: 26px;
+}
+
+.bar-chart .title .dropdown-menu {
+  overflow: scroll;
+}
+
+.bar-chart .loader-background {
+  background: #fdfdfd;
+}
+
+.bar-chart .loader,
+.bar-chart .loader:before,
+.bar-chart .loader:after {
+  top: 35%;
+}
+
+.bar-chart .loader:before,
+.bar-chart .loader:after {
+  margin: -9px auto;
+}

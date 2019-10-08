@@ -1,0 +1,27 @@
+.dual-viewer .title {
+  overflow: visible;
+  float: left;
+}
+
+.dual-viewer .title  > label{
+  white-space: nowrap;
+  font-weight: normal;
+  user-select: none;
+  margin-left: 27px;
+  margin-top: 10px;
+  select: none;
+  width: 80px;
+}
+
+.dual-viewer .title  > .dropdown {
+  position: relative;
+  top: -1px;
+}
+
+.dual-viewer .title  > .dropdown > button {
+  padding: 2px 12px;
+}
+
+.dual-viewer .title  .dropdown-menu {
+  overflow: scroll;
+}

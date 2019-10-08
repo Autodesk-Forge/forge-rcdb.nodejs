@@ -1,0 +1,60 @@
+.ar-vr-toolkit {
+
+  .token {
+    background: #fafafa;
+    position: relative;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    user-select: text;
+    text-align: left;
+    padding: 10px;
+    height: 100%;
+    width: 100%;
+
+    .jsonview {
+      overflow-y: scroll;
+    }
+
+    .btn-copy {
+      position: absolute;
+      background: none;
+      z-index: 1000;
+      outline: none;
+      border: none;
+      right: 42px;
+      top: 8px;
+
+      span {
+        color: #888888;
+        font-size: 24px;
+      }
+
+      &:hover {
+        span {
+          color: orange;
+        }
+      }
+    }
+
+    .btn-refresh {
+      position: absolute;
+      background: none;
+      z-index: 1000;
+      outline: none;
+      border: none;
+      right: 8px;
+      top: 8px;
+
+      span {
+        color: #888888;
+        font-size: 24px;
+      }
+
+      &:hover {
+        span {
+          color: orange;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,50 @@
+
+.tool-panel-modal {
+    overflow: visible;
+    height: 150px;
+    width: 450px;
+    resize: none;
+    z-index: 100;
+}
+
+.tool-panel-modal .dockingPanel,
+.tool-panel-modal .dockingPanel:hover {
+    transition-property: none;
+    opacity: 1.0;
+}
+
+.tool-panel-modal .dockingPanelTitle {
+    cursor: auto;
+}
+
+.tool-panel-modal .container {
+    width: calc(100% - 40px);
+    padding: 0;
+}
+
+.tool-panel-modal-background {
+    background-color: black;
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
+    opacity: 0.5;
+    z-index: 10;
+    left: 0px;
+    top: 0px;
+}
+
+.tool-panel-modal .tool-panel-modal-footer {
+    border-top: solid 1px #a7a7a7;
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+}
+
+.tool-panel-modal .tool-panel-modal-footer .btn {
+    background-color: transparent;
+    color: #FFFFFF;
+}
+
+.tool-panel-modal .tool-panel-modal-footer .btn:hover {
+    color:#E2580B
+}

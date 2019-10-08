@@ -1,0 +1,29 @@
+
+.configurator-view {
+  height: calc(100vh - 65px);
+  background-color: #dadada;
+  position: relative;
+  width: 100vw;
+}
+
+.configurator-toolbar {
+  position: absolute;
+  bottom: 100px;
+  right: 105px;
+}
+
+.configurator-toolbar #toolbar-markup3D .adsk-control-tooltip {
+  transform: translate(-65px, 25px);
+}
+
+.configurator-toolbar #toolbar-transform .adsk-control-tooltip {
+  transform: translate(-140px, 20px);
+}
+
+.configurator-toolbar #toolbar-translate .adsk-control-tooltip {
+  transform: translate(-125px, -20px);
+}
+
+.configurator-toolbar #toolbar-rotate .adsk-control-tooltip {
+  transform: translate(-115px, -15px);
+}

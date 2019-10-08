@@ -1,0 +1,125 @@
+.hfdm .title {
+  display: inline-flex;
+  float: left;
+}
+
+.hfdm .title > label {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  white-space: nowrap;
+  font-weight: normal;
+  user-select: none;
+  margin-left: 27px;
+  margin-top: 10px;
+  select: none;
+  width: 144px;
+  float: left;
+}
+
+.hfdm .content > .controls {
+  margin: 10px 10px 0px 10px;
+  display: inline-block;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.hfdm .content > .controls > .row {
+  width: 100%;
+  margin: 0;
+}
+
+.hfdm .content > .controls .dropdown {
+  width: calc(100% - 88px);
+  margin-bottom: 6px;
+  float: left;
+}
+
+.hfdm .content > .controls .dropdown > button {
+  padding: 0 10px 0 10px;
+  overflow: hidden;
+  height: 26px;
+  width: 100%;
+  margin: 0;
+}
+
+.hfdm .content > .controls button {
+  background: whitesmoke;
+  border-radius: 4px;
+  margin-left: 4px;
+  outline: none;
+  height: 26px;
+  width: 30px;
+  float: left;
+}
+
+.hfdm .content > .controls button > span {
+  position: relative;
+  font-size: 16px;
+  color: #9b9b9b;
+  top: -1px;
+}
+
+.hfdm .content > .controls button:disabled > span {
+  color: #d0d0d0;
+}
+
+.hfdm .content > .controls button:hover:not(:disabled) > span {
+  color: #FF9800;
+}
+
+.hfdm .content > .controls button:disabled > span {
+  color: #d0d0d0;
+}
+
+.hfdm .content > .controls label {
+  margin: 4px 10px 0 10px;
+  font-weight: normal;
+  float: left;
+}
+
+.hfdm .clipboard-btn {
+  border: 1px solid #cdcdcd;
+  background: whitesmoke;
+  border-radius: 4px;
+  margin-left: 8px;
+  color: #8c8c8c;
+}
+
+/////////////////////////////////////////////////////////
+// title controls
+//
+/////////////////////////////////////////////////////////
+.hfdm-controls {
+  margin: auto 0 auto calc(100% - 140px);
+  position: relative;
+  float: left;
+}
+
+.hfdm-controls > button {
+  border: 1px solid #c6c6c6;
+  background-color: #e1e1e1;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+  outline: none;
+  height: 24px;
+  width: 26px;
+}
+
+.hfdm-controls > button:hover {
+  border: 1px solid #878787;
+  background-color: #f5f5f5;
+}
+
+.hfdm-controls > button > label {
+  position: relative;
+  font-size: 20px;
+  color: #f0fcff;
+  top: -8px;
+}
+
+.hfdm-controls > button > span {
+  pointer-events: none;
+  color: #9b9b9b
+}

@@ -1,0 +1,17 @@
+.visual-report .d3.d3-force {
+    width: 567px;
+    height: 415px;
+    border: 1px solid #000000;
+}
+
+.d3-force .node {
+    cursor: pointer;
+    stroke: #3182bd;
+    stroke-width: 1.5px;
+}
+
+.d3-force .link {
+    fill: none;
+    stroke: #9ecae1;
+    stroke-width: 1.5px;
+}

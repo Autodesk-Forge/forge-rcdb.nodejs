@@ -1,0 +1,52 @@
+ .pie-chart{
+  background: #fdfdfd;
+
+  .title {
+    position: relative !important;
+    overflow: visible;
+    float: left;
+  }
+
+  .title > label {
+    white-space: nowrap;
+    font-weight: normal;
+    user-select: none;
+    margin-left: 27px;
+    select: none;
+    width: 85px;
+  }
+
+   .title > .dropdown {
+    position: relative;
+    top: -1px;
+  }
+
+   .title > button {
+    margin-left: 4px;
+    height: 26px;
+  }
+
+   .title > .dropdown > button {
+    padding: 2px 12px;
+    height: 26px;
+  }
+
+   .title .dropdown-menu {
+    overflow: scroll;
+  }
+
+   .loader-background {
+    background: #fdfdfd;
+  }
+
+   .loader,
+   .loader:before,
+   .loader:after {
+    top: 35%;
+  }
+
+   .loader:before,
+   .loader:after {
+    margin: -9px auto;
+  }
+}

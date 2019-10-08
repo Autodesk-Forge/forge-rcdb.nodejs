@@ -1,0 +1,36 @@
+.recent-models {
+  background: #ffffff;
+  overflow: hidden;
+  height: 100%;
+
+  .title {
+    border-bottom: 1px solid #dedede;
+    padding: 4px 0 4px 8px;
+    background: #f9f9f9;
+    text-align: left;
+    font-weight: 800;
+    font-size: 16px;
+    cursor: default;
+    color: #6d6d6d;
+  }
+
+  .title > span {
+    position: relative;
+    margin-right: 6px;
+    font-size: 24px;
+    color: #8e8e8e;
+    top: 2px;
+  }
+
+  .title > label {
+    position: relative;
+    margin: 0;
+    top: -2px;
+  }
+
+  .content {
+    height: calc(100% - 42px);
+    margin: 4px 0 0 4px;
+    overflow: auto;
+  }
+}

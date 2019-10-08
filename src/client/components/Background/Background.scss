@@ -1,0 +1,8 @@
+.background {
+  background: rgba(248, 248, 248, 0.8);
+  transform: rotateZ(180deg);
+  height: calc(100% - 65px);
+  position: absolute;
+  width: 100vw;
+  top: 65px;
+}

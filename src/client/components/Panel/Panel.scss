@@ -1,0 +1,79 @@
+.react-panel {
+  transition-timing-function: ease;
+  transition-duration: 1.5s;
+  transition-property: border, background;
+  transition-delay: 0.0s;
+
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 3px 5px rgba(0,0,0,.2);
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  position: absolute;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.react-panel:hover {
+  background: rgba(255, 255, 255, 1.0);
+  border: 1px solid #afafaf;
+  z-index: 2;
+}
+
+.react-panel .title {
+  margin: 0px 8px 0px 0px;
+  background: #ededed;
+  display: inline-flex;
+  height: 35px;
+  float: left;
+  width: 100%;
+  z-index: 1;
+
+  &.draggable{
+    cursor: move;
+  }
+}
+
+.react-panel .title > label {
+  pointer-events: none;
+  white-space: nowrap;
+  font-weight: normal;
+  user-select: none;
+  margin-left: 27px;
+  font-weight: bold;
+  line-height: 14px;
+  margin-top: 10px;
+  text-align: left;
+  font-size: 14px;
+  select: none;
+  float: left;
+}
+
+.react-panel > .content {
+  height: calc(100% - 35px);
+  margin-top: 35px;
+}
+
+.react-panel .content {
+  background-color: transparent !important;
+}
+
+.react-panel > .resizer {
+  transition-timing-function: ease;
+  transition-duration: 1.5s;
+  transition-property: background;
+  transition-delay: 0.0s;
+
+  transform: rotateZ(45deg);
+  left: calc(100% - 15px);
+  top: calc(100% - 15px);
+  cursor: nwse-resize;
+  position: absolute;
+  background: #e1e1e1;
+  height: 30px;
+  width: 30px;
+  z-index: 2;
+}
+
+.react-panel > .resizer:hover {
+  background: #bbbbbb;
+}

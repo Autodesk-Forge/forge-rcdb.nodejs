@@ -1,0 +1,42 @@
+.menu-base {
+  position: absolute;
+  min-width: 120px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(150, 150, 150, 0.15);
+  border-radius: 5px;
+  z-index: 20;
+}
+
+.menuItem-base {
+  background-color: rgba(255, 255, 255, 0.12);
+  border: 1px solid #868686;
+  position: relative;
+  display: table-row;
+  box-sizing: content-box;
+  padding: 5px 10px 5px 10px;
+  width: calc(100% - 22px);
+  vertical-align: middle;
+  white-space: nowrap;
+  border-radius: 4px;
+  margin-bottom: 1px;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+  display: table;
+}
+
+
+.menuItem-base .menuItemIcon {
+  padding: 8px 0 5px 8px;
+}
+
+.menuItem-base > span {
+  pointer-events: none;
+  position: relative;
+  margin-left: -2px;
+  margin-right: 5px;
+  font-size: 18px;
+  float: left;
+  top: 2px;
+}

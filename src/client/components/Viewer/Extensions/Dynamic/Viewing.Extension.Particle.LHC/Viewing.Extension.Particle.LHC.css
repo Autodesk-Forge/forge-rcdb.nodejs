@@ -1,0 +1,33 @@
+.LHC{
+    top: 60px;
+    left: 10px;
+    width: 202px;
+    height: 172px;
+    resize: none;
+}
+
+.LHC .container {
+    width: 100%;
+    padding: 2px 0 0 0;
+    width: calc(100% - 2px);
+}
+
+.LHC .dockingPanelTitle {
+    cursor: auto;
+}
+
+.LHC .list-group-item {
+    width: calc(100% - 22px);
+    height: 4px;
+    line-height: .3;
+    border-radius: 4px;
+    margin: 1px;
+    padding: 10px 10px 10px 10px;
+    background-color: #e8e8e8;
+    border: 1px solid #000;
+    cursor: pointer;
+}
+
+.LHC .list-group-item:hover {
+    background-color: #5BC0DE;
+}

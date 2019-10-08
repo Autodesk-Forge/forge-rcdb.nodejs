@@ -1,0 +1,98 @@
+
+.switch-container {
+  position: relative;
+}
+
+.switch-container *:hover {
+  cursor: pointer;
+}
+
+.switch-container.disabled *:hover {
+  cursor: not-allowed;
+}
+
+input[type="checkbox"].switch {
+  pointer-events: none;
+  position: absolute;
+  cursor: pointer;
+  opacity: 0;
+}
+
+input[type="checkbox"].switch + div {
+  vertical-align: middle;
+  width: 40px;
+  height: 20px;
+  border-radius: 999px;
+  background-color: #9d9d9d;
+  -webkit-transition-duration: .4s;
+  transition-duration: .4s;
+  -webkit-transition-property: background-color, box-shadow;
+  transition-property: background-color, box-shadow;
+  cursor: pointer;
+}
+
+input[type="checkbox"].switch + div span {
+  position: absolute;
+  font-size: 1.6rem;
+  color: #f5f5f5;
+  margin-top: 12px;
+}
+
+input[type="checkbox"].switch + div span:nth-child( 1 ) {
+  margin-left: 15px;
+}
+
+input[type="checkbox"].switch + div span:nth-child( 2 ) {
+  margin-left: 55px;
+}
+
+input[type="checkbox"].switch:checked + div {
+  width: 60px;
+  background-position: 0 0;
+  background-color: #57BB00;
+}
+
+.switch-container.disabled input[type="checkbox"].switch + div {
+  background-color: rgba(157, 157, 157, 0.50);
+}
+
+input[type="checkbox"].switch + div {
+  width: 60px;
+  height: 26px;
+}
+
+input[type="checkbox"].switch + div > div {
+  float: left;
+  width: 24px;
+  height: 24px;
+  border-radius: inherit;
+  background: #f5f5f5;
+  -webkit-transition-timing-function: cubic-bezier(1,0,0,1);
+  transition-timing-function: cubic-bezier(1,0,0,1);
+  -webkit-transition-duration: 0.4s;
+  transition-duration: 0.4s;
+  -webkit-transition-property: transform, background-color;
+  transition-property: transform, background-color;
+  pointer-events: none;
+  margin-top: 1px;
+  margin-left: 1px;
+}
+
+input[type="checkbox"].switch:checked + div > div {
+  -webkit-transform: translate3d(20px, 0, 0);
+  transform: translate3d(20px, 0, 0);
+  background-color: #f5f5f5;
+}
+
+input[type="checkbox"].bigswitch.switch + div > div {
+  width: 44px;
+  height: 44px;
+  margin-top: 1px;
+}
+
+
+input[type="checkbox"].switch:checked + div > div {
+  -webkit-transform: translate3d(34px, 0, 0);
+  transform: translate3d(34px, 0, 0);
+}
+

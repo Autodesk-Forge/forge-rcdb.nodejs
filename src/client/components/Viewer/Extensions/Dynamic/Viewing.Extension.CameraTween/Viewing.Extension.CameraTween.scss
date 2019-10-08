@@ -1,0 +1,88 @@
+.camera-tween {
+
+  .title {
+    display: inline-flex;
+    float: left;
+  }
+
+  .title > label {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    white-space: nowrap;
+    font-weight: normal;
+    user-select: none;
+    margin-left: 27px;
+    margin-top: 10px;
+    select: none;
+    width: 144px;
+    float: left;
+  }
+
+  .content {
+    height: 100%;
+
+    .tween {
+      border: 1px solid #d5d5d5;
+      margin: 6px 6px 0px 5px;
+      padding: 8px 0 4px 10px;
+
+      .row {
+        width: 100%;
+        margin: 0;
+
+        .label-container {
+          p {
+            margin: 2px 0 10px;
+          }
+        }
+
+        .name {
+          width: 70px;
+        }
+
+        .separator {
+          width: 12px;
+        }
+
+        .input-duration {
+          border: 1px solid #dedede;
+
+          padding: 2px 0 0 4px;
+          background: #eaeaea;
+          border-radius: 4px;
+          margin: 0 0 6px 5px;
+          overflow: hidden;
+          text-align: left;
+          color: #000000;
+          height: 26px;
+          float: left;
+          width: 56px;
+        }
+
+        .dropdown {
+          width: calc(100% - 252px);
+          margin-left: 8px;
+          float: left;
+
+          .dropdown-menu {
+            max-height: 150px;
+            overflow: scroll;
+            width: 100%;
+          }
+
+          .btn {
+            padding: 2px 2px;
+            overflow: hidden;
+            width: 100%;
+          }
+        }
+      }
+    }
+
+    .config-manager-container {
+      height: calc(100% - 152px);
+    }
+  }
+}
+

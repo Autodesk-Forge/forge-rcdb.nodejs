@@ -1,0 +1,64 @@
+.model-derivatives {
+
+  .job {
+    position: relative;
+    text-align: left;
+    padding: 10px;
+    height: 100%;
+    width: 100%;
+
+    .dropdown {
+      width: 100%;
+
+      .btn {
+        padding: 2px 12px;
+        width: 100%;
+
+        .caret {
+          margin-left: 6px;
+          color: #888888;
+        }
+      }
+    }
+
+    .job-btn {
+      border-radius: 5px;
+      margin-top: 4px;
+      outline: none;
+      width: 100%;
+
+      span {
+        margin: 0 4px 0 0;
+        color: #888888;
+      }
+
+      &:hover:not([disabled]) {
+        border: 1px solid #878787;
+        background-color: #f5f5f5;
+
+        span {
+          color: #f58b00
+        }
+      }
+    }
+
+    .payload {
+      height: calc(100% - 54px);
+      position: relative;
+      overflow-x: hidden;
+      overflow-y: scroll;
+      margin-top: 8px;
+
+      .loader-background {
+        background: #fafafa;
+      }
+
+      .react-json-view {
+
+        .object-content {
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+}

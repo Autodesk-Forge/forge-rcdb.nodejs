@@ -1,0 +1,28 @@
+
+.cat .hotspot-item-img {
+  background-repeat: no-repeat;
+  width: calc(100% - 8px);
+  margin: 0px 0px 0px 4px;
+  background-size: 100%;
+  border-radius: 4px;
+  position: relative;
+  display: block;
+  height: 180px;
+}
+
+.cat .hotspot-item label {
+  font-weight: normal;
+  padding: 4px;
+}
+
+.cat .tooltip {
+  border-bottom: 0px;
+}
+
+.cat div.tooltip-inner {
+  border: 1px solid #b4b4b4;
+  background-color: #f8f8f8;
+  padding: 4px 2px;
+  max-width: 280px;
+  color: #000000;
+}

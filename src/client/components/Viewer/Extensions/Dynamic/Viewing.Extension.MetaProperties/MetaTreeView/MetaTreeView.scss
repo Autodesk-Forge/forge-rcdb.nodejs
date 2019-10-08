@@ -1,0 +1,144 @@
+.metatree-container {
+
+  overflow-x: hidden;
+  overflow-y: scroll;
+  text-align: left;
+  height: 100%;
+
+  .treeview-base group {
+    width: 100%;
+  }
+
+  .treeview-base lmvheader {
+    transition-property: background, border;
+    transition-timing-function: ease;
+    transition-duration: 1.5s;
+    transition-delay: 0.0s;
+
+    background: rgba(245, 245, 245, 0.5);
+    margin-bottom: -4px;
+    border: none;
+    height: 30px;
+  }
+
+  .treeview-base lmvheader.root {
+    width: calc(100% - 2px);
+  }
+
+  .treeview-base lmvheader.category {
+    width: calc(100% - 2px);
+  }
+
+  .treeview-base lmvheader.property {
+    width: calc(100% - 25px);
+  }
+
+  .treeview-base lmvheader:hover {
+    background: rgba(0, 105, 245, 0.35);
+  }
+
+  .treeview-base group > lmvheader.root {
+    background-color: #d8d8d8 !important;
+  }
+
+  .treeview-base group > lmvheader.category {
+    background-color: #e6e6e6 !important;
+    padding: 6px;
+  }
+
+  .treeview-base group > lmvheader > icon {
+    height: 20px;
+    float: left;
+  }
+
+  .treeview-base lmvheader.root .treenode-container {
+    width: calc(100% - 22px);
+    overflow: hidden;
+    float: left;
+  }
+
+  .treeview-base lmvheader.category .treenode-container {
+    width: calc(100% - 46px);
+    pointer-events: none;
+    overflow: hidden;
+    float: left;
+  }
+
+  .treenode {
+    float: left;
+  }
+
+  .treeview-base lmvheader.property {
+    padding: 0px;
+  }
+
+  .treeview-base lmvheader.property .treenode {
+    width: 100%;
+  }
+
+  .treeview-base lmvheader.property .treenode .separator {
+    background: white;
+    height: 30px;
+    float: left;
+    width: 1px;
+  }
+
+  .treeview-base lmvheader.property .treenode .meta-value,
+  .treeview-base lmvheader.property .treenode .meta-name {
+    padding: 6px;
+    width: 49%;
+
+    p {
+      pointer-events: none;
+    }
+  }
+
+  .treeview-base lmvheader.property .treenode .meta-link,
+  .treeview-base lmvheader.property .treenode .meta-file {
+    position: relative;
+    overflow: hidden;
+    font-size: 100%;
+    color: #343434;
+    height: 100%;
+    float: left;
+  }
+
+  .treeview-base lmvheader:hover.property .treenode .meta-value.editable {
+    width: calc(50% - 50px);
+  }
+
+  .treeview-base lmvheader.property .treenode span {
+    transition-timing-function: ease;
+    transition-property: color;
+    transition-duration: 1.0s;
+    transition-delay: 0.0s;
+
+    position: relative;
+    margin: 0 8px 0 0;
+    font-size: 20px;
+    color: #fafafa;
+    display: none;
+    top: 4px;
+  }
+
+  .treeview-base lmvheader.property .treenode span.fa-edit {
+    position: relative;
+    top: 6px;
+  }
+
+  .treeview-base lmvheader:hover.property .treenode span {
+    color: rgba(47, 47, 47, 0.60);
+    display: inline;
+  }
+
+  .treeview-base lmvheader:hover.property .treenode span:hover {
+    color: #FF9800;
+  }
+
+  .treenode .switch-container {
+    border: 1px solid #9c9c9c;
+    border-radius: 12px;
+    margin: 0 8px 0 2px;
+    float: left;
+  }
+}

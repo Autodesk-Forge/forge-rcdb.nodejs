@@ -1,0 +1,55 @@
+
+.dialog.service {
+  height: auto !important;
+  left: calc(50% - 140px);
+  top: calc(40% - 100px);
+  width: 280px;
+}
+
+.dialog.service > .controls {
+  border-top: 1px solid #d2d2d2;
+  top: calc(100% - 114px);
+  padding: 6px 6px 0 0;
+  position: relative;
+  height: 40px;
+  width: 100%;
+}
+
+.dialog.service > .controls > button {
+  background: whitesmoke;
+  border-radius: 4px;
+  margin-left: 4px;
+  min-width: 84px;
+  outline: none;
+  float: right;
+  height: 26px;
+}
+
+.dialog.service > .controls > button > span {
+  position: relative;
+  margin: 0 4px 0 0;
+  font-size: 20px;
+  color: #9b9b9b;
+  top: 0px;
+}
+
+.dialog.service > .controls > button:hover:not(:disabled) > span {
+  color: #FF9800;
+}
+
+.dialog.service > .controls > button:disabled > span {
+  color: #d0d0d0;
+}
+
+.dialog.service > .controls > button:disabled > label {
+  pointer-events: none;
+  color: #9b9b9b;
+}
+
+.dialog.service > .controls > button > label {
+  font-weight: normal;
+  position: relative;
+  top: -2px;
+}
+
+

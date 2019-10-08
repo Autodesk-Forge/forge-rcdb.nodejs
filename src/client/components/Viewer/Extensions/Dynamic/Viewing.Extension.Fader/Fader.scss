@@ -1,0 +1,148 @@
+.fader {
+
+  .title {
+    display: inline-flex;
+    float: left;
+  }
+
+  .title > label {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    white-space: nowrap;
+    font-weight: normal;
+    user-select: none;
+    margin-left: 27px;
+    margin-top: 10px;
+    select: none;
+    width: 144px;
+    float: left;
+  }
+
+  .content > .controls {
+    margin: 10px 10px 0px 10px;
+    display: inline-block;
+    white-space: nowrap;
+    height: 54px;
+    width: 100%;
+  }
+
+  .content > .controls > .row {
+    width: 100%;
+    margin: 0;
+  }
+
+  .content > .settings {
+    margin: 10px 0 0 0;
+    overflow: scroll;
+    height: 100%;
+  }
+
+  .content > .settings .row {
+    width: calc(100% - 20px);
+    margin: 5px 0 5px 10px;
+  }
+
+  .content > .settings .control-element {
+    float:left;
+  }
+
+  .rc-slider.control-element {
+    width: calc(100% - 30px);
+    margin: 10px 0 0 6px;
+  }
+
+  .rc-slider-track {
+    background-color: #33bd08;
+  }
+
+  .rc-slider-handle {
+    transition-timing-function: ease;
+    transition-property: border;
+    transition-duration: 1.5s;
+    transition-delay: 0.0s;
+
+    border: solid 2px #33bd08;
+  }
+
+  .rc-slider-handle:hover {
+    border: solid 2px #44eb08;
+  }
+
+  .switch-container {
+    border: 1px solid #9c9c9c;
+    border-radius: 12px;
+    margin: 6px 0 0 0px;
+    float: left;
+  }
+
+  input[type="checkbox"].switch + div {
+    width: 34px;
+    height: 16px;
+  }
+
+  input[type="checkbox"].switch:checked + div {
+    width: 34px;
+  }
+
+  input[type="checkbox"].switch:checked + div > div {
+    transform: translate3d(18px, 0, 0);
+  }
+
+  input[type="checkbox"].switch + div > div {
+    height: 16px;
+    width: 16px;
+    margin: 0;
+  }
+}
+
+.fader-tooltip {
+  transition-timing-function: ease;
+  transition-property: opacity;
+  transition-duration: 1.0s;
+  transition-delay: 0.0s;
+
+  position: absolute;
+  font-weight: bold;
+  color: #44eb08;
+  display: none;
+  opacity: 0;
+}
+
+/////////////////////////////////////////////////////////
+// title controls
+//
+/////////////////////////////////////////////////////////
+.fader-controls {
+  margin: auto 0 auto calc(100% - 130px);
+  position: relative;
+  float: left;
+}
+
+.fader-controls > button {
+  border: 1px solid #c6c6c6;
+  background-color: #e1e1e1;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+  outline: none;
+  height: 24px;
+  width: 26px;
+}
+
+.fader-controls > button:hover {
+  border: 1px solid #878787;
+  background-color: #f5f5f5;
+}
+
+.fader-controls > button > label {
+  position: relative;
+  font-size: 20px;
+  color: #f0fcff;
+  top: -8px;
+}
+
+.fader-controls > button > span {
+  pointer-events: none;
+  color: #9b9b9b
+}

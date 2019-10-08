@@ -1,0 +1,403 @@
+{
+    "_id" : ObjectId("57efaead77c8eb0a560ef465"),
+    "name" : "Car Seat",
+    "env" : "Local",
+    "layout" : {
+        "type" : "flexLayoutRight",
+        "rightFlex" : 0.35
+    },
+    "model" : {
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9zZWF0LmR3Zg",
+        "path": "https://sbhehe.github.io/sb233/carseat/0.svf",
+        "name" : "Car Seat"
+    },
+    "dynamicExtensions" : [
+        {
+            "id" : "Viewing.Extension.ExtensionManager",
+            "options" : {
+                "materialCategories" : [
+                    "Material"
+                ],
+                "properties" : [
+                    "Component Category",
+                    "Date Created",
+                    "Density",
+                    "Description",
+                    "Designer",
+                    "Material",
+                    "Part Number"
+                ],
+                "parentControl" : "modelTools",
+                "extensions" : [
+                    {
+                        "id" : "Viewing.Extension.Database.Table",
+                        "enabled" : true,
+                        "options" : {
+                            "displayIndex" : NumberInt(0),
+                            "apiUrl" : "/api/materials",
+                            "flex" : 0.4
+                        }
+                    },
+                    {
+                        "id" : "Viewing.Extension.Database.CostBreakdown",
+                        "enabled" : true,
+                        "options" : {
+                            "displayIndex" : NumberInt(1)
+                        }
+                    },
+                    {
+                        "id" : "Viewing.Extension.ViewerProperties",
+                        "enabled" : true
+                    },
+                    {
+                        "id" : "Viewing.Extension.VisualReport",
+                        "enabled" : true
+                    },
+                    {
+                        "id" : "Viewing.Extension.Markup3D",
+                        "enabled" : true
+                    },
+                    {
+                        "id" : "Viewing.Extension.Transform",
+                        "enabled" : true
+                    }
+                ]
+            }
+        }
+    ]
+}
+{
+    "_id" : ObjectId("5841e11f540a4d30802763e2"),
+    "name" : "V8",
+    "env" : "Local",
+    "layout" : {
+        "type" : "flexLayoutRight",
+        "rightFlex" : 0.35
+    },
+    "model" : {
+        "urn_" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9WOC5mM2Q=",
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Zm9yZ2UtcmNkYi1nYWxsZXJ5LXRtcC1wcm9kL2YwNDktZTc0Zi1kNWE4LmR3Zng",
+        "path": "https://sbhehe.github.io/sb233/v8/0.svf",
+        "name" : "V8"
+    },
+    "dynamicExtensions" : [
+        {
+            "id" : "Viewing.Extension.ExtensionManager",
+            "options" : {
+                "materialCategories" : [
+                    "Material"
+                ],
+                "properties" : [
+                    "Date Created",
+                    "Density",
+                    "Description",
+                    "Material",
+                    "Part Number"
+                ],
+                "parentControl" : "modelTools",
+                "extensions" : [
+                    {
+                        "id" : "Viewing.Extension.Database.Table",
+                        "enabled" : true,
+                        "options" : {
+                            "displayIndex" : NumberInt(0),
+                            "apiUrl" : "/api/materials",
+                            "flex" : 0.4
+                        }
+                    },
+                    {
+                        "id" : "Viewing.Extension.Database.CostBreakdown",
+                        "enabled" : true,
+                        "options" : {
+                            "displayIndex" : NumberInt(1)
+                        }
+                    },
+                    {
+                        "id" : "Viewing.Extension.ViewerProperties",
+                        "enabled" : true
+                    },
+                    {
+                        "id" : "Viewing.Extension.VisualReport",
+                        "enabled" : true
+                    },
+                    {
+                        "id" : "Viewing.Extension.Markup3D",
+                        "enabled" : true
+                    },
+                    {
+                        "id" : "Viewing.Extension.Transform",
+                        "enabled" : true
+                    }
+                ]
+            }
+        }
+    ]
+}
+{
+    "_id" : ObjectId("57f3739777c879f48ad54a44"),
+    "name" : "Office",
+    "env" : "Local",
+    "layout" : {
+        "type" : "flexLayoutRight",
+        "rightFlex" : 0.35
+    },
+    "model" : {
+      "path": "https://sbhehe.github.io/sb233/office/3D_View/0/0.svf",
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9vZmZpY2UucnZ0",
+        "name" : "Office"
+    },
+    "dynamicExtensions" : [
+        {
+            "id" : "Viewing.Extension.ExtensionManager",
+            "options" : {
+                "materialCategories" : [
+                    "Base/Arms Material",
+                    "Body Material",
+                    "Chiller Material",
+                    "Cushion Material",
+                    "Dishwasher Material",
+                    "Dresser Material",
+                    "Frame Material",
+                    "Glass Material",
+                    "Leg Material",
+                    "Light Box Material",
+                    "Light Casing Material",
+                    "Loading Cover Material",
+                    "Material",
+                    "Material Density",
+                    "Material Structure",
+                    "Mount Material",
+                    "Pendant Material",
+                    "Pillow Material",
+                    "Pipe Material",
+                    "Projecting Connection Material",
+                    "Reflective Material",
+                    "Seat/Back Material",
+                    "Shade Material",
+                    "Shelving Unit Material",
+                    "Shower Stall Material",
+                    "Sink Material",
+                    "Strainer Material",
+                    "Structural Material",
+                    "Switchboard Material",
+                    "Top Material",
+                    "Tread Material",
+                    "Tub Material",
+                    "Valve Material",
+                    "Water Closet Seat Material"
+                ],
+                "properties" : [
+                    "Category",
+                    "Flow",
+                    "Level",
+                    "Material",
+                    "Reference Level",
+                    "System Classification",
+                    "System Name",
+                    "System Type"
+                ],
+                "parentControl" : "modelTools",
+                "extensions" : [
+                    {
+                        "id" : "Viewing.Extension.Database.Table",
+                        "enabled" : true,
+                        "options" : {
+                            "displayIndex" : NumberInt(0),
+                            "apiUrl" : "/api/materials",
+                            "flex" : 0.4
+                        }
+                    },
+                    {
+                        "id" : "Viewing.Extension.Database.CostBreakdown",
+                        "enabled" : true,
+                        "options" : {
+                            "displayIndex" : NumberInt(1)
+                        }
+                    },
+                    {
+                        "id" : "Viewing.Extension.ViewerProperties",
+                        "enabled" : true
+                    },
+                    {
+                        "id" : "Viewing.Extension.VisualReport",
+                        "enabled" : true
+                    },
+                    {
+                        "id" : "Viewing.Extension.Markup3D",
+                        "enabled" : true
+                    },
+                    {
+                        "id" : "Viewing.Extension.Transform",
+                        "enabled" : true
+                    }
+                ]
+            }
+        }
+    ]
+}
+{
+    "_id" : ObjectId("583ec7efebfb320e3cef26a5"),
+    "name" : "210 King",
+    "env" : "Local",
+    "layout" : {
+        "type" : "flexLayoutRight",
+        "rightFlex" : 0.35
+    },
+    "model" : {
+      "path": "https://sbhehe.github.io/sb233/king/3D_View/0/0.svf",
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS8yMTAlMjBLaW5nJTIwLSUyMDIwMTUucnZ0",
+        "name" : "210 King"
+    },
+    "dynamicExtensions" : [
+        {
+            "id" : "Viewing.Extension.ExtensionManager",
+            "options" : {
+                "materialCategories" : [
+                    "Base Material",
+                    "Boiler Material",
+                    "Box Material",
+                    "Diffuser Material",
+                    "Frame Material",
+                    "Glass Pane Material",
+                    "Grille Material",
+                    "Head Material",
+                    "Headrail Material",
+                    "ForgeMaterial",
+                    "Material",
+                    "Monolithic Material",
+                    "NetworkedSensorBaseMaterial",
+                    "NetworkedSensorIndicatorMaterial",
+                    "NetworkedSensorTopMaterial",
+                    "Ramp Material",
+                    "Riser Material",
+                    "Sash Material",
+                    "Seat/Back Material",
+                    "Sill Material",
+                    "Strainer Material",
+                    "Stringer Material",
+                    "Structural Material",
+                    "Tower Material",
+                    "Transformer Material",
+                    "Tread Material",
+                    "Trim Exterior Material",
+                    "Urinal Material",
+                    "Valve Material",
+                    "Water Closet Material"
+                ],
+                "properties" : [
+                    "Category",
+                    "Flow",
+                    "Level",
+                    "Material",
+                    "Reference Level",
+                    "System Classification",
+                    "System Name",
+                    "System Type"
+                ],
+                "parentControl" : "modelTools",
+                "extensions" : [
+                    {
+                        "id" : "Viewing.Extension.Database.Table",
+                        "enabled" : true,
+                        "options" : {
+                            "displayIndex" : NumberInt(0),
+                            "apiUrl" : "/api/materials",
+                            "flex" : 0.4
+                        }
+                    },
+                    {
+                        "id" : "Viewing.Extension.Database.CostBreakdown",
+                        "enabled" : true,
+                        "options" : {
+                            "displayIndex" : NumberInt(1)
+                        }
+                    },
+                    {
+                        "id" : "Viewing.Extension.ViewerProperties",
+                        "enabled" : true
+                    },
+                    {
+                        "id" : "Viewing.Extension.VisualReport",
+                        "enabled" : true
+                    },
+                    {
+                        "id" : "Viewing.Extension.Markup3D",
+                        "enabled" : true
+                    },
+                    {
+                        "id" : "Viewing.Extension.Transform",
+                        "enabled" : true
+                    }
+                ]
+            }
+        }
+    ]
+}
+{
+    "_id" : ObjectId("57efaf0377c8eb0a560ef467"),
+    "name" : "RC Engine",
+    "env" : "Local",
+    "layout" : {
+        "type" : "flexLayoutRight",
+        "rightFlex" : 0.35
+    },
+    "model" : {
+      "path": "https://sbhehe.github.io/sb233/engine/0.svf",
+        "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9lbmdpbmUuZHdm",
+        "name" : "RC Engine"
+    },
+    "dynamicExtensions" : [
+        {
+            "id" : "Viewing.Extension.ExtensionManager",
+            "options" : {
+                "materialCategories" : [
+                    "Material"
+                ],
+                "properties" : [
+                    "Component Category",
+                    "Date Created",
+                    "Density",
+                    "Description",
+                    "Designer",
+                    "Material",
+                    "Part Number"
+                ],
+                "parentControl" : "modelTools",
+                "extensions" : [
+                    {
+                        "id" : "Viewing.Extension.Database.Table",
+                        "enabled" : true,
+                        "options" : {
+                            "displayIndex" : NumberInt(0),
+                            "apiUrl" : "/api/materials",
+                            "flex" : 0.4
+                        }
+                    },
+                    {
+                        "id" : "Viewing.Extension.Database.CostBreakdown",
+                        "enabled" : true,
+                        "options" : {
+                            "displayIndex" : NumberInt(1)
+                        }
+                    },
+                    {
+                        "id" : "Viewing.Extension.ViewerProperties",
+                        "enabled" : true
+                    },
+                    {
+                        "id" : "Viewing.Extension.VisualReport",
+                        "enabled" : true
+                    },
+                    {
+                        "id" : "Viewing.Extension.Markup3D",
+                        "enabled" : true
+                    },
+                    {
+                        "id" : "Viewing.Extension.Transform",
+                        "enabled" : true
+                    }
+                ]
+            }
+        }
+    ]
+}

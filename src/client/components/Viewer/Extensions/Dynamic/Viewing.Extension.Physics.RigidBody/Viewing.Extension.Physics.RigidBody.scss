@@ -1,0 +1,242 @@
+.physics-rigid .title {
+  display: inline-flex;
+  float: left;
+}
+
+.physics-rigid .title > label {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  white-space: nowrap;
+  font-weight: normal;
+  user-select: none;
+  margin-left: 27px;
+  margin-top: 10px;
+  select: none;
+  width: 144px;
+  float: left;
+}
+
+.physics-rigid .content > .controls {
+  margin: 10px 10px 0px 10px;
+  display: inline-block;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.physics-rigid .content > .controls > .row {
+  width: 100%;
+  margin: 0;
+}
+
+.physics-rigid .content > .controls .dropdown {
+  width: calc(100% - 88px);
+  margin-bottom: 6px;
+  float: left;
+}
+
+.physics-rigid .content > .controls .dropdown > button {
+  padding: 0 10px 0 10px;
+  overflow: hidden;
+  height: 26px;
+  width: 100%;
+  margin: 0;
+}
+
+.physics-rigid .content > .controls button {
+  background: whitesmoke;
+  border-radius: 4px;
+  margin-left: 4px;
+  outline: none;
+  height: 26px;
+  width: 30px;
+  float: left;
+}
+
+.physics-rigid .content > .controls button > span {
+  position: relative;
+  font-size: 16px;
+  color: #9b9b9b;
+  top: -1px;
+}
+
+.physics-rigid .content > .controls button:disabled > span {
+  color: #d0d0d0;
+}
+
+.physics-rigid .content > .controls button:hover:not(:disabled) > span {
+  color: #FF9800;
+}
+
+.physics-rigid .content > .controls button:disabled > span {
+  color: #d0d0d0;
+}
+
+.physics-rigid .content > .controls label {
+  margin: 4px 10px 0 10px;
+  font-weight: normal;
+  float: left;
+}
+
+.physics-rigid .control-element:first-child {
+  margin-top: 16px;
+}
+
+.physics-rigid .control-element {
+  width: calc(100% - 46px);
+  margin: 0 0 0 16px;
+  text-align: left;
+  float: left;
+
+  .switch-container {
+    border: 1px solid #cdcdcd;
+    border-radius: 10px;
+    position: relative;
+    margin-right: 6px;
+    float: left;
+    top: 4px;
+  }
+
+  input[type="checkbox"].switch + div {
+    width: 34px;
+    height: 16px;
+  }
+
+  input[type="checkbox"].switch:checked + div {
+    width: 34px;
+  }
+
+  input[type="checkbox"].switch:checked + div > div {
+    transform: translate3d(18px, 0, 0);
+  }
+
+  input[type="checkbox"].switch + div > div {
+    height: 16px;
+    width: 16px;
+    margin: 0;
+  }
+
+  input[type="checkbox"].switch:checked + div {
+    background-color: #FF9800;
+  }
+
+  label:first-child {
+    margin: 0 0 10px 0;
+    color: #000000;
+  }
+
+  .reset {
+    background: whitesmoke;
+    position: relative;
+    border-radius: 4px;
+    margin-left: 20px;
+    height: 26px;
+    float: none;
+    width: 80px;
+    top: 2px;
+  }
+
+  .row {
+    width: 100%;
+    margin: 0;
+  }
+
+  .row > .label-container {
+    margin: 2px 0 0 9px;
+    width: 78px;
+  }
+
+  button {
+    background: whitesmoke;
+    border-radius: 4px;
+    margin-left: 4px;
+    outline: none;
+    height: 26px;
+    width: 30px;
+    float: left;
+  }
+
+  button > span {
+    position: relative;
+    font-size: 16px;
+    color: #9b9b9b;
+    top: -1px;
+  }
+
+  button:hover > span {
+    color: #FF9800;
+  }
+
+  button > label {
+    position: relative;
+    margin: 0 0 0 6px;
+    top: -2px;
+  }
+
+  .rc-slider-handle {
+    border: solid 2px #FF9800;
+  }
+
+  .rc-slider-track {
+    background-color: #FF9800;
+  }
+
+  .input-vel {
+    border: 1px solid #dedede;
+    width: calc(33% - 48px);
+    padding: 2px 0 0 4px;
+    background: #eaeaea;
+    border-radius: 4px;
+    margin: 0 0 6px 5px;
+    overflow: hidden;
+    text-align: left;
+    color: #000000;
+    height: 26px;
+    float: left;
+  }
+}
+
+.physics-rigid hr {
+  border-top: 1px solid #cdcdcd;
+  margin: 20px 10px 16px 45px;
+  width: calc(100% - 120px);
+  float: left;
+}
+
+/////////////////////////////////////////////////////////
+// title controls
+//
+/////////////////////////////////////////////////////////
+.physics-controls {
+  margin: auto 0 auto calc(100% - 140px);
+  position: relative;
+  float: left;
+}
+
+.physics-controls > button {
+  border: 1px solid #c6c6c6;
+  background-color: #e1e1e1;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+  outline: none;
+  height: 24px;
+  width: 26px;
+}
+
+.physics-controls > button:hover {
+  border: 1px solid #878787;
+  background-color: #f5f5f5;
+}
+
+.physics-controls > button > label {
+  position: relative;
+  font-size: 20px;
+  color: #f0fcff;
+  top: -8px;
+}
+
+.physics-controls > button > span {
+  pointer-events: none;
+  color: #9b9b9b
+}

@@ -1,0 +1,263 @@
+.configurator-view .home{
+  background-image: url('/resources/img/routes/configurator.jpg');
+  background-position: center center;
+  background-size: cover;
+  padding: 10px 0;
+  color: white;
+  height: 100%;
+
+  .search {
+    background: rgba(248, 248, 248, 0.4);
+    margin: 0 auto 10px auto;
+    padding: 5px 0 0 30px;
+    position: relative;
+    max-width: 978px;
+    text-align: left;
+    height: 30px;
+    color: white;
+    width: 95%;
+  }
+
+  .search[contenteditable]:empty:not(:focus):before {
+    content: attr(data-placeholder);
+    pointer-events: none;
+    color: #d8d8d8;
+  }
+
+  .container {
+    background: rgba(248, 248, 248, 0.4);
+    height: calc(100% - 46px);
+    margin: 0 auto 0 auto;
+    position: relative;
+    width: 95%;
+  }
+
+  .primary {
+    height: calc(100% - 30px);
+    overflow-x: hidden;
+    overflow-y: scroll;
+    margin-top: 16px;
+  }
+
+  .secondary {
+    margin: 16px 0 0 0;
+    overflow: hidden;
+  }
+
+  @media only screen and (max-width: 876px) {
+
+    .search {
+      max-width: 978px;
+    }
+
+    .container {
+      max-width: 978px;
+    }
+
+    .primary {
+      max-width: 100%;
+      margin-left: 0;
+      float: none;
+      width: auto;
+    }
+
+    .secondary {
+
+    }
+  }
+
+  @media only screen and (min-width: 875px) {
+
+    .search {
+      max-width: 978px;
+    }
+
+    .container {
+      max-width: 978px;
+    }
+
+    .primary {
+      margin: 16px 0px 0 3.0%;
+      padding-right: 40px;
+      width: 75%;
+      float: left;
+    }
+
+    .secondary {
+      float: left;
+      width: 32%;
+    }
+  }
+
+  .items {
+    padding-top: 2px;
+  }
+
+  .item:last-child {
+    padding-bottom: 100px;
+  }
+
+  .item {
+    box-shadow: 20px 20px 33px 0px rgba(0, 0, 0, 0.21);
+    display: inline-block;
+    margin: 0 0 16px 0;
+    min-height: 246px;
+    text-align: left;
+    color: black;
+    width: 100%;
+    padding: 0;
+
+    .content {
+      transition-property: background;
+      transition-timing-function: ease;
+      transition-duration: 0.85s;
+      transition-delay: 0.0s;
+
+      background: rgba(245, 245, 245, 0.8);
+      display: inline-block;
+      min-height: 216px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .content:hover {
+      background: rgba(255, 233, 114, 0.9);
+      border: 2px solid #d9701a;
+      text-decoration: none;
+      margin: -2px 0px;
+
+      .image-container {
+        margin-left: 6px;
+      }
+
+      .description {
+        padding-right: 16px;
+      }
+    }
+
+    @media only screen and (max-width: 549px) {
+
+      .image-container {
+        box-shadow: 15px 15px 33px 0px rgba(0, 0, 0, 0.21);
+        border: 1px solid #cccccc;
+        width: calc(100% - 16px);
+        float: left;
+        margin: 8px;
+      }
+
+      .title {
+        margin: 4px 0 0 22px;
+        font-size: 18px;
+        color: black;
+        width: 100%;
+      }
+
+      .description {
+        padding: 10px 20px 0 25px;
+        color: #545454;
+        float: left;
+        width: 100%;
+      }
+    }
+
+    @media only screen and (min-width: 550px) {
+
+      .image-container {
+        box-shadow: 15px 15px 33px 0px rgba(0, 0, 0, 0.21);
+        border: 1px solid #cccccc;
+        height: 200px;
+        width: 200px;
+        float: left;
+        margin: 8px;
+      }
+
+      .title {
+        margin: 4px 0 0 22px;
+        font-size: 18px;
+        color: black;
+      }
+
+      .description {
+        width: calc(100% - 220px);
+        padding: 10px 20px 0 25px;
+        color: #545454;
+        float: left;
+      }
+    }
+
+
+    .image-container img {
+      object-position: center;
+      height: 100%;
+      width: 100%;
+    }
+
+    .footer {
+      border-top: 1px solid gainsboro;
+      background: #f9f9f9;
+      min-height: 34px;
+      float: left;
+      width: 100%;
+
+      .dropdown {
+        margin-left: 9px;
+        height: 32px;
+        top: 4px;
+
+        .dropdown-toggle.btn {
+          background: #dedede;
+          padding: 1px 12px;
+          min-width: 198px;
+          border-radius: 0;
+        }
+      }
+
+      .open > .dropdown-menu {
+        display: block;
+        min-width: 198px;
+      }
+
+      .stars {
+        margin: 1px 18px 0 0;
+        display: none;
+        float: right;
+
+        .label-container {
+          margin: 5px 4px 0 0;
+          cursor: default;
+        }
+      }
+
+      .git-link {
+        margin: 3px 6px 0 0;
+        cursor: default;
+        float: right;
+
+        .label-container {
+          margin: 3px 6px 0 0;
+
+          p {
+            margin: 0;
+          }
+        }
+
+        a {
+          transition-property: color;
+          transition-timing-function: ease;
+          transition-duration: 0.5s;
+          transition-delay: 0.0s;
+
+          text-decoration: none;
+          cursor: pointer;
+          font-size: 28px;
+          color: #484848;
+
+          &:hover {
+            color: orange;
+          }
+        }
+      }
+    }
+  }
+}
+

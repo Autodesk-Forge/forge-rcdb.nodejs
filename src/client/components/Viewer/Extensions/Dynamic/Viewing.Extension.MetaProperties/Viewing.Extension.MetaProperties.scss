@@ -1,0 +1,203 @@
+.meta-properties .title {
+  display: inline-flex;
+  float: left;
+}
+
+.meta-properties .title > label {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  white-space: nowrap;
+  font-weight: normal;
+  user-select: none;
+  margin-left: 27px;
+  margin-top: 10px;
+  select: none;
+  width: 142px;
+  float: left;
+}
+
+.meta-properties .content {
+  height: 100%;
+}
+
+.meta-properties .content > .controls {
+  position: absolute;
+  width: 100%;
+}
+
+/////////////////////////////////////////////////////////
+// title controls
+//
+/////////////////////////////////////////////////////////
+.meta-properties-controls {
+  margin: auto 0 auto calc(100% - 315px);
+  position: relative;
+  float: left;
+}
+
+.meta-properties-controls > button:first-child {
+  margin: 0 0 0 0;
+}
+
+.meta-properties-controls > button {
+  border: 1px solid #c6c6c6;
+  background-color: #e1e1e1;
+  border-radius: 6px;
+  position: relative;
+  margin: 0 0 0 4px;
+  overflow: hidden;
+  outline: none;
+  height: 24px;
+  width: 26px;
+}
+
+.meta-properties-controls > button:hover {
+  border: 1px solid #878787;
+  background-color: #f5f5f5;
+}
+
+.meta-properties-controls > button > label {
+  position: relative;
+  font-size: 20px;
+  color: #f0fcff;
+  top: -8px;
+}
+
+.meta-properties-controls > button > span {
+  pointer-events: none;
+  color: #9b9b9b
+}
+
+/////////////////////////////////////////////////////////
+// meta property dialog
+//
+/////////////////////////////////////////////////////////
+.meta-property-dlg {
+  left: calc(50% - 170px) !important;
+  width: 340px !important;
+
+  .content {
+    padding: 6px 6px 4px 6px;
+    overflow: visible;
+    height: auto;
+  }
+}
+
+/////////////////////////////////////////////////////////
+// popover
+//
+/////////////////////////////////////////////////////////
+.meta-properties.exports {
+  width: 222px;
+
+  button {
+    border: 1px solid #d8d8d8;
+    background: #f7f7f7;
+    border-radius: 4px;
+    outline: none;
+    margin: 4px 0;
+    width: 100%;
+
+    &:hover {
+      background: #ffffff;
+    }
+
+    span {
+      pointer-events: none;
+      position: relative;
+      font-size: 24px;
+      color: green;
+      left: -8px;
+      top: 4px;
+    }
+
+    label {
+      pointer-events: none;
+      font-weight: normal;
+    }
+  }
+}
+
+/////////////////////////////////////////////////////////
+// meta search
+//
+/////////////////////////////////////////////////////////
+.meta-search {
+
+  .meta-search-controls {
+    width: calc(100% - 19px);
+  }
+
+  .input-search {
+    border-bottom-left-radius: 4px;
+    border-top-left-radius: 4px;
+    border: 1px solid #c6c6c6;
+    width: calc(100% - 50px);
+    padding: 1px 0 0 4px;
+    white-space: nowrap;
+    background: white;
+    margin: 8px 0 0 0;
+    overflow: hidden;
+    height: 24px;
+    float: left;
+  }
+
+  button {
+    border-bottom-right-radius: 4px;
+    border-top-right-radius: 4px;
+    border: 1px solid #cccccc;
+    background: #e1e1e1;
+    margin: 8px 0 0 0;
+    color: #9b9b9b;
+    outline: none;
+    height: 24px;
+
+    &:hover {
+      background: #f5f5f5;
+    }
+
+    span {
+      position: relative;
+      top: -1px;
+    }
+  }
+
+  .table {
+    margin-bottom: 0px;
+    border: none;
+  }
+
+  .table-bordered > thead > tr > th,
+  .table-bordered > thead > tr > td {
+    border-bottom: none;
+  }
+
+  .table > thead > tr > th {
+    cursor: default;
+  }
+
+  .table > thead > tr > th,
+  .table > tbody > tr > th,
+  .table > tfoot > tr > th,
+  .table > thead > tr > td,
+  .table > tbody > tr > td,
+  .table > tfoot > tr > td {
+    outline: none;
+    padding: 4px;
+  }
+
+  .table > tbody > tr > td {
+    cursor: pointer;
+  }
+
+  .react-bs-table-container,
+  .react-bs-table {
+    height: 100%;
+  }
+
+  .react-bs-container-body {
+    height: calc(100% - 28px);
+    overflow: scroll;
+  }
+}

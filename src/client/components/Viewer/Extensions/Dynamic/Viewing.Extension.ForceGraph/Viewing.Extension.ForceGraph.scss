@@ -1,0 +1,48 @@
+.force-graph .title {
+  position: relative !important;
+  overflow: visible;
+  float: left;
+}
+
+.force-graph .title > label{
+  white-space: nowrap;
+  font-weight: normal;
+  user-select: none;
+  margin-left: 27px;
+  select: none;
+  width: 85px;
+}
+
+.force-graph .title > .dropdown {
+  position: relative;
+  top: -1px;
+}
+
+.force-graph .title > button {
+  margin-left: 4px;
+  height: 26px;
+}
+
+.force-graph .title > .dropdown > button {
+  padding: 2px 12px;
+  height: 26px;
+}
+
+.force-graph .title .dropdown-menu {
+  overflow: scroll;
+}
+
+.force-graph .loader-background {
+  background: #fdfdfd;
+}
+
+.force-graph .loader,
+.force-graph .loader:before,
+.force-graph .loader:after {
+  top: 35%;
+}
+
+.force-graph .loader:before,
+.force-graph .loader:after {
+  margin: -9px auto;
+}

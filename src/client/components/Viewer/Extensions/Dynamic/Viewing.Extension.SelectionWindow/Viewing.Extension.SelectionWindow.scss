@@ -1,0 +1,143 @@
+.selection-window {
+
+  .title {
+    display: inline-flex;
+    float: left;
+  }
+
+  .title > label {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    white-space: nowrap;
+    font-weight: normal;
+    user-select: none;
+    margin-left: 27px;
+    margin-top: 10px;
+    select: none;
+    width: 144px;
+    float: left;
+  }
+
+  .content {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 100%;
+
+    .row {
+      padding: 10px;
+      width: 100%;
+      margin: 0;
+
+      .label-container {
+        margin: 4px 0 0 20px;
+      }
+    }
+
+    button.active {
+      border: 2px solid #FF9800;
+    }
+
+    button.active > span {
+      color: #FF9800;
+    }
+
+    button > span {
+      position: relative;
+      font-size: 16px;
+      color: #9b9b9b;
+    }
+
+    button:disabled > span {
+      color: #d0d0d0;
+    }
+
+    button:hover:not(:disabled) > span {
+      color: #FF9800;
+    }
+
+    button:disabled > span {
+      color: #d0d0d0;
+    }
+
+    .select-btn {
+      background: whitesmoke;
+      border-radius: 4px;
+      outline: none;
+      float: left;
+
+      span {
+        margin-right: 6px;
+        top: 1px;
+      }
+    }
+
+    .switch-container {
+      border: 1px solid #9c9c9c;
+      border-radius: 12px;
+      margin: 5px 0 0 6px;
+      float: left;
+    }
+
+    input[type="checkbox"].switch + div {
+      width: 34px;
+      height: 16px;
+    }
+
+    input[type="checkbox"].switch:checked + div {
+      width: 34px;
+    }
+
+    input[type="checkbox"].switch:checked + div > div {
+      transform: translate3d(18px, 0, 0);
+    }
+
+    input[type="checkbox"].switch + div > div {
+      height: 16px;
+      width: 16px;
+      margin: 0;
+    }
+
+    .selection-tree-container {
+      height: calc(100% - 55px)
+    }
+  }
+}
+
+/////////////////////////////////////////////////////////
+// title controls
+//
+/////////////////////////////////////////////////////////
+.selection-window-controls {
+  margin: auto 0 auto calc(100% - 152px);
+  position: relative;
+  float: left;
+}
+
+.selection-window-controls > button {
+  border: 1px solid #c6c6c6;
+  background-color: #e1e1e1;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+  outline: none;
+  height: 24px;
+  width: 26px;
+}
+
+.selection-window-controls > button:hover {
+  border: 1px solid #878787;
+  background-color: #f5f5f5;
+}
+
+.selection-window-controls > button > label {
+  position: relative;
+  font-size: 20px;
+  color: #f0fcff;
+  top: -8px;
+}
+
+.selection-window-controls > button > span {
+  pointer-events: none;
+  color: #9b9b9b
+}

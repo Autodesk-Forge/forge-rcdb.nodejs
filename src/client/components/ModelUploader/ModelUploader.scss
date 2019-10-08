@@ -1,0 +1,81 @@
+
+.model-uploader {
+  overflow: hidden;
+  height: 100%;
+
+  .title {
+    border-bottom: 1px solid #dedede;
+    padding: 4px 0 4px 8px;
+    background: #f9f9f9;
+    text-align: left;
+    font-weight: 800;
+    font-size: 16px;
+    cursor: default;
+    color: #6d6d6d;
+  }
+
+  .title > span {
+    position: relative;
+    margin-right: 6px;
+    font-size: 24px;
+    color: #8e8e8e;
+    top: 2px;
+  }
+
+  .title > label {
+    margin: 0;
+  }
+
+  .login {
+    height: calc(100% - 36px);
+    padding-top: 10px;
+    background: white;
+    cursor: default;
+
+    u {
+      cursor: pointer;
+    }
+  }
+
+  .limit {
+    cursor: not-allowed;
+    padding-top: 3px;
+    color: #e44747;
+
+    hr {
+      margin: -6px 40px 3px 40px;
+    }
+  }
+
+  .content {
+    transition-property: all;
+    transition-timing-function: ease;
+    transition-duration: 0.5s;
+    transition-delay: 0.0s;
+
+    border: 2px solid #ffffff;
+    height: calc(100% - 36px);
+    padding: 8px 10px 0 0;
+    background: white;
+    cursor: pointer;
+  }
+
+  .content:hover {
+    border-color: #1bb1f4;
+  }
+
+  hr {
+    margin: 0 40px 10px 40px;
+  }
+}
+
+.composite-dlg {
+
+  .root-filename {
+    border: 1px solid #d2d2d2;
+    background: #fdfdfd;
+    border-radius: 3px;
+    padding-left: 6px;
+    text-align: left;
+  }
+}

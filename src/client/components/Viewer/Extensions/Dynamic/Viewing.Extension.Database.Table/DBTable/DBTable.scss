@@ -1,0 +1,265 @@
+.footable {
+  border-collapse: separate;
+  border-radius: 6px;
+  border-spacing: 0;
+  overflow: hidden;
+  font-size: 13px;
+  display: block;
+  border: none;
+  height: 100%;
+  width: 100%;
+  color: #444;
+}
+
+.footable > thead {
+  display: block;
+  width: 100%;
+}
+
+.footable > tbody > tr > td:first-child {
+  margin-left: 0;
+  cursor: pointer;
+}
+
+.breakpoint > tbody > tr > td:first-child:not(.footable-cell-detail) {
+  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRyoQAAAaJJREFUSEvllUFuglAQhl1115WrtzJGAUVQoIrgEy3V2gWr3mHuoqXtXdqkp2oXvULnx0KKoYlNZleTL0NgmH9m3oy0Wv/i1zf6bdM0M2tgVRimkYkVH85DtdALWq1XtL5eFzaKIxIT0Eut0jSl3d2uAiJiApy9Qubb221FskrkBOJFrJDxZrup4KrkBObRXC2TJaU3aQWLygmEYai01sUBl/z5kDudTrvb7aomJt7EQcboO1oFy1URj26jP2JwvMvaEGCuh/aQbNsuKK9hPd8jCKBNOtEFqMB13cr3p/9gOCDDMIKagOd5GbJqAsEgUKBjwk7gGveb/GfhjDjeiYDvZXhBAl5MVF0XGE/GGR5IMJ1NiePVBRzXyfBAguAqII5XF/j4fI+YrInXt5d7HDReLOEe02/+3/fNs/9K7JGt3LFLfuCT7zNsOUO5ReOxUwjI+1DBonICpmUqzDmqKOFvg5wAL6HC8ozcETmOU1jLEhTgL5pCxmhLCVclV0Gv31MIiDaVsKicwD7fq4fHA+VP+ZHnnA75Xk6A5/qCUaecM+dfpb4QKE1wJiAAAAAASUVORK5CYII=') no-repeat 5px center;
+  background-size: 18px 18px;
+  padding-left: 40px;
+}
+
+.breakpoint > tbody > tr.footable-detail-show > td:first-child:not(.footable-cell-detail) {
+  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABp0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuMTAw9HKhAAAAmElEQVRIS2NgGAWjITAaAvQLAXl5eWFFRUVJamGgebworldVU/XW1NJM0dLSAmMYG0STytbQ1EhRVVU1QrHAwMDA29zCPIUa2NTMNAVoHpoFhgbeFpYWKdTAZuZmKQaGaBbo6et5gySogU1MTVKA5qH6QEdXxxskQQ1sZGyUAjQP1YLX719ZALE3FbEa/fLAqE2jITC4QwAAaXKwpLW9uNwAAAAASUVORK5CYII=') no-repeat 5px center;
+  background-size: 18px 18px;
+}
+
+.footable.breakpoint > tbody > tr.footable-row-detail {
+  background: #eee;
+  color: #000;
+}
+
+.footable > thead > tr {
+  transition-property: background;
+  transition-timing-function: ease;
+  transition-duration: 0.5s;
+  transition-delay: 0.0s;
+
+  background: rgb(255,255,255);
+}
+
+.footable > tbody > tr:hover {
+  background: #f8f8f8;
+  color: #000;
+}
+
+.footable.breakpoint > tbody > tr:hover:not(.footable-row-detail) {
+  cursor: pointer;
+}
+
+.footable > thead > tr > th {
+  text-align: left;
+  padding: 10px;
+  border: none;
+  border-bottom: 1px solid rgb(180, 180, 180);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.footable > tbody > tr {
+  border-bottom: 1px solid rgb(215, 215, 215);
+}
+
+.footable > tbody > tr > td {
+  text-align: left;
+  padding: 10px;
+  border: none;
+  overflow: hidden;
+}
+
+.footable > tbody > tr > td:last-child {
+  overflow: visible;
+}
+
+.footable > tbody > tr > td label {
+  display: inline-block;
+  max-width: 100%;
+  margin-bottom: 0;
+  font-weight: normal;
+}
+
+.footable > thead > tr > th:first-child label {
+  margin-left: 18px;
+}
+
+.footable > tbody > tr > td:first-child label {
+  margin-left: 18px;
+  cursor: pointer;
+}
+
+.footable > tbody > tr > td.footable-cell-detail {
+  border-left: none;
+}
+
+.footable > thead > tr > th, .footable > thead > tr > td {
+  -webkit-box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
+  -moz-box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
+  box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
+  text-shadow: 0 1px 0 rgba(255,255,255,.5);
+  border-top: none;
+  cursor: default;
+}
+
+.footable > thead > tr:first-child > th:first-child, .footable > thead > tr:first-child > td:first-child {
+  border-radius: 0 0 0 0;
+}
+
+.footable > thead > tr:first-child > th.footable-last-column, .footable > thead > tr:first-child > td.footable-last-column {
+  -moz-border-radius: 0 0 0 0;
+  -webkit-border-radius: 0 0 0 0;
+  border-radius: 0 0 0 0;
+}
+
+.footable > thead > tr:first-child > th:first-child.footable-last-column, .footable > thead > tr:first-child > td:first-child.footable-last-column {
+  -moz-border-radius: 6px 6px 0 0;
+  -webkit-border-radius: 6px 6px 0 0;
+  border-radius: 6px 6px 0 0;
+}
+
+.footable > tbody > tr:last-child > td:first-child {
+  -moz-border-radius: 0 0 0 6px;
+  -webkit-border-radius: 0 0 0 6px;
+  border-radius: 0 0 0 6px;
+}
+
+.footable > tbody > tr:last-child > td.footable-last-column {
+  -moz-border-radius: 0 0 6px 0;
+  -webkit-border-radius: 0 0 6px 0;
+  border-radius: 0 0 6px 0;
+}
+
+.footable > tbody > tr:last-child > td:first-child.footable-last-column {
+  -moz-border-radius: 0 0 6px 6px;
+  -webkit-border-radius: 0 0 6px 6px;
+  border-radius: 0 0 6px 6px;
+}
+
+.footable > thead > tr > th:first-child, .footable > thead > tr > td:first-child,
+.footable > tbody > tr > td:first-child {
+  border-left: none;
+}
+
+.footable > tbody img {
+  vertical-align:middle;
+}
+
+.footable > tfoot > tr > th, .footable > tfoot > tr > td {
+//  background-color: #dce9f9;
+//  background-image: -webkit-gradient(linear, left top, left bottom, from(#ebf3fc), to(#dce9f9));
+//  background-image: -webkit-linear-gradient(top, #ebf3fc, #dce9f9);
+//  background-image: -moz-linear-gradient(top, #ebf3fc, #dce9f9);
+//  background-image: -ms-linear-gradient(top, #ebf3fc, #dce9f9);
+//  background-image: -o-linear-gradient(top, #ebf3fc, #dce9f9);
+//  background-image: linear-gradient(to bottom, #ebf3fc, #dce9f9);
+  box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
+  border-top: 1px solid #ccc;
+  text-shadow: 0 1px 0 rgba(255,255,255,.5);
+  padding: 10px;
+}
+
+.footable input[type="text"]{
+  background-color:transparent;
+  border-style:none;
+}
+
+.footable input[type="text"]:focus{
+  border-style:inset;
+  border-color: rgba(82, 168, 236, 0.8);
+  outline: 0;
+  outline: thin dotted \9;
+  //box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+}
+
+.footable input[readonly]:focus{
+  background-color:transparent;
+  border-color:black;
+  border-width:thin;
+  box-shadow: none;
+}
+
+.fooId{
+  /* used for identifying each field as a key field in the th tag */
+}
+
+.fooEditable{
+  /* used for identifying each field as an editable field in the th tag */
+}
+
+.fooNewRecord{
+  /* used for identifying the new record layout in the tr tag */
+}
+
+.db-table {
+  user-select: none;
+  height: calc(100%);
+  width: 100%;
+}
+
+.db-table .db-column {
+  width: 20%;
+}
+
+.db-table .select-container {
+
+}
+
+.scroll tr {
+  color: #5a5a5a;
+  display: flex;
+}
+
+.scroll td {
+  padding: 3px;
+  flex: 1 auto;
+  border: 1px solid #aaa;
+  width: 1px;
+  word-wrap: break;
+  color: rgb(114, 114, 114);
+}
+
+.scroll thead tr:after {
+  overflow-y: scroll;
+  visibility: hidden;
+  content: '';
+  height: 0;
+}
+
+.scroll thead th {
+  border: 1px solid #000;
+  display: block;
+  flex: 1 auto;
+}
+
+.scroll tbody {
+  height: calc(100% + 28px);
+  overflow: scroll;
+  display: block;
+  width: 100%;
+}
+
+.db-table .select-container {
+  float: left;
+}
+
+.db-table .select-name {
+  margin-right: 14px;
+  margin-top: 8px;
+  float: left;
+}
+
+.db-table .row-detail:nth-child(2) {
+ margin-top: 8px;
+}
+
+.db-table .row-detail .select-container {
+  margin-left: 14px;
+  margin-top: -3px;
+}

@@ -1,0 +1,22 @@
+.viewer-app-container {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+
+.viewer-container {
+  position: absolute;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+
+.viewer-panels-container {
+  position: absolute;
+  overflow: visible;
+  height: 0;
+  width: 0;
+  left: 0;
+  top: 0;
+}

@@ -1,0 +1,27 @@
+.visual-report .d3.d3-bar {
+    overflow-x: auto;
+}
+
+.bar-item:hover {
+    fill: brown;
+}
+
+.axis {
+    font: 10px sans-serif;
+}
+
+.axis path {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.x.axis path {
+    display: none;
+}

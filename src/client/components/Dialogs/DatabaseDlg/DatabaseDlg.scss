@@ -1,0 +1,90 @@
+@media screen and (min-width: 260px) {
+
+  .dialog.database {
+    left: calc(50% - 125px);
+    top: calc(40% - 100px);
+    height: 174px;
+    width: 250px;
+  }
+
+  .database .responsive-grid a {
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 4px;
+    margin-right: 4px;
+    margin-left: 4px;
+    color: #606060;
+    width: 100px;
+  }
+
+  .database .responsive-grid img {
+    transition: transform .2s ease-in-out;
+    background: #ccc;
+    max-width: 100%;
+    display: block;
+    height: auto;
+    border: none;
+    width: 90px;
+    height: 82px;
+    margin: 4px;
+  }
+}
+
+@media screen and (max-width: 259px) {
+
+  .dialog.database {
+    left: calc(50% - 175px);
+    top: calc(40% - 100px);
+    height: 188px;
+    width: 200px;
+  }
+
+  .database .responsive-grid a {
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 4px;
+    margin-right: 4px;
+    margin-left: 4px;
+    color: #606060;
+    width: 100px;
+  }
+
+  .database .responsive-grid img {
+    transition: transform .2s ease-in-out;
+    background: #ccc;
+    max-width: 100%;
+    display: block;
+    height: auto;
+    border: none;
+    width: 90px;
+    height: 82px;
+    margin: 4px;
+  }
+}
+
+.database .responsive-grid {
+  height: calc(100% - 40px);
+  justify-content: center;
+  flex-wrap: wrap;
+  display: flex;
+}
+
+.database .responsive-grid a:nth-of-type(2n) {
+  margin-right: 0;
+}
+
+.database .responsive-grid a:hover img {
+  transform: scale(1.10);
+}
+
+.database .responsive-grid figure {
+  background-color: #e0e0e0;
+  border: 1px solid #d2d2d2;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 0;
+}
+
+.database .responsive-grid figcaption {
+  margin: 4px;
+}

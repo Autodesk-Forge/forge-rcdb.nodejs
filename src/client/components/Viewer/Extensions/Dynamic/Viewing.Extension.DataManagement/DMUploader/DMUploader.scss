@@ -1,0 +1,55 @@
+
+.dm-uploader {
+  overflow: hidden;
+  height: 100%;
+
+  .title > span {
+    position: relative;
+    margin-right: 6px;
+    font-size: 24px;
+    color: #8e8e8e;
+    top: 2px;
+  }
+
+  .content {
+    transition-property: all;
+    transition-timing-function: ease;
+    transition-duration: 0.5s;
+    transition-delay: 0.0s;
+
+    border: 2px solid #d2d2d2;
+    padding: 8px 10px 0 0;
+    background: white;
+    cursor: pointer;
+    height: 90px;
+
+    p {
+      padding: 10px;
+
+      span {
+        left: calc(50% - 40px);
+        position: absolute;
+        font-size: 81px;
+        color: #9b9b9b;
+        opacity: 0.2;
+        z-index: 0;
+        top: 8px;
+      }
+    }
+  }
+
+  .content:hover {
+    border-color: #1bb1f4;
+  }
+}
+
+.composite-dlg {
+
+  .root-filename {
+    border: 1px solid #d2d2d2;
+    background: #fdfdfd;
+    border-radius: 3px;
+    padding-left: 6px;
+    text-align: left;
+  }
+}

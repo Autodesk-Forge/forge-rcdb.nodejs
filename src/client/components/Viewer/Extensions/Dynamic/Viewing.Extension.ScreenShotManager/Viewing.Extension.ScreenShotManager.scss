@@ -1,0 +1,183 @@
+.screenshot-manager .title {
+  display: inline-flex;
+  float: left;
+}
+
+.screenshot-manager .title > label {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  white-space: nowrap;
+  font-weight: normal;
+  user-select: none;
+  margin-left: 27px;
+  margin-top: 10px;
+  select: none;
+  width: 139px;
+  float: left;
+}
+
+.screenshot-manager .content > .controls {
+  margin: 10px 10px 0px 10px;
+  width: calc(100% - 20px);
+  white-space: nowrap;
+  display: flex;
+  height: 32px;
+}
+
+.screenshot-manager .content > .controls > .row {
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+.screenshot-manager .content > .controls button {
+  background: whitesmoke;
+  border-radius: 4px;
+  outline: none;
+  height: 26px;
+  width: 38px;
+  float: left;
+ }
+
+.screenshot-manager .content > .controls button > span {
+  position: relative;
+  font-size: 20px;
+  color: #9b9b9b;
+}
+
+.screenshot-manager .content > .controls button:hover > span {
+  color: #FF9800;
+}
+
+.screenshot-manager .content > .controls .label-container {
+  margin: 4px 10px 0 10px;
+  font-weight: normal;
+  float: left;
+}
+
+.screenshot-manager .content > .controls .size-input {
+  border: 1px solid #aeaeae;
+  width: calc(50% - 122px);
+  padding: 3px 0 0 10px;
+  white-space: nowrap;
+  border-radius: 4px;
+  text-align: left;
+  overflow: hidden;
+  height: 26px;
+  float: left;
+}
+
+.screenshot-manager .items {
+  height: calc(100% - 56px);
+  overflow: scroll;
+  margin: 4px;
+}
+
+.screenshot-manager .items > .item {
+  transition-timing-function: ease;
+  transition-duration: 1.5s;
+  transition-property: all;
+  transition-delay: 0.0s;
+
+  border: 1px solid #aeaeae;
+  width: calc(100% - 10px);
+  background: #ededed;
+  white-space: nowrap;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  height: 62px;
+  padding: 2px;
+  margin: 5px;
+}
+
+.screenshot-manager .items > .item:hover {
+  background: rgba(0, 105, 245, 0.35);
+  border: 1px solid #1bb1f4;
+}
+
+.screenshot-manager .items > .item > .preview {
+  pointer-events: none;
+  position: relative;
+  border-radius: 4px;
+  height: 54px;
+  width: 54px;
+  float: left;
+  left: 1px;
+  top: 1px;
+}
+
+.screenshot-manager .items > .item > div {
+  width: calc(100% - 100px);
+  pointer-events: none;
+  position: relative;
+  overflow: hidden;
+  float: left;
+  top: 16px;
+}
+
+.screenshot-manager .items > .item > div > .label {
+  font-weight: normal;
+  font-size: small;
+  color: black;
+}
+
+.screenshot-manager .items > .item > button {
+  transition-timing-function: ease;
+  transition-duration: 1.5s;
+  transition-property: all;
+  transition-delay: 0.0s;
+
+  background: #f58b00;
+  border-radius: 4px;
+  position: relative;
+  outline: none;
+  float: right;
+  right: 4px;
+  top: 13px;
+}
+
+.screenshot-manager .items > .item > button:hover {
+  background: #ff9100;
+}
+
+/////////////////////////////////////////////////////////
+// title controls
+//
+/////////////////////////////////////////////////////////
+.screenshot-manager-controls {
+  left: calc(100% - 186px);
+  margin: auto 0 auto 0px;
+  position: relative;
+  float: left;
+}
+
+.screenshot-manager-controls > button {
+  border: 1px solid #c6c6c6;
+  background-color: #e1e1e1;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+  outline: none;
+  height: 24px;
+  width: 26px;
+}
+
+.screenshot-manager-controls > button:hover {
+  border: 1px solid #878787;
+  background-color: #f5f5f5;
+}
+
+.screenshot-manager-controls > button > label {
+  position: relative;
+  font-size: 20px;
+  color: #f0fcff;
+  top: -8px;
+}
+
+.screenshot-manager-controls > button > span {
+  pointer-events: none;
+  color: #9b9b9b
+}

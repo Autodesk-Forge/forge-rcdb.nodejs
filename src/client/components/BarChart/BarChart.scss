@@ -1,0 +1,36 @@
+.bar-chart {
+  background-color: #fdfdfd;
+  overflow-y: scroll;
+  overflow-x: scroll;
+  user-select: none;
+  height: 100%;
+  width: 100%;
+}
+
+.bar-chart .d3.d3-bar {
+  overflow-x: auto;
+}
+
+.bar-chart .bar-item {
+  cursor: pointer;
+}
+
+.bar-chart .axis {
+  font: 10px sans-serif;
+}
+
+.bar-chart .axis path {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.bar-chart .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.bar-chart .x.axis path {
+  display: none;
+}

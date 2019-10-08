@@ -1,0 +1,66 @@
+.react-pie {
+  height: 100%;
+  width: 100%;
+
+  .react-pie-inner {
+    height: 100%;
+    width: 100%;
+
+    svg {
+      height: 100%;
+      width: 100%;
+
+      .react-pie-segment {
+        cursor: pointer;
+
+        path {
+          transition-property: fill-opacity;
+          transition-timing-function: ease;
+          transition-duration: 0.5s;
+          transition-delay: 0.0s;
+
+          fill-opacity: 0.95;
+          stroke-width: 1.0;
+
+          &:hover {
+            fill-opacity: 0.7;
+            stroke-width: 2.0;
+          }
+        }
+
+        text {
+          pointer-events: none;
+          font-size: 10px;
+          fill: white;
+        }
+      }
+    }
+  }
+
+  .react-pie-tooltip-container {
+    transition-property: opacity;
+    transition-timing-function: ease;
+    transition-duration: 1.0s;
+    transition-delay: 0.0s;
+
+    pointer-events: none;
+    position: absolute;
+    opacity: 0;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    top: 0;
+
+    &.active {
+      opacity: 1;
+    }
+
+    .react-pie-tooltip {
+      background-color: #ededed !important;
+      border: 1px solid grey;
+      color: grey !important;
+      padding: 4px;
+    }
+  }
+}
+

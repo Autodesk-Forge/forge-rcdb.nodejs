@@ -1,0 +1,54 @@
+.ar-vr-toolkit {
+
+  .new-scene {
+    position: relative;
+    overflow-y: scroll;
+    overflow-x: scroll;
+    text-align: left;
+    background: white;
+    padding: 10px;
+    height: 100%;
+    width: 100%;
+
+    .content {
+      overflow: hidden;
+      height: 100%;
+
+      .controls {
+        margin-bottom: 10px;
+        position: relative;
+        height: 26px;
+
+        input {
+          width: calc(100% - 162px);
+          margin-right: 2px;
+          padding-left: 4px;
+          outline: none;
+          float: left;
+        }
+
+        button {
+          background: whitesmoke;
+          border-radius: 0px;
+          color: dimgrey;
+          outline: none;
+          width: 160px;
+          height: 26px;
+          float: left;
+
+          span {
+            position: relative;
+            margin-right: 4px;
+            top: 1px;
+          }
+        }
+      }
+
+      .hierarchy-tree-container {
+        height: calc(100% - 36px);
+        overflow-x: hidden;
+        overflow-y: scroll;
+      }
+    }
+  }
+}

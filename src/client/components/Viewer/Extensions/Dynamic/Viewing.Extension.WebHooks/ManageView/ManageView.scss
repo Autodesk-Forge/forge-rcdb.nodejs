@@ -1,0 +1,82 @@
+.web-hooks {
+
+  .manage {
+    background: #fafafa;
+    position: relative;
+    text-align: left;
+    padding: 10px;
+    height: 100%;
+    width: 100%;
+
+    hr {
+      margin: 10px 0;
+    }
+
+    .dropdown {
+      width: 100%;
+
+      button {
+        border-radius: 0;
+        width: 290px;
+      }
+    }
+  }
+
+  .hooks {
+    border: 1px solid #dddddd;
+    height: calc(100% - 32px);
+    position: relative;    
+    margin: 4px 0 0 0;
+    overflow: scroll;
+    width: 290px;
+    float: left;
+
+    .hook {
+      transition-timing-function: ease;
+      transition-duration: 1.5s;
+      transition-property: all;
+      transition-delay: 0.0s;
+
+      border: 1px solid #cccccc;
+      padding: 4px 4px 4px 8px; 
+      cursor:pointer;
+      margin: 4px;
+
+      &:hover:not(.active) {
+        background: rgba(0, 105, 245, 0.35);
+        border: 1px solid #1bb1f4;
+
+        button {
+          display: block;
+        }
+      }
+
+      button {
+        background: none;
+        display: none;
+        outline: none;
+        float: right;
+        border: none;
+
+        span {
+          position: relative;
+          color: #888888;
+          font-size: 20px;
+          top: -1px;
+        }
+
+        span:hover {
+          color: orange;
+        }
+      }
+    }
+  }
+
+  .hook-details {
+    border: 1px solid #dddddd;
+    height: calc(100% - 32px);
+    width: calc(100% - 294px);
+    margin: 4px 0 0 4px;
+    float: left;
+  }
+}

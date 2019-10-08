@@ -1,0 +1,24 @@
+.configurator-loader {
+  height: calc(100vh - 65px);
+  position: relative;
+  top: 0px;
+}
+
+.configurator .data-pane {
+  background-color: #fdfdfd;
+  height: 100%;
+}
+
+.configurator .spinner {
+  display: none;
+}
+
+.configurator .adsk-viewing-viewer.empty {
+  pointer-events: none;
+}
+
+.configurator .empty .adsk-control,
+.configurator .empty .viewcubeUI,
+.configurator .empty .progressbg {
+  display: none;
+}

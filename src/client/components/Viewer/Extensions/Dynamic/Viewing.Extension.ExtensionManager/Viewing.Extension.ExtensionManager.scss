@@ -1,0 +1,70 @@
+.extension-manager .title {
+    float: left;
+}
+
+.extension-manager .content {
+  background: white;
+}
+
+.extension-manager .title  > label{
+  white-space: nowrap;
+  font-weight: normal;
+  user-select: none;
+  margin-left: 27px;
+  margin-top: 10px;
+  select: none;
+  width: 80px;
+}
+
+.extension-manager .extension-list {
+  height: calc(100% - 12px);
+  background-color: white;
+  margin: 6px 0 0 0;
+  overflow: scroll;
+}
+
+.extension-manager .item {
+  transition-timing-function: ease;
+  transition-duration: 1.5s;
+  transition-property: all;
+  transition-delay: 0.0s;
+  background: #ededed;
+
+  border: 1px solid #aeaeae;
+  width: calc(100% - 10px);
+  white-space: nowrap;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  height: 24px;
+  padding: 2px;
+  margin: 5px;
+}
+
+.extension-manager .item:hover {
+  background: rgba(0, 105, 245, 0.35);
+  border: 1px solid #1bb1f4;
+}
+
+.extension-manager .item.loading {
+  cursor: progress;
+}
+
+.extension-manager .item.enabled {
+  background: rgba(2, 160, 29, 0.72);
+  border: 2px solid #00f41b;
+}
+
+.extension-manager .item > label {
+  pointer-events: none;
+  font-weight: normal;
+  margin: 0 0 0 10px;
+  position: relative;
+  float: left;
+  top: -2px;
+}
+
+.extension-pane {
+  height: 100%;
+  width: 100%;
+}

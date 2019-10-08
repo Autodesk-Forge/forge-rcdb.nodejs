@@ -1,0 +1,100 @@
+
+.image-grid {
+
+  flex-wrap: wrap;
+  display: flex;
+
+  a {
+    width: calc(50% - 4px);
+    display: inline-block;
+    text-decoration: none;
+    margin-bottom: 4px;
+    margin-right: 4px;
+    color: black;
+  }
+
+  a:hover img {
+    transform: scale(1.1)
+  }
+
+  a:hover button {
+    border: solid 1px #1bb1f4;
+  }
+
+  button {
+    border: solid 1px #dedede;
+    background: transparent;
+    overflow: hidden;
+    outline: none;
+    margin: 0;
+  }
+
+  figcaption {
+    margin-top: 15px;
+  }
+
+  img {
+    transition: transform .2s ease-in-out;
+    max-width: 100%;
+    display: block;
+    height: auto;
+  }
+
+  .p a {
+    text-decoration: underline;
+    display: inline;
+    font-size: 13px;
+    margin: 0;
+    color: blue;
+  }
+
+  .p {
+    text-align: center;
+    font-size: 13px;
+    padding-top: 100px;
+  }
+
+  @media only screen and (min-width: 875px) {
+    a {
+      width: calc(33% - 3px);
+    }
+
+    a:nth-of-type(n) {
+      margin-right: 4px;
+    }
+
+    a:nth-of-type(3n) {
+      margin-right: 0;
+    }
+  }
+
+  @media only screen and
+  (min-width: 501px) and
+  (max-width: 876px) {
+    a {
+      width: calc(20% - 4px);
+    }
+
+    a:nth-of-type(n) {
+      margin-right: 4px;
+    }
+
+    a:nth-of-type(5n) {
+      margin-right: 0;
+    }
+  }
+
+  @media only screen and (max-width: 500px) {
+    a {
+      width: calc(33% - 3px);
+    }
+
+    a:nth-of-type(n) {
+      margin-right: 4px;
+    }
+
+    a:nth-of-type(3n) {
+      margin-right: 0;
+    }
+  }
+}

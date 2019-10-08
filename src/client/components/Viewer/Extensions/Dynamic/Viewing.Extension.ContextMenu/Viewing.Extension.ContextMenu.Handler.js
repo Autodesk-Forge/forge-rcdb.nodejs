@@ -1,0 +1,32 @@
+/// //////////////////////////////////////////////////////////////////
+// Viewing.Extension.ContextMenu
+// by Philippe Leefsma, September 2016
+//
+/// //////////////////////////////////////////////////////////////////
+import EventsEmitter from 'EventsEmitter'
+
+export default class ContextMenuHandler extends
+  EventsEmitter.Composer(
+    Autodesk.Viewing.Extensions.ViewerObjectContextMenu) {
+  /// //////////////////////////////////////////////////////////////
+  // Class constructor
+  //
+  /// //////////////////////////////////////////////////////////////
+  constructor (viewer, options = {}) {
+    super(viewer, options)
+  }
+
+  /// //////////////////////////////////////////////////////////////
+  //
+  //
+  /// //////////////////////////////////////////////////////////////
+  buildMenu (event, status) {
+    const defaultMenu = super.buildMenu(event, status)
+
+    const newMenu = this.emit(
+      'buildMenu',
+      defaultMenu)
+
+    return newMenu || defaultMenu
+  }
+}

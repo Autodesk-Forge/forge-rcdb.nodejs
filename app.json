@@ -1,0 +1,41 @@
+{
+  "name": "forge-rcdb.nodejs",
+  "description": "Autodesk Forge - Responsive Connected Database",
+  "repository": "https://github.com/Autodesk-Forge/forge-rcdb.nodejs",
+  "logo": "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/resources/img/forge.png",
+  "keywords": ["autodesk", "forge", "node", "express"],
+  "env": {
+    "NODE_ENV": {
+      "description": "Environment, defaulted to production",
+      "value": "production"
+    },
+    "NPM_CONFIG_PRODUCTION": {
+      "description": "This forces Heroku to install devDependencies, needed to build the App. Must be false!",
+      "value": "false"
+    },
+    "FORGE_CLIENT_ID": {
+      "description": "Your Forge Client ID API Key"
+    },
+    "FORGE_CLIENT_SECRET": {
+      "description": "Your Forge Client Secret API Key"
+    },
+    "RCDB_CONNECTION_STRING": {
+      "description": "Entire MongoDB connecion string, leave 'RCDB_HOST' and 'RCDB_PORT' empty if this is specified but be sure to specify 'RCDB_DBNAME'"
+    },
+    "RCDB_DBHOST": {
+      "description": "Database host url"
+    },
+    "RCDB_PORT": {
+      "description": "Database port"
+    },
+    "RCDB_DBNAME": {
+      "description": "Database name"
+    },
+    "RCDB_USER": {
+      "description": "Database username"
+    },
+    "RCDB_PASS": {
+      "description": "Database user password"
+    }
+  }
+}
