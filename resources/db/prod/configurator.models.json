@@ -28,7 +28,7 @@
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.3
     }, 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.Physics.RigidBody", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.Physics.RigidBody", 
     "model" : {
         "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9QaHlzaWNzMi5kd2Z4", 
         "name" : "Table", 
@@ -49,7 +49,7 @@
     "env" : "AutodeskProduction", 
     "private" : true, 
     "desc" : "The MFG version of the Visual Reports demo. The extensions set is slightly different than its AEC counter-part: ForceGraph is a cool feature pulled out from D3, BarChart and PieChart represent visually the categorized selected model component properties.", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ForceGraph", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ForceGraph", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.45
@@ -118,7 +118,7 @@
     "env" : "AutodeskProduction", 
     "private" : true, 
     "desc" : "The MFG version of the Visual Reports demo. The extensions set is slightly different than its AEC counter-part: ForceGraph is a cool feature pulled out from D3, BarChart and PieChart represent visually the categorized selected model component properties.", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ForceGraph", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ForceGraph", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.45
@@ -170,7 +170,7 @@
     "env" : "AutodeskProduction", 
     "desc" : "", 
     "private" : true, 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.Material", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.Material", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.25
@@ -208,7 +208,7 @@
     "name" : "Model Derivatives", 
     "env" : "AutodeskProduction", 
     "desc" : "Implements a control panel that lets interact with the Forge Model Derivatives API", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ModelDerivatives", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ModelDerivatives", 
     "layout" : {
         "type" : "flexLayoutLeft", 
         "rightFlex" : 0.5
@@ -232,7 +232,7 @@
     "name" : "Meta Properties", 
     "env" : "AutodeskProduction", 
     "desc" : "Create, modify and delete custom meta-properties at will! Simply select a component in the viewer and use 'Add Meta Property' from the right-click context menu. The custom meta-properties will appear in the panel along the native model properties where they can be edited. Plain Text, Link & File property types are available.", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.MetaProperties", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.MetaProperties", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.35
@@ -979,7 +979,7 @@
     "name" : "IoT", 
     "env" : "AutodeskProduction", 
     "desc" : "An Internet of Things sample that illustrates the possibilities to integrate a digital model with physical sensors installed on real equipment. In that demo the first four sensors in the list are returning fake data generated on the fly, it can be connected with a fifth sensor that displays along the others. Once a sensor is selected, the graphs will show realtime data sent by that sensor representing current temperature, luminosity and acceleration.", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.IoT", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.IoT", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.3
@@ -1316,7 +1316,7 @@
     "name" : "ScreenShot Manager", 
     "env" : "AutodeskProduction", 
     "desc" : "A panel illustrating the use of viewer.getScreenShot API: take screenshots of the desired size and save them to disk by clicking on the thumbnail.", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ScreenShotManager", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ScreenShotManager", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.3
@@ -1337,7 +1337,7 @@
     "name" : "Fader", 
     "env" : "AutodeskProduction", 
     "desc" : "Forge Fader is a WiFi signal attenuation simulator: user can pick the position of the router on the floor and the signal strength will be represented by a custom shader on the surface. The signal strength is computed based on the attenuation in air and per wall depending the distance and number of walls between the position and the signal source. Parameters can be modified by user and we also included a cool 'dynamic' mode ...", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.Fader", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.Fader", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.3
@@ -1361,7 +1361,7 @@
     "name" : "Visual Reports AEC", 
     "env" : "AutodeskProduction", 
     "desc" : "A combo of 3 dynamic extensions loaded together by the Extension Manager and displayed inside a cutting edge resizable layout pane: DualViewer loads a selectable 2D view of the building, BarChart and PieChart represent visually the categorized selected model component properties. A must see!", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.DualViewer", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.DualViewer", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.45
@@ -1439,7 +1439,7 @@
     "env" : "AutodeskProduction", 
     "private" : true, 
     "desc" : "A combo of 3 dynamic extensions loaded together by the Extension Manager and displayed inside a cutting edge resizable layout pane: DualViewer loads a selectable 2D view of the building, BarChart and PieChart represent visually the categorized selected model component properties. A must see!", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.DualViewer", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.DualViewer", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.45
@@ -1511,7 +1511,7 @@
     "env" : "AutodeskProduction", 
     "private" : true, 
     "desc" : "Create, modify and delete custom meta-properties at will! Simply select a component in the viewer and use 'Add Meta Property' from the right-click context menu. The custom meta-properties will appear in the panel along the native model properties where they can be edited. Plain Text, Link & File property types are available.", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.MetaProperties", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.MetaProperties", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.35
@@ -1795,7 +1795,7 @@
     "private" : true, 
     "env" : "AutodeskProduction", 
     "desc" : "An Internet of Things sample that illustrates the possibilities to integrate a digital model with physical sensors installed on real equipment. In that demo the first four sensors in the list are returning fake data generated on the fly, it can be connected with a fifth sensor that displays along the others. Once a sensor is selected, the graphs will show realtime data sent by that sensor representing current temperature, luminosity and acceleration.", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.IoT.2", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.IoT.2", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.3
@@ -1819,7 +1819,7 @@
     "name" : "PointCloud Markup", 
     "env" : "AutodeskProduction", 
     "desc" : "A high-performance 3D Markup demo based on a PointCloud entity using custom shader with animated dynamic texture.", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.PointCloudMarkup", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.PointCloudMarkup", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.3
@@ -5012,7 +5012,7 @@
     "name" : "PieChart Demo", 
     "env" : "AutodeskProduction", 
     "private" : true, 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ForceGraph", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ForceGraph", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.45
@@ -5054,7 +5054,7 @@
     "name" : "Web Hooks", 
     "env" : "Local", 
     "desc" : "Forge Web Hooks management console", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.WebHooks", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.WebHooks", 
     "layout" : {
         "type" : "flexLayoutLeft", 
         "rightFlex" : 0.75
@@ -5077,7 +5077,7 @@
     "displayName" : "3 Legged", 
     "env" : "Local", 
     "desc" : "Implements a control panel to interact with the Forge AR/VR Toolkit API", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ARToolkitController", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ARToolkitController", 
     "layout" : {
         "type" : "flexLayoutLeft", 
         "rightFlex" : 0.5
@@ -5106,7 +5106,7 @@
     "env" : "Local", 
     "private" : true, 
     "desc" : "Implements a control panel to interact with the Forge AR/VR Toolkit API", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ARToolkitController", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ARToolkitController", 
     "layout" : {
         "type" : "flexLayoutLeft", 
         "rightFlex" : 0.5
@@ -5128,7 +5128,7 @@
     "_id" : ObjectId("5a7185a92a0a7aeb152725d5"), 
     "name" : "Level Filter", 
     "env" : "AutodeskProduction", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.Filter", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.Filter", 
     "desc" : "Computes building levels based on floors components and lets user toggle display for specific level.", 
     "layout" : {
         "type" : "flexLayoutRight", 
@@ -5215,7 +5215,7 @@
     "_id" : ObjectId("5a82aebe7c56bcfef008a2f8"), 
     "name" : "React Panel", 
     "env" : "AutodeskProduction", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ReactPanel", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ReactPanel", 
     "desc" : "", 
     "model" : {
         "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9WOC5kd2Z4", 
@@ -5236,7 +5236,7 @@
     "name" : "Model Loader", 
     "env" : "AutodeskProduction", 
     "desc" : "Multiple model aggregation extension for the Forge Viewer, which lets you load and unload models to the same scene. Also included as part of the demo, the Model Transformer extension allows you to translate, rotate and scale models at will.", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ModelLoader", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ModelLoader", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.3
@@ -5258,7 +5258,7 @@
     "name" : "Selection Filter", 
     "env" : "AutodeskProduction", 
     "desc" : "A custom TreeView component that controls selectability of the model entities. Toggle each switch in the tree to enable/disable selectability of the component: disabling a parent component will automatically disable all children. The TreeView is implemented in plain JavaScript manipulating the DOM API but each node content is rendered by React", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.SelectionFilter", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.SelectionFilter", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.35
@@ -5303,7 +5303,7 @@
     "name" : "Visual Reports MFG", 
     "env" : "AutodeskProduction", 
     "desc" : "The MFG version of the Visual Reports demo. The extensions set is slightly different than its AEC counter-part: ForceGraph is a cool feature pulled out from D3, BarChart and PieChart represent visually the categorized selected model component properties.", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ForceGraph", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ForceGraph", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.45
@@ -5391,7 +5391,7 @@
     "name" : "Particle System", 
     "env" : "Local", 
     "desc" : "A custom 3D particle system written in JavaScript integrated with the Forge Viewer. Have fun tweaking the parameters of the emitters and magnetic fields to see the effect on the spinning particles!", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.Particle", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.Particle", 
     "model" : {
         "path" : "resources/models/prod/particles/0.svf", 
         "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9vZmZpY2UucnZ0", 
@@ -5418,7 +5418,7 @@
     "_id" : ObjectId("59729386f8b8e45a94ba94c0"), 
     "name" : "Data Management", 
     "env" : "AutodeskProduction", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.DataManagement", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.DataManagement", 
     "desc" : "Access data from your A360 account and load your models in the Viewer. The demo can also aggregate models from this website's gallery section. It requires you to be logged in and have a valid A360 account.", 
     "layout" : {
         "type" : "flexLayoutLeft", 
@@ -5458,7 +5458,7 @@
     "name" : "Plant Factory", 
     "env" : "AutodeskProduction", 
     "desc" : "A large plant factory model integrated with D3 graphs and data tables representing visually some of the available model component properties.", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.PlantFactory", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.PlantFactory", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.4
@@ -5482,7 +5482,7 @@
     "name" : "Wall Analyzer", 
     "env" : "AutodeskProduction", 
     "desc" : "A demo that performs a geometric analysis of the loaded model based on the Floors and Walls component categories in order to display wall meshes at each level of the building.", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.WallAnalyzer", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.WallAnalyzer", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.35
@@ -5510,7 +5510,7 @@
     "name" : "Config Manager", 
     "env" : "AutodeskProduction", 
     "desc" : "Create sequences of viewer states and store them in database. Each state can be restored independently or played as a loop in the sequence. States can also be hooked to custom extensions, like ModelTransformer and Markup3D in that demo.", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ConfigManager", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ConfigManager", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.3
@@ -11316,7 +11316,7 @@
     "name" : "Showcase", 
     "env" : "AutodeskProduction", 
     "desc" : "Showcase a model: this demo creates a skybox around a model and adds some controlled camera motion. Camera position can be moved by user but target is always pointing at the model. After a while without user interactionthe motion will be restored.", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.Showcase", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.Showcase", 
     "model" : {
         "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9WOC5kd2Z4", 
         "role" : "3d", 
@@ -11352,7 +11352,7 @@
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.25
     }, 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.Physics.RigidBody", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.Physics.RigidBody", 
     "model" : {
         "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9QaHlzaWNzMS5kd2Z4", 
         "path" : "resources/models/cubes wall/0.svf", 
@@ -11380,7 +11380,7 @@
     "env" : "Local", 
     "private" : true, 
     "desc" : "", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.Particle", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.Particle", 
     "model" : {
         "path" : "resources/models/prod/LHC/0.svf", 
         "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9vZmZpY2UucnZ0", 
@@ -11404,7 +11404,7 @@
     "_id" : ObjectId("5898edb0f3d07692f6cef148"), 
     "name" : "Configurator", 
     "env" : "AutodeskProduction", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.CAT", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.CAT", 
     "desc" : "Loader configurator", 
     "model" : {
         "path" : "resources/models/tmp/loader/loader.svf", 
@@ -11428,7 +11428,7 @@
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.35
     }, 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.Kinematics", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.Kinematics", 
     "model" : {
         "path" : "resources/models/prod/robot/0.svf", 
         "role" : "3d"
@@ -14801,7 +14801,7 @@
     "name" : "Bounding Box", 
     "env" : "AutodeskProduction", 
     "desc" : "Create, modify and delete custom meta-properties at will! Simply select a component in the viewer and use 'Add Meta Property' from the right-click context menu. The custom meta-properties will appear in the panel along the native model properties where they can be edited. Plain Text, Link & File property types are available.", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.MetaProperties", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.MetaProperties", 
     "private" : true, 
     "model" : {
         "urn" : "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6bGVlZnNtcC1mb3JnZS9lbmdpbmUuZHdm", 
@@ -14820,7 +14820,7 @@
     "env" : "AutodeskProduction", 
     "private" : true, 
     "desc" : "The ExtensionManager panel controls loading & unloading dynamic viewer extensions. Click on available extensions to toggle them ON or OFF. Each extension script is dynamically requested from the server first time is has to be loaded, illustrating advanced feature management in a large real-world Web Application.", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ExtensionManager", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ExtensionManager", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.3
@@ -14928,7 +14928,7 @@
     "name" : "Level Filter - II", 
     "env" : "AutodeskProduction", 
     "private" : true, 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.Filter", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.Filter", 
     "desc" : "", 
     "layout" : {
         "type" : "flexLayoutRight", 
@@ -15010,7 +15010,7 @@
     "_id" : ObjectId("5922e86e20229e6d5a8ed500"), 
     "name" : "HFDM", 
     "desc" : "Synchronises viewer camera events accross multiple users in real-time using the High Frequency Data Management API (HFDM).", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.HFDM", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.HFDM", 
     "env" : "AutodeskProduction", 
     "layout" : {
         "type" : "flexLayoutRight", 
@@ -15035,7 +15035,7 @@
     "name" : "Selection Window", 
     "env" : "AutodeskProduction", 
     "desc" : "Custom Selection Window Extension: select components visually using a 2D selection window defined on the screen.", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.SelectionWindow", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.SelectionWindow", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.27
@@ -15079,7 +15079,7 @@
     "name" : "Camera Tween", 
     "env" : "AutodeskProduction", 
     "desc" : "Smooth camera transitions using Tween.js", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.CameraTween", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.CameraTween", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.35
@@ -21320,7 +21320,7 @@
     "name" : "Extension Manager", 
     "env" : "AutodeskProduction", 
     "desc" : "That panel controls loading & unloading viewer extensions. Click on the items to toggle the extensions ON or OFF. Each extension script is dynamically requested from the server first time is has to be loaded, illustrating advanced feature management in a large real-world Web Application. You can choose below between Custom Extensions (various demo extensions from FPD Team) and Native Extensions (Official extensions provided along Forge Viewer API).", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ExtensionManager", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.ExtensionManager", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.3
@@ -22723,7 +22723,7 @@
     "name" : "Markup 2D", 
     "env" : "AutodeskProduction", 
     "desc" : "A demo editor to control the Markup 2D API: create and save sequences of viewer states including SVG data from the markups that be be restored at a later time at your will or replayed in order.", 
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.Markup2D", 
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/legacy/src/client/viewer.components/Viewer.Extensions.Dynamic/Viewing.Extension.Markup2D", 
     "layout" : {
         "type" : "flexLayoutRight", 
         "rightFlex" : 0.35
