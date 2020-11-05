@@ -43,7 +43,7 @@ To run these samples, you need your own Forge API credentials:
 
    Install [MongoDB](https://www.mongodb.com/), start an instance locally and create a database - we recommend to follow the tutorial [here](https://docs.mongodb.com/manual/tutorial/getting-started/) for detailed instructions.
 
-   Import the four data collections using the JSON files [here](./resources/db) to your database, we recommend to use [MongoDB Compass](https://www.mongodb.com/products/compass) or [Robo3T](https://robomongo.org/) as client tools for this task. See [here](https://docs.mongodb.com/compass/master/import-export/) and [here](https://stackoverflow.com/questions/23009146/import-a-data-base-file-json-into-robo3t-robomongo) for instructions to import data. *Note: if you use MongoDB Compass to import the data you will need to minify the JSON objects into one lines otherwise the tool wouldn't be able to parse the JSON objects correctly*
+   Import the four data collections using the JSON files [here](./resources/db) to your database, we recommend to use [MongoDB Compass](https://www.mongodb.com/products/compass) or [Studio3T](https://studio3t.com/download/) as client tools for this task. See [here](https://docs.mongodb.com/compass/master/import-export/) and [here](https://studio3t.com/knowledge-base/articles/mongodb-import-json-csv-bson/) for instructions to import data. *Note: if you use MongoDB Compass to import the data you will need to minify the JSON objects into one lines otherwise the tool wouldn't be able to parse the JSON objects correctly*
 
    Make sure your database collections look like below:
 
@@ -156,7 +156,7 @@ Run the Gallery app from the [Extension Library project](https://github.com/Auto
 
 > Why am I getting the error "Unexpected end of input JSON" when importing the data with MongoDB Compass?
 
-You will need to minify the JSON objects into one lines otherwise the tool wouldn't be able to parse the JSON objects correctly. Alternatively use `Robo3T` to import the data instead.
+You will need to minify the JSON objects into one lines otherwise the tool wouldn't be able to parse the JSON objects correctly. Alternatively use `Studio3T` to import the data instead.
 
 > What should I do if I get the error `Module build failed: Error: Node Sass does not yet support your current environment: OS X 64-bit with Unsupported runtime (64)` when I tried to build the front end?
 
