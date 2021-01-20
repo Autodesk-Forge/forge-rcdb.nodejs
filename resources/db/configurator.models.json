@@ -4463,7 +4463,7 @@
     "_id" : ObjectId("5a7185a92a0a7aeb152725d5"),
     "name" : "Level Filter",
     "env" : "Local",
-    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/master/src/client/components/Viewer/Extensions/Dynamic/Viewing.Extension.Filter",
+    "git" : "https://github.com/Autodesk-Forge/forge-rcdb.nodejs/tree/89e2e0af1d87e3b948cb66bc88f54140c6e8a0e8/src/client/components/Viewer/Extensions/Dynamic/Viewing.Extension.LevelFilter",
     "desc" : "Computes building levels based on floors components and lets user toggle display for specific level.",
     "layout" : {
         "type" : "flexLayoutRight",
