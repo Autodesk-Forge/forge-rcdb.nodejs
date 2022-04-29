@@ -31,7 +31,7 @@
   "dependencies": {
     "adm-zip": "^0.4.7",
     "archiver": "2.0.0",
-    "async": "2.4.1",
+    "async": "2.6.4",
     "autobind-decorator": "^2.4.0",
     "body-parser": "^1.18.2",
     "buffer": "^5.0.6",
