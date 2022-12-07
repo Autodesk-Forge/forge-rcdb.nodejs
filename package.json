@@ -41,7 +41,7 @@
     "connect-mongo": "2.0.0",
     "cookie-parser": "^1.4.3",
     "core-js": "^2.6.9",
-    "express": "4.16.2",
+    "express": "4.17.3",
     "express-rate-limit": "2.11.0",
     "express-session": "^1.15.1",
     "express-static-gzip": "^0.3.0",
