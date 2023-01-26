@@ -176,8 +176,8 @@
     "webpack-bundle-analyzer": "^3.3.2",
     "webpack-cli": "^3.3.12",
     "webpack-dev-middleware": "^3.7.0",
-    "webpack-dev-server": "^3.8.1",
-    "webpack-hot-middleware": "^2.20.0",
+    "webpack-dev-server": "^3.11.3",
+    "webpack-hot-middleware": "^2.25.3",
     "webpack-manifest-plugin": "^2.0.4",
     "webpack-md5-hash": "0.0.5",
     "worker-loader": "^2.0.0"
